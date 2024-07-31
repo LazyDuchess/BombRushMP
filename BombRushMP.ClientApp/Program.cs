@@ -4,18 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestClient
+namespace BombRushMP.ClientApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            var address = "localhost";
-            var port = 34085;
-            var client = new Client(address, port);
+            var address = "127.0.0.1:34085";
+            var client = new BRCClient(address);
             while (true)
             {
-                //hello
+                client.Update();
             }
         }
     }

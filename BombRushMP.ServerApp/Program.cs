@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.Server
+namespace BombRushMP.ServerApp
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            var port = 34085;
-            var server = new Server(port);
+            var port = (ushort)34085;
+            var server = new BRCServer(port, 65534);
             while(true)
             {
                 server.Update();
