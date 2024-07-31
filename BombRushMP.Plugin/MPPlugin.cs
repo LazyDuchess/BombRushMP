@@ -3,7 +3,7 @@
 namespace BombRushMP.Plugin
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    public class Plugin : BaseUnityPlugin
+    public class MPPlugin : BaseUnityPlugin
     {
         private void Awake()
         {
