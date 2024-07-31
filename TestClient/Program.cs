@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.Server
+namespace TestClient
 {
     internal class Program
     {
         static void Main(string[] args)
         {
+            var address = "localhost";
             var port = 34085;
-            var server = new Server(port);
-            while(true)
+            var client = new Client(address, port);
+            while (true)
             {
-                server.Update();
+                //hello
             }
         }
     }

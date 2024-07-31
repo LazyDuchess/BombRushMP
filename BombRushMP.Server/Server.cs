@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Server
 {
-    public class Server
+    public class Server : IDisposable
     {
         private TcpListener _tcpServer;
         public Server(int port)
@@ -26,8 +27,12 @@ namespace BombRushMP.Server
 
         public void Stop()
         {
-            if (_tcpServer != null)
-                _tcpServer.Stop();
+            _tcpServer.Stop();
+        }
+
+        public void Dispose()
+        {
+            Stop();
         }
 
         private void TCPWaitForClients()
@@ -39,7 +44,28 @@ namespace BombRushMP.Server
 
         private void TCPProcessClient(object obj)
         {
+            var connectionOpen = true;
             var client = (TcpClient)obj;
+            var stream = client.GetStream();
+            while (connectionOpen)
+            {
+                var bytes = new byte[client.ReceiveBufferSize];
+                try
+                {
+                    stream.Read(bytes, 0, client.ReceiveBufferSize);
+                }
+                catch (Exception)
+                {
+                    connectionOpen = false;
+                }
+                if (connectionOpen)
+                {
+                    string msg = Encoding.ASCII.GetString(bytes); //the message incoming
+                    Log(msg);
+                }
+            }
+            Log($"Client connection from address {(client.Client.RemoteEndPoint as IPEndPoint).Address} was closed.");
+            client.Close();
         }
 
         private void Log(string message)
