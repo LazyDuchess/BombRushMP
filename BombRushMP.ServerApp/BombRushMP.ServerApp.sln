@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.Server", "BombRushMP.Server.csproj", "{E0E61187-4908-4A05-BD08-E64B7FC7345B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BombRushMP.ServerApp", "BombRushMP.ServerApp.csproj", "{C170AB91-2318-4C13-BAC5-272DF84D113A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E0E61187-4908-4A05-BD08-E64B7FC7345B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E0E61187-4908-4A05-BD08-E64B7FC7345B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E0E61187-4908-4A05-BD08-E64B7FC7345B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E0E61187-4908-4A05-BD08-E64B7FC7345B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C170AB91-2318-4C13-BAC5-272DF84D113A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C170AB91-2318-4C13-BAC5-272DF84D113A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C170AB91-2318-4C13-BAC5-272DF84D113A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C170AB91-2318-4C13-BAC5-272DF84D113A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {7C2940C7-D973-43D7-99FC-280D7DD5DC88}
+		SolutionGuid = {1700B4C6-C688-4C4D-9568-748098615C2B}
 	EndGlobalSection
 EndGlobal
