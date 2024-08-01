@@ -10,7 +10,7 @@ namespace BombRushMP.ServerApp
     {
         static void Main(string[] args)
         {
-            var port = (ushort)34085;
+            var port = (ushort)41585;
             var server = new BRCServer(port, 65534);
             while(true)
             {

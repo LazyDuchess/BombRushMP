@@ -10,7 +10,7 @@ namespace BombRushMP.ClientApp
     {
         static void Main(string[] args)
         {
-            var address = "127.0.0.1:34085";
+            var address = "127.0.0.1:41585";
             var client = new BRCClient(address);
             while (true)
             {
