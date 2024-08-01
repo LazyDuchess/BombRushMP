@@ -71,7 +71,9 @@ namespace BombRushMP.Plugin
                 Player.motor._rigidbody.velocity = ClientVisualState.GetUnityVelocity();
                 Player.transform.position = Vector3.Lerp(Player.transform.position, ClientVisualState.GetUnityPosition(), Time.deltaTime * ClientConstants.PlayerInterpolation);
                 Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, ClientVisualState.GetUnityRotation(), Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.rotation = Quaternion.Lerp(Player.visualTf.rotation, ClientVisualState.GetUnityVisualRotation(), Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, ClientVisualState.GetUnityVisualRotation(), Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, ClientVisualState.GetUnityVisualPosition(), Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.GrindDirectionHash), ClientVisualState.GrindDirection, Time.deltaTime * ClientConstants.PlayerInterpolation));
             }
 
             PlayerPatch.PlayAnimPatchEnabled = false;

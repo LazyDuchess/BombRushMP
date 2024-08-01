@@ -14,11 +14,13 @@ namespace BombRushMP.Common.Packets
         public override Packets PacketId => Packets.ClientVisualState;
         private const byte Version = 0;
         public Vector3 Position;
+        public Vector3 VisualPosition;
         public Vector3 Velocity;
         public Quaternion Rotation;
         public Quaternion VisualRotation;
         public bool MoveStyleEquipped;
         public int MoveStyle;
+        public float GrindDirection;
 
         public override void Write(BinaryWriter writer)
         {
@@ -27,6 +29,10 @@ namespace BombRushMP.Common.Packets
             writer.Write(Position.X);
             writer.Write(Position.Y);
             writer.Write(Position.Z);
+
+            writer.Write(VisualPosition.X);
+            writer.Write(VisualPosition.Y);
+            writer.Write(VisualPosition.Z);
 
             writer.Write(Rotation.X);
             writer.Write(Rotation.Y);
@@ -44,6 +50,8 @@ namespace BombRushMP.Common.Packets
 
             writer.Write(MoveStyleEquipped);
             writer.Write(MoveStyle);
+
+            writer.Write(GrindDirection);
         }
 
         public override void Read(BinaryReader reader)
@@ -53,6 +61,10 @@ namespace BombRushMP.Common.Packets
             var posX = reader.ReadSingle();
             var posY = reader.ReadSingle();
             var posZ = reader.ReadSingle();
+
+            var visualPosX = reader.ReadSingle();
+            var visualPosY = reader.ReadSingle();
+            var visualPosZ = reader.ReadSingle();
 
             var rotX = reader.ReadSingle();
             var rotY = reader.ReadSingle();
@@ -71,7 +83,10 @@ namespace BombRushMP.Common.Packets
             MoveStyleEquipped = reader.ReadBoolean();
             MoveStyle = reader.ReadInt32();
 
+            GrindDirection = reader.ReadSingle();
+
             Position = new Vector3(posX, posY, posZ);
+            VisualPosition = new Vector3(visualPosX, visualPosY, visualPosZ);
             Rotation = new Quaternion(rotX, rotY, rotZ, rotW);
             Velocity = new Vector3(velX, velY, velZ);
             VisualRotation = new Quaternion(visualRotX, visualRotY, visualRotZ, visualRotW);

@@ -85,9 +85,11 @@ namespace BombRushMP.Plugin
             packet.MoveStyleEquipped = player.usingEquippedMovestyle;
             packet.MoveStyle = (int)player.moveStyleEquipped;
             packet.SetUnityPosition(player.gameObject.transform.position);
+            packet.SetUnityVisualPosition(player.visualTf.localPosition);
             packet.SetUnityRotation(player.gameObject.transform.rotation);
-            packet.SetUnityVisualRotation(player.visualTf.rotation);
+            packet.SetUnityVisualRotation(player.visualTf.localRotation);
             packet.SetUnityVeolcity(player.motor._rigidbody.velocity);
+            packet.GrindDirection = player.anim.GetFloat(ClientConstants.GrindDirectionHash);
             return packet;
         }
 

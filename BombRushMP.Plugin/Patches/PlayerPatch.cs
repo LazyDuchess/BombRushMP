@@ -135,12 +135,7 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.OrientVisualToSurface))]
         private static bool OrientVisualToSurface_Prefix(Player __instance)
         {
-            if (MPUtility.IsMultiplayerPlayer(__instance))
-            {
-                if (!__instance.IsGrounded()) return false;
-                __instance.visualTf.position = Vector3.Lerp(__instance.visualTf.position, __instance.motor.groundPoint, 1f - Mathf.Exp(-18f * Core.dt));
-                return false;
-            }
+            if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
             return true;
         }
 

@@ -26,6 +26,11 @@ namespace BombRushMP.Plugin
             return new Vector3(clientVisualState.Position.X, clientVisualState.Position.Y, clientVisualState.Position.Z);
         }
 
+        public static Vector3 GetUnityVisualPosition(this ClientVisualState clientVisualState)
+        {
+            return new Vector3(clientVisualState.VisualPosition.X, clientVisualState.VisualPosition.Y, clientVisualState.VisualPosition.Z);
+        }
+
         public static Vector3 GetUnityVelocity(this ClientVisualState clientVisualState)
         {
             return new Vector3(clientVisualState.Velocity.X, clientVisualState.Velocity.Y, clientVisualState.Velocity.Z);
@@ -44,6 +49,11 @@ namespace BombRushMP.Plugin
         public static void SetUnityPosition(this ClientVisualState clientVisualState, Vector3 position)
         {
             clientVisualState.Position = new System.Numerics.Vector3(position.x, position.y, position.z);
+        }
+
+        public static void SetUnityVisualPosition(this ClientVisualState clientVisualState, Vector3 position)
+        {
+            clientVisualState.VisualPosition = new System.Numerics.Vector3(position.x, position.y, position.z);
         }
 
         public static void SetUnityVeolcity(this ClientVisualState clientVisualState, Vector3 velocity)
