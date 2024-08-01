@@ -8,6 +8,6 @@ namespace BombRushMP.Plugin
 {
     public static class ClientConstants
     {
-        public const float PlayerInterpolation = 10f;
+        public const float PlayerInterpolation = 12f;
     }
 }

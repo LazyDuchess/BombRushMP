@@ -46,12 +46,12 @@ namespace BombRushMP.ServerApp
             _tickStopWatch.Stop();
             var deltaTime = (float)_tickStopWatch.Elapsed.TotalSeconds;
             _tickTimer += deltaTime;
+            _tickStopWatch.Restart();
             if (_tickTimer >= Constants.NetworkingTickRate)
             {
                 Tick(_tickTimer);
                 _tickTimer = 0f;
             }
-            _tickStopWatch.Restart();
         }
 
         private void Tick(float deltaTime)
@@ -117,6 +117,14 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientState:
                     {
                         var clientState = (ClientState)packet;
+                        var oldClientState = _players[e.FromConnection.Id].ClientState;
+                        if (oldClientState != null)
+                        {
+                            var clientStateUpdatePacket = new ServerClientStates();
+                            clientStateUpdatePacket.ClientStates[e.FromConnection.Id] = clientState;
+                            SendPacketToStage(clientStateUpdatePacket, MessageSendMode.Reliable,oldClientState.Stage);
+                            return;
+                        }
                         if (clientState.ProtocolVersion != Constants.ProtocolVersion)
                         {
                             Log($"Rejecting player from {e.FromConnection} (ID: {e.FromConnection.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
@@ -142,6 +150,16 @@ namespace BombRushMP.ServerApp
                     {
                         var playerAnimation = (PlayerAnimation)packet;
                         playerAnimation.ClientId = e.FromConnection.Id;
+                        var player = _players[e.FromConnection.Id];
+                        if (player.ClientState == null) return;
+                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[e.FromConnection.Id].ClientState.Stage);
+                    }
+                    break;
+
+                case Packets.PlayerVoice:
+                    {
+                        var playerVoice = (PlayerVoice)packet;
+                        playerVoice.ClientId = e.FromConnection.Id;
                         var player = _players[e.FromConnection.Id];
                         if (player.ClientState == null) return;
                         SendPacketToStage(packet, MessageSendMode.Reliable, _players[e.FromConnection.Id].ClientState.Stage);

@@ -82,8 +82,12 @@ namespace BombRushMP.Plugin
         private ClientVisualState CreateVisualStatePacket(Player player)
         {
             var packet = new ClientVisualState();
+            packet.MoveStyleEquipped = player.usingEquippedMovestyle;
+            packet.MoveStyle = (int)player.moveStyleEquipped;
             packet.SetUnityPosition(player.gameObject.transform.position);
             packet.SetUnityRotation(player.gameObject.transform.rotation);
+            packet.SetUnityVisualRotation(player.visualTf.rotation);
+            packet.SetUnityVeolcity(player.motor._rigidbody.velocity);
             return packet;
         }
 
@@ -180,6 +184,17 @@ namespace BombRushMP.Plugin
                         }
                     }
                     break;
+
+                case Packets.PlayerVoice:
+                    {
+                        var playerVoice = (PlayerVoice)packet;
+                        if (Players.TryGetValue(playerVoice.ClientId, out var player))
+                        {
+                            if (player.Player != null)
+                                player.Player.PlayVoice((AudioClipID)playerVoice.AudioClipId, (VoicePriority)playerVoice.VoicePriority, true);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -199,16 +214,24 @@ namespace BombRushMP.Plugin
             Connect();
         }
 
-        private void OnConnected(object sender, EventArgs e)
+        public void SendClientState()
         {
-            Log("Connected!");
+            var player = WorldHandler.instance.GetCurrentPlayer();
             var statePacket = new ClientState()
             {
                 Name = Username,
+                Character = (int)player.character,
+                Outfit = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 ProtocolVersion = Constants.ProtocolVersion
             };
             SendPacket(statePacket, MessageSendMode.Reliable);
+        }
+
+        private void OnConnected(object sender, EventArgs e)
+        {
+            Log("Connected!");
+            SendClientState();
         }
 
         private void Log(string message)

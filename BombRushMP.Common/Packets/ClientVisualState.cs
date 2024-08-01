@@ -14,7 +14,11 @@ namespace BombRushMP.Common.Packets
         public override Packets PacketId => Packets.ClientVisualState;
         private const byte Version = 0;
         public Vector3 Position;
+        public Vector3 Velocity;
         public Quaternion Rotation;
+        public Quaternion VisualRotation;
+        public bool MoveStyleEquipped;
+        public int MoveStyle;
 
         public override void Write(BinaryWriter writer)
         {
@@ -28,6 +32,18 @@ namespace BombRushMP.Common.Packets
             writer.Write(Rotation.Y);
             writer.Write(Rotation.Z);
             writer.Write(Rotation.W);
+
+            writer.Write(VisualRotation.X);
+            writer.Write(VisualRotation.Y);
+            writer.Write(VisualRotation.Z);
+            writer.Write(VisualRotation.W);
+
+            writer.Write(Velocity.X);
+            writer.Write(Velocity.Y);
+            writer.Write(Velocity.Z);
+
+            writer.Write(MoveStyleEquipped);
+            writer.Write(MoveStyle);
         }
 
         public override void Read(BinaryReader reader)
@@ -43,8 +59,22 @@ namespace BombRushMP.Common.Packets
             var rotZ = reader.ReadSingle();
             var rotW = reader.ReadSingle();
 
+            var visualRotX = reader.ReadSingle();
+            var visualRotY = reader.ReadSingle();
+            var visualRotZ = reader.ReadSingle();
+            var visualRotW = reader.ReadSingle();
+
+            var velX = reader.ReadSingle();
+            var velY = reader.ReadSingle();
+            var velZ = reader.ReadSingle();
+
+            MoveStyleEquipped = reader.ReadBoolean();
+            MoveStyle = reader.ReadInt32();
+
             Position = new Vector3(posX, posY, posZ);
             Rotation = new Quaternion(rotX, rotY, rotZ, rotW);
+            Velocity = new Vector3(velX, velY, velZ);
+            VisualRotation = new Quaternion(visualRotX, visualRotY, visualRotZ, visualRotW);
         }
     }
 }

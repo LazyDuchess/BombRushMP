@@ -16,9 +16,19 @@ namespace BombRushMP.Plugin
             return new Quaternion(clientVisualState.Rotation.X, clientVisualState.Rotation.Y, clientVisualState.Rotation.Z, clientVisualState.Rotation.W);
         }
 
+        public static Quaternion GetUnityVisualRotation(this ClientVisualState clientVisualState)
+        {
+            return new Quaternion(clientVisualState.VisualRotation.X, clientVisualState.VisualRotation.Y, clientVisualState.VisualRotation.Z, clientVisualState.VisualRotation.W);
+        }
+
         public static Vector3 GetUnityPosition(this ClientVisualState clientVisualState)
         {
             return new Vector3(clientVisualState.Position.X, clientVisualState.Position.Y, clientVisualState.Position.Z);
+        }
+
+        public static Vector3 GetUnityVelocity(this ClientVisualState clientVisualState)
+        {
+            return new Vector3(clientVisualState.Velocity.X, clientVisualState.Velocity.Y, clientVisualState.Velocity.Z);
         }
 
         public static void SetUnityRotation(this ClientVisualState clientVisualState, Quaternion rotation)
@@ -26,9 +36,19 @@ namespace BombRushMP.Plugin
             clientVisualState.Rotation = new System.Numerics.Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
         }
 
+        public static void SetUnityVisualRotation(this ClientVisualState clientVisualState, Quaternion rotation)
+        {
+            clientVisualState.VisualRotation = new System.Numerics.Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
+        }
+
         public static void SetUnityPosition(this ClientVisualState clientVisualState, Vector3 position)
         {
             clientVisualState.Position = new System.Numerics.Vector3(position.x, position.y, position.z);
+        }
+
+        public static void SetUnityVeolcity(this ClientVisualState clientVisualState, Vector3 velocity)
+        {
+            clientVisualState.Velocity = new System.Numerics.Vector3(velocity.x, velocity.y, velocity.z);
         }
     }
 }

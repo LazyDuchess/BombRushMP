@@ -47,6 +47,9 @@ namespace BombRushMP.Common.Packets
                 case Packets.PlayerAnimation:
                     packet = new PlayerAnimation();
                     break;
+                case Packets.PlayerVoice:
+                    packet = new PlayerVoice();
+                    break;
             }
             if (packet != null)
                 packet.Read(reader);

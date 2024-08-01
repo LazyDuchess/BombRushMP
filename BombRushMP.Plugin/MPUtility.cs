@@ -11,15 +11,16 @@ namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
-        public static Player CreateMultiplayerPlayer()
+        public static Player CreateMultiplayerPlayer(Characters character, int outfit)
         {
             var clientController = ClientController.Instance;
             var worldHandler = WorldHandler.instance;
             Player player = UnityEngine.Object.Instantiate(worldHandler.playerPrefab, Vector3.zero, Quaternion.identity).GetComponent<Player>();
             player.tf.SetAsFirstSibling();
             player.motor._rigidbody.isKinematic = true;
+            player.motor._rigidbody.useGravity = false;
             worldHandler.RegisterPlayer(player);
-            worldHandler.InitPlayer(player, Characters.metalHead, 0, PlayerType.NONE, MoveStyle.SKATEBOARD, Crew.PLAYERS);
+            worldHandler.InitPlayer(player, character, outfit, PlayerType.NONE, MoveStyle.SKATEBOARD, Crew.PLAYERS);
             clientController.PlayerRegistry.Add(player);
             return player;
         }
