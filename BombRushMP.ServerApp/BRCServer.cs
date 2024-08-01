@@ -112,6 +112,7 @@ namespace BombRushMP.ServerApp
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
+            if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
             switch (packetId)
             {
                 case Packets.ClientState:

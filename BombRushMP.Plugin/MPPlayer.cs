@@ -23,7 +23,7 @@ namespace BombRushMP.Plugin
         {
             var clientController = ClientController.Instance;
             if (!clientController.Connected) return;
-            //if (ClientId == clientController.LocalID) return;
+            if (ClientId == clientController.LocalID) return;
 
             var worldHandler = WorldHandler.instance;
             if (ClientState == null || ClientVisualState == null)
