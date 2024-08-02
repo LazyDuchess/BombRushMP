@@ -29,6 +29,7 @@ namespace BombRushMP.Plugin
         private Client _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
+        public GraffitiGame CurrentGraffitiGame = null;
 
         public void Connect()
         {
@@ -81,23 +82,43 @@ namespace BombRushMP.Plugin
 
         private ClientVisualState CreateVisualStatePacket(Player player)
         {
+            var state = PlayerStates.None;
+            if (CurrentGraffitiGame != null)
+                state = PlayerStates.Graffiti;
             var packet = new ClientVisualState();
-            packet.MoveStyleEquipped = player.usingEquippedMovestyle;
-            packet.MoveStyle = (int)player.moveStyleEquipped;
-            packet.SetUnityPosition(player.gameObject.transform.position);
-            packet.SetUnityVisualPosition(player.visualTf.localPosition);
-            packet.SetUnityRotation(player.gameObject.transform.rotation);
-            packet.SetUnityVisualRotation(player.visualTf.localRotation);
-            packet.SetUnityVeolcity(player.motor._rigidbody.velocity);
-            packet.GrindDirection = player.anim.GetFloat(ClientConstants.GrindDirectionHash);
-            packet.SprayCanHeld = player.spraycanState == Player.SpraycanState.START || player.spraycanState == Player.SpraycanState.SHAKE;
-            packet.PhoneHeld = player.characterVisual.phoneActive;
-            packet.PhoneDirectionX = player.anim.GetFloat(ClientConstants.PhoneDirectionXHash);
-            packet.PhoneDirectionY = player.anim.GetFloat(ClientConstants.PhoneDirectionYHash);
-            packet.TurnDirection1 = player.anim.GetFloat(ClientConstants.TurnDirection1Hash);
-            packet.TurnDirection2 = player.anim.GetFloat(ClientConstants.TurnDirection2Hash);
-            packet.TurnDirection3 = player.anim.GetFloat(ClientConstants.TurnDirection3Hash);
-            packet.TurnDirectionSkateboard = player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash);
+            packet.State = state;
+            if (state == PlayerStates.None)
+            {
+                packet.MoveStyleEquipped = player.usingEquippedMovestyle;
+                packet.MoveStyle = (int)player.moveStyleEquipped;
+                packet.Position = player.gameObject.transform.position.ToSystemVector3();
+                packet.VisualPosition = player.visualTf.localPosition.ToSystemVector3();
+                packet.Rotation = player.gameObject.transform.rotation.ToSystemQuaternion();
+                packet.VisualRotation = player.visualTf.localRotation.ToSystemQuaternion();
+                packet.Velocity = player.motor._rigidbody.velocity.ToSystemVector3();
+                packet.GrindDirection = player.anim.GetFloat(ClientConstants.GrindDirectionHash);
+                packet.SprayCanHeld = player.spraycanState == Player.SpraycanState.START || player.spraycanState == Player.SpraycanState.SHAKE;
+                packet.PhoneHeld = player.characterVisual.phoneActive;
+                packet.PhoneDirectionX = player.anim.GetFloat(ClientConstants.PhoneDirectionXHash);
+                packet.PhoneDirectionY = player.anim.GetFloat(ClientConstants.PhoneDirectionYHash);
+                packet.TurnDirection1 = player.anim.GetFloat(ClientConstants.TurnDirection1Hash);
+                packet.TurnDirection2 = player.anim.GetFloat(ClientConstants.TurnDirection2Hash);
+                packet.TurnDirection3 = player.anim.GetFloat(ClientConstants.TurnDirection3Hash);
+                packet.TurnDirectionSkateboard = player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash);
+                packet.BoostpackEffectMode = (int)player.characterVisual.boostpackEffectMode;
+                packet.FrictionEffectMode = (int)player.characterVisual.frictionEffectMode;
+                if (player.characterVisual.dustParticles != null)
+                    packet.DustEmissionRate = (int)player.characterVisual.dustParticles.emission.rateOverTime.constant;
+                packet.CurrentAnimation = player.curAnim;
+                packet.CurrentAnimationTime = player.curAnimActiveTime;
+            }
+            else if (state == PlayerStates.Graffiti){
+                var grafRotation = Quaternion.LookRotation(-CurrentGraffitiGame.gSpot.transform.forward, Vector3.up);
+                packet.MoveStyle = (int)player.moveStyleEquipped;
+                packet.Position = (CurrentGraffitiGame.gSpot.transform.position + (CurrentGraffitiGame.gSpot.transform.forward * ClientConstants.PlayerGraffitiDistance) + (-CurrentGraffitiGame.gSpot.transform.up * ClientConstants.PlayerGraffitiDownDistance)).ToSystemVector3();
+                packet.Rotation = grafRotation.ToSystemQuaternion();
+                packet.BoostpackEffectMode = (int)CurrentGraffitiGame.characterPuppet.boostpackEffectMode;
+            }
             return packet;
         }
 
@@ -186,30 +207,30 @@ namespace BombRushMP.Plugin
 
                 case Packets.PlayerAnimation:
                     {
-                        var playerAnimation = (PlayerAnimation)packet;
-                        if (Players.TryGetValue(playerAnimation.ClientId, out var player))
+                        var playerPacket = (PlayerAnimation)packet;
+                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
                         {
                             if (player.Player != null)
-                                MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, playerAnimation.NewAnim, playerAnimation.ForceOverwrite, playerAnimation.Instant, playerAnimation.AtTime);
+                                MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, playerPacket.NewAnim, playerPacket.ForceOverwrite, playerPacket.Instant, playerPacket.AtTime);
                         }
                     }
                     break;
 
                 case Packets.PlayerVoice:
                     {
-                        var playerVoice = (PlayerVoice)packet;
-                        if (Players.TryGetValue(playerVoice.ClientId, out var player))
+                        var playerPacket = (PlayerVoice)packet;
+                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
                         {
                             if (player.Player != null)
-                                player.Player.PlayVoice((AudioClipID)playerVoice.AudioClipId, (VoicePriority)playerVoice.VoicePriority, true);
+                                player.Player.PlayVoice((AudioClipID)playerPacket.AudioClipId, (VoicePriority)playerPacket.VoicePriority, true);
                         }
                     }
                     break;
 
                 case Packets.PlayerSpray:
                     {
-                        var playerSpray = (PlayerSpray)packet;
-                        if (Players.TryGetValue(playerSpray.ClientId, out var player))
+                        var playerPacket = (PlayerSpray)packet;
+                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
                         {
                             if (player.Player != null)
                                 player.Player.SetSpraycanState(Player.SpraycanState.SPRAY);
@@ -219,10 +240,39 @@ namespace BombRushMP.Plugin
 
                 case Packets.PlayerTeleport:
                     {
-                        var playerTp = (PlayerTeleport)packet;
-                        if (Players.TryGetValue(playerTp.ClientId, out var player))
+                        var playerPacket = (PlayerTeleport)packet;
+                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
                         {
                             player.Teleporting = true;
+                        }
+                    }
+                    break;
+
+                case Packets.PlayerGraffitiSlash:
+                    {
+                        var playerPacket = (PlayerGraffitiSlash)packet;
+                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
+                        {
+                            if (player.Player != null)
+                            {
+                                player.Player.RemoveGraffitiSlash();
+                                player.Player.CreateGraffitiSlashEffect(player.Player.transform, Vector3.zero);
+                                player.Player.AudioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiSlash, player.Player.playerOneShotAudioSource, 0f);
+                            }
+                        }
+                    }
+                    break;
+
+                case Packets.PlayerGraffitiFinisher:
+                    {
+                        var playerPacket = (PlayerGraffitiFinisher)packet;
+                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
+                        {
+                            if (player.Player != null)
+                            {
+                                player.Player.RemoveGraffitiSlash();
+                                player.Player.AudioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, player.Player.playerOneShotAudioSource, 0f);
+                            }
                         }
                     }
                     break;

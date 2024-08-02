@@ -24,11 +24,8 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return true;
             if (clientController.Connected && !__instance.isAI)
             {
-                var packet = new PlayerAnimation();
-                packet.NewAnim = newAnim;
-                packet.ForceOverwrite = forceOverwrite;
-                packet.Instant = instant;
-                packet.AtTime = atTime;
+                if (__instance.inGraffitiGame) return true;
+                var packet = new PlayerAnimation(newAnim, forceOverwrite, instant, atTime);
                 // Doesn't really need to be reliable no?
                 clientController.SendPacket(packet, MessageSendMode.Reliable);
             }
@@ -200,6 +197,38 @@ namespace BombRushMP.Plugin.Patches
                 Player.UpdateBlinkAnimation(__instance.characterVisual.mainRenderer, __instance.characterMesh, ref __instance.blinkTimer, ref __instance.blink, ref __instance.blinkDuration, Core.dt);
             }
             return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.StartGraffitiMode))]
+        private static void StartGraffitiMode_Postfix(Player __instance, GraffitiSpot graffitiSpot)
+        {
+            if (!__instance.inGraffitiGame) return;
+            Core.Instance.UnPauseCore(PauseType.Graffiti);
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            clientController.CurrentGraffitiGame = GameObject.FindFirstObjectByType<GraffitiGame>();
+            if (!clientController.Connected) return;
+            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.EndGraffitiMode))]
+        private static void EndGraffitiMode_Postfix(Player __instance, GraffitiSpot graffitiSpot)
+        {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            clientController.CurrentGraffitiGame = null;
+            if (!clientController.Connected) return;
+            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.UpdateBoostpack))]
+        private static bool UpdateBoostpack_Prefix(Player __instance)
+        {
+            if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
+            return true;
         }
     }
 }

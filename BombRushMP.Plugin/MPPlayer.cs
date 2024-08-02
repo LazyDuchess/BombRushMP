@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common.Packets;
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Packets;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
@@ -18,6 +19,7 @@ namespace BombRushMP.Plugin
         public Player Player;
         public bool Teleporting = true;
         public int Outfit = 0;
+        private PlayerStates _previousState = PlayerStates.None;
 
         public void FrameUpdate()
         {
@@ -42,20 +44,21 @@ namespace BombRushMP.Plugin
             if (fit < 0 || fit > 3)
                 fit = 0;
 
+            var justCreated = false;
+
             if (Player == null)
             {
                 Player = MPUtility.CreateMultiplayerPlayer(chara, fit, this);
                 Outfit = fit;
+                justCreated = true;
             }
-
-            if (Player.ability != null)
-                Player.StopCurrentAbility();
 
             if (Player.character != chara)
             {
                 Player.SetCharacter(chara, fit);
                 Player.InitVisual();
                 Outfit = fit;
+                justCreated = true;
             }
 
             if (Outfit != fit)
@@ -64,17 +67,39 @@ namespace BombRushMP.Plugin
                 Outfit = fit;
             }
 
+            if (justCreated)
+            {
+                if (ClientVisualState.CurrentAnimation != 0)
+                {
+                    PlayerPatch.PlayAnimPatchEnabled = false;
+                    try
+                    {
+                        Player.PlayAnim(ClientVisualState.CurrentAnimation, true, true, ClientVisualState.CurrentAnimationTime);
+                    }
+                    finally
+                    {
+                        PlayerPatch.PlayAnimPatchEnabled = true;
+                    }
+                }
+            }
+
             if (!Player.anim.GetComponent<InverseKinematicsRelay>())
                 Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
 
-            Player.motor._rigidbody.velocity = ClientVisualState.GetUnityVelocity();
+            var clientVisualStatePosition = ClientVisualState.Position.ToUnityVector3();
+            var clientVisualStateVisualPosition = ClientVisualState.VisualPosition.ToUnityVector3();
+            var clientVisualStateRotation = ClientVisualState.Rotation.ToUnityQuaternion();
+            var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
+            var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
+
+            Player.motor._rigidbody.velocity = clientVisualStateVelocity;
 
             if (Teleporting)
             {
                 Teleporting = false;
-                Player.SetPosAndRotHard(ClientVisualState.GetUnityPosition(), ClientVisualState.GetUnityRotation());
-                Player.visualTf.localPosition = ClientVisualState.GetUnityVisualPosition();
-                Player.visualTf.localRotation = ClientVisualState.GetUnityVisualRotation();
+                Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
+                Player.visualTf.localPosition = clientVisualStateVisualPosition;
+                Player.visualTf.localRotation = clientVisualStateVisualRotation;
                 Player.anim.SetFloat(ClientConstants.GrindDirectionHash, ClientVisualState.GrindDirection);
                 Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, ClientVisualState.PhoneDirectionX);
                 Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, ClientVisualState.PhoneDirectionY);
@@ -85,10 +110,10 @@ namespace BombRushMP.Plugin
             }
             else
             {
-                Player.transform.position = Vector3.Lerp(Player.transform.position, ClientVisualState.GetUnityPosition(), Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, ClientVisualState.GetUnityRotation(), Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, ClientVisualState.GetUnityVisualRotation(), Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, ClientVisualState.GetUnityVisualPosition(), Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.transform.position = Vector3.Lerp(Player.transform.position, clientVisualStatePosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, clientVisualStateRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, clientVisualStateVisualRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, clientVisualStateVisualPosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
                 Player.anim.SetFloat(ClientConstants.GrindDirectionHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.GrindDirectionHash), ClientVisualState.GrindDirection, Time.deltaTime * ClientConstants.PlayerInterpolation));
                 Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionXHash), ClientVisualState.PhoneDirectionX, Time.deltaTime * ClientConstants.PlayerInterpolation));
                 Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionYHash), ClientVisualState.PhoneDirectionY, Time.deltaTime * ClientConstants.PlayerInterpolation));
@@ -120,6 +145,26 @@ namespace BombRushMP.Plugin
 
             UpdateLookAt();
             UpdatePhone();
+            UpdateSprayCan();
+
+            if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
+                Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);
+
+            if (Player.characterVisual.frictionEffectMode != (FrictionEffectMode)ClientVisualState.FrictionEffectMode)
+                Player.characterVisual.SetFrictionEffect((FrictionEffectMode)ClientVisualState.FrictionEffectMode);
+
+            Player.SetDustEmission(ClientVisualState.DustEmissionRate);
+
+            if (ClientVisualState.State != PlayerStates.Graffiti)
+                Player.RemoveGraffitiSlash();
+
+            _previousState = ClientVisualState.State;
+        }
+
+        private void UpdateSprayCan()
+        {
+            if (ClientVisualState.State == PlayerStates.Graffiti)
+                Player.characterVisual.SetSpraycan(true);
         }
 
         private void UpdateLookAt()
@@ -163,8 +208,8 @@ namespace BombRushMP.Plugin
             ClientVisualState = null;
             if (Player != null)
             {
-                clientController.MultiplayerPlayerByPlayer.Remove(Player);
-                worldHandler.SceneObjectsRegister.players.Remove(Player);
+                clientController?.MultiplayerPlayerByPlayer?.Remove(Player);
+                worldHandler?.SceneObjectsRegister?.players?.Remove(Player);
                 GameObject.Destroy(Player.gameObject);
                 Player = null;
             }

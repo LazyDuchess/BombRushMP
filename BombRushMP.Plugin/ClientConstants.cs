@@ -10,6 +10,8 @@ namespace BombRushMP.Plugin
     public static class ClientConstants
     {
         public const float PlayerInterpolation = 12f;
+        public const float PlayerGraffitiDistance = 1f;
+        public const float PlayerGraffitiDownDistance = 1f;
         public static int GrindDirectionHash = Animator.StringToHash("grindDirection");
         public static int PhoneDirectionXHash = Animator.StringToHash("phoneDirectionX");
         public static int PhoneDirectionYHash = Animator.StringToHash("phoneDirectionY");

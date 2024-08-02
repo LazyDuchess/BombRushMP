@@ -13,26 +13,34 @@ namespace BombRushMP.Common.Packets
     {
         public override Packets PacketId => Packets.ClientVisualState;
         private const byte Version = 0;
-        public Vector3 Position;
-        public Vector3 VisualPosition;
-        public Vector3 Velocity;
-        public Quaternion Rotation;
-        public Quaternion VisualRotation;
-        public bool MoveStyleEquipped;
-        public int MoveStyle;
-        public float GrindDirection;
-        public bool SprayCanHeld;
-        public bool PhoneHeld;
-        public float PhoneDirectionX;
-        public float PhoneDirectionY;
-        public float TurnDirection1;
-        public float TurnDirection2;
-        public float TurnDirection3;
-        public float TurnDirectionSkateboard;
+        public Vector3 Position = Vector3.Zero;
+        public Vector3 VisualPosition = Vector3.Zero;
+        public Vector3 Velocity = Vector3.Zero;
+        public Quaternion Rotation = Quaternion.Identity;
+        public Quaternion VisualRotation = Quaternion.Identity;
+        public bool MoveStyleEquipped = false;
+        public int MoveStyle = 0;
+        public float GrindDirection = 0f;
+        public bool SprayCanHeld = false;
+        public bool PhoneHeld = false;
+        public float PhoneDirectionX = 0f;
+        public float PhoneDirectionY = 0f;
+        public float TurnDirection1 = 0f;
+        public float TurnDirection2 = 0f;
+        public float TurnDirection3 = 0f;
+        public float TurnDirectionSkateboard = 0f;
+        public PlayerStates State = PlayerStates.None;
+        public int DustEmissionRate = 0;
+        public int BoostpackEffectMode = 0;
+        public int FrictionEffectMode = 0;
+        public int CurrentAnimation = 0;
+        public float CurrentAnimationTime = 0f;
 
         public override void Write(BinaryWriter writer)
         {
             writer.Write(Version);
+
+            writer.Write((int)State);
 
             writer.Write(Position.X);
             writer.Write(Position.Y);
@@ -71,11 +79,20 @@ namespace BombRushMP.Common.Packets
             writer.Write(TurnDirectionSkateboard);
 
             writer.Write(GrindDirection);
+
+            writer.Write(DustEmissionRate);
+            writer.Write(BoostpackEffectMode);
+            writer.Write(FrictionEffectMode);
+
+            writer.Write(CurrentAnimation);
+            writer.Write(CurrentAnimationTime);
         }
 
         public override void Read(BinaryReader reader)
         {
             var version = reader.ReadByte();
+
+            State = (PlayerStates)reader.ReadInt32();
 
             var posX = reader.ReadSingle();
             var posY = reader.ReadSingle();
@@ -120,6 +137,13 @@ namespace BombRushMP.Common.Packets
             Rotation = new Quaternion(rotX, rotY, rotZ, rotW);
             Velocity = new Vector3(velX, velY, velZ);
             VisualRotation = new Quaternion(visualRotX, visualRotY, visualRotZ, visualRotW);
+
+            DustEmissionRate = reader.ReadInt32();
+            BoostpackEffectMode = reader.ReadInt32();
+            FrictionEffectMode = reader.ReadInt32();
+
+            CurrentAnimation = reader.ReadInt32();
+            CurrentAnimationTime = reader.ReadSingle();
         }
     }
 }

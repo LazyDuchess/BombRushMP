@@ -144,43 +144,16 @@ namespace BombRushMP.ServerApp
                     }
                     break;
 
-                case Packets.PlayerAnimation:
+                default:
                     {
-                        var playerAnimation = (PlayerAnimation)packet;
-                        playerAnimation.ClientId = client.Id;
-                        var player = _players[client.Id];
-                        if (player.ClientState == null) return;
-                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
-                    }
-                    break;
-
-                case Packets.PlayerVoice:
-                    {
-                        var playerVoice = (PlayerVoice)packet;
-                        playerVoice.ClientId = client.Id;
-                        var player = _players[client.Id];
-                        if (player.ClientState == null) return;
-                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
-                    }
-                    break;
-
-                case Packets.PlayerSpray:
-                    {
-                        var playerSpray = (PlayerSpray)packet;
-                        playerSpray.ClientId = client.Id;
-                        var player = _players[client.Id];
-                        if (player.ClientState == null) return;
-                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
-                    }
-                    break;
-
-                case Packets.PlayerTeleport:
-                    {
-                        var playerTp = (PlayerTeleport)packet;
-                        playerTp.ClientId = client.Id;
-                        var player = _players[client.Id];
-                        if (player.ClientState == null) return;
-                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
+                        if (packet is PlayerPacket)
+                        {
+                            var playerPacket = packet as PlayerPacket;
+                            playerPacket.ClientId = client.Id;
+                            var player = _players[client.Id];
+                            if (player.ClientState == null) return;
+                            SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
+                        }
                     }
                     break;
             }

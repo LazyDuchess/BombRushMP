@@ -16,6 +16,8 @@ namespace BombRushMP.Common.Packets
         PlayerAnimation,
         PlayerVoice,
         PlayerSpray,
-        PlayerTeleport
+        PlayerTeleport,
+        PlayerGraffitiSlash,
+        PlayerGraffitiFinisher
     }
 }

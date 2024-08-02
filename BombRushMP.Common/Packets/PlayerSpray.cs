@@ -7,21 +7,8 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common.Packets
 {
-    public class PlayerSpray : Packet
+    public class PlayerSpray : PlayerPacket
     {
         public override Packets PacketId => Packets.PlayerSpray;
-        private const byte Version = 0;
-        public ushort ClientId = 0;
-        public override void Write(BinaryWriter writer)
-        {
-            writer.Write(Version);
-            writer.Write(ClientId);
-        }
-
-        public override void Read(BinaryReader reader)
-        {
-            var version = reader.ReadByte();
-            ClientId = reader.ReadUInt16();
-        }
     }
 }

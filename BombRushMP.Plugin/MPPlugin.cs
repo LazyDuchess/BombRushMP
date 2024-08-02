@@ -12,6 +12,7 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             // Plugin startup logic
+            PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
