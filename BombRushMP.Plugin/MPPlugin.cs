@@ -2,7 +2,6 @@
 using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
-using UnityEngine.SceneManagement;
 
 namespace BombRushMP.Plugin
 {
@@ -21,7 +20,6 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
-            var stage = Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name);
             ClientController.Create("127.0.0.1:41585");
         }
     }
