@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -26,10 +28,11 @@ namespace BombRushMP.Plugin
         public ushort LocalID = 0;
         public string Address = "";
         public string Username = "Goofiest Gooner";
+        public bool DebugNetworkedLocalPlayer = true;
+        public GraffitiGame CurrentGraffitiGame = null;
         private Client _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
-        public GraffitiGame CurrentGraffitiGame = null;
 
         public void Connect()
         {
@@ -62,6 +65,11 @@ namespace BombRushMP.Plugin
                 _client.Disconnect();
             }
             _client = null;
+        }
+        
+        public void SendGenericEvent(GenericEvents ev, MessageSendMode sendMode)
+        {
+            SendPacket(new PlayerGenericEvent(ev), sendMode);
         }
 
         public void SendPacket(Packet packet, MessageSendMode sendMode)
@@ -162,11 +170,44 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private void ExecuteGenericEvent(GenericEvents ev, MPPlayer player)
+        {
+            switch (ev)
+            {
+                case GenericEvents.GraffitiSlash:
+                    if (player.Player == null) break;
+                    player.Player.RemoveGraffitiSlash();
+                    player.Player.CreateGraffitiSlashEffect(player.Player.transform, Vector3.zero);
+                    player.Player.AudioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiSlash, player.Player.playerOneShotAudioSource, 0f);
+                    break;
+
+                case GenericEvents.GraffitiFinisher:
+                    if (player.Player == null) break;
+                    player.Player.RemoveGraffitiSlash();
+                    player.Player.AudioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, player.Player.playerOneShotAudioSource, 0f);
+                    break;
+
+                case GenericEvents.Spray:
+                    if (player.Player == null) break;
+                    player.Player.SetSpraycanState(Player.SpraycanState.SPRAY);
+                    break;
+
+                case GenericEvents.Teleport:
+                    player.Teleporting = true;
+                    break;
+            }
+        }
+
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
+            if (packet is PlayerPacket)
+            {
+                var playerPacket = packet as PlayerPacket;
+                if (playerPacket.ClientId == LocalID && !DebugNetworkedLocalPlayer) return;
+            }
             switch (packetId)
             {
                 case Packets.ServerConnectionResponse:
@@ -227,52 +268,12 @@ namespace BombRushMP.Plugin
                     }
                     break;
 
-                case Packets.PlayerSpray:
+                case Packets.PlayerGenericEvent:
                     {
-                        var playerPacket = (PlayerSpray)packet;
-                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
+                        var evPacket = (PlayerGenericEvent)packet;
+                        if (Players.TryGetValue(evPacket.ClientId, out var player))
                         {
-                            if (player.Player != null)
-                                player.Player.SetSpraycanState(Player.SpraycanState.SPRAY);
-                        }
-                    }
-                    break;
-
-                case Packets.PlayerTeleport:
-                    {
-                        var playerPacket = (PlayerTeleport)packet;
-                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
-                        {
-                            player.Teleporting = true;
-                        }
-                    }
-                    break;
-
-                case Packets.PlayerGraffitiSlash:
-                    {
-                        var playerPacket = (PlayerGraffitiSlash)packet;
-                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
-                        {
-                            if (player.Player != null)
-                            {
-                                player.Player.RemoveGraffitiSlash();
-                                player.Player.CreateGraffitiSlashEffect(player.Player.transform, Vector3.zero);
-                                player.Player.AudioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiSlash, player.Player.playerOneShotAudioSource, 0f);
-                            }
-                        }
-                    }
-                    break;
-
-                case Packets.PlayerGraffitiFinisher:
-                    {
-                        var playerPacket = (PlayerGraffitiFinisher)packet;
-                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
-                        {
-                            if (player.Player != null)
-                            {
-                                player.Player.RemoveGraffitiSlash();
-                                player.Player.AudioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, player.Player.playerOneShotAudioSource, 0f);
-                            }
+                            ExecuteGenericEvent(evPacket.Event, player);
                         }
                     }
                     break;

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Riptide;
+using BombRushMP.Common;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -35,7 +36,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
         }
 
         [HarmonyPostfix]
@@ -46,7 +47,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
         }
     }
 }

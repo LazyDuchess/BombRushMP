@@ -7,6 +7,8 @@ using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
 using UnityEngine;
+using Riptide;
+using BombRushMP.Common;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -22,7 +24,7 @@ namespace BombRushMP.Plugin.Patches
             if (!clientController.Connected) return;
             clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), Riptide.MessageSendMode.Reliable);
             if (anim == "grafSlashFinisher")
-                clientController.SendPacket(new PlayerGraffitiFinisher(), Riptide.MessageSendMode.Reliable);
+                clientController.SendGenericEvent(GenericEvents.GraffitiFinisher, MessageSendMode.Reliable);
         }
 
         [HarmonyPostfix]
@@ -42,7 +44,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerGraffitiSlash(), Riptide.MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.GraffitiSlash, MessageSendMode.Reliable);
         }
     }
 }

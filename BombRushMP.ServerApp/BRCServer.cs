@@ -91,13 +91,14 @@ namespace BombRushMP.ServerApp
             _server.Stop();
         }
 
-        public void SendPacketToStage(Packet packet, MessageSendMode sendMode, int stage)
+        public void SendPacketToStage(Packet packet, MessageSendMode sendMode, int stage, ushort[] except = null)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode);
             foreach (var player in _players)
             {
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
+                if (except != null && except.Contains(player.Key)) continue;
                 player.Value.Client.Send(message);
             }
         }
@@ -152,6 +153,8 @@ namespace BombRushMP.ServerApp
                             playerPacket.ClientId = client.Id;
                             var player = _players[client.Id];
                             if (player.ClientState == null) return;
+                            // Exclude sender - will break things if you're trying to display the networked local player clientside.
+                            // SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage, [client.Id]);
                             SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
                         }
                     }

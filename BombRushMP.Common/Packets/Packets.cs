@@ -15,9 +15,6 @@ namespace BombRushMP.Common.Packets
         ServerClientVisualStates,
         PlayerAnimation,
         PlayerVoice,
-        PlayerSpray,
-        PlayerTeleport,
-        PlayerGraffitiSlash,
-        PlayerGraffitiFinisher
+        PlayerGenericEvent
     }
 }

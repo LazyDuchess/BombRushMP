@@ -24,8 +24,11 @@ namespace BombRushMP.Plugin
         public void FrameUpdate()
         {
             var clientController = ClientController.Instance;
+
             if (!clientController.Connected) return;
-            //if (ClientId == clientController.LocalID) return;
+
+            if (!clientController.DebugNetworkedLocalPlayer)
+                if (ClientId == clientController.LocalID) return;
 
             var worldHandler = WorldHandler.instance;
             if (ClientState == null || ClientVisualState == null)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
@@ -165,7 +166,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             if (!clientController.Connected) return;
             if (state != Player.SpraycanState.SPRAY) return;
-            clientController.SendPacket(new PlayerSpray(), MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Spray, MessageSendMode.Reliable);
         }
 
         [HarmonyPostfix]
@@ -176,7 +177,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
         }
 
         [HarmonyPrefix]
@@ -204,12 +205,11 @@ namespace BombRushMP.Plugin.Patches
         private static void StartGraffitiMode_Postfix(Player __instance, GraffitiSpot graffitiSpot)
         {
             if (!__instance.inGraffitiGame) return;
-            Core.Instance.UnPauseCore(PauseType.Graffiti);
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             clientController.CurrentGraffitiGame = GameObject.FindFirstObjectByType<GraffitiGame>();
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
         }
 
         [HarmonyPostfix]
@@ -220,7 +220,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             clientController.CurrentGraffitiGame = null;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
         }
 
         [HarmonyPrefix]
