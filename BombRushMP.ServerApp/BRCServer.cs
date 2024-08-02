@@ -20,6 +20,7 @@ namespace BombRushMP.ServerApp
 {
     public class BRCServer : IDisposable
     {
+        public Action<Connection, Packets, Packet> PacketReceived;
         private Dictionary<ushort, Player> _players = new();
         private Server _server;
         private Stopwatch _tickStopWatch;
@@ -107,34 +108,30 @@ namespace BombRushMP.ServerApp
             client.Send(message);
         }
 
-        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        private void OnPacketReceived(Connection client, Packets packetId, Packet packet)
         {
-            var packetId = (Packets)e.MessageId;
-            var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
-            if (packet == null) return;
-            if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
             switch (packetId)
             {
                 case Packets.ClientState:
                     {
                         var clientState = (ClientState)packet;
-                        var oldClientState = _players[e.FromConnection.Id].ClientState;
+                        var oldClientState = _players[client.Id].ClientState;
                         if (oldClientState != null)
                         {
                             var clientStateUpdatePacket = new ServerClientStates();
-                            clientStateUpdatePacket.ClientStates[e.FromConnection.Id] = clientState;
-                            SendPacketToStage(clientStateUpdatePacket, MessageSendMode.Reliable,oldClientState.Stage);
+                            clientStateUpdatePacket.ClientStates[client.Id] = clientState;
+                            SendPacketToStage(clientStateUpdatePacket, MessageSendMode.Reliable, oldClientState.Stage);
                             return;
                         }
                         if (clientState.ProtocolVersion != Constants.ProtocolVersion)
                         {
-                            Log($"Rejecting player from {e.FromConnection} (ID: {e.FromConnection.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
-                            _server.DisconnectClient(e.FromConnection);
+                            Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
+                            _server.DisconnectClient(client);
                             return;
                         }
-                        _players[e.FromConnection.Id].ClientState = clientState;
-                        Log($"Player from {e.FromConnection} (ID: {e.FromConnection.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = e.FromConnection.Id }, MessageSendMode.Reliable, e.FromConnection);
+                        _players[client.Id].ClientState = clientState;
+                        Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, MessageSendMode.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, MessageSendMode.Reliable, clientState.Stage);
                     }
@@ -143,30 +140,60 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientVisualState:
                     {
                         var clientVisualState = (ClientVisualState)packet;
-                        _players[e.FromConnection.Id].ClientVisualState = clientVisualState;
+                        _players[client.Id].ClientVisualState = clientVisualState;
                     }
                     break;
 
                 case Packets.PlayerAnimation:
                     {
                         var playerAnimation = (PlayerAnimation)packet;
-                        playerAnimation.ClientId = e.FromConnection.Id;
-                        var player = _players[e.FromConnection.Id];
+                        playerAnimation.ClientId = client.Id;
+                        var player = _players[client.Id];
                         if (player.ClientState == null) return;
-                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[e.FromConnection.Id].ClientState.Stage);
+                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
                     }
                     break;
 
                 case Packets.PlayerVoice:
                     {
                         var playerVoice = (PlayerVoice)packet;
-                        playerVoice.ClientId = e.FromConnection.Id;
-                        var player = _players[e.FromConnection.Id];
+                        playerVoice.ClientId = client.Id;
+                        var player = _players[client.Id];
                         if (player.ClientState == null) return;
-                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[e.FromConnection.Id].ClientState.Stage);
+                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
+                    }
+                    break;
+
+                case Packets.PlayerSpray:
+                    {
+                        var playerSpray = (PlayerSpray)packet;
+                        playerSpray.ClientId = client.Id;
+                        var player = _players[client.Id];
+                        if (player.ClientState == null) return;
+                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
+                    }
+                    break;
+
+                case Packets.PlayerTeleport:
+                    {
+                        var playerTp = (PlayerTeleport)packet;
+                        playerTp.ClientId = client.Id;
+                        var player = _players[client.Id];
+                        if (player.ClientState == null) return;
+                        SendPacketToStage(packet, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
                     }
                     break;
             }
+        }
+
+        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        {
+            var packetId = (Packets)e.MessageId;
+            var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
+            if (packet == null) return;
+            if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
+            PacketReceived?.Invoke(e.FromConnection, packetId, packet);
+            OnPacketReceived(e.FromConnection, packetId, packet);
         }
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)

@@ -11,7 +11,7 @@ namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
-        public static Player CreateMultiplayerPlayer(Characters character, int outfit)
+        public static Player CreateMultiplayerPlayer(Characters character, int outfit, MPPlayer multiplayerPlayer)
         {
             var clientController = ClientController.Instance;
             var worldHandler = WorldHandler.instance;
@@ -21,7 +21,7 @@ namespace BombRushMP.Plugin
             player.motor._rigidbody.useGravity = false;
             worldHandler.RegisterPlayer(player);
             worldHandler.InitPlayer(player, character, outfit, PlayerType.NONE, MoveStyle.SKATEBOARD, Crew.PLAYERS);
-            clientController.PlayerRegistry.Add(player);
+            clientController.MultiplayerPlayerByPlayer[player] = multiplayerPlayer;
             return player;
         }
 
@@ -29,7 +29,14 @@ namespace BombRushMP.Plugin
         {
             var clientController = ClientController.Instance;
             if (clientController == null) return false;
-            return clientController.PlayerRegistry.Contains(player);
+            return clientController.MultiplayerPlayerByPlayer.ContainsKey(player);
+        }
+
+        public static MPPlayer GetMuliplayerPlayer(Player player)
+        {
+            if (!IsMultiplayerPlayer(player)) return null;
+            var clientController = ClientController.Instance;
+            return clientController.MultiplayerPlayerByPlayer[player];
         }
 
         public static void PlayAnimationOnMultiplayerPlayer(Player player, int newAnim, bool forceOverwrite = false, bool instant = false, float atTime = -1)

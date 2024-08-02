@@ -50,6 +50,12 @@ namespace BombRushMP.Common.Packets
                 case Packets.PlayerVoice:
                     packet = new PlayerVoice();
                     break;
+                case Packets.PlayerSpray:
+                    packet = new PlayerSpray();
+                    break;
+                case Packets.PlayerTeleport:
+                    packet = new PlayerTeleport();
+                    break;
             }
             if (packet != null)
                 packet.Read(reader);

@@ -26,5 +26,27 @@ namespace BombRushMP.Plugin.Patches
             voicePacket.VoicePriority = (int)VoicePriority.MOVEMENT;
             clientController.SendPacket(voicePacket, MessageSendMode.Reliable);
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(GrindAbility.SetToLine))]
+        private static void SetToLine_Postfix(GrindAbility __instance)
+        {
+            if (__instance.p.isAI) return;
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            if (!clientController.Connected) return;
+            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(GrindAbility.OnStopAbility))]
+        private static void OnStopAbility_Postfix(GrindAbility __instance)
+        {
+            if (__instance.p.isAI) return;
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            if (!clientController.Connected) return;
+            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+        }
     }
 }

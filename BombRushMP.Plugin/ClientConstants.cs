@@ -11,5 +11,11 @@ namespace BombRushMP.Plugin
     {
         public const float PlayerInterpolation = 12f;
         public static int GrindDirectionHash = Animator.StringToHash("grindDirection");
+        public static int PhoneDirectionXHash = Animator.StringToHash("phoneDirectionX");
+        public static int PhoneDirectionYHash = Animator.StringToHash("phoneDirectionY");
+        public static int TurnDirection1Hash = Animator.StringToHash("turnDirectionX");
+        public static int TurnDirection2Hash = Animator.StringToHash("turnDirectionX2");
+        public static int TurnDirection3Hash = Animator.StringToHash("turnDirectionX3");
+        public static int TurnDirectionSkateboardHash = Animator.StringToHash("turnDirectionSkateboard");
     }
 }

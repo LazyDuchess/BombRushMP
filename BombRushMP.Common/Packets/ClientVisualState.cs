@@ -21,6 +21,14 @@ namespace BombRushMP.Common.Packets
         public bool MoveStyleEquipped;
         public int MoveStyle;
         public float GrindDirection;
+        public bool SprayCanHeld;
+        public bool PhoneHeld;
+        public float PhoneDirectionX;
+        public float PhoneDirectionY;
+        public float TurnDirection1;
+        public float TurnDirection2;
+        public float TurnDirection3;
+        public float TurnDirectionSkateboard;
 
         public override void Write(BinaryWriter writer)
         {
@@ -50,6 +58,17 @@ namespace BombRushMP.Common.Packets
 
             writer.Write(MoveStyleEquipped);
             writer.Write(MoveStyle);
+
+            writer.Write(SprayCanHeld);
+            writer.Write(PhoneHeld);
+
+            writer.Write(PhoneDirectionX);
+            writer.Write(PhoneDirectionY);
+
+            writer.Write(TurnDirection1);
+            writer.Write(TurnDirection2);
+            writer.Write(TurnDirection3);
+            writer.Write(TurnDirectionSkateboard);
 
             writer.Write(GrindDirection);
         }
@@ -82,6 +101,17 @@ namespace BombRushMP.Common.Packets
 
             MoveStyleEquipped = reader.ReadBoolean();
             MoveStyle = reader.ReadInt32();
+
+            SprayCanHeld = reader.ReadBoolean();
+            PhoneHeld = reader.ReadBoolean();
+
+            PhoneDirectionX = reader.ReadSingle();
+            PhoneDirectionY = reader.ReadSingle();
+
+            TurnDirection1 = reader.ReadSingle();
+            TurnDirection2 = reader.ReadSingle();
+            TurnDirection3 = reader.ReadSingle();
+            TurnDirectionSkateboard = reader.ReadSingle();
 
             GrindDirection = reader.ReadSingle();
 

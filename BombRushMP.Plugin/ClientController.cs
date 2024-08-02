@@ -17,7 +17,7 @@ namespace BombRushMP.Plugin
     public class ClientController : MonoBehaviour
     {
         public static ClientController Instance { get; private set; }
-        public HashSet<Player> PlayerRegistry = new();
+        public Dictionary<Player, MPPlayer> MultiplayerPlayerByPlayer = new();
         public Dictionary<ushort, MPPlayer> Players = new();
         /// <summary>
         /// Whether the client is connected to the server and performed the initial handshake.
@@ -90,6 +90,14 @@ namespace BombRushMP.Plugin
             packet.SetUnityVisualRotation(player.visualTf.localRotation);
             packet.SetUnityVeolcity(player.motor._rigidbody.velocity);
             packet.GrindDirection = player.anim.GetFloat(ClientConstants.GrindDirectionHash);
+            packet.SprayCanHeld = player.spraycanState == Player.SpraycanState.START || player.spraycanState == Player.SpraycanState.SHAKE;
+            packet.PhoneHeld = player.characterVisual.phoneActive;
+            packet.PhoneDirectionX = player.anim.GetFloat(ClientConstants.PhoneDirectionXHash);
+            packet.PhoneDirectionY = player.anim.GetFloat(ClientConstants.PhoneDirectionYHash);
+            packet.TurnDirection1 = player.anim.GetFloat(ClientConstants.TurnDirection1Hash);
+            packet.TurnDirection2 = player.anim.GetFloat(ClientConstants.TurnDirection2Hash);
+            packet.TurnDirection3 = player.anim.GetFloat(ClientConstants.TurnDirection3Hash);
+            packet.TurnDirectionSkateboard = player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash);
             return packet;
         }
 
@@ -194,6 +202,27 @@ namespace BombRushMP.Plugin
                         {
                             if (player.Player != null)
                                 player.Player.PlayVoice((AudioClipID)playerVoice.AudioClipId, (VoicePriority)playerVoice.VoicePriority, true);
+                        }
+                    }
+                    break;
+
+                case Packets.PlayerSpray:
+                    {
+                        var playerSpray = (PlayerSpray)packet;
+                        if (Players.TryGetValue(playerSpray.ClientId, out var player))
+                        {
+                            if (player.Player != null)
+                                player.Player.SetSpraycanState(Player.SpraycanState.SPRAY);
+                        }
+                    }
+                    break;
+
+                case Packets.PlayerTeleport:
+                    {
+                        var playerTp = (PlayerTeleport)packet;
+                        if (Players.TryGetValue(playerTp.ClientId, out var player))
+                        {
+                            player.Teleporting = true;
                         }
                     }
                     break;

@@ -146,5 +146,48 @@ namespace BombRushMP.Plugin.Patches
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
             return true;
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.SetInputs))]
+        private static void SetInputs_Postfix(Player __instance)
+        {
+            if (!__instance.isAI) return;
+            var mpPlayer = MPUtility.GetMuliplayerPlayer(__instance);
+            if (mpPlayer == null) return;
+            __instance.sprayButtonHeld = mpPlayer.ClientVisualState.SprayCanHeld;
+            if (!mpPlayer.ClientVisualState.SprayCanHeld && __instance.spraycanState != Player.SpraycanState.SPRAY)
+                __instance.SetSpraycanState(Player.SpraycanState.NONE);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.SetSpraycanState))]
+        private static void SetSpraycanState_Prefix(Player __instance, Player.SpraycanState state)
+        {
+            if (__instance.isAI) return;
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            if (!clientController.Connected) return;
+            if (state != Player.SpraycanState.SPRAY) return;
+            clientController.SendPacket(new PlayerSpray(), MessageSendMode.Reliable);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.CompletelyStop))]
+        private static void CompletelyStop_Postfix(Player __instance)
+        {
+            if (__instance.isAI) return;
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            if (!clientController.Connected) return;
+            clientController.SendPacket(new PlayerTeleport(), MessageSendMode.Reliable);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.OnTriggerEnter))]
+        private static bool OnTriggerEnter_Prefix(Player __instance)
+        {
+            if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
+            return true;
+        }
     }
 }
