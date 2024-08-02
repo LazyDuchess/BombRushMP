@@ -189,5 +189,17 @@ namespace BombRushMP.Plugin.Patches
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
             return true;
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.LateUpdateAnimation))]
+        private static bool LateUpdateAnimation_Prefix(Player __instance)
+        {
+            if (!MPUtility.IsMultiplayerPlayer(__instance)) return true;
+            if (__instance.characterVisual.canBlink)
+            {
+                Player.UpdateBlinkAnimation(__instance.characterVisual.mainRenderer, __instance.characterMesh, ref __instance.blinkTimer, ref __instance.blink, ref __instance.blinkDuration, Core.dt);
+            }
+            return false;
+        }
     }
 }

@@ -64,6 +64,9 @@ namespace BombRushMP.Plugin
                 Outfit = fit;
             }
 
+            if (!Player.anim.GetComponent<InverseKinematicsRelay>())
+                Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
+
             Player.motor._rigidbody.velocity = ClientVisualState.GetUnityVelocity();
 
             if (Teleporting)
@@ -107,13 +110,49 @@ namespace BombRushMP.Plugin
 
                 if (Player.usingEquippedMovestyle != ClientVisualState.MoveStyleEquipped)
                 {
-                    Player.SwitchToEquippedMovestyle(ClientVisualState.MoveStyleEquipped, false, true, true);
+                    Player.SwitchToEquippedMovestyle(ClientVisualState.MoveStyleEquipped, false, true, false);
                 }
             }
             finally
             {
                 PlayerPatch.PlayAnimPatchEnabled = true;
             }
+
+            UpdateLookAt();
+            UpdatePhone();
+        }
+
+        private void UpdateLookAt()
+        {
+            Player.characterVisual.lookAtVel = Player.GetPracticalWorldVelocity();
+            Player.characterVisual.lookAtSubject = null;
+            Player.characterVisual.phoneActive = false;
+        }
+
+        private void UpdatePhone()
+        {
+            if (ClientVisualState.PhoneHeld)
+            {
+                Player.phoneLayerWeight += Player.grabPhoneSpeed * Core.dt;
+                Player.characterVisual.SetPhone(true);
+                if (Player.phoneLayerWeight >= 1f)
+                {
+                    Player.phoneLayerWeight = 1f;
+                    Player.characterVisual.phoneActive = true;
+                    Player.characterVisual.lookAtSubject = Player.characterVisual.VFX.phone;
+                    Player.characterVisual.lookAtPos = Vector3.Lerp(Player.characterVisual.lookAtPos, Player.characterVisual.VFX.phone.transform.position + Vector3.up * 0.25f, Mathf.Clamp(Player.characterVisual.lookAtVel.magnitude * Core.dt * 3f, 6f * Core.dt, 1f));
+                }
+            }
+            else
+            {
+                Player.phoneLayerWeight -= Player.grabPhoneSpeed * Core.dt;
+                if (Player.phoneLayerWeight <= 0f)
+                {
+                    Player.phoneLayerWeight = 0f;
+                    Player.characterVisual.SetPhone(false);
+                }
+            }
+            Player.anim.SetLayerWeight(3, Player.phoneLayerWeight);
         }
 
         public void Delete()
