@@ -251,11 +251,14 @@ namespace BombRushMP.Plugin
 
                 case Packets.PlayerVoice:
                     {
-                        var playerPacket = (PlayerVoice)packet;
-                        if (Players.TryGetValue(playerPacket.ClientId, out var player))
+                        if (MPSettings.Instance.PlayerAudioEnabled)
                         {
-                            if (player.Player != null)
-                                player.Player.PlayVoice((AudioClipID)playerPacket.AudioClipId, (VoicePriority)playerPacket.VoicePriority, true);
+                            var playerPacket = (PlayerVoice)packet;
+                            if (Players.TryGetValue(playerPacket.ClientId, out var player))
+                            {
+                                if (player.Player != null)
+                                    player.Player.PlayVoice((AudioClipID)playerPacket.AudioClipId, (VoicePriority)playerPacket.VoicePriority, true);
+                            }
                         }
                     }
                     break;

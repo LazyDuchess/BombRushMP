@@ -3,6 +3,7 @@ using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
 using System.Net;
+using System.IO;
 
 namespace BombRushMP.Plugin
 {
@@ -12,6 +13,10 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             // Plugin startup logic
+            var configFile = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "Settings.mps");
+
+            new MPSettings(configFile);
+
             PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
