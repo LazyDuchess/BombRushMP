@@ -23,11 +23,13 @@ namespace BombRushMP.Plugin
 
         public void FrameUpdate()
         {
+            var mpSettings = MPSettings.Instance;
+
             var clientController = ClientController.Instance;
 
             if (!clientController.Connected) return;
 
-            if (!clientController.DebugNetworkedLocalPlayer)
+            if (!mpSettings.DebugLocalPlayer)
             {
                 if (ClientId == clientController.LocalID)
                 {

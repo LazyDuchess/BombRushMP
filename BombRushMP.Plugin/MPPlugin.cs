@@ -13,10 +13,7 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             // Plugin startup logic
-            var configFile = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "Settings.mps");
-
-            new MPSettings(configFile);
-
+            new MPSettings(Config);
             PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
@@ -26,7 +23,16 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
-            ClientController.Create(Dns.GetHostAddresses("brcmp.lazyduchess.me")[0].ToString() + ":41585");
+            ClientController.Create(GetServerAddress(MPSettings.Instance.ServerAddress, MPSettings.Instance.ServerPort));
+        }
+
+        private string GetServerAddress(string address, int port)
+        {
+            var addresses = Dns.GetHostAddresses(address);
+            if (addresses.Length > 0)
+                address = addresses[0].ToString();
+            address += $":{port}";
+            return address;
         }
     }
 }

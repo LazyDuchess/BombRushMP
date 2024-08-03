@@ -27,12 +27,16 @@ namespace BombRushMP.Plugin
         public bool Connected => _client != null && _client.IsConnected && _handShook;
         public ushort LocalID = 0;
         public string Address = "";
-        public string Username = "Goofiest Gooner";
-        public bool DebugNetworkedLocalPlayer = true;
         public GraffitiGame CurrentGraffitiGame = null;
         private Client _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
+        private MPSettings _mpSettings = null;
+
+        private void Awake()
+        {
+            _mpSettings = MPSettings.Instance;
+        }
 
         public void Connect()
         {
@@ -198,7 +202,7 @@ namespace BombRushMP.Plugin
             if (packet is PlayerPacket)
             {
                 var playerPacket = packet as PlayerPacket;
-                if (playerPacket.ClientId == LocalID && !DebugNetworkedLocalPlayer) return;
+                if (playerPacket.ClientId == LocalID && !_mpSettings.DebugLocalPlayer) return;
             }
             switch (packetId)
             {
@@ -326,7 +330,7 @@ namespace BombRushMP.Plugin
             var player = WorldHandler.instance.GetCurrentPlayer();
             var statePacket = new ClientState()
             {
-                Name = Username,
+                Name = _mpSettings.PlayerName,
                 Character = (int)player.character,
                 Outfit = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),

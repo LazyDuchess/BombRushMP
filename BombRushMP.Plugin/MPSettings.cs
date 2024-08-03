@@ -12,36 +12,89 @@ namespace BombRushMP.Plugin
     {
         public static MPSettings Instance { get; private set; }
         private const byte Version = 0;
-        public bool PlayerAudioEnabled = true;
-        private string _savePath;
-        public MPSettings(string savePath)
+        public bool PlayerAudioEnabled
         {
-            Instance = this;
-            _savePath = savePath;
+            get
+            {
+                return _playerAudioEnabled.Value;
+            }
+
+            set
+            {
+                _playerAudioEnabled.Value = value;
+            }
+        }
+        public string ServerAddress
+        {
+            get
+            {
+                return _serverAddress.Value;
+            }
+
+            set
+            {
+                _serverAddress.Value = value;
+            }
         }
 
-        public void Load()
+        public int ServerPort
         {
-            if (File.Exists(_savePath))
+            get
             {
-                using var stream = new FileStream(_savePath, FileMode.Open);
-                using var reader = new BinaryReader(stream);
-                var version = reader.ReadByte();
-                PlayerAudioEnabled = reader.ReadBoolean();
+                return _serverPort.Value;
             }
+            set
+            {
+                _serverPort.Value = value;
+            }
+        }
+
+        public string PlayerName
+        {
+            get
+            {
+                return _playerName.Value;
+            }
+            set
+            {
+                _playerName.Value = value;
+            }
+        }
+
+        public bool DebugLocalPlayer
+        {
+            get
+            {
+                return _debugLocalPlayer.Value;
+            }
+
+            set
+            {
+                _debugLocalPlayer.Value = value;
+            }
+        }
+
+        private ConfigEntry<bool> _playerAudioEnabled;
+        private ConfigEntry<string> _serverAddress;
+        private ConfigEntry<string> _playerName;
+        private ConfigEntry<int> _serverPort;
+        private ConfigEntry<bool> _debugLocalPlayer;
+        private string _savePath;
+        private ConfigFile _configFile;
+        public MPSettings(ConfigFile configFile)
+        {
+            Instance = this;
+            _configFile = configFile;
+            _playerName = configFile.Bind("General", "Player Name", "Goofiest Gooner", "Your player name.");
+            _serverAddress = configFile.Bind("General", "Server Address", "brcmp.lazyduchess.me", "Address of the server to connect to.");
+            _serverPort = configFile.Bind("General", "Server Port", 41585, "Port of the server to connect to.");
+            _playerAudioEnabled = configFile.Bind("Settings", "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
+            _debugLocalPlayer = configFile.Bind("Debug", "Debug Local Player", false, "Render the networked local player in the game.");
         }
 
         public void Save()
         {
-            var _saveDirectory = Path.GetDirectoryName(_savePath);
-
-            if (!Directory.Exists(_saveDirectory))
-                Directory.CreateDirectory(_saveDirectory);
-
-            using var stream = new FileStream(_savePath, FileMode.Create);
-            using var writer = new BinaryWriter(stream);
-            writer.Write(Version);
-            writer.Write(PlayerAudioEnabled);
+            _configFile.Save();
         }
     }
 }
