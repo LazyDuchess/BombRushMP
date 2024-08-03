@@ -28,7 +28,14 @@ namespace BombRushMP.Plugin
             if (!clientController.Connected) return;
 
             if (!clientController.DebugNetworkedLocalPlayer)
-                if (ClientId == clientController.LocalID) return;
+            {
+                if (ClientId == clientController.LocalID)
+                {
+                    if (Player != null)
+                        DeletePlayer();
+                    return;
+                }
+            }
 
             var worldHandler = WorldHandler.instance;
             if (ClientState == null || ClientVisualState == null)
@@ -203,12 +210,10 @@ namespace BombRushMP.Plugin
             Player.anim.SetLayerWeight(3, Player.phoneLayerWeight);
         }
 
-        public void Delete()
+        private void DeletePlayer()
         {
             var clientController = ClientController.Instance;
             var worldHandler = WorldHandler.instance;
-            ClientState = null;
-            ClientVisualState = null;
             if (Player != null)
             {
                 clientController?.MultiplayerPlayerByPlayer?.Remove(Player);
@@ -216,6 +221,13 @@ namespace BombRushMP.Plugin
                 GameObject.Destroy(Player.gameObject);
                 Player = null;
             }
+        }
+
+        public void Delete()
+        {
+            ClientState = null;
+            ClientVisualState = null;
+            DeletePlayer();
         }
     }
 }

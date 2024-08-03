@@ -221,6 +221,7 @@ namespace BombRushMP.Plugin.Patches
             clientController.CurrentGraffitiGame = null;
             if (!clientController.Connected) return;
             clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.GraffitiGameOver, MessageSendMode.Reliable);
         }
 
         [HarmonyPrefix]

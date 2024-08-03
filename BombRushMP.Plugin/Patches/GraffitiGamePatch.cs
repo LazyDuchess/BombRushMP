@@ -17,14 +17,14 @@ namespace BombRushMP.Plugin.Patches
     {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(GraffitiGame.Play))]
-        private static void Play_Postfix(string anim)
+        private static void Play_Postfix(GraffitiGame __instance, string anim)
         {
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
             clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), Riptide.MessageSendMode.Reliable);
             if (anim == "grafSlashFinisher")
-                clientController.SendGenericEvent(GenericEvents.GraffitiFinisher, MessageSendMode.Reliable);
+                clientController.SendPacket(new PlayerGraffitiFinisher((int)__instance.gSpot.size), MessageSendMode.Reliable);
         }
 
         [HarmonyPostfix]
@@ -44,7 +44,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.GraffitiSlash, MessageSendMode.Reliable);
+            clientController.SendPacket(new PlayerGraffitiSlash(__instance.slashCardinal.ToSystemVector3()), MessageSendMode.Reliable);
         }
     }
 }

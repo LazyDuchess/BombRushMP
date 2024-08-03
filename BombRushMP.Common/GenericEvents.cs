@@ -8,9 +8,8 @@ namespace BombRushMP.Common
 {
     public enum GenericEvents
     {
-        GraffitiSlash,
-        GraffitiFinisher,
         Spray,
-        Teleport
+        Teleport,
+        GraffitiGameOver
     }
 }
