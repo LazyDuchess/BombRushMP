@@ -24,7 +24,7 @@ namespace BombRushMP.ServerApp
         private Dictionary<ushort, Player> _players = new();
         private Server _server;
         private Stopwatch _tickStopWatch;
-        private float _tickTimer = 0f;
+
         public BRCServer(ushort port, ushort maxPlayers)
         {
             _tickStopWatch = new Stopwatch();
@@ -44,14 +44,11 @@ namespace BombRushMP.ServerApp
 
         public void Update()
         {
-            _tickStopWatch.Stop();
-            var deltaTime = (float)_tickStopWatch.Elapsed.TotalSeconds;
-            _tickTimer += deltaTime;
-            _tickStopWatch.Restart();
-            if (_tickTimer >= Constants.NetworkingTickRate)
+            var deltaTime = _tickStopWatch.Elapsed.TotalSeconds;
+            if (deltaTime >= Constants.NetworkingTickRate)
             {
-                Tick(_tickTimer);
-                _tickTimer = 0f;
+                Tick((float)_tickStopWatch.Elapsed.TotalSeconds);
+                _tickStopWatch.Restart();
             }
         }
 

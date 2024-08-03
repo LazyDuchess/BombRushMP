@@ -2,6 +2,7 @@
 using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
+using System.Net;
 
 namespace BombRushMP.Plugin
 {
@@ -20,7 +21,7 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
-            ClientController.Create("127.0.0.1:41585");
+            ClientController.Create(Dns.GetHostAddresses("brcmp.lazyduchess.me")[0].ToString() + ":41585");
         }
     }
 }
