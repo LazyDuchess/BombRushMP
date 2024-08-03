@@ -168,8 +168,16 @@ namespace BombRushMP.ServerApp
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
             if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
-            PacketReceived?.Invoke(e.FromConnection, packetId, packet);
-            OnPacketReceived(e.FromConnection, packetId, packet);
+            try
+            {
+                PacketReceived?.Invoke(e.FromConnection, packetId, packet);
+                OnPacketReceived(e.FromConnection, packetId, packet);
+            }
+            catch(Exception exc)
+            {
+                Log($"Dropped client from {e.FromConnection} (ID: {e.FromConnection.Id}) because they sent a faulty packet. Exception:\n{exc}");
+                _server.DisconnectClient(e.FromConnection);
+            }
         }
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
