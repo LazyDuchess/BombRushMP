@@ -114,6 +114,7 @@ namespace BombRushMP.ServerApp
                     {
                         var clientState = (ClientState)packet;
                         var oldClientState = _players[client.Id].ClientState;
+                        _players[client.Id].ClientState = clientState;
                         if (oldClientState != null)
                         {
                             var clientStateUpdatePacket = new ServerClientStates();
@@ -127,7 +128,6 @@ namespace BombRushMP.ServerApp
                             _server.DisconnectClient(client);
                             return;
                         }
-                        _players[client.Id].ClientState = clientState;
                         Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, MessageSendMode.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
@@ -229,7 +229,7 @@ namespace BombRushMP.ServerApp
 
         public void Log(string message)
         {
-            Console.WriteLine(message);
+            Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message}");
         }
     }
 }

@@ -4,13 +4,6 @@ using Reptile;
 using Riptide;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -345,9 +338,9 @@ namespace BombRushMP.Plugin
             SendClientState();
         }
 
-        private void Log(string message)
+        public void Log(string message)
         {
-            Debug.Log(message);
+            Debug.Log($"[{DateTime.Now.ToShortTimeString()}] {message}");
         }
 
         private void OnDestroy()
