@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.CrewBoom;
 using Reptile;
 using Riptide;
 using System;
@@ -329,6 +330,10 @@ namespace BombRushMP.Plugin
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 ProtocolVersion = Constants.ProtocolVersion
             };
+            if (CrewBoomSupport.Installed)
+            {
+                statePacket.CrewBoomCharacter = CrewBoomSupport.GetGuidForCharacter(player.character);
+            }
             SendPacket(statePacket, MessageSendMode.Reliable);
         }
 

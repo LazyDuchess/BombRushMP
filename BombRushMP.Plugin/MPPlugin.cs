@@ -4,15 +4,22 @@ using HarmonyLib;
 using Reptile;
 using System.Net;
 using System.IO;
+using BepInEx.Bootstrap;
+using BombRushMP.CrewBoom;
 
 namespace BombRushMP.Plugin
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency("CrewBoom", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
     {
         private void Awake()
         {
             // Plugin startup logic
+            if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
+            {
+                CrewBoomSupport.Initialize();
+            }
             new MPSettings(Config);
             PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);

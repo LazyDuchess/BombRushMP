@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
@@ -56,8 +57,18 @@ namespace BombRushMP.Plugin
                 return;
             }
             var chara = (Characters)ClientState.Character;
+
             if (chara >= Characters.MAX || chara <= Characters.NONE)
                 chara = Characters.metalHead;
+
+            if (ClientState.CrewBoomCharacter != Guid.Empty)
+            {
+                if (CrewBoomSupport.Installed)
+                {
+                    chara = CrewBoomSupport.GetCharacterForGuid(ClientState.CrewBoomCharacter);
+                }
+            }
+
             var fit = ClientState.Outfit;
             if (fit < 0 || fit > 3)
                 fit = 0;
