@@ -20,6 +20,7 @@ namespace BombRushMP.Plugin
         public bool Teleporting = true;
         public int Outfit = 0;
         private PlayerStates _previousState = PlayerStates.None;
+        public Nameplate NamePlate;
 
         public void FrameUpdate()
         {
@@ -31,6 +32,11 @@ namespace BombRushMP.Plugin
 
             if (!mpSettings.DebugLocalPlayer)
             {
+                if (NamePlate != null)
+                {
+                    GameObject.Destroy(NamePlate.gameObject);
+                    NamePlate = null;
+                }
                 if (ClientId == clientController.LocalID)
                 {
                     if (Player != null)
@@ -158,6 +164,7 @@ namespace BombRushMP.Plugin
             UpdateLookAt();
             UpdatePhone();
             UpdateSprayCan();
+            UpdateNameplate();
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
                 Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);
@@ -171,6 +178,31 @@ namespace BombRushMP.Plugin
                 Player.RemoveGraffitiSlash();
 
             _previousState = ClientVisualState.State;
+        }
+
+        private void UpdateNameplate()
+        {
+            var settings = MPSettings.Instance;
+
+            if (!settings.ShowNamePlates)
+            {
+                if (NamePlate != null)
+                {
+                    GameObject.Destroy(NamePlate.gameObject);
+                    NamePlate = null;
+                }
+                return;
+            }
+
+            if (NamePlate == null)
+            {
+                NamePlate = Nameplate.Create();
+            }
+
+            if (NamePlate.Label.text != ClientState.Name)
+                NamePlate.Label.text = ClientState.Name;
+
+            NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
         }
 
         private void UpdateSprayCan()
@@ -229,6 +261,9 @@ namespace BombRushMP.Plugin
         {
             ClientState = null;
             ClientVisualState = null;
+            if (NamePlate != null)
+                GameObject.Destroy(NamePlate.gameObject);
+            NamePlate = null;
             DeletePlayer();
         }
     }

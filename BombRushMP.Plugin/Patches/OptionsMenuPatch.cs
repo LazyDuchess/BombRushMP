@@ -18,8 +18,56 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(OptionsMenu.Awake))]
         private static void Awake_Postfix(OptionsMenu __instance)
         {
-            var gameTab = __instance.GetComponentInChildren<OptionsMenuGameTab>();
-            var audioTab = __instance.GetComponentInChildren<OptionsMenuAudioTab>();
+            PatchGameTab(__instance);
+            PatchAudioTab(__instance);   
+        }
+
+        private static void PatchGameTab(OptionsMenu optionsMenu)
+        {
+            var gameTab = optionsMenu.GetComponentInChildren<OptionsMenuGameTab>();
+            var invertAxis = gameTab.settingsContainer.transform.Find("GameTabSettingsInvertAxisContainer");
+            var showNamePlates = GameObject.Instantiate(invertAxis.gameObject);
+            showNamePlates.gameObject.name = "GameTabSettingsShowNamePlatesContainer";
+            showNamePlates.transform.Find("MultiSelectionButton").GetComponentInChildren<TextMeshProUGUI>().text = "Show nameplates";
+            showNamePlates.transform.SetParent(invertAxis.transform.parent, false);
+            showNamePlates.transform.localPosition = new Vector3(showNamePlates.transform.localPosition.x, -10f, showNamePlates.transform.localPosition.z);
+            GameObject.Destroy(showNamePlates.GetComponentInChildren<TMProLocalizationAddOn>());
+
+            var multiOptionButton = showNamePlates.GetComponentInChildren<MultiOptionButton>();
+            var mpSettings = MPSettings.Instance;
+            multiOptionButton.SetLabelText(mpSettings.ShowNamePlates ? "On" : "Off");
+
+            multiOptionButton.OnChanged += (index) => {
+                var mpSettings = MPSettings.Instance;
+                mpSettings.ShowNamePlates = !mpSettings.ShowNamePlates;
+                mpSettings.Save();
+                multiOptionButton.SetLabelText(mpSettings.ShowNamePlates ? "On" : "Off");
+            };
+
+            gameTab.textSelectables = gameTab.textSelectables.AddItem(multiOptionButton).ToArray();
+
+            var languageButton = gameTab.settingsContainer.transform.Find("GameTabSettingsLanguageContainer").GetComponentInChildren<MultiOptionButton>();
+            var applyLanguageButton = gameTab.settingsContainer.transform.Find("GameTabApplyLanguageButton").GetComponentInChildren<TextMeshProMenuButton>();
+
+            var newNav = new Navigation();
+            newNav.selectOnUp = languageButton;
+            newNav.selectOnDown = applyLanguageButton;
+            newNav.mode = Navigation.Mode.Explicit;
+            multiOptionButton.navigation = newNav;
+
+            newNav = languageButton.navigation;
+            newNav.selectOnDown = multiOptionButton;
+            languageButton.navigation = newNav;
+
+            newNav = applyLanguageButton.navigation;
+            newNav.selectOnUp = multiOptionButton;
+            applyLanguageButton.navigation = newNav;
+        }
+
+        private static void PatchAudioTab(OptionsMenu optionsMenu)
+        {
+            var gameTab = optionsMenu.GetComponentInChildren<OptionsMenuGameTab>();
+            var audioTab = optionsMenu.GetComponentInChildren<OptionsMenuAudioTab>();
 
             var invertAxis = gameTab.settingsContainer.transform.Find("GameTabSettingsInvertAxisContainer");
             var playerAudio = GameObject.Instantiate(invertAxis.gameObject);
@@ -44,7 +92,7 @@ namespace BombRushMP.Plugin.Patches
                 multiOptionButton.SetLabelText(mpSettings.PlayerAudioEnabled ? "On" : "Off");
             };
 
-            var backButton = __instance.transform.Find("OptionsMenuBottomButtonContainer").Find("BackButton").GetComponentInChildren<TextMeshProMenuButton>();
+            var backButton = optionsMenu.transform.Find("OptionsMenuBottomButtonContainer").Find("BackButton").GetComponentInChildren<TextMeshProMenuButton>();
             var musicVolume = audioTab.settingsContainer.transform.Find("AudioTabMusicVolumeContainer").GetComponentInChildren<OptionsSliderButton>();
 
             var newNav = new Navigation();
