@@ -161,12 +161,12 @@ namespace BombRushMP.ServerApp
 
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            var packetId = (Packets)e.MessageId;
-            var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
-            if (packet == null) return;
-            if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
             try
             {
+                var packetId = (Packets)e.MessageId;
+                var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
+                if (packet == null) return;
+                if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
                 PacketReceived?.Invoke(e.FromConnection, packetId, packet);
                 OnPacketReceived(e.FromConnection, packetId, packet);
             }
