@@ -8,6 +8,10 @@ using System.Reflection;
 
 namespace BombRushMP.CrewBoom
 {
+    /// <summary>
+    /// Doing this in reflection so that I don't have to depend on CB. Dynamically loading the library like I do in CarJack gets the mod flagged every update.
+    /// Maybe this will work.
+    /// </summary>
     public static class CrewBoomSupport
     {
         public static bool Installed { get; private set; } = false;
