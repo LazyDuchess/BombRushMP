@@ -23,6 +23,12 @@ namespace BombRushMP.Plugin
             _clientController.ServerDisconnect += OnDisconnect;
         }
 
+        public string GetLobbyName(uint lobbyId)
+        {
+            var lobby = Lobbies[lobbyId];
+            return $"Freeroam";
+        }
+
         public void Dispose()
         {
             _clientController.PacketReceived -= OnPacketReceived;

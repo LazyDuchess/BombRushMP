@@ -6,6 +6,7 @@ using System.Net;
 using System.IO;
 using BepInEx.Bootstrap;
 using BombRushMP.CrewBoom;
+using BombRushMP.Plugin.Phone;
 
 namespace BombRushMP.Plugin
 {
@@ -15,6 +16,7 @@ namespace BombRushMP.Plugin
     {
         private void Awake()
         {
+            new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
             {
@@ -34,11 +36,13 @@ namespace BombRushMP.Plugin
             AppMultiplayer.Initialize();
             AppMultiplayerDebug.Initialize();
             AppJoinLobbyDebug.Initialize();
+            AppMultiplayerLobby.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()
         {
             ClientController.Create(GetServerAddress(MPSettings.Instance.ServerAddress, MPSettings.Instance.ServerPort));
+            LobbyUI.Create();
         }
 
         private string GetServerAddress(string address, int port)

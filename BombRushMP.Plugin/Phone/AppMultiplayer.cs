@@ -1,4 +1,5 @@
 using BombRushMP.Plugin;
+using BombRushMP.Plugin.Phone;
 using CommonAPI.Phone;
 
 public class AppMultiplayer : CustomApp
@@ -20,7 +21,14 @@ public class AppMultiplayer : CustomApp
     {
         ScrollView.RemoveAllButtons();
 
-        var button = PhoneUIUtility.CreateSimpleButton("Spectate");
+        var button = PhoneUIUtility.CreateSimpleButton("Lobby");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppMultiplayerLobby));
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Spectate");
         button.OnConfirm += () =>
         {
             SpectatorController.StartSpectating();

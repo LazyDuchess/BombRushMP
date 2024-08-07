@@ -8,11 +8,11 @@ using Reptile.Phone;
 
 namespace BombRushMP.Plugin.Patches
 {
-    [HarmonyPatch(typeof(Phone))]
+    [HarmonyPatch(typeof(Reptile.Phone.Phone))]
     internal static class PhonePatch
     {
         [HarmonyPrefix]
-        [HarmonyPatch(nameof(Phone.OpenCloseHandeling))]
+        [HarmonyPatch(nameof(Reptile.Phone.Phone.OpenCloseHandeling))]
         private static bool OpenCloseHandeling_Prefix()
         {
             if (SpectatorController.Instance != null)
