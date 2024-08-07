@@ -23,7 +23,9 @@ namespace BombRushMP.Plugin
         public ushort LocalID = 0;
         public string Address = "";
         public GraffitiGame CurrentGraffitiGame = null;
-        public Action<Connection, Packets, Packet> PacketReceived;
+        public Action ServerDisconnect;
+        public Action ServerConnect;
+        public Action<Packets, Packet> PacketReceived;
         private Client _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
@@ -32,12 +34,12 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             _mpSettings = MPSettings.Instance;
+            ClientLobbyManager = new();
         }
 
         public void Connect()
         {
             Log($"Connecting to {Address}");
-            ClientLobbyManager = new();
             _client = new Client();
             _client.Connect(Address);
             _client.Connected += OnConnected;
@@ -45,11 +47,11 @@ namespace BombRushMP.Plugin
             _client.ConnectionFailed += OnConnectionFailed;
             _client.MessageReceived += OnMessageReceived;
             _client.ClientDisconnected += OnClientDisconnected;
+            ServerConnect?.Invoke();
         }
 
         public void Disconnect()
         {
-            ClientLobbyManager?.Dispose();
             foreach (var player in Players)
             {
                 player.Value.Delete();
@@ -67,6 +69,7 @@ namespace BombRushMP.Plugin
                 _client.Disconnect();
             }
             _client = null;
+            ServerDisconnect?.Invoke();
         }
         
         public void SendGenericEvent(GenericEvents ev, MessageSendMode sendMode)
@@ -197,7 +200,7 @@ namespace BombRushMP.Plugin
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
-            PacketReceived?.Invoke(e.FromConnection, packetId, packet);
+            PacketReceived?.Invoke(packetId, packet);
             if (packet is PlayerPacket)
             {
                 var playerPacket = packet as PlayerPacket;
@@ -356,6 +359,7 @@ namespace BombRushMP.Plugin
         private void OnDestroy()
         {
             Disconnect();
+            ClientLobbyManager?.Dispose();
         }
     }
 }

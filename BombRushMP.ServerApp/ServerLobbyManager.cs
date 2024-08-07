@@ -15,6 +15,8 @@ namespace BombRushMP.ServerApp
         public Dictionary<uint, Lobby> Lobbies = new();
         private BRCServer _server = null;
         private UIDProvider _uidProvider = new();
+        private HashSet<int> _queuedStageUpdates = new();
+
         public ServerLobbyManager()
         {
             _server = BRCServer.Instance;
@@ -49,7 +51,7 @@ namespace BombRushMP.ServerApp
                 Lobbies.Remove(lobbyId);
                 _uidProvider.FreeUID(lobbyId);
                 Log($"Deleted Lobby with UID {lobbyId}");
-                SendLobbiesToStage(lobby.Stage);
+                QueueStageUpdate(lobby.Stage);
             }
         }
 
@@ -58,7 +60,7 @@ namespace BombRushMP.ServerApp
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
                 lobby.Players.Add(clientId);
-                SendLobbiesToStage(lobby.Stage);
+                QueueStageUpdate(lobby.Stage);
             }
         }
 
@@ -69,14 +71,15 @@ namespace BombRushMP.ServerApp
                 lobby.Players.Remove(clientId);
                 if (lobby.HostId == clientId)
                     DeleteLobby(lobbyId);
-                else
-                    SendLobbiesToStage(lobby.Stage);
+                QueueStageUpdate(lobby.Stage);
             }
         }
 
         private void OnTick(float deltaTime)
         {
-
+            foreach (var stage in _queuedStageUpdates)
+                SendLobbiesToStage(stage);
+            _queuedStageUpdates.Clear();
         }
 
         private void OnClientHandshook(Connection client)
@@ -122,8 +125,16 @@ namespace BombRushMP.ServerApp
         private void SendLobbiesToClient(Connection client)
         {
             var player = _server.Players[client.Id];
+
+            if (_queuedStageUpdates.Contains(player.ClientState.Stage)) return;
+
             var lobbies = CreateServerLobbiesPacket(player.ClientState.Stage);
             _server.SendPacketToClient(lobbies, MessageSendMode.Reliable, client);
+        }
+
+        private void QueueStageUpdate(int stage)
+        {
+            _queuedStageUpdates.Add(stage);
         }
 
         private void SendLobbiesToStage(int stage)

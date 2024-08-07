@@ -15,21 +15,29 @@ namespace BombRushMP.Plugin
         {
             get
             {
-                if (CurrentLobbyId == 0)
-                    return null;
-                if (!Lobbies.TryGetValue(CurrentLobbyId, out var lobby))
-                    return null;
-                return lobby;
+                foreach(var lobby in Lobbies)
+                {
+                    if (lobby.Value.Players.Contains(_clientController.LocalID))
+                        return lobby.Value;
+                }
+                return null;
             }
         }
-        public ulong CurrentLobbyId = 0;
-        public Dictionary<ulong, Lobby> Lobbies = new();
+        public Dictionary<uint, Lobby> Lobbies = new();
+        public Action LobbiesUpdated;
         private ClientController _clientController;
 
         public ClientLobbyManager()
         {
             _clientController = ClientController.Instance;
             _clientController.PacketReceived += OnPacketReceived;
+            _clientController.ServerDisconnect += OnDisconnect;
+        }
+
+        public void Dispose()
+        {
+            _clientController.PacketReceived -= OnPacketReceived;
+            _clientController.ServerDisconnect -= OnDisconnect;
         }
 
         public void CreateLobby()
@@ -37,14 +45,31 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyCreate(), MessageSendMode.Reliable);
         }
 
-        private void OnPacketReceived(Connection client, Packets packetId, Packet packet)
+        private void OnPacketReceived(Packets packetId, Packet packet)
         {
-
+            switch (packetId)
+            {
+                case Packets.ServerLobbies:
+                    var lobbies = (ServerLobbies)packet;
+                    Lobbies = new();
+                    foreach(var lobby in lobbies.Lobbies)
+                    {
+                        Lobbies[lobby.Id] = lobby;
+                    }
+                    Log($"Received {lobbies.Lobbies.Count} lobbies from server.");
+                    LobbiesUpdated?.Invoke();
+                    break;
+            }
         }
 
-        public void Dispose()
+        private void OnDisconnect()
         {
-            _clientController.PacketReceived -= OnPacketReceived;
+            Lobbies = new();
+        }
+
+        private void Log(string message)
+        {
+            Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message}");
         }
     }
 }
