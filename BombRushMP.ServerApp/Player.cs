@@ -25,7 +25,7 @@ namespace BombRushMP.ServerApp
                 SecondsWithoutSendingClientState += deltaTime;
                 if (SecondsWithoutSendingClientState > SecondsToKickPlayerWithoutClientState)
                 {
-                    Server.Log($"Rejecting player from {Client} (ID: {Client.Id}) because they took longer than {SecondsToKickPlayerWithoutClientState} seconds to send ClientState.");
+                    ServerLogger.Log($"Rejecting player from {Client} (ID: {Client.Id}) because they took longer than {SecondsToKickPlayerWithoutClientState} seconds to send ClientState.");
                     Server.DisconnectClient(Client.Id);
                     return;
                 }

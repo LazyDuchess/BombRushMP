@@ -125,8 +125,10 @@ namespace BombRushMP.ServerApp
                         if (existingLobby != null)
                             RemovePlayer(existingLobby.Id, playerId);
 
-                        if (Lobbies.ContainsKey(lobbyPacket.LobbyId))
+                        if (Lobbies.TryGetValue(lobbyPacket.LobbyId, out var lobby)) {
                             AddPlayer(lobbyPacket.LobbyId, playerId);
+                            ServerLogger.Log($"{_server.Players[playerId].ClientState.Name} joined lobby UID {lobby.Id}. Now at {lobby.Players.Count} players. Hosted by {_server.Players[lobby.HostId].ClientState.Name}.");
+                        }
                     }
                     break;
 

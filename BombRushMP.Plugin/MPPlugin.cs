@@ -20,14 +20,20 @@ namespace BombRushMP.Plugin
             {
                 CrewBoomSupport.Initialize();
             }
-            AppMultiplayer.Initialize();
-            AppMultiplayerDebug.Initialize();
+            InitializePhone();
             new MPSettings(Config);
             PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private void InitializePhone()
+        {
+            AppMultiplayer.Initialize();
+            AppMultiplayerDebug.Initialize();
+            AppJoinLobbyDebug.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

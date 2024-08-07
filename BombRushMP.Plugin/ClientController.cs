@@ -33,6 +33,7 @@ namespace BombRushMP.Plugin
 
         private void Awake()
         {
+            Instance = this;
             _mpSettings = MPSettings.Instance;
             ClientLobbyManager = new();
         }
@@ -87,7 +88,6 @@ namespace BombRushMP.Plugin
         {
             var clientControllerGO = new GameObject("Client Controller");
             var clientController = clientControllerGO.AddComponent<ClientController>();
-            Instance = clientController;
             clientController.Address = address;
             clientController.Connect();
             return clientController;

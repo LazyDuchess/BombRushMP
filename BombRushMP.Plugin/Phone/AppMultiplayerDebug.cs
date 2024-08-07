@@ -20,10 +20,18 @@ public class AppMultiplayerDebug : CustomApp
     private void PopulateButtons()
     {
         ScrollView.RemoveAllButtons();
+
         var button = PhoneUIUtility.CreateSimpleButton("Create Lobby");
         button.OnConfirm += () =>
         {
             ClientController.Instance.ClientLobbyManager.CreateLobby();
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Join Lobby");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppJoinLobbyDebug));
         };
         ScrollView.AddButton(button);
     }
