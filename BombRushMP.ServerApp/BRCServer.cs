@@ -20,13 +20,18 @@ namespace BombRushMP.ServerApp
 {
     public class BRCServer : IDisposable
     {
+        public static BRCServer Instance { get; private set; }
+        public LobbyManager LobbyManager;
         public Action<Connection, Packets, Packet> PacketReceived;
-        private Dictionary<ushort, Player> _players = new();
+        public Action<float> OnTick;
+        public Dictionary<ushort, Player> Players = new();
         private Server _server;
         private Stopwatch _tickStopWatch;
 
         public BRCServer(ushort port, ushort maxPlayers)
         {
+            Instance = this;
+            LobbyManager = new();
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
             _server = new Server();
@@ -55,7 +60,7 @@ namespace BombRushMP.ServerApp
         private void Tick(float deltaTime)
         {
             _server.Update();
-            foreach(var player in _players)
+            foreach(var player in Players)
             {
                 player.Value.Tick(deltaTime);
             }
@@ -64,6 +69,7 @@ namespace BombRushMP.ServerApp
             {
                 TickStage(stage);
             }
+            OnTick?.Invoke(deltaTime);
         }
 
         private void TickStage(int stage)
@@ -75,7 +81,7 @@ namespace BombRushMP.ServerApp
         private HashSet<int> GetActiveStages()
         {
             var stages = new HashSet<int>();
-            foreach (var player in _players)
+            foreach (var player in Players)
             {
                 if (player.Value.ClientState == null) continue;
                 stages.Add(player.Value.ClientState.Stage);
@@ -91,7 +97,7 @@ namespace BombRushMP.ServerApp
         public void SendPacketToStage(Packet packet, MessageSendMode sendMode, int stage, ushort[] except = null)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode);
-            foreach (var player in _players)
+            foreach (var player in Players)
             {
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
@@ -113,8 +119,8 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientState:
                     {
                         var clientState = (ClientState)packet;
-                        var oldClientState = _players[client.Id].ClientState;
-                        _players[client.Id].ClientState = clientState;
+                        var oldClientState = Players[client.Id].ClientState;
+                        Players[client.Id].ClientState = clientState;
                         if (oldClientState != null)
                         {
                             var clientStateUpdatePacket = new ServerClientStates();
@@ -138,7 +144,7 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientVisualState:
                     {
                         var clientVisualState = (ClientVisualState)packet;
-                        _players[client.Id].ClientVisualState = clientVisualState;
+                        Players[client.Id].ClientVisualState = clientVisualState;
                     }
                     break;
 
@@ -148,11 +154,11 @@ namespace BombRushMP.ServerApp
                         {
                             var playerPacket = packet as PlayerPacket;
                             playerPacket.ClientId = client.Id;
-                            var player = _players[client.Id];
+                            var player = Players[client.Id];
                             if (player.ClientState == null) return;
                             // Exclude sender - will break things if you're trying to display the networked local player clientside.
                             // SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage, [client.Id]);
-                            SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage);
+                            SendPacketToStage(playerPacket, MessageSendMode.Reliable, Players[client.Id].ClientState.Stage);
                         }
                     }
                     break;
@@ -166,7 +172,7 @@ namespace BombRushMP.ServerApp
                 var packetId = (Packets)e.MessageId;
                 var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
                 if (packet == null) return;
-                if (!_players.TryGetValue(e.FromConnection.Id, out var result)) return;
+                if (!Players.TryGetValue(e.FromConnection.Id, out var result)) return;
                 PacketReceived?.Invoke(e.FromConnection, packetId, packet);
                 OnPacketReceived(e.FromConnection, packetId, packet);
             }
@@ -183,16 +189,16 @@ namespace BombRushMP.ServerApp
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
-            _players[e.Client.Id] = player;
+            Players[e.Client.Id] = player;
         }
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
             Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}.");
             ClientState clientState = null;
-            if (_players.TryGetValue(e.Client.Id, out var result))
+            if (Players.TryGetValue(e.Client.Id, out var result))
             {
-                _players.Remove(e.Client.Id);
+                Players.Remove(e.Client.Id);
                 clientState = result.ClientState;
             }
             if (clientState != null)
@@ -205,7 +211,7 @@ namespace BombRushMP.ServerApp
         private ServerClientStates CreateClientStatesPacket(int stage)
         {
             var packet = new ServerClientStates();
-            foreach(var player in _players)
+            foreach(var player in Players)
             {
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
@@ -217,7 +223,7 @@ namespace BombRushMP.ServerApp
         private ServerClientVisualStates CreateClientVisualStatesPacket(int stage)
         {
             var packet = new ServerClientVisualStates();
-            foreach(var player in _players)
+            foreach(var player in Players)
             {
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;

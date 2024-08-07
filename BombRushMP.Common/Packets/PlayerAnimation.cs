@@ -11,7 +11,6 @@ namespace BombRushMP.Common.Packets
     public class PlayerAnimation : PlayerPacket
     {
         public override Packets PacketId => Packets.PlayerAnimation;
-        private const byte Version = 0;
         public int NewAnim;
         public bool ForceOverwrite;
         public bool Instant;
@@ -32,7 +31,6 @@ namespace BombRushMP.Common.Packets
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(Version);
             writer.Write(ClientId);
             writer.Write(NewAnim);
             writer.Write(ForceOverwrite);
@@ -43,7 +41,6 @@ namespace BombRushMP.Common.Packets
         public override void Read(BinaryReader reader)
         {
             base.Read(reader);
-            var version = reader.ReadByte();
             ClientId = reader.ReadUInt16();
             NewAnim = reader.ReadInt32();
             ForceOverwrite = reader.ReadBoolean();

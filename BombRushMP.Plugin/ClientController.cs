@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin
     public class ClientController : MonoBehaviour
     {
         public static ClientController Instance { get; private set; }
+        public LobbyManager LobbyManager = null;
         public Dictionary<Player, MPPlayer> MultiplayerPlayerByPlayer = new();
         public Dictionary<ushort, MPPlayer> Players = new();
         /// <summary>
@@ -22,6 +23,7 @@ namespace BombRushMP.Plugin
         public ushort LocalID = 0;
         public string Address = "";
         public GraffitiGame CurrentGraffitiGame = null;
+        public Action<Connection, Packets, Packet> PacketReceived;
         private Client _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
@@ -35,6 +37,7 @@ namespace BombRushMP.Plugin
         public void Connect()
         {
             Log($"Connecting to {Address}");
+            LobbyManager = new();
             _client = new Client();
             _client.Connect(Address);
             _client.Connected += OnConnected;
@@ -46,7 +49,8 @@ namespace BombRushMP.Plugin
 
         public void Disconnect()
         {
-            foreach(var player in Players)
+            LobbyManager?.Dispose();
+            foreach (var player in Players)
             {
                 player.Value.Delete();
             }
@@ -80,9 +84,9 @@ namespace BombRushMP.Plugin
         {
             var clientControllerGO = new GameObject("Client Controller");
             var clientController = clientControllerGO.AddComponent<ClientController>();
+            Instance = clientController;
             clientController.Address = address;
             clientController.Connect();
-            Instance = clientController;
             return clientController;
         }
 
@@ -193,6 +197,7 @@ namespace BombRushMP.Plugin
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
+            PacketReceived?.Invoke(e.FromConnection, packetId, packet);
             if (packet is PlayerPacket)
             {
                 var playerPacket = packet as PlayerPacket;

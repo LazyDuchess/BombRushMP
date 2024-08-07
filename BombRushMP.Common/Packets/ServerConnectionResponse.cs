@@ -13,18 +13,15 @@ namespace BombRushMP.Common.Packets
     public class ServerConnectionResponse : Packet
     {
         public override Packets PacketId => Packets.ServerConnectionResponse;
-        public const byte Version = 0;
         public ushort LocalClientId = 0;
 
         public override void Read(BinaryReader reader)
         {
-            var version = reader.ReadByte();
             LocalClientId = reader.ReadUInt16();
         }
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Version);
             writer.Write(LocalClientId);
         }
     }

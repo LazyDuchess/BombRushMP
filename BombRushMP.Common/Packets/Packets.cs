@@ -17,6 +17,7 @@ namespace BombRushMP.Common.Packets
         PlayerVoice,
         PlayerGenericEvent,
         PlayerGraffitiSlash,
-        PlayerGraffitiFinisher
+        PlayerGraffitiFinisher,
+        ClientLobbyCreate
     }
 }

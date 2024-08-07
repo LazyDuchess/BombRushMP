@@ -12,7 +12,6 @@ namespace BombRushMP.Common.Packets
     public class ClientVisualState : Packet
     {
         public override Packets PacketId => Packets.ClientVisualState;
-        private const byte Version = 0;
         public Vector3 Position = Vector3.Zero;
         public Vector3 VisualPosition = Vector3.Zero;
         public Vector3 Velocity = Vector3.Zero;
@@ -38,8 +37,6 @@ namespace BombRushMP.Common.Packets
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Version);
-
             writer.Write((int)State);
 
             writer.Write(Position.X);
@@ -90,8 +87,6 @@ namespace BombRushMP.Common.Packets
 
         public override void Read(BinaryReader reader)
         {
-            var version = reader.ReadByte();
-
             State = (PlayerStates)reader.ReadInt32();
 
             var posX = reader.ReadSingle();

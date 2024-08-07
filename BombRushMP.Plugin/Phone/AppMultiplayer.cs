@@ -19,10 +19,18 @@ public class AppMultiplayer : CustomApp
     private void PopulateButtons()
     {
         ScrollView.RemoveAllButtons();
+
         var button = PhoneUIUtility.CreateSimpleButton("Spectate");
         button.OnConfirm += () =>
         {
             SpectatorController.StartSpectating();
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Debug");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppMultiplayerDebug));
         };
         ScrollView.AddButton(button);
     }

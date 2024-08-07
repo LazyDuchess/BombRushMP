@@ -10,11 +10,9 @@ namespace BombRushMP.Common.Packets
     public class ServerClientStates : Packet
     {
         public override Packets PacketId => Packets.ServerClientStates;
-        private const byte Version = 0;
         public Dictionary<ushort, ClientState> ClientStates = new();
         public override void Read(BinaryReader reader)
         {
-            var version = reader.ReadByte();
             var count = reader.ReadInt32();
             for(var i = 0; i < count; i++)
             {
@@ -27,7 +25,6 @@ namespace BombRushMP.Common.Packets
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Version);
             writer.Write(ClientStates.Count);
             foreach(var clientState in ClientStates)
             {

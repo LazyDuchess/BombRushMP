@@ -21,6 +21,7 @@ namespace BombRushMP.Plugin
                 CrewBoomSupport.Initialize();
             }
             AppMultiplayer.Initialize();
+            AppMultiplayerDebug.Initialize();
             new MPSettings(Config);
             PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);

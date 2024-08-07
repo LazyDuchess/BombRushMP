@@ -13,7 +13,6 @@ namespace BombRushMP.Common.Packets
     public class ClientState : Packet
     {
         public override Packets PacketId => Packets.ClientState;
-        private const byte Version = 0;
         public Guid CrewBoomCharacter = Guid.Empty;
         public int Character = 0;
         public int Outfit = 0;
@@ -23,7 +22,6 @@ namespace BombRushMP.Common.Packets
 
         public override void Read(BinaryReader reader)
         {
-            var version = reader.ReadByte();
             if (Guid.TryParse(reader.ReadString(), out var result))
                 CrewBoomCharacter = result;
             Character = reader.ReadInt32();
@@ -35,7 +33,6 @@ namespace BombRushMP.Common.Packets
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Version);
             writer.Write(CrewBoomCharacter.ToString());
             writer.Write(Character);
             writer.Write(Outfit);
