@@ -9,7 +9,7 @@ namespace BombRushMP.Common
 {
     public class Lobby
     {
-        public ulong Id = 0;
+        public uint Id = 0;
         public ushort HostId = 0;
         public List<ushort> Players = new();
 
@@ -18,7 +18,7 @@ namespace BombRushMP.Common
 
         }
 
-        public Lobby(ulong id, ushort hostId)
+        public Lobby(uint id, ushort hostId)
         {
             Id = id;
             HostId = hostId;
@@ -26,7 +26,7 @@ namespace BombRushMP.Common
 
         public void Read(BinaryReader reader)
         {
-            Id = reader.ReadUInt64();
+            Id = reader.ReadUInt32();
             HostId = reader.ReadUInt16();
             Players.Clear();
             var playerCount = reader.ReadInt32();

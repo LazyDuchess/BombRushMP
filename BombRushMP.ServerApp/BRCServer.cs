@@ -22,6 +22,7 @@ namespace BombRushMP.ServerApp
     {
         public static BRCServer Instance { get; private set; }
         public LobbyManager LobbyManager;
+        public Action<Connection> ClientDisconnected;
         public Action<Connection, Packets, Packet> PacketReceived;
         public Action<float> OnTick;
         public Dictionary<ushort, Player> Players = new();
@@ -195,6 +196,7 @@ namespace BombRushMP.ServerApp
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
             Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}.");
+            ClientDisconnected?.Invoke(e.Client);
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))
             {

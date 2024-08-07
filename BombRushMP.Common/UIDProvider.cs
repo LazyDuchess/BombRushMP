@@ -11,14 +11,14 @@ namespace BombRushMP.Common
     /// </summary>
     public class UIDProvider
     {
-        private ulong _currentUID = 1;
-        private HashSet<ulong> _usedUIDs = new();
+        private uint _currentUID = 1;
+        private HashSet<uint> _usedUIDs = new();
 
-        public ulong RequestUID()
+        public uint RequestUID()
         {
             while(_usedUIDs.Contains(_currentUID))
             {
-                if (_currentUID < ulong.MaxValue)
+                if (_currentUID < uint.MaxValue)
                     _currentUID++;
                 else
                     _currentUID = 1;
@@ -27,7 +27,7 @@ namespace BombRushMP.Common
             return _currentUID++;
         }
 
-        public void FreeUID(ulong uid)
+        public void FreeUID(uint uid)
         {
            _usedUIDs.Remove(uid);
         }
