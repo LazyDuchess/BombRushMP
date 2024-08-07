@@ -22,12 +22,16 @@
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
     <PackageReference Include="RiptideNetworking.Riptide" Version="2.2.0" />
-    <PackageReference Include="UnityEngine.Modules" Version="2021.3.20" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.27" IncludeAssets="compile" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
     <ProjectReference Include="..\BombRushMP.CrewBoom\BombRushMP.CrewBoom.csproj" />
+    <ProjectReference Include="..\libs\BRC-CommonAPI\CommonAPI.csproj">
+      <Private>False</Private>
+      <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

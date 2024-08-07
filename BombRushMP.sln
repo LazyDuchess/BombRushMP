@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BombRushMP.Common", "BombRu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BombRushMP.CrewBoom", "BombRushMP.CrewBoom\BombRushMP.CrewBoom.csproj", "{329ED03C-4D7E-4273-9F86-4FCBEC24856F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonAPI", "libs\BRC-CommonAPI\CommonAPI.csproj", "{CDFFFA18-9CB0-4BC2-84C0-366C5EDC73A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{329ED03C-4D7E-4273-9F86-4FCBEC24856F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{329ED03C-4D7E-4273-9F86-4FCBEC24856F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{329ED03C-4D7E-4273-9F86-4FCBEC24856F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDFFFA18-9CB0-4BC2-84C0-366C5EDC73A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDFFFA18-9CB0-4BC2-84C0-366C5EDC73A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDFFFA18-9CB0-4BC2-84C0-366C5EDC73A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDFFFA18-9CB0-4BC2-84C0-366C5EDC73A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

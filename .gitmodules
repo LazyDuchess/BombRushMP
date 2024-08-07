@@ -1,0 +1,3 @@
+[submodule "libs/BRC-CommonAPI"]
+	path = libs/BRC-CommonAPI
+	url = https://github.com/LazyDuchess/BRC-CommonAPI
