@@ -104,15 +104,39 @@ namespace BombRushMP.ServerApp
             switch (packetId)
             {
                 case Packets.ClientLobbyCreate:
-                    var existingLobby = GetLobbyPlayerIsIn(client.Id);
+                    {
+                        var existingLobby = GetLobbyPlayerIsIn(client.Id);
 
-                    if (existingLobby != null)
-                        RemovePlayer(existingLobby.Id, client.Id);
+                        if (existingLobby != null)
+                            RemovePlayer(existingLobby.Id, client.Id);
 
-                    var lobby = new Lobby(player.ClientState.Stage, _uidProvider.RequestUID(), client.Id);
-                    Lobbies[lobby.Id] = lobby;
-                    AddPlayer(lobby.Id, client.Id);
-                    ServerLogger.Log($"Created Lobby with UID {lobby.Id} with host {player.ClientState.Name}");
+                        var lobby = new Lobby(player.ClientState.Stage, _uidProvider.RequestUID(), client.Id);
+                        Lobbies[lobby.Id] = lobby;
+                        AddPlayer(lobby.Id, client.Id);
+                        ServerLogger.Log($"Created Lobby with UID {lobby.Id} with host {player.ClientState.Name}");
+                    }
+                    break;
+
+                case Packets.ClientLobbyJoin:
+                    {
+                        var lobbyPacket = (ClientLobbyJoin)packet;
+                        var existingLobby = GetLobbyPlayerIsIn(playerId);
+
+                        if (existingLobby != null)
+                            RemovePlayer(existingLobby.Id, playerId);
+
+                        if (Lobbies.ContainsKey(lobbyPacket.LobbyId))
+                            AddPlayer(lobbyPacket.LobbyId, playerId);
+                    }
+                    break;
+
+                case Packets.ClientLobbyLeave:
+                    {
+                        var existingLobby = GetLobbyPlayerIsIn(playerId);
+
+                        if (existingLobby != null)
+                            RemovePlayer(existingLobby.Id, playerId);
+                    }
                     break;
             }
         }

@@ -34,6 +34,16 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyCreate(), MessageSendMode.Reliable);
         }
 
+        public void JoinLobby(uint lobbyId)
+        {
+            _clientController.SendPacket(new ClientLobbyJoin(lobbyId), MessageSendMode.Reliable);
+        }
+
+        public void LeaveLobby()
+        {
+            _clientController.SendPacket(new ClientLobbyLeave(), MessageSendMode.Reliable);
+        }
+
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
             switch (packetId)
