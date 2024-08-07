@@ -41,7 +41,7 @@ namespace BombRushMP.ServerApp
             _server.ClientDisconnected += OnClientDisconnected;
             _server.MessageReceived += OnMessageReceived;
             _server.Start(port, maxPlayers);
-            Log($"Starting server on port {port} with max players {maxPlayers}");
+            ServerLogger.Log($"Starting server on port {port} with max players {maxPlayers}");
         }
 
         public void DisconnectClient(ushort id)
@@ -132,11 +132,11 @@ namespace BombRushMP.ServerApp
                         }
                         if (clientState.ProtocolVersion != Constants.ProtocolVersion)
                         {
-                            Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
+                            ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
                             _server.DisconnectClient(client);
                             return;
                         }
-                        Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
+                        ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, MessageSendMode.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, MessageSendMode.Reliable, clientState.Stage);
@@ -181,14 +181,14 @@ namespace BombRushMP.ServerApp
             }
             catch(Exception exc)
             {
-                Log($"Dropped client from {e.FromConnection} (ID: {e.FromConnection.Id}) because they sent a faulty packet. Exception:\n{exc}");
+                ServerLogger.Log($"Dropped client from {e.FromConnection} (ID: {e.FromConnection.Id}) because they sent a faulty packet. Exception:\n{exc}");
                 _server.DisconnectClient(e.FromConnection);
             }
         }
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
-            Log($"Client connected from {e.Client}. ID: {e.Client.Id}.");
+            ServerLogger.Log($"Client connected from {e.Client}. ID: {e.Client.Id}.");
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
@@ -197,7 +197,7 @@ namespace BombRushMP.ServerApp
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
-            Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}.");
+            ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}.");
             ClientDisconnected?.Invoke(e.Client);
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))
@@ -235,11 +235,6 @@ namespace BombRushMP.ServerApp
                 packet.ClientVisualStates[player.Key] = player.Value.ClientVisualState;
             }
             return packet;
-        }
-
-        public void Log(string message)
-        {
-            Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message}");
         }
     }
 }

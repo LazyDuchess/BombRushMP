@@ -39,7 +39,7 @@ namespace BombRushMP.Plugin
 
         public void Connect()
         {
-            Log($"Connecting to {Address}");
+            ClientLogger.Log($"Connecting to {Address}");
             _client = new Client();
             _client.Connect(Address);
             _client.Connected += OnConnected;
@@ -213,7 +213,7 @@ namespace BombRushMP.Plugin
                         var connectionResponse = (ServerConnectionResponse)packet;
                         LocalID = connectionResponse.LocalClientId;
                         _handShook = true;
-                        Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}.");
+                        ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}.");
                     }
                     break;
 
@@ -313,16 +313,16 @@ namespace BombRushMP.Plugin
 
         private void OnConnectionFailed(object sender, ConnectionFailedEventArgs e)
         {
-            Log($"Failed to connect to server. Reason: {e.Reason}");
-            Log("Will attempt to re-connect");
+            ClientLogger.Log($"Failed to connect to server. Reason: {e.Reason}");
+            ClientLogger.Log("Will attempt to re-connect");
             Disconnect();
             Connect();
         }
 
         private void OnDisconnect(object sender, DisconnectedEventArgs e)
         {
-            Log($"Disconnected! Reason: {e.Reason}");
-            Log("Will attempt to re-connect");
+            ClientLogger.Log($"Disconnected! Reason: {e.Reason}");
+            ClientLogger.Log("Will attempt to re-connect");
             Disconnect();
             Connect();
         }
@@ -347,13 +347,8 @@ namespace BombRushMP.Plugin
 
         private void OnConnected(object sender, EventArgs e)
         {
-            Log("Connected!");
+            ClientLogger.Log("Connected!");
             SendClientState();
-        }
-
-        public void Log(string message)
-        {
-            Debug.Log($"[{DateTime.Now.ToShortTimeString()}] {message}");
         }
 
         private void OnDestroy()

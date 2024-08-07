@@ -50,7 +50,7 @@ namespace BombRushMP.ServerApp
             {
                 Lobbies.Remove(lobbyId);
                 _uidProvider.FreeUID(lobbyId);
-                Log($"Deleted Lobby with UID {lobbyId}");
+                ServerLogger.Log($"Deleted Lobby with UID {lobbyId}");
                 QueueStageUpdate(lobby.Stage);
             }
         }
@@ -112,14 +112,9 @@ namespace BombRushMP.ServerApp
                     var lobby = new Lobby(player.ClientState.Stage, _uidProvider.RequestUID(), client.Id);
                     Lobbies[lobby.Id] = lobby;
                     AddPlayer(lobby.Id, client.Id);
-                    Log($"Created Lobby with UID {lobby.Id} with host {player.ClientState.Name}");
+                    ServerLogger.Log($"Created Lobby with UID {lobby.Id} with host {player.ClientState.Name}");
                     break;
             }
-        }
-
-        private void Log(string message)
-        {
-            Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message}");
         }
 
         private void SendLobbiesToClient(Connection client)

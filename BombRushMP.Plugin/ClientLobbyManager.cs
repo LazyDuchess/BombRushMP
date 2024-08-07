@@ -11,18 +11,7 @@ namespace BombRushMP.Plugin
 {
     public class ClientLobbyManager : IDisposable
     {
-        public Lobby CurrentLobby
-        {
-            get
-            {
-                foreach(var lobby in Lobbies)
-                {
-                    if (lobby.Value.Players.Contains(_clientController.LocalID))
-                        return lobby.Value;
-                }
-                return null;
-            }
-        }
+        public Lobby CurrentLobby { get; private set; }
         public Dictionary<uint, Lobby> Lobbies = new();
         public Action LobbiesUpdated;
         private ClientController _clientController;
@@ -56,8 +45,8 @@ namespace BombRushMP.Plugin
                     {
                         Lobbies[lobby.Id] = lobby;
                     }
-                    Log($"Received {lobbies.Lobbies.Count} lobbies from server.");
-                    LobbiesUpdated?.Invoke();
+                    ClientLogger.Log($"Received {lobbies.Lobbies.Count} lobbies from server.");
+                    OnLobbiesUpdated();
                     break;
             }
         }
@@ -65,11 +54,18 @@ namespace BombRushMP.Plugin
         private void OnDisconnect()
         {
             Lobbies = new();
+            OnLobbiesUpdated();
         }
 
-        private void Log(string message)
+        private void OnLobbiesUpdated()
         {
-            Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message}");
+            CurrentLobby = null;
+            foreach (var lobby in Lobbies)
+            {
+                if (lobby.Value.Players.Contains(_clientController.LocalID))
+                    CurrentLobby = lobby.Value;
+            }
+            LobbiesUpdated?.Invoke();
         }
     }
 }
