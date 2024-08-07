@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.ServerApp
 {
-    public class LobbyManager : IDisposable
+    public class ServerLobbyManager : IDisposable
     {
         public Dictionary<uint, Lobby> Lobbies = new();
         private BRCServer _server = null;
         private UIDProvider _uidProvider = new();
-        public LobbyManager()
+        public ServerLobbyManager()
         {
             _server = BRCServer.Instance;
             _server.PacketReceived += OnPacketReceived;

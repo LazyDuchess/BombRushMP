@@ -23,7 +23,7 @@ public class AppMultiplayerDebug : CustomApp
         var button = PhoneUIUtility.CreateSimpleButton("Create Lobby");
         button.OnConfirm += () =>
         {
-            ClientController.Instance.LobbyManager.CreateLobby();
+            ClientController.Instance.ClientLobbyManager.CreateLobby();
         };
         ScrollView.AddButton(button);
     }

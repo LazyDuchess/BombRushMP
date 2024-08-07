@@ -13,7 +13,7 @@ namespace BombRushMP.Plugin
     public class ClientController : MonoBehaviour
     {
         public static ClientController Instance { get; private set; }
-        public LobbyManager LobbyManager = null;
+        public ClientLobbyManager ClientLobbyManager = null;
         public Dictionary<Player, MPPlayer> MultiplayerPlayerByPlayer = new();
         public Dictionary<ushort, MPPlayer> Players = new();
         /// <summary>
@@ -37,7 +37,7 @@ namespace BombRushMP.Plugin
         public void Connect()
         {
             Log($"Connecting to {Address}");
-            LobbyManager = new();
+            ClientLobbyManager = new();
             _client = new Client();
             _client.Connect(Address);
             _client.Connected += OnConnected;
@@ -49,7 +49,7 @@ namespace BombRushMP.Plugin
 
         public void Disconnect()
         {
-            LobbyManager?.Dispose();
+            ClientLobbyManager?.Dispose();
             foreach (var player in Players)
             {
                 player.Value.Delete();

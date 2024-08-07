@@ -21,7 +21,7 @@ namespace BombRushMP.ServerApp
     public class BRCServer : IDisposable
     {
         public static BRCServer Instance { get; private set; }
-        public LobbyManager LobbyManager;
+        public ServerLobbyManager ServerLobbyManager;
         public Action<Connection> ClientHandshook;
         public Action<Connection> ClientDisconnected;
         public Action<Connection, Packets, Packet> PacketReceived;
@@ -33,7 +33,7 @@ namespace BombRushMP.ServerApp
         public BRCServer(ushort port, ushort maxPlayers)
         {
             Instance = this;
-            LobbyManager = new();
+            ServerLobbyManager = new();
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
             _server = new Server();

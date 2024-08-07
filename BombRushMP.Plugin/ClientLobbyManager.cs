@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Plugin
 {
-    public class LobbyManager : IDisposable
+    public class ClientLobbyManager : IDisposable
     {
         public Lobby CurrentLobby
         {
@@ -26,7 +26,7 @@ namespace BombRushMP.Plugin
         public Dictionary<ulong, Lobby> Lobbies = new();
         private ClientController _clientController;
 
-        public LobbyManager()
+        public ClientLobbyManager()
         {
             _clientController = ClientController.Instance;
             _clientController.PacketReceived += OnPacketReceived;
