@@ -22,6 +22,7 @@ namespace BombRushMP.ServerApp
     {
         public static BRCServer Instance { get; private set; }
         public LobbyManager LobbyManager;
+        public Action<Connection> ClientHandshook;
         public Action<Connection> ClientDisconnected;
         public Action<Connection, Packets, Packet> PacketReceived;
         public Action<float> OnTick;
@@ -139,6 +140,7 @@ namespace BombRushMP.ServerApp
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, MessageSendMode.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, MessageSendMode.Reliable, clientState.Stage);
+                        ClientHandshook?.Invoke(client);
                     }
                     break;
 

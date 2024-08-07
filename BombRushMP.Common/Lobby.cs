@@ -9,6 +9,7 @@ namespace BombRushMP.Common
 {
     public class Lobby
     {
+        public int Stage = 0;
         public uint Id = 0;
         public ushort HostId = 0;
         public List<ushort> Players = new();
@@ -18,14 +19,16 @@ namespace BombRushMP.Common
 
         }
 
-        public Lobby(uint id, ushort hostId)
+        public Lobby(int stage, uint id, ushort hostId)
         {
+            Stage = stage;
             Id = id;
             HostId = hostId;
         }
 
         public void Read(BinaryReader reader)
         {
+            Stage = reader.ReadInt32();
             Id = reader.ReadUInt32();
             HostId = reader.ReadUInt16();
             Players.Clear();
@@ -39,6 +42,7 @@ namespace BombRushMP.Common
 
         public void Write(BinaryWriter writer)
         {
+            writer.Write(Stage);
             writer.Write(Id);
             writer.Write(HostId);
             writer.Write(Players.Count);
