@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.Plugin.Gamemodes;
 using HarmonyLib;
 using Reptile;
 using Riptide;
@@ -229,6 +231,22 @@ namespace BombRushMP.Plugin.Patches
         private static bool UpdateBoostpack_Prefix(Player __instance)
         {
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.LateUpdateUIDisplay))]
+        private static bool LateUpdateUIDisplay_Prefix(Player __instance)
+        {
+            if (ClientController.Instance == null) return true;
+            var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
+            if (currentLobby == null) return true;
+            if (currentLobby.CurrentGamemode == null) return true;
+            if (currentLobby.CurrentGamemode is GraffitiRace)
+            {
+                __instance.UpdateUIIndicatorData();
+                return false;
+            }
             return true;
         }
     }

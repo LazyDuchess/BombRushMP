@@ -10,7 +10,7 @@ namespace BombRushMP.Common
     public class LobbyState
     {
         public bool InGame = false;
-        public GamemodeIDs Gamemode = GamemodeIDs.ScoreBattle;
+        public GamemodeIDs Gamemode = GamemodeIDs.GraffitiRace;
         public int Stage = 0;
         public uint Id = 0;
         public ushort HostId = 0;

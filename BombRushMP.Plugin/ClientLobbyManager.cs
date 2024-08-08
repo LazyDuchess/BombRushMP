@@ -188,7 +188,7 @@ namespace BombRushMP.Plugin
             {
                 CurrentLobby.CurrentGamemode.OnEnd(true);
             }
-            CurrentLobby.CurrentGamemode = GamemodeFactory.GetGamemode(GamemodeIDs.ScoreBattle);
+            CurrentLobby.CurrentGamemode = GamemodeFactory.GetGamemode(CurrentLobby.LobbyState.Gamemode);
             CurrentLobby.CurrentGamemode.Lobby = CurrentLobby;
             CurrentLobby.LobbyState.InGame = true;
             CurrentLobby.CurrentGamemode.OnStart();

@@ -8,6 +8,7 @@ namespace BombRushMP.Common
 {
     public enum GamemodeIDs
     {
-        ScoreBattle
+        ScoreBattle,
+        GraffitiRace
     }
 }

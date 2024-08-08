@@ -11,7 +11,8 @@ namespace BombRushMP.ServerApp.Gamemodes
     {
         private static Dictionary<GamemodeIDs, Type> Gamemodes = new()
         {
-            {GamemodeIDs.ScoreBattle, typeof(ScoreBattle) }
+            {GamemodeIDs.ScoreBattle, typeof(ScoreBattle) },
+            {GamemodeIDs.GraffitiRace, typeof(GraffitiRace) },
         };
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)
