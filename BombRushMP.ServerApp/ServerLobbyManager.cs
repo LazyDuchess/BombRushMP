@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.ServerApp.Gamemodes;
 using Riptide;
 using Riptide.Transports;
 using System;
@@ -33,6 +34,27 @@ namespace BombRushMP.ServerApp
             _server.OnTick -= OnTick;
             _server.ClientDisconnected -= OnClientDisconnected;
             _server.ClientHandshook -= OnClientHandshook;
+        }
+
+        public void StartGame(uint lobbyId)
+        {
+            var lobby = Lobbies[lobbyId];
+            lobby.CurrentGamemode = GamemodeFactory.GetGamemode(lobby.LobbyState.Gamemode);
+            lobby.CurrentGamemode.Lobby = lobby;
+            lobby.LobbyState.InGame = true;
+            lobby.CurrentGamemode.OnStart();
+            SendLobbiesToStage(lobby.LobbyState.Stage);
+            SendPacketToLobby(new ServerLobbyStart(), MessageSendMode.Reliable, lobbyId);
+        }
+
+        public void EndGame(uint lobbyId)
+        {
+            var lobby = Lobbies[lobbyId];
+            lobby.LobbyState.InGame = false;
+            lobby.CurrentGamemode.OnEnd();
+            lobby.CurrentGamemode = null;
+            SendLobbiesToStage(lobby.LobbyState.Stage);
+            SendPacketToLobby(new ServerLobbyEnd(), MessageSendMode.Reliable, lobbyId);
         }
 
         public Lobby GetLobbyPlayerIsIn(ushort clientId)
@@ -84,6 +106,8 @@ namespace BombRushMP.ServerApp
             foreach (var action in _queuedActions)
                 action();
             _queuedActions.Clear();
+            foreach (var lobby in Lobbies)
+                lobby.Value.Tick();
         }
 
         private void OnClientHandshook(Connection client)
@@ -126,15 +150,20 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientLobbyJoin:
                     {
                         var lobbyPacket = (ClientLobbyJoin)packet;
+
+                        if (!Lobbies.TryGetValue(lobbyPacket.LobbyId, out var lobby))
+                            break;
+
+                        if (lobby.LobbyState.InGame) 
+                            break;
+
                         var existingLobby = GetLobbyPlayerIsIn(playerId);
 
                         if (existingLobby != null)
                             RemovePlayer(existingLobby.LobbyState.Id, playerId);
 
-                        if (Lobbies.TryGetValue(lobbyPacket.LobbyId, out var lobby)) {
-                            AddPlayer(lobbyPacket.LobbyId, playerId);
-                            ServerLogger.Log($"{_server.Players[playerId].ClientState.Name} joined lobby UID {lobby.LobbyState.Id}. Now at {lobby.LobbyState.Players.Count} players. Hosted by {_server.Players[lobby.LobbyState.HostId].ClientState.Name}.");
-                        }
+                        AddPlayer(lobbyPacket.LobbyId, playerId);
+                        ServerLogger.Log($"{_server.Players[playerId].ClientState.Name} joined lobby UID {lobby.LobbyState.Id}. Now at {lobby.LobbyState.Players.Count} players. Hosted by {_server.Players[lobby.LobbyState.HostId].ClientState.Name}.");
                     }
                     break;
 
@@ -146,6 +175,26 @@ namespace BombRushMP.ServerApp
                             RemovePlayer(existingLobby.LobbyState.Id, playerId);
                     }
                     break;
+
+                case Packets.ClientLobbyStart:
+                    {
+                        var existingLobby = GetLobbyPlayerIsIn(playerId);
+
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                            StartGame(existingLobby.LobbyState.Id);
+                    }
+                    break;
+            }
+        }
+
+        public void SendPacketToLobby(Packet packet, MessageSendMode sendMode, uint lobbyId)
+        {
+            if (Lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                foreach (var player in lobby.LobbyState.Players)
+                {
+                    _server.SendPacketToClient(packet, sendMode, _server.Players[player.Key].Client);
+                }
             }
         }
 
