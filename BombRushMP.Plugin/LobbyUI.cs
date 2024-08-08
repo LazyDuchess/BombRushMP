@@ -17,7 +17,8 @@ namespace BombRushMP.Plugin
         private ClientLobbyManager _lobbyManager;
         private GameObject _playerName;
         private float _playerNameHeight = 40f;
-        private List<LobbyPlayerUI> _playerUIs = new();
+        private const int PlayerUIPoolSize = 32;
+        private LobbyPlayerUI[] _playerUIs = new LobbyPlayerUI[PlayerUIPoolSize];
         private void Awake()
         {
             Instance = this;
@@ -27,7 +28,21 @@ namespace BombRushMP.Plugin
             _lobbyManager.LobbiesUpdated += OnLobbiesUpdated;
             _playerName = _canvas.transform.Find("Player Name").gameObject;
             _playerName.SetActive(false);
+            InitializePlayerUIPool();
             Deactivate();
+        }
+
+        private void InitializePlayerUIPool()
+        {
+            for(var i = 0; i < PlayerUIPoolSize; i++)
+            {
+                var playerui = LobbyPlayerUI.Create(_playerName);
+                playerui.transform.SetParent(_canvas.transform, false);
+                playerui.transform.localPosition -= new Vector3(0, (i + 1) * _playerNameHeight, 0);
+                playerui.Position = i;
+                _playerUIs[i] = playerui;
+                playerui.gameObject.SetActive(false);
+            }
         }
 
         private void OnLobbiesUpdated()
@@ -48,21 +63,20 @@ namespace BombRushMP.Plugin
         private void UpdateUI()
         {
             _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
-            foreach (var playerui in _playerUIs)
-            {
-                Destroy(playerui.gameObject);
-            }
-            _playerUIs.Clear();
             var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToList();
-            for(var i = 0; i < players.Count; i++)
+            for(var i = 0; i < PlayerUIPoolSize; i++)
             {
+                var playerui = _playerUIs[i];
+                if (i >= players.Count)
+                {
+                    if (playerui.gameObject.activeSelf)
+                        playerui.gameObject.SetActive(false);
+                    continue;
+                }
+                if (!playerui.gameObject.activeSelf)
+                    playerui.gameObject.SetActive(true);
                 var player = players[i];
-                var playerui = LobbyPlayerUI.Create(_playerName);
-                playerui.transform.SetParent(_canvas.transform, false);
-                playerui.transform.localPosition -= new Vector3(0, (i + 1) * _playerNameHeight, 0);
-                playerui.Position = i;
                 playerui.SetPlayer(player);
-                _playerUIs.Add(playerui);
             }
         }
 
