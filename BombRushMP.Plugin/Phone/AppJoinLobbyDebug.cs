@@ -29,8 +29,8 @@ public class AppJoinLobbyDebug : CustomApp
         var lobbies = clientController.ClientLobbyManager.Lobbies;
         foreach(var lobby in lobbies)
         {
-            var host = clientController.Players[lobby.Value.HostId];
-            var button = PhoneUIUtility.CreateSimpleButton($"{host.ClientState.Name} ({lobby.Value.Players.Count})");
+            var host = clientController.Players[lobby.Value.LobbyState.HostId];
+            var button = PhoneUIUtility.CreateSimpleButton($"{host.ClientState.Name} ({lobby.Value.LobbyState.Players.Count})");
             button.OnConfirm += () =>
             {
                 clientController.ClientLobbyManager.JoinLobby(lobby.Key);

@@ -45,7 +45,7 @@ namespace BombRushMP.Plugin.Phone
             var clientController = ClientController.Instance;
             var lobbyManager = clientController.ClientLobbyManager;
             var currentLobby = lobbyManager.CurrentLobby;
-            if (currentLobby.HostId == clientController.LocalID)
+            if (currentLobby.LobbyState.HostId == clientController.LocalID)
             {
                 var button = PhoneUIUtility.CreateSimpleButton("Start Game");
                 button.OnConfirm += () =>

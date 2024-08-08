@@ -45,13 +45,13 @@ namespace BombRushMP.Plugin
 
         private void UpdateUI()
         {
-            _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.Id);
+            _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
             foreach (var playerui in _playerUIs)
             {
                 Destroy(playerui.gameObject);
             }
             _playerUIs.Clear();
-            var players = _lobbyManager.CurrentLobby.Players.Values.OrderByDescending(p => p.Score);
+            var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score);
             foreach (var player in players)
             {
                 var playerui = LobbyPlayerUI.Create(_playerName);

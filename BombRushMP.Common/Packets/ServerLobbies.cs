@@ -10,14 +10,14 @@ namespace BombRushMP.Common.Packets
     public class ServerLobbies : Packet
     {
         public override Packets PacketId => Packets.ServerLobbies;
-        public List<Lobby> Lobbies = new();
+        public List<LobbyState> Lobbies = new();
 
         public ServerLobbies()
         {
 
         }
 
-        public ServerLobbies(List<Lobby> lobbies)
+        public ServerLobbies(List<LobbyState> lobbies)
         {
             Lobbies = lobbies;
         }
@@ -27,7 +27,7 @@ namespace BombRushMP.Common.Packets
             var lobbyCount = reader.ReadInt32();
             for(var i = 0; i < lobbyCount; i++)
             {
-                var lobby = new Lobby();
+                var lobby = new LobbyState();
                 lobby.Read(reader);
                 Lobbies.Add(lobby);
             }

@@ -39,7 +39,7 @@ namespace BombRushMP.ServerApp
         {
             foreach(var lobby in Lobbies)
             {
-                if (lobby.Value.Players.Keys.Contains(clientId))
+                if (lobby.Value.LobbyState.Players.Keys.Contains(clientId))
                     return lobby.Value;
             }
             return null;
@@ -52,7 +52,7 @@ namespace BombRushMP.ServerApp
                 Lobbies.Remove(lobbyId);
                 _uidProvider.FreeUID(lobbyId);
                 ServerLogger.Log($"Deleted Lobby with UID {lobbyId}");
-                QueueStageUpdate(lobby.Stage);
+                _server.SendPacketToStage(new ServerLobbyDeleted(lobby.LobbyState.Id), MessageSendMode.Reliable, lobby.LobbyState.Stage);
             }
         }
 
@@ -60,8 +60,8 @@ namespace BombRushMP.ServerApp
         {
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
-                lobby.Players[clientId] = new LobbyPlayer(lobbyId, clientId);
-                QueueStageUpdate(lobby.Stage);
+                lobby.LobbyState.Players[clientId] = new LobbyPlayer(lobbyId, clientId);
+                QueueStageUpdate(lobby.LobbyState.Stage);
             }
         }
 
@@ -69,10 +69,10 @@ namespace BombRushMP.ServerApp
         {
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
-                lobby.Players.Remove(clientId);
-                if (lobby.HostId == clientId)
+                lobby.LobbyState.Players.Remove(clientId);
+                if (lobby.LobbyState.HostId == clientId)
                     DeleteLobby(lobbyId);
-                QueueStageUpdate(lobby.Stage);
+                QueueStageUpdate(lobby.LobbyState.Stage);
             }
         }
 
@@ -96,7 +96,7 @@ namespace BombRushMP.ServerApp
             var lobby = GetLobbyPlayerIsIn(client.Id);
             if (lobby != null)
             {
-                RemovePlayer(lobby.Id, client.Id);
+                RemovePlayer(lobby.LobbyState.Id, client.Id);
             }
         }
 
@@ -112,12 +112,13 @@ namespace BombRushMP.ServerApp
                         var existingLobby = GetLobbyPlayerIsIn(client.Id);
 
                         if (existingLobby != null)
-                            RemovePlayer(existingLobby.Id, client.Id);
+                            RemovePlayer(existingLobby.LobbyState.Id, client.Id);
 
-                        var lobby = new Lobby(player.ClientState.Stage, _uidProvider.RequestUID(), client.Id);
-                        Lobbies[lobby.Id] = lobby;
-                        AddPlayer(lobby.Id, client.Id);
-                        ServerLogger.Log($"Created Lobby with UID {lobby.Id} with host {player.ClientState.Name}");
+                        var lobbyState = new LobbyState(player.ClientState.Stage, _uidProvider.RequestUID(), client.Id);
+                        var lobby = new Lobby(lobbyState);
+                        Lobbies[lobby.LobbyState.Id] = lobby;
+                        AddPlayer(lobby.LobbyState.Id, client.Id);
+                        ServerLogger.Log($"Created Lobby with UID {lobby.LobbyState.Id} with host {player.ClientState.Name}");
                         QueueAction(() => { _server.SendPacketToClient(new ServerLobbyCreateResponse(), MessageSendMode.Reliable, client); });
                     }
                     break;
@@ -128,11 +129,11 @@ namespace BombRushMP.ServerApp
                         var existingLobby = GetLobbyPlayerIsIn(playerId);
 
                         if (existingLobby != null)
-                            RemovePlayer(existingLobby.Id, playerId);
+                            RemovePlayer(existingLobby.LobbyState.Id, playerId);
 
                         if (Lobbies.TryGetValue(lobbyPacket.LobbyId, out var lobby)) {
                             AddPlayer(lobbyPacket.LobbyId, playerId);
-                            ServerLogger.Log($"{_server.Players[playerId].ClientState.Name} joined lobby UID {lobby.Id}. Now at {lobby.Players.Count} players. Hosted by {_server.Players[lobby.HostId].ClientState.Name}.");
+                            ServerLogger.Log($"{_server.Players[playerId].ClientState.Name} joined lobby UID {lobby.LobbyState.Id}. Now at {lobby.LobbyState.Players.Count} players. Hosted by {_server.Players[lobby.LobbyState.HostId].ClientState.Name}.");
                         }
                     }
                     break;
@@ -142,7 +143,7 @@ namespace BombRushMP.ServerApp
                         var existingLobby = GetLobbyPlayerIsIn(playerId);
 
                         if (existingLobby != null)
-                            RemovePlayer(existingLobby.Id, playerId);
+                            RemovePlayer(existingLobby.LobbyState.Id, playerId);
                     }
                     break;
             }
@@ -154,7 +155,7 @@ namespace BombRushMP.ServerApp
 
             if (_queuedStageUpdates.Contains(player.ClientState.Stage)) return;
 
-            var lobbies = CreateServerLobbiesPacket(player.ClientState.Stage);
+            var lobbies = CreateServerLobbyStatesPacket(player.ClientState.Stage);
             _server.SendPacketToClient(lobbies, MessageSendMode.Reliable, client);
         }
 
@@ -170,18 +171,25 @@ namespace BombRushMP.ServerApp
 
         private void SendLobbiesToStage(int stage)
         {
-            var lobbies = CreateServerLobbiesPacket(stage);
+            var lobbies = CreateServerLobbyStatesPacket(stage);
             _server.SendPacketToStage(lobbies, MessageSendMode.Reliable, stage);
         }
 
-        private List<Lobby> GetLobbiesForStage(int stage)
+        private List<LobbyState> GetLobbyStatesForStage(int stage)
         {
-            return Lobbies.Values.Where(x => x.Stage == stage).ToList();
+            var lobbyStates = new List<LobbyState>();
+            foreach (var lobby in Lobbies)
+            {
+                if (lobby.Value.LobbyState.Stage != stage) continue;
+                lobbyStates.Add(lobby.Value.LobbyState);
+            }
+            return lobbyStates;
         }
 
-        private Packet CreateServerLobbiesPacket(int stage)
+        private Packet CreateServerLobbyStatesPacket(int stage)
         {
-            return new ServerLobbies(GetLobbiesForStage(stage));
+            
+            return new ServerLobbies(GetLobbyStatesForStage(stage));
         }
     }
 }

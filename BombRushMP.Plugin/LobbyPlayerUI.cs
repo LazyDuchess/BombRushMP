@@ -34,7 +34,7 @@ namespace BombRushMP.Plugin
 
             var playername = _clientController.Players[player.Id].ClientState.Name;
 
-            if (lobby.HostId == player.Id)
+            if (lobby.LobbyState.HostId == player.Id)
                 playername = $"<color=yellow>[Host]</color> {playername}";
 
             _playerName.text = playername;

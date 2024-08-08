@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common
 {
-    public class Lobby
+    public class LobbyState
     {
         public int Stage = 0;
         public uint Id = 0;
         public ushort HostId = 0;
         public Dictionary<ushort, LobbyPlayer> Players = new();
 
-        public Lobby()
+        public LobbyState()
         {
 
         }
 
-        public Lobby(int stage, uint id, ushort hostId)
+        public LobbyState(int stage, uint id, ushort hostId)
         {
             Stage = stage;
             Id = id;

@@ -22,6 +22,7 @@ namespace BombRushMP.Common.Packets
         ClientLobbyJoin,
         ClientLobbyLeave,
         ServerLobbies,
-        ServerLobbyCreateResponse
+        ServerLobbyCreateResponse,
+        ServerLobbyDeleted
     }
 }

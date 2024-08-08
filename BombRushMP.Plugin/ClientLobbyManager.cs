@@ -14,6 +14,7 @@ namespace BombRushMP.Plugin
         public Lobby CurrentLobby { get; private set; }
         public Dictionary<uint, Lobby> Lobbies = new();
         public Action LobbiesUpdated;
+        public Action LobbyChanged;
         private ClientController _clientController;
 
         public ClientLobbyManager()
@@ -54,14 +55,30 @@ namespace BombRushMP.Plugin
         {
             switch (packetId)
             {
-                case Packets.ServerLobbies:
-                    var lobbies = (ServerLobbies)packet;
-                    Lobbies = new();
-                    foreach(var lobby in lobbies.Lobbies)
+                case Packets.ServerLobbyDeleted:
                     {
-                        Lobbies[lobby.Id] = lobby;
+                        var serverpacket = (ServerLobbyDeleted)packet;
+                        if (Lobbies.TryGetValue(serverpacket.LobbyUID, out var lobby))
+                        {
+                            Lobbies.Remove(serverpacket.LobbyUID);
+                            OnLobbyDeleted(lobby);
+                        }
                     }
-                    ClientLogger.Log($"Received {lobbies.Lobbies.Count} lobbies from server.");
+                    break;
+
+                case Packets.ServerLobbies:
+                    {
+                        var lobbies = (ServerLobbies)packet;
+                        foreach (var lobbyState in lobbies.Lobbies)
+                        {
+                            if (!Lobbies.TryGetValue(lobbyState.Id, out var lobby))
+                            {
+                                lobby = new Lobby();
+                                Lobbies[lobbyState.Id] = lobby;
+                            }
+                            lobby.LobbyState = lobbyState;
+                        }
+                    }
                     OnLobbiesUpdated();
                     break;
             }
@@ -73,14 +90,33 @@ namespace BombRushMP.Plugin
             OnLobbiesUpdated();
         }
 
-        private void OnLobbiesUpdated()
+        private void UpdateCurrentLobby()
         {
             CurrentLobby = null;
             foreach (var lobby in Lobbies)
             {
-                if (lobby.Value.Players.Keys.Contains(_clientController.LocalID))
+                if (lobby.Value.LobbyState.Players.Keys.Contains(_clientController.LocalID))
                     CurrentLobby = lobby.Value;
             }
+        }
+
+        private void OnLobbyDeleted(Lobby lobby)
+        {
+            if (lobby == CurrentLobby)
+            {
+                CurrentLobby = null;
+                LobbyChanged?.Invoke();
+            }
+            UpdateCurrentLobby();
+            LobbiesUpdated?.Invoke();
+        }
+
+        private void OnLobbiesUpdated()
+        {
+            var oldLobby = CurrentLobby;
+            UpdateCurrentLobby();
+            if (oldLobby != CurrentLobby)
+                LobbyChanged?.Invoke();
             LobbiesUpdated?.Invoke();
         }
     }
