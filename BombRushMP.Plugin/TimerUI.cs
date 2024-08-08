@@ -62,6 +62,8 @@ namespace BombRushMP.Plugin
 
         public static void Create()
         {
+            if (Instance != null)
+                Destroy(Instance.gameObject);
             var mpAssets = MPAssets.Instance;
             var prefab = mpAssets.Bundle.LoadAsset<GameObject>("Timer UI");
             var timerUi = Instantiate(prefab);

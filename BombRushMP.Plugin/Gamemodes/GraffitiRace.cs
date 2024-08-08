@@ -158,7 +158,9 @@ namespace BombRushMP.Plugin.Gamemodes
                x.deactivateDuringEncounters == false &&
                x is not GraffitiSpotFinisher &&
                x.attachedTo == GraffitiSpot.AttachType.DEFAULT &&
-               x.notAllowedToPaint != PlayerType.HUMAN
+               x.notAllowedToPaint != PlayerType.HUMAN &&
+               x.GetComponentInParent<Rigidbody>() == null &&
+               x.beTargetForObjective == Story.ObjectiveID.NONE
             ).ToList();
 
             var raceSpots = new List<string>();
@@ -183,8 +185,8 @@ namespace BombRushMP.Plugin.Gamemodes
             }
 
             var spawnSpot = GetGraffitiSpotByUID(raceSpots[0]);
-            var spawnPosition = spawnSpot.transform.position;
             var spawnForward = -spawnSpot.transform.forward;
+            var spawnPosition = spawnSpot.transform.position - (spawnForward * 1f);
             spawnForward.y = 0f;
             spawnForward = spawnForward.normalized;
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);

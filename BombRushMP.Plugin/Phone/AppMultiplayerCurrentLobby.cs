@@ -46,6 +46,7 @@ namespace BombRushMP.Plugin.Phone
             var clientController = ClientController.Instance;
             var lobbyManager = clientController.ClientLobbyManager;
             var currentLobby = lobbyManager.CurrentLobby;
+            if (currentLobby == null) return;
             PhoneButton button = null;
             if (currentLobby.LobbyState.HostId == clientController.LocalID)
             {
@@ -56,7 +57,7 @@ namespace BombRushMP.Plugin.Phone
                     {
                         if (currentLobby.CurrentGamemode == null)
                         {
-                            MyPhone.CloseCurrentApp();
+                            PhoneUtility.BackToHomescreen(MyPhone);
                             MyPhone.TurnOff();
                             lobbyManager.StartGame();
                         }

@@ -11,6 +11,7 @@ namespace BombRushMP.Plugin
 {
     public class LobbyUI : MonoBehaviour
     {
+        public static LobbyUI Instance { get; private set; }
         private GameObject _canvas;
         private TextMeshProUGUI _lobbyName;
         private ClientLobbyManager _lobbyManager;
@@ -19,6 +20,7 @@ namespace BombRushMP.Plugin
         private List<LobbyPlayerUI> _playerUIs = new();
         private void Awake()
         {
+            Instance = this;
             _canvas = transform.Find("Canvas").gameObject;
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
@@ -71,6 +73,8 @@ namespace BombRushMP.Plugin
 
         public static void Create()
         {
+            if (Instance != null)
+                Destroy(Instance.gameObject);
             var mpAssets = MPAssets.Instance;
             var prefab = mpAssets.Bundle.LoadAsset<GameObject>("Lobby UI");
             var lobbyUi = Instantiate(prefab);
