@@ -1,4 +1,5 @@
-﻿using CommonAPI.Phone;
+﻿using BombRushMP.Common;
+using CommonAPI.Phone;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,6 +66,12 @@ namespace BombRushMP.Plugin.Phone
                     button = PhoneUIUtility.CreateSimpleButton("Change Gamemode");
                     button.OnConfirm += () =>
                     {
+                        var gamemodeValues = Enum.GetValues(typeof(GamemodeIDs));
+                        var gamemode = (int)currentLobby.LobbyState.Gamemode;
+                        gamemode++;
+                        if (gamemode >= gamemodeValues.Length)
+                            gamemode = 0;
+                        lobbyManager.SetGamemode((GamemodeIDs)gamemode);
 
                     };
                     ScrollView.AddButton(button);

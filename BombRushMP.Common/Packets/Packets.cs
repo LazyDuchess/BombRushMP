@@ -27,8 +27,10 @@ namespace BombRushMP.Common.Packets
         ClientLobbyStart,
         ServerLobbyStart,
         ServerLobbyEnd,
-        ServerScoreBattleBegin,
-        ClientScoreBattleScore,
-        ClientLobbyEnd
+        ServerGamemodeBegin,
+        ClientGameModeScore,
+        ClientLobbyEnd,
+        ClientGraffitiRaceData,
+        ClientLobbySetGamemode
     }
 }

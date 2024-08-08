@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common.Packets
 {
-    public class ServerScoreBattleBegin : Packet
+    public class ServerGamemodeBegin : Packet
     {
-        public override Packets PacketId => Packets.ServerScoreBattleBegin;
+        public override Packets PacketId => Packets.ServerGamemodeBegin;
         public DateTime StartTime = DateTime.UtcNow;
 
-        public ServerScoreBattleBegin()
+        public ServerGamemodeBegin()
         {
 
         }
 
-        public ServerScoreBattleBegin(DateTime startTime)
+        public ServerGamemodeBegin(DateTime startTime)
         {
             StartTime = startTime;
         }

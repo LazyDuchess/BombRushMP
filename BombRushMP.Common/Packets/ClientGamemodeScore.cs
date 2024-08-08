@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common.Packets
 {
-    public class ClientScoreBattleScore : Packet
+    public class ClientGamemodeScore : Packet
     {
-        public override Packets PacketId => Packets.ClientScoreBattleScore;
+        public override Packets PacketId => Packets.ClientGameModeScore;
         public float Score = 0;
 
-        public ClientScoreBattleScore()
+        public ClientGamemodeScore()
         {
 
         }
 
-        public ClientScoreBattleScore(float score)
+        public ClientGamemodeScore(float score)
         {
             Score = score;
         }

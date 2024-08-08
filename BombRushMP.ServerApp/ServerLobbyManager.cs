@@ -150,6 +150,25 @@ namespace BombRushMP.ServerApp
 
             switch (packetId)
             {
+                case Packets.ClientLobbySetGamemode:
+                    {
+                        if (existingLobby == null)
+                            break;
+
+                        if (existingLobby.LobbyState.HostId != playerId)
+                            break;
+
+                        if (existingLobby.LobbyState.InGame)
+                            break;
+
+                        if (existingLobby.CurrentGamemode != null)
+                            break;
+
+                        existingLobby.LobbyState.Gamemode = ((ClientLobbySetGamemode)packet).Gamemode;
+                        QueueStageUpdate(existingLobby.LobbyState.Stage);
+                    }
+                    break;
+
                 case Packets.ClientLobbyCreate:
                     {
                         if (existingLobby != null)

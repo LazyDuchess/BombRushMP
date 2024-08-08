@@ -110,21 +110,11 @@ namespace BombRushMP.Plugin.Gamemodes
                 player.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.COMBAT, true);
         }
 
-        private IEnumerator CountdownCoroutine()
-        {
-            var timerUI = TimerUI.Instance;
-            timerUI.SetText("3");
-            yield return new WaitForSeconds(1f);
-            timerUI.SetText("2");
-            yield return new WaitForSeconds(1f);
-            timerUI.SetText("1");
-        }
-
         public override void OnPacketReceived(Packets packetId, Packet packet)
         {
             switch(packetId){
-                case Packets.ServerScoreBattleBegin:
-                    var beginPacket = (ServerScoreBattleBegin)packet;
+                case Packets.ServerGamemodeBegin:
+                    var beginPacket = (ServerGamemodeBegin)packet;
                     _startTime = beginPacket.StartTime;
                     BeginMainEvent();
                     break;
@@ -139,7 +129,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 var score = player.score;
                 if (player.IsComboing())
                     score += player.baseScore * player.scoreMultiplier;
-                ClientController.SendPacket(new ClientScoreBattleScore(score), MessageSendMode.Reliable);
+                ClientController.SendPacket(new ClientGamemodeScore(score), MessageSendMode.Reliable);
             }
         }
     }

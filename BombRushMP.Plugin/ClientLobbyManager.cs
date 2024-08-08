@@ -108,6 +108,11 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyEnd(), MessageSendMode.Reliable);
         }
 
+        public void SetGamemode(GamemodeIDs gamemode)
+        {
+            _clientController.SendPacket(new ClientLobbySetGamemode(gamemode), MessageSendMode.Reliable);
+        }
+
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
             if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)

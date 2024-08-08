@@ -32,7 +32,7 @@ namespace BombRushMP.ServerApp.Gamemodes
                 case States.Countdown:
                     if (_stateTimer > 3f)
                     {
-                        ServerLobbyManager.SendPacketToLobby(new ServerScoreBattleBegin(), Riptide.MessageSendMode.Reliable, Lobby.LobbyState.Id);
+                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), Riptide.MessageSendMode.Reliable, Lobby.LobbyState.Id);
                         _state = States.Main;
                         _startTime = DateTime.UtcNow;
                     }
@@ -57,8 +57,8 @@ namespace BombRushMP.ServerApp.Gamemodes
             {
                 switch (packetId)
                 {
-                    case Packets.ClientScoreBattleScore:
-                        var scorePacket = (ClientScoreBattleScore)packet;
+                    case Packets.ClientGameModeScore:
+                        var scorePacket = (ClientGamemodeScore)packet;
                         ServerLobbyManager.SetPlayerScore(playerId, scorePacket.Score);
                         break;
                 }

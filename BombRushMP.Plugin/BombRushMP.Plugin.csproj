@@ -48,6 +48,10 @@
       <HintPath>$(ManagedPath)/UnityEngine.UI.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="EasyDecal.Runtime">
+      <HintPath>$(ManagedPath)/EasyDecal.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
