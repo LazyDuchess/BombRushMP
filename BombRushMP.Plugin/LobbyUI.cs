@@ -21,7 +21,6 @@ namespace BombRushMP.Plugin
         {
             _canvas = transform.Find("Canvas").gameObject;
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
-            _lobbyName.richText = false;
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
             _lobbyManager.LobbiesUpdated += OnLobbiesUpdated;
             _playerName = _canvas.transform.Find("Player Name").gameObject;
@@ -41,13 +40,19 @@ namespace BombRushMP.Plugin
         private void Activate()
         {
             _canvas.SetActive(true);
+            UpdateUI();
+        }
+
+        private void UpdateUI()
+        {
             _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.Id);
-            foreach(var playerui in _playerUIs)
+            foreach (var playerui in _playerUIs)
             {
                 Destroy(playerui.gameObject);
             }
             _playerUIs.Clear();
-            foreach(var player in _lobbyManager.CurrentLobby.Players)
+            var players = _lobbyManager.CurrentLobby.Players.Values.OrderByDescending(p => p.Score);
+            foreach (var player in players)
             {
                 var playerui = LobbyPlayerUI.Create(_playerName);
                 playerui.transform.SetParent(_canvas.transform, false);

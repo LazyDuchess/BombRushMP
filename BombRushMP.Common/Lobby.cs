@@ -12,7 +12,7 @@ namespace BombRushMP.Common
         public int Stage = 0;
         public uint Id = 0;
         public ushort HostId = 0;
-        public List<ushort> Players = new();
+        public Dictionary<ushort, LobbyPlayer> Players = new();
 
         public Lobby()
         {
@@ -35,8 +35,10 @@ namespace BombRushMP.Common
             var playerCount = reader.ReadInt32();
             for (var i = 0; i < playerCount; i++)
             {
-                var playerId = reader.ReadUInt16();
-                Players.Add(playerId);
+                var player = new LobbyPlayer();
+                player.Read(reader);
+                player.LobbyId = Id;
+                Players[player.Id] = player;
             }
         }
 
@@ -46,9 +48,9 @@ namespace BombRushMP.Common
             writer.Write(Id);
             writer.Write(HostId);
             writer.Write(Players.Count);
-            foreach(var playerId in Players)
+            foreach(var player in Players)
             {
-                writer.Write(playerId);
+                player.Value.Write(writer);
             }
         }
     }

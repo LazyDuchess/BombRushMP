@@ -39,7 +39,7 @@ namespace BombRushMP.ServerApp
         {
             foreach(var lobby in Lobbies)
             {
-                if (lobby.Value.Players.Contains(clientId))
+                if (lobby.Value.Players.Keys.Contains(clientId))
                     return lobby.Value;
             }
             return null;
@@ -60,7 +60,7 @@ namespace BombRushMP.ServerApp
         {
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
-                lobby.Players.Add(clientId);
+                lobby.Players[clientId] = new LobbyPlayer(lobbyId, clientId);
                 QueueStageUpdate(lobby.Stage);
             }
         }

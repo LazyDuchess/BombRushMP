@@ -78,7 +78,7 @@ namespace BombRushMP.Plugin
             CurrentLobby = null;
             foreach (var lobby in Lobbies)
             {
-                if (lobby.Value.Players.Contains(_clientController.LocalID))
+                if (lobby.Value.Players.Keys.Contains(_clientController.LocalID))
                     CurrentLobby = lobby.Value;
             }
             LobbiesUpdated?.Invoke();
