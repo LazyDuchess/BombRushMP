@@ -45,23 +45,50 @@ namespace BombRushMP.Plugin.Phone
             var clientController = ClientController.Instance;
             var lobbyManager = clientController.ClientLobbyManager;
             var currentLobby = lobbyManager.CurrentLobby;
+            PhoneButton button = null;
             if (currentLobby.LobbyState.HostId == clientController.LocalID)
             {
-                var button = PhoneUIUtility.CreateSimpleButton("Start Game");
-                button.OnConfirm += () =>
+                if (currentLobby.CurrentGamemode == null)
                 {
-                    MyPhone.CloseCurrentApp();
-                    MyPhone.TurnOff();
-                    lobbyManager.StartGame();
-                };
-                ScrollView.AddButton(button);
+                    button = PhoneUIUtility.CreateSimpleButton("Start Game");
+                    button.OnConfirm += () =>
+                    {
+                        if (currentLobby.CurrentGamemode == null)
+                        {
+                            MyPhone.CloseCurrentApp();
+                            MyPhone.TurnOff();
+                            lobbyManager.StartGame();
+                        }
+                    };
+                    ScrollView.AddButton(button);
 
-                button = PhoneUIUtility.CreateSimpleButton("Change Gamemode");
-                button.OnConfirm += () =>
+                    button = PhoneUIUtility.CreateSimpleButton("Change Gamemode");
+                    button.OnConfirm += () =>
+                    {
+
+                    };
+                    ScrollView.AddButton(button);
+
+                    button = PhoneUIUtility.CreateSimpleButton("Invite Players");
+                    button.OnConfirm += () =>
+                    {
+
+                    };
+                    ScrollView.AddButton(button);
+                }
+                else
                 {
-
-                };
-                ScrollView.AddButton(button);
+                    button = PhoneUIUtility.CreateSimpleButton("End Game");
+                    button.OnConfirm += () =>
+                    {
+                        if (currentLobby.CurrentGamemode != null)
+                        {
+                            MyPhone.CloseCurrentApp();
+                            lobbyManager.EndGame();
+                        }
+                    };
+                    ScrollView.AddButton(button);
+                }
 
                 button = PhoneUIUtility.CreateSimpleButton("Kick Players");
                 button.OnConfirm += () =>
@@ -69,23 +96,15 @@ namespace BombRushMP.Plugin.Phone
 
                 };
                 ScrollView.AddButton(button);
-
-                button = PhoneUIUtility.CreateSimpleButton("Invite Players");
-                button.OnConfirm += () =>
-                {
-
-                };
-                ScrollView.AddButton(button);
             }
+
+            button = PhoneUIUtility.CreateSimpleButton("Leave Lobby");
+            button.OnConfirm += () =>
             {
-                var button = PhoneUIUtility.CreateSimpleButton("Leave Lobby");
-                button.OnConfirm += () =>
-                {
-                    lobbyManager.LeaveLobby();
-                    MyPhone.CloseCurrentApp();
-                };
-                ScrollView.AddButton(button);
-            }
+                lobbyManager.LeaveLobby();
+                MyPhone.CloseCurrentApp();
+            };
+            ScrollView.AddButton(button);
         }
     }
 }

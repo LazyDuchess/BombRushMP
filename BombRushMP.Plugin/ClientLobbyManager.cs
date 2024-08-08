@@ -75,6 +75,11 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyStart(), MessageSendMode.Reliable);
         }
 
+        public void EndGame()
+        {
+            _clientController.SendPacket(new ClientLobbyEnd(), MessageSendMode.Reliable);
+        }
+
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
             if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)

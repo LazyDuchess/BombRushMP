@@ -194,8 +194,15 @@ namespace BombRushMP.ServerApp
 
                 case Packets.ClientLobbyStart:
                     {
-                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId && existingLobby.LobbyState.InGame == false)
                             StartGame(existingLobby.LobbyState.Id);
+                    }
+                    break;
+
+                case Packets.ClientLobbyEnd:
+                    {
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId && existingLobby.LobbyState.InGame == true)
+                            EndGame(existingLobby.LobbyState.Id, true);
                     }
                     break;
             }
