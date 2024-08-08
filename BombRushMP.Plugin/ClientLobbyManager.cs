@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Reptile;
 
 namespace BombRushMP.Plugin
 {
@@ -17,12 +18,38 @@ namespace BombRushMP.Plugin
         public Action LobbiesUpdated;
         public Action LobbyChanged;
         private ClientController _clientController;
+        private WorldHandler _worldHandler;
 
         public ClientLobbyManager()
         {
             _clientController = ClientController.Instance;
             _clientController.PacketReceived += OnPacketReceived;
             _clientController.ServerDisconnect += OnDisconnect;
+            _worldHandler = WorldHandler.instance;
+            LobbyChanged += HandleEncounter;
+        }
+
+        public void Dispose()
+        {
+            _clientController.PacketReceived -= OnPacketReceived;
+            _clientController.ServerDisconnect -= OnDisconnect;
+            if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)
+                CurrentLobby.CurrentGamemode.OnEnd(true);
+            if (_worldHandler.currentEncounter != null && _worldHandler.currentEncounter is ProxyEncounter)
+                _worldHandler.currentEncounter.SetEncounterState(Encounter.EncounterState.CLOSED);
+            LobbyChanged -= HandleEncounter;
+        }
+
+        private void HandleEncounter()
+        {
+            if (CurrentLobby == null && _worldHandler.currentEncounter != null && _worldHandler.currentEncounter is ProxyEncounter)
+            {
+                _worldHandler.currentEncounter.SetEncounterState(Encounter.EncounterState.CLOSED);
+            }
+            else if (CurrentLobby != null && _worldHandler.currentEncounter == null)
+            {
+                ProxyEncounter.Instance.ActivateEncounter();
+            }
         }
 
         public void OnUpdate()
@@ -31,6 +58,13 @@ namespace BombRushMP.Plugin
             {
                 CurrentLobby.CurrentGamemode.OnUpdate();
             }
+        }
+
+        public bool CanJoinLobby()
+        {
+            if (_worldHandler.currentEncounter != null && _worldHandler.currentEncounter is not ProxyEncounter)
+                return false;
+            return true;
         }
 
         public void OnTick()
@@ -47,21 +81,15 @@ namespace BombRushMP.Plugin
             return GamemodeFactory.GetGamemodeName(lobby.LobbyState.Gamemode);
         }
 
-        public void Dispose()
-        {
-            _clientController.PacketReceived -= OnPacketReceived;
-            _clientController.ServerDisconnect -= OnDisconnect;
-            if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)
-                CurrentLobby.CurrentGamemode.OnEnd(true);
-        }
-
         public void CreateLobby()
         {
+            if (!CanJoinLobby()) return;
             _clientController.SendPacket(new ClientLobbyCreate(), MessageSendMode.Reliable);
         }
 
         public void JoinLobby(uint lobbyId)
         {
+            if (!CanJoinLobby()) return;
             _clientController.SendPacket(new ClientLobbyJoin(lobbyId), MessageSendMode.Reliable);
         }
 

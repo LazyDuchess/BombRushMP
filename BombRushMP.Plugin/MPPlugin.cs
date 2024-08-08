@@ -22,6 +22,7 @@ namespace BombRushMP.Plugin
             {
                 CrewBoomSupport.Initialize();
             }
+            ProxyEncounter.Initialize();
             InitializePhone();
             new MPSettings(Config);
             PacketFactory.Initialize();
