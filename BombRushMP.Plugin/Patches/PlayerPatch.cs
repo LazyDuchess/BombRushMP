@@ -250,5 +250,14 @@ namespace BombRushMP.Plugin.Patches
             }
             return true;
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.LandCombo))]
+        private static void LandCombo_Prefix(Player __instance)
+        {
+            if (!__instance.IsComboing()) return;
+            if (WorldHandler.instance.currentEncounter != null && WorldHandler.instance.currentEncounter is ProxyEncounter)
+                __instance.ClearMultipliersDone();
+        }
     }
 }
