@@ -36,7 +36,7 @@ namespace BombRushMP.Plugin
             AppMultiplayer.Initialize();
             AppMultiplayerDebug.Initialize();
             AppJoinLobbyDebug.Initialize();
-            AppMultiplayerLobby.Initialize();
+            AppMultiplayerCurrentLobby.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()
