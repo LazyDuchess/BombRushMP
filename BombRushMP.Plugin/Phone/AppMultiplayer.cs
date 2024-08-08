@@ -1,3 +1,4 @@
+using BombRushMP.Common.Packets;
 using BombRushMP.Plugin;
 using BombRushMP.Plugin.Phone;
 using CommonAPI.Phone;
@@ -6,6 +7,7 @@ public class AppMultiplayer : CustomApp
 {
     private PhoneButton _createLobbyButton;
     private PhoneButton _lobbyButton;
+    private bool _waitingForLobbyCreateResponse = false;
     public static void Initialize()
     {
         PhoneAPI.RegisterApp<AppMultiplayer>("multiplayer");
@@ -22,7 +24,13 @@ public class AppMultiplayer : CustomApp
     public override void OnAppUpdate()
     {
         base.OnAppUpdate();
-        var lobbyManager = ClientController.Instance.ClientLobbyManager;
+        var clientController = ClientController.Instance;
+        if (!clientController.Connected)
+        {
+            _waitingForLobbyCreateResponse = false;
+            ClientController.Instance.PacketReceived -= OnPacketReceived_LobbyCreation;
+        }
+        var lobbyManager = clientController.ClientLobbyManager;
         if (lobbyManager.CurrentLobby != null)
         {
             if (_lobbyButton == null)
@@ -51,9 +59,24 @@ public class AppMultiplayer : CustomApp
         _createLobbyButton = PhoneUIUtility.CreateSimpleButton("Create Lobby");
         _createLobbyButton.OnConfirm += () =>
         {
-            lobbyManager.CreateLobby();
+            if (!_waitingForLobbyCreateResponse)
+            {
+                lobbyManager.CreateLobby();
+                _waitingForLobbyCreateResponse = true;
+                ClientController.Instance.PacketReceived += OnPacketReceived_LobbyCreation;
+            }
         };
         ScrollView.InsertButton(0, _createLobbyButton);
+    }
+
+    private void OnPacketReceived_LobbyCreation(Packets packetId, Packet packet)
+    {
+        if (packetId == Packets.ServerLobbyCreateResponse)
+        {
+            _waitingForLobbyCreateResponse = false;
+            MyPhone.OpenApp(typeof(AppMultiplayerCurrentLobby));
+            ClientController.Instance.PacketReceived -= OnPacketReceived_LobbyCreation;
+        }
     }
 
     private void MakeLobbyButton()

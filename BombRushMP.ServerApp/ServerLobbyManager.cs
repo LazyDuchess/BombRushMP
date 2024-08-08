@@ -16,6 +16,7 @@ namespace BombRushMP.ServerApp
         private BRCServer _server = null;
         private UIDProvider _uidProvider = new();
         private HashSet<int> _queuedStageUpdates = new();
+        private List<Action> _queuedActions = new();
 
         public ServerLobbyManager()
         {
@@ -80,6 +81,9 @@ namespace BombRushMP.ServerApp
             foreach (var stage in _queuedStageUpdates)
                 SendLobbiesToStage(stage);
             _queuedStageUpdates.Clear();
+            foreach (var action in _queuedActions)
+                action();
+            _queuedActions.Clear();
         }
 
         private void OnClientHandshook(Connection client)
@@ -114,6 +118,7 @@ namespace BombRushMP.ServerApp
                         Lobbies[lobby.Id] = lobby;
                         AddPlayer(lobby.Id, client.Id);
                         ServerLogger.Log($"Created Lobby with UID {lobby.Id} with host {player.ClientState.Name}");
+                        QueueAction(() => { _server.SendPacketToClient(new ServerLobbyCreateResponse(), MessageSendMode.Reliable, client); });
                     }
                     break;
 
@@ -156,6 +161,11 @@ namespace BombRushMP.ServerApp
         private void QueueStageUpdate(int stage)
         {
             _queuedStageUpdates.Add(stage);
+        }
+
+        private void QueueAction(Action action)
+        {
+            _queuedActions.Add(action);
         }
 
         private void SendLobbiesToStage(int stage)
