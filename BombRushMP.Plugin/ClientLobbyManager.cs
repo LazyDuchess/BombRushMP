@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.ServerApp.Gamemodes;
 using Riptide;
 using System;
 using System.Collections.Generic;
@@ -24,16 +25,34 @@ namespace BombRushMP.Plugin
             _clientController.ServerDisconnect += OnDisconnect;
         }
 
+        public void OnUpdate()
+        {
+            if (CurrentLobby != null && CurrentLobby.LobbyState.InGame && CurrentLobby.CurrentGamemode != null)
+            {
+                CurrentLobby.CurrentGamemode.OnUpdate();
+            }
+        }
+
+        public void OnTick()
+        {
+            if (CurrentLobby != null && CurrentLobby.LobbyState.InGame && CurrentLobby.CurrentGamemode != null)
+            {
+                CurrentLobby.CurrentGamemode.OnTick();
+            }
+        }
+
         public string GetLobbyName(uint lobbyId)
         {
             var lobby = Lobbies[lobbyId];
-            return $"Freeroam";
+            return GamemodeFactory.GetGamemodeName(lobby.LobbyState.Gamemode);
         }
 
         public void Dispose()
         {
             _clientController.PacketReceived -= OnPacketReceived;
             _clientController.ServerDisconnect -= OnDisconnect;
+            if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)
+                CurrentLobby.CurrentGamemode.OnEnd(true);
         }
 
         public void CreateLobby()
@@ -51,8 +70,15 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyLeave(), MessageSendMode.Reliable);
         }
 
+        public void StartGame()
+        {
+            _clientController.SendPacket(new ClientLobbyStart(), MessageSendMode.Reliable);
+        }
+
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
+            if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)
+                CurrentLobby.CurrentGamemode.OnPacketReceived(packetId, packet);
             switch (packetId)
             {
                 case Packets.ServerLobbyDeleted:
@@ -81,12 +107,25 @@ namespace BombRushMP.Plugin
                     }
                     OnLobbiesUpdated();
                     break;
+
+                case Packets.ServerLobbyStart:
+                    {
+                        OnStartGame();
+                    }
+                    break;
+
+                case Packets.ServerLobbyEnd:
+                    {
+                        var endPacket = (ServerLobbyEnd)packet;
+                        OnEndGame(endPacket.Cancelled);
+                    }
+                    break;
             }
         }
 
         private void OnDisconnect()
         {
-            Lobbies = new();
+            Lobbies.Clear();
             OnLobbiesUpdated();
         }
 
@@ -100,11 +139,37 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private void OnEndGame(bool cancelled)
+        {
+            if (CurrentLobby.CurrentGamemode != null)
+            {
+                CurrentLobby.CurrentGamemode.OnEnd(cancelled);
+            }
+            CurrentLobby.CurrentGamemode = null;
+            CurrentLobby.LobbyState.InGame = false;
+        }
+
+        private void OnStartGame()
+        {
+            if (CurrentLobby.CurrentGamemode != null)
+            {
+                CurrentLobby.CurrentGamemode.OnEnd(true);
+            }
+            CurrentLobby.CurrentGamemode = GamemodeFactory.GetGamemode(GamemodeIDs.ScoreBattle);
+            CurrentLobby.CurrentGamemode.Lobby = CurrentLobby;
+            CurrentLobby.LobbyState.InGame = true;
+            CurrentLobby.CurrentGamemode.OnStart();
+        }
+
         private void OnLobbyDeleted(Lobby lobby)
         {
             if (lobby == CurrentLobby)
             {
                 CurrentLobby = null;
+                if (lobby.CurrentGamemode != null)
+                {
+                    lobby.CurrentGamemode.OnEnd(true);
+                }
                 LobbyChanged?.Invoke();
             }
             UpdateCurrentLobby();
@@ -116,7 +181,17 @@ namespace BombRushMP.Plugin
             var oldLobby = CurrentLobby;
             UpdateCurrentLobby();
             if (oldLobby != CurrentLobby)
+            {
+                if (oldLobby != null)
+                {
+                    if (oldLobby.CurrentGamemode != null)
+                    {
+                        oldLobby.CurrentGamemode.OnEnd(true);
+                        oldLobby.CurrentGamemode = null;
+                    }
+                }
                 LobbyChanged?.Invoke();
+            }
             LobbiesUpdated?.Invoke();
         }
     }

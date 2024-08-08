@@ -1,6 +1,6 @@
 ﻿using Reptile;
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -23,14 +23,27 @@ namespace BombRushMP.Plugin
             Deactivate();
         }
 
-        private void Activate()
+        public void Activate()
         {
+            StopAllCoroutines();
             _canvas.SetActive(true);
         }
 
-        private void Deactivate()
+        public void Deactivate()
         {
+            StopAllCoroutines();
             _canvas.SetActive(false);
+        }
+
+        public void DeactivateDelayed()
+        {
+            StartCoroutine(DeactivateCoroutine());
+        }
+
+        private IEnumerator DeactivateCoroutine()
+        {
+            yield return new WaitForSeconds(3f);
+            Deactivate();
         }
 
         public void SetTime(float time)
@@ -51,9 +64,9 @@ namespace BombRushMP.Plugin
         {
             var mpAssets = MPAssets.Instance;
             var prefab = mpAssets.Bundle.LoadAsset<GameObject>("Timer UI");
-            var lobbyUi = Instantiate(prefab);
-            lobbyUi.transform.SetParent(Core.Instance.UIManager.transform, false);
-            lobbyUi.AddComponent<LobbyUI>();
+            var timerUi = Instantiate(prefab);
+            timerUi.transform.SetParent(Core.Instance.UIManager.transform, false);
+            timerUi.AddComponent<TimerUI>();
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using BombRushMP.Common;
+using Reptile;
+using System.Globalization;
 
 namespace BombRushMP.Plugin
 {
@@ -25,7 +27,14 @@ namespace BombRushMP.Plugin
         private void Update()
         {
             if (_lobbyPlayer == null) return;
-            _score.text = _lobbyPlayer.Score.ToString();
+            _score.text = FormatScore(_lobbyPlayer.Score);
+        }
+
+        private string FormatScore(float score)
+        {
+            if (score <= 0f)
+                return "0";
+            return FormattingUtility.FormatPlayerScore(CultureInfo.CurrentCulture, _lobbyPlayer.Score);
         }
 
         public void SetPlayer(LobbyPlayer player)
@@ -37,9 +46,9 @@ namespace BombRushMP.Plugin
             if (lobby.LobbyState.HostId == player.Id)
                 playername = $"<color=yellow>[Host]</color> {playername}";
 
-            _playerName.text = playername;
-            _score.text = player.Score.ToString();
             _lobbyPlayer = player;
+            _playerName.text = playername;
+            _score.text = FormatScore(_lobbyPlayer.Score);
         }
 
         public static LobbyPlayerUI Create(GameObject reference)

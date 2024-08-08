@@ -11,7 +11,7 @@ namespace BombRushMP.Common
     {
         public uint LobbyId = 0;
         public ushort Id = 0;
-        public int Score = 0;
+        public float Score = 0;
 
         public LobbyPlayer()
         {
@@ -33,7 +33,7 @@ namespace BombRushMP.Common
         public void Read(BinaryReader reader)
         {
             Id = reader.ReadUInt16();
-            Score = reader.ReadInt32();
+            Score = reader.ReadSingle();
         }
     }
 }

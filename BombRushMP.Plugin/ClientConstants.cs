@@ -9,6 +9,8 @@ namespace BombRushMP.Plugin
 {
     public static class ClientConstants
     {
+        public const int MinimumPlayersToCheer = 1;
+        public const float MinimumScoreToCheer = 500000f;
         public const float PlayerInterpolation = 12f;
         public const float PlayerGraffitiDistance = 1f;
         public const float PlayerGraffitiDownDistance = 1f;

@@ -52,6 +52,7 @@ namespace BombRushMP.Plugin.Phone
                 {
                     MyPhone.CloseCurrentApp();
                     MyPhone.TurnOff();
+                    lobbyManager.StartGame();
                 };
                 ScrollView.AddButton(button);
 

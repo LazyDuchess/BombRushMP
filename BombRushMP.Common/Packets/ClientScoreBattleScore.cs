@@ -7,28 +7,29 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common.Packets
 {
-    public class ServerLobbyEnd : Packet
+    public class ClientScoreBattleScore : Packet
     {
-        public override Packets PacketId => Packets.ServerLobbyEnd;
-        public bool Cancelled = false;
-        public ServerLobbyEnd()
+        public override Packets PacketId => Packets.ClientScoreBattleScore;
+        public float Score = 0;
+
+        public ClientScoreBattleScore()
         {
 
         }
 
-        public ServerLobbyEnd(bool cancelled)
+        public ClientScoreBattleScore(float score)
         {
-           Cancelled = cancelled;
+            Score = score;
         }
 
         public override void Read(BinaryReader reader)
         {
-            Cancelled = reader.ReadBoolean();
+            Score = reader.ReadSingle();
         }
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write(Cancelled);
+            writer.Write(Score);
         }
     }
 }

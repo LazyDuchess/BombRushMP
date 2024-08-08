@@ -18,10 +18,10 @@ namespace BombRushMP.ServerApp
             LobbyState = lobbyState;
         }
 
-        public void Tick()
+        public void Tick(float deltaTime)
         {
             if (CurrentGamemode != null && LobbyState.InGame)
-                CurrentGamemode.Tick();
+                CurrentGamemode.Tick(deltaTime);
         }
     }
 }

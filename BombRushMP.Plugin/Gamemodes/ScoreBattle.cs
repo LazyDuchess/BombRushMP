@@ -1,0 +1,146 @@
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Packets;
+using Reptile;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+using Riptide;
+
+namespace BombRushMP.Plugin.Gamemodes
+{
+    public class ScoreBattle : Gamemode
+    {
+        public enum States
+        {
+            Countdown,
+            Main,
+            Finished
+        }
+        private States _state = States.Countdown;
+        private float _stateTimer = 0f;
+        private DateTime _startTime = DateTime.UtcNow;
+
+        public ScoreBattle() : base() { }
+
+        public override void OnStart()
+        {
+            TimerUI.Instance.Activate();
+        }
+
+        public override void OnUpdate()
+        {
+            var timerUI = TimerUI.Instance;
+            switch (_state)
+            {
+                case States.Countdown:
+                    timerUI.SetText("1");
+
+                    if (_stateTimer < 2f)
+                        timerUI.SetText("2");
+
+                    if (_stateTimer < 1f)
+                        timerUI.SetText("3");
+                    break;
+
+                case States.Main:
+                    var timeElapsed = (float)(DateTime.UtcNow - _startTime).TotalSeconds;
+                    var timeLeft = Constants.ScoreBattleDuration - timeElapsed;
+                    if (timeLeft <= 0f)
+                        timeLeft = 0f;
+                    timerUI.SetTime(timeLeft);
+                    break;
+            }
+            _stateTimer += Time.deltaTime;
+        }
+
+        private void BeginMainEvent()
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            if (player.IsComboing())
+            {
+                player.scoreMultiplier = 1f;
+            }
+            else
+            {
+                player.scoreMultiplier = 0f;
+                player.tricksInCombo = 1;
+            }
+
+            player.boostCharge = player.maxBoostCharge;
+            player.lastScore = 0f;
+            player.lastCornered = 0;
+            player.ClearMultipliersDone();
+            player.comboTimeOutTimer = 1f;
+            player.RefreshAirTricks();
+            player.RefreshAllDegrade();
+            player.score = 0f;
+            player.baseScore = 0f;
+            
+            player.grindAbility.trickTimer = 0f;
+            _state = States.Main;
+        }
+
+        public override void OnEnd(bool cancelled)
+        {
+            TimerUI.Instance.DeactivateDelayed();
+
+            if (!cancelled)
+            {
+                Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
+                if (Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer)
+                {
+                    var winner = Lobby.GetHighestScoringPlayer();
+                    if (winner.Id == ClientController.Instance.LocalID && winner.Score >= ClientConstants.MinimumScoreToCheer)
+                    {
+                        var player = WorldHandler.instance.GetCurrentPlayer();
+                        player.StartCoroutine(Cheer(player));
+                    }
+                }
+            }
+        }
+
+        private IEnumerator Cheer(Player player)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.5f,1f));
+            if (player != null && !player.IsDead() && !player.IsBusyWithSequence())
+                player.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.COMBAT, true);
+        }
+
+        private IEnumerator CountdownCoroutine()
+        {
+            var timerUI = TimerUI.Instance;
+            timerUI.SetText("3");
+            yield return new WaitForSeconds(1f);
+            timerUI.SetText("2");
+            yield return new WaitForSeconds(1f);
+            timerUI.SetText("1");
+        }
+
+        public override void OnPacketReceived(Packets packetId, Packet packet)
+        {
+            switch(packetId){
+                case Packets.ServerScoreBattleBegin:
+                    var beginPacket = (ServerScoreBattleBegin)packet;
+                    _startTime = beginPacket.StartTime;
+                    BeginMainEvent();
+                    break;
+            }
+        }
+
+        public override void OnTick()
+        {
+            if (_state == States.Main)
+            {
+                var player = WorldHandler.instance.GetCurrentPlayer();
+                var score = player.score;
+                if (player.IsComboing())
+                    score += player.baseScore * player.scoreMultiplier;
+                ClientController.SendPacket(new ClientScoreBattleScore(score), MessageSendMode.Reliable);
+            }
+        }
+    }
+}

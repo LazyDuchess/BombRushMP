@@ -42,19 +42,31 @@ namespace BombRushMP.ServerApp
             lobby.CurrentGamemode = GamemodeFactory.GetGamemode(lobby.LobbyState.Gamemode);
             lobby.CurrentGamemode.Lobby = lobby;
             lobby.LobbyState.InGame = true;
-            lobby.CurrentGamemode.OnStart();
+            foreach(var player in lobby.LobbyState.Players)
+            {
+                player.Value.Score = 0;
+            }
             SendLobbiesToStage(lobby.LobbyState.Stage);
             SendPacketToLobby(new ServerLobbyStart(), MessageSendMode.Reliable, lobbyId);
+            lobby.CurrentGamemode.OnStart();
         }
 
-        public void EndGame(uint lobbyId)
+        public void EndGame(uint lobbyId, bool cancelled)
         {
             var lobby = Lobbies[lobbyId];
             lobby.LobbyState.InGame = false;
-            lobby.CurrentGamemode.OnEnd();
+            var gamemode = lobby.CurrentGamemode;
             lobby.CurrentGamemode = null;
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyEnd(), MessageSendMode.Reliable, lobbyId);
+            SendPacketToLobby(new ServerLobbyEnd(cancelled), MessageSendMode.Reliable, lobbyId);
+            gamemode.OnEnd(cancelled);
+        }
+
+        public void SetPlayerScore(ushort clientId, float score)
+        {
+            var existingLobby = GetLobbyPlayerIsIn(clientId);
+            existingLobby.LobbyState.Players[clientId].Score = score;
+            SendLobbiesToStage(existingLobby.LobbyState.Stage);
         }
 
         public Lobby GetLobbyPlayerIsIn(ushort clientId)
@@ -71,6 +83,8 @@ namespace BombRushMP.ServerApp
         {
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
+                if (lobby.CurrentGamemode != null)
+                    EndGame(lobbyId, true);
                 Lobbies.Remove(lobbyId);
                 _uidProvider.FreeUID(lobbyId);
                 ServerLogger.Log($"Deleted Lobby with UID {lobbyId}");
@@ -107,7 +121,7 @@ namespace BombRushMP.ServerApp
                 action();
             _queuedActions.Clear();
             foreach (var lobby in Lobbies)
-                lobby.Value.Tick();
+                lobby.Value.Tick(deltaTime);
         }
 
         private void OnClientHandshook(Connection client)
@@ -129,12 +143,15 @@ namespace BombRushMP.ServerApp
             var playerId = client.Id;
             var player = _server.Players[playerId];
             if (player.ClientState == null) return;
+
+            var existingLobby = GetLobbyPlayerIsIn(client.Id);
+            if (existingLobby != null && existingLobby.CurrentGamemode != null)
+                existingLobby.CurrentGamemode.OnPacketFromLobbyReceived(packetId, packet, playerId);
+
             switch (packetId)
             {
                 case Packets.ClientLobbyCreate:
                     {
-                        var existingLobby = GetLobbyPlayerIsIn(client.Id);
-
                         if (existingLobby != null)
                             RemovePlayer(existingLobby.LobbyState.Id, client.Id);
 
@@ -157,7 +174,8 @@ namespace BombRushMP.ServerApp
                         if (lobby.LobbyState.InGame) 
                             break;
 
-                        var existingLobby = GetLobbyPlayerIsIn(playerId);
+                        if (existingLobby == lobby)
+                            break;
 
                         if (existingLobby != null)
                             RemovePlayer(existingLobby.LobbyState.Id, playerId);
@@ -169,8 +187,6 @@ namespace BombRushMP.ServerApp
 
                 case Packets.ClientLobbyLeave:
                     {
-                        var existingLobby = GetLobbyPlayerIsIn(playerId);
-
                         if (existingLobby != null)
                             RemovePlayer(existingLobby.LobbyState.Id, playerId);
                     }
@@ -178,8 +194,6 @@ namespace BombRushMP.ServerApp
 
                 case Packets.ClientLobbyStart:
                     {
-                        var existingLobby = GetLobbyPlayerIsIn(playerId);
-
                         if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
                             StartGame(existingLobby.LobbyState.Id);
                     }

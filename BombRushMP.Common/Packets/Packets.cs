@@ -26,6 +26,8 @@ namespace BombRushMP.Common.Packets
         ServerLobbyDeleted,
         ClientLobbyStart,
         ServerLobbyStart,
-        ServerLobbyEnd
+        ServerLobbyEnd,
+        ServerScoreBattleBegin,
+        ClientScoreBattleScore
     }
 }

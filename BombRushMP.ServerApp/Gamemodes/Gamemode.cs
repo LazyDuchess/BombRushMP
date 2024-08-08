@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombRushMP.Common.Packets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,12 +24,17 @@ namespace BombRushMP.ServerApp.Gamemodes
 
         }
 
-        public virtual void OnEnd()
+        public virtual void OnEnd(bool cancelled)
         {
 
         }
 
-        public virtual void Tick()
+        public virtual void Tick(float deltaTime)
+        {
+
+        }
+
+        public virtual void OnPacketFromLobbyReceived(Packets packetId, Packet packet, ushort playerId)
         {
 
         }

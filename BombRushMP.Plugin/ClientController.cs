@@ -145,11 +145,12 @@ namespace BombRushMP.Plugin
 
         private void Tick()
         {
-            _client.Update();
+            _client?.Update();
             if (Connected)
             {
                 SendVisualState();
             }
+            ClientLobbyManager.OnTick();
         }
 
         private void Update()
@@ -164,6 +165,7 @@ namespace BombRushMP.Plugin
             {
                 player.Value.FrameUpdate();
             }
+            ClientLobbyManager.OnUpdate();
         }
 
         private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
