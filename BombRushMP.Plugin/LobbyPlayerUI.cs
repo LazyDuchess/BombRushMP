@@ -17,17 +17,12 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _score;
         private ClientController _clientController;
         private LobbyPlayer _lobbyPlayer = null;
+        public int Position = -1;
         private void Awake()
         {
             _playerName = transform.Find("Label").GetComponent<TextMeshProUGUI>();
             _score = transform.Find("Score").GetComponent<TextMeshProUGUI>();
             _clientController = ClientController.Instance;
-        }
-
-        private void Update()
-        {
-            if (_lobbyPlayer == null) return;
-            _score.text = FormatScore(_lobbyPlayer.Score);
         }
 
         private string FormatScore(float score)
@@ -49,6 +44,10 @@ namespace BombRushMP.Plugin
             _lobbyPlayer = player;
             _playerName.text = playername;
             _score.text = FormatScore(_lobbyPlayer.Score);
+            if (Position != -1)
+            {
+                _playerName.text = $"{Position + 1}. {playername}";
+            }
         }
 
         public static LobbyPlayerUI Create(GameObject reference)

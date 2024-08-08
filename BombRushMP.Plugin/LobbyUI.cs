@@ -51,12 +51,14 @@ namespace BombRushMP.Plugin
                 Destroy(playerui.gameObject);
             }
             _playerUIs.Clear();
-            var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score);
-            foreach (var player in players)
+            var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToList();
+            for(var i = 0; i < players.Count; i++)
             {
+                var player = players[i];
                 var playerui = LobbyPlayerUI.Create(_playerName);
                 playerui.transform.SetParent(_canvas.transform, false);
-                playerui.transform.localPosition -= new Vector3(0, _playerUIs.Count + 1 * _playerNameHeight, 0);
+                playerui.transform.localPosition -= new Vector3(0, (i + 1) * _playerNameHeight, 0);
+                playerui.Position = i;
                 playerui.SetPlayer(player);
                 _playerUIs.Add(playerui);
             }
