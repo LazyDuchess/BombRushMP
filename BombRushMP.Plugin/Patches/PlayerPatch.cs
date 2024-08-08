@@ -238,6 +238,7 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.LateUpdateUIDisplay))]
         private static bool LateUpdateUIDisplay_Prefix(Player __instance)
         {
+            if (__instance.isAI) return true;
             if (ClientController.Instance == null) return true;
             var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
             if (currentLobby == null) return true;
