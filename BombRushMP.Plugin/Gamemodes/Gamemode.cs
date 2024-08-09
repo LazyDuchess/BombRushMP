@@ -9,6 +9,7 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class Gamemode
     {
+        public MinimapOverrideModes MinimapOverrideMode = MinimapOverrideModes.None;
         public Lobby Lobby;
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;

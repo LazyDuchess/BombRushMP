@@ -28,6 +28,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public GraffitiRace() : base()
         {
             _worldHandler = WorldHandler.instance;
+            MinimapOverrideMode = MinimapOverrideModes.ForceOn;
         }
 
         public override void OnPacketReceived(Packets packetId, Packet packet)

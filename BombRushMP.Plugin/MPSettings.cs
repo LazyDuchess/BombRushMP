@@ -87,12 +87,26 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool ShowMinimap
+        {
+            get
+            {
+                return _showMinimap.Value;
+            }
+
+            set
+            {
+                _showMinimap.Value = value;
+            }
+        }
+
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
         private ConfigEntry<int> _serverPort;
         private ConfigEntry<bool> _debugLocalPlayer;
         private ConfigEntry<bool> _showNamePlates;
+        private ConfigEntry<bool> _showMinimap;
         private string _savePath;
         private ConfigFile _configFile;
         public MPSettings(ConfigFile configFile)
@@ -104,6 +118,7 @@ namespace BombRushMP.Plugin
             _serverPort = configFile.Bind("General", "Server Port", 41585, "Port of the server to connect to.");
             _playerAudioEnabled = configFile.Bind("Settings", "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
             _showNamePlates = configFile.Bind("Settings", "Show Nameplates", true, "Whether to show nameplates above players.");
+            _showMinimap = configFile.Bind("Settings", "Show Minimap", true, "Whether to always show the minimap in-game.");
             _debugLocalPlayer = configFile.Bind("Debug", "Debug Local Player", false, "Render the networked local player in the game.");
             _playerName.SettingChanged += (sender, args) =>
             {

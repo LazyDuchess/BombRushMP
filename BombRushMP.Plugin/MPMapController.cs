@@ -16,6 +16,8 @@ namespace BombRushMP.Plugin
         private UIManager _uiManager;
         private Mapcontroller _mapController;
         private BaseModule _baseModule;
+        private MPSettings _mpSettings;
+        private ClientController _clientController;
         public bool BeingDisplayed { get; private set; } = false;
 
         private void Awake()
@@ -25,6 +27,8 @@ namespace BombRushMP.Plugin
             _uiManager = Core.Instance.UIManager;
             _mapController = Mapcontroller.Instance;
             _baseModule = Core.Instance.BaseModule;
+            _mpSettings = MPSettings.Instance;
+            _clientController = ClientController.Instance;
             var mapUIGameObject = transform.Find("Canvas").Find("Map").gameObject;
             _mapUI = mapUIGameObject.AddComponent<MPMapUI>();
         }
@@ -52,15 +56,40 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private MinimapOverrideModes GetCurrentMinimapOverrideMode()
+        {
+            if (_clientController == null)
+                return MinimapOverrideModes.None;
+            var currentLobby = _clientController.ClientLobbyManager.CurrentLobby;
+            if (currentLobby == null)
+                return MinimapOverrideModes.None;
+            if (currentLobby.CurrentGamemode == null)
+                return MinimapOverrideModes.None;
+            return currentLobby.CurrentGamemode.MinimapOverrideMode;
+        }
+
         private bool ShouldDisplayMap()
         {
             if (Core.Instance.BaseModule.IsInGamePaused)
                 return false;
+
             if (!_uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
                 return false;
             var player = _worldHandler.GetCurrentPlayer();
+
             if (player.phone.state != Reptile.Phone.Phone.PhoneState.OFF && player.phone.state != Reptile.Phone.Phone.PhoneState.SHUTTINGDOWN)
                 return false;
+
+            var currentMinimapOverrideMode = GetCurrentMinimapOverrideMode();
+
+            if (currentMinimapOverrideMode == MinimapOverrideModes.ForceOn)
+                return true;
+            else if (currentMinimapOverrideMode == MinimapOverrideModes.ForceOff)
+                return false;
+
+            if (!_mpSettings.ShowMinimap)
+                return false;
+
             return true;
         }
 
