@@ -19,5 +19,15 @@ namespace BombRushMP.Plugin.Patches
             if (__instance.m_Player.cam == null) return false;
             return true;
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Mapcontroller.DisableMapCamera))]
+        private static bool DisableMapCamera_Prefix(Mapcontroller __instance)
+        {
+            var mpMapController = MPMapController.Instance;
+            if (mpMapController != null && mpMapController.BeingDisplayed)
+                return false;
+            return true;
+        }
     }
 }
