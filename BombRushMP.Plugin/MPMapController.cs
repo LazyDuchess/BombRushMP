@@ -41,8 +41,7 @@ namespace BombRushMP.Plugin
             if (_mapController == null) return;
             if (ShouldDisplayMap())
             {
-                if (!_mapUI.gameObject.activeSelf)
-                    newMapActive = true;
+                newMapActive = true;
                 if (!_mapController.m_Camera.enabled)
                     _mapController.m_Camera.enabled = true;
                 if (!BeingDisplayed)
@@ -53,8 +52,7 @@ namespace BombRushMP.Plugin
             }
             else
             {
-                if (_mapUI.gameObject.activeSelf)
-                    newMapActive = false;
+                newMapActive = false;
                 BeingDisplayed = false;
             }
             if (newMapActive != _mapActive)
