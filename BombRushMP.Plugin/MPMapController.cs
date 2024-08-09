@@ -11,6 +11,7 @@ namespace BombRushMP.Plugin
     public class MPMapController : MonoBehaviour
     {
         public static MPMapController Instance { get; private set; }
+        public bool BeingDisplayed { get; private set; } = false;
         private MPMapUI _mapUI;
         private WorldHandler _worldHandler;
         private UIManager _uiManager;
@@ -18,7 +19,7 @@ namespace BombRushMP.Plugin
         private BaseModule _baseModule;
         private MPSettings _mpSettings;
         private ClientController _clientController;
-        public bool BeingDisplayed { get; private set; } = false;
+        private bool _mapActive = false;
 
         private void Awake()
         {
@@ -31,15 +32,17 @@ namespace BombRushMP.Plugin
             _clientController = ClientController.Instance;
             var mapUIGameObject = transform.Find("Canvas").Find("Map").gameObject;
             _mapUI = mapUIGameObject.AddComponent<MPMapUI>();
+            _mapActive = _mapUI.gameObject.activeSelf;
         }
 
         private void Update()
         {
+            var newMapActive = false;
             if (_mapController == null) return;
             if (ShouldDisplayMap())
             {
                 if (!_mapUI.gameObject.activeSelf)
-                    _mapUI.gameObject.SetActive(true);
+                    newMapActive = true;
                 if (!_mapController.m_Camera.enabled)
                     _mapController.m_Camera.enabled = true;
                 if (!BeingDisplayed)
@@ -51,8 +54,13 @@ namespace BombRushMP.Plugin
             else
             {
                 if (_mapUI.gameObject.activeSelf)
-                    _mapUI.gameObject.SetActive(false);
+                    newMapActive = false;
                 BeingDisplayed = false;
+            }
+            if (newMapActive != _mapActive)
+            {
+                _mapActive = newMapActive;
+                _mapUI.gameObject.SetActive(_mapActive);
             }
         }
 

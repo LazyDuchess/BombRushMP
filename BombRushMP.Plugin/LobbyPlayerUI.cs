@@ -19,6 +19,8 @@ namespace BombRushMP.Plugin
         private LobbyPlayer _lobbyPlayer = null;
         private GameObject _readySprite;
         private GameObject _notReadySprite;
+        private bool _readySpriteActive = true;
+        private bool _notReadySpriteActive = true;
         public int Position = -1;
         private void Awake()
         {
@@ -27,6 +29,8 @@ namespace BombRushMP.Plugin
             _readySprite = transform.Find("Ready").gameObject;
             _notReadySprite = transform.Find("Not Ready").gameObject;
             _clientController = ClientController.Instance;
+            _readySpriteActive = _readySprite.activeSelf;
+            _notReadySpriteActive = _notReadySprite.activeSelf;
         }
 
         private string FormatScore(float score)
@@ -38,8 +42,8 @@ namespace BombRushMP.Plugin
 
         public void SetPlayer(LobbyPlayer player)
         {
-            _readySprite.SetActive(false);
-            _notReadySprite.SetActive(false);
+            var readySpriteNewActive = false;
+            var notReadySpriteNewActive = false;
 
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
 
@@ -50,9 +54,21 @@ namespace BombRushMP.Plugin
             else if (!lobby.LobbyState.InGame)
             {
                 if (player.Ready)
-                    _readySprite.SetActive(true);
+                    readySpriteNewActive = true;
                 else
-                    _notReadySprite.SetActive(true);
+                    notReadySpriteNewActive = true;
+            }
+
+            if (readySpriteNewActive != _readySpriteActive)
+            {
+                _readySpriteActive = readySpriteNewActive;
+                _readySprite.SetActive(_readySpriteActive);
+            }
+
+            if (notReadySpriteNewActive != _notReadySpriteActive)
+            {
+                _notReadySpriteActive = notReadySpriteNewActive;
+                _notReadySprite.SetActive(_notReadySpriteActive);
             }
 
             _lobbyPlayer = player;
