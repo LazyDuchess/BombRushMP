@@ -16,7 +16,7 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _lobbyName;
         private ClientLobbyManager _lobbyManager;
         private GameObject _playerName;
-        private float _playerNameHeight = 40f;
+        private float _playerNameHeight = 35f;
         private const int PlayerUIPoolSize = 32;
         private LobbyPlayerUI[] _playerUIs = new LobbyPlayerUI[PlayerUIPoolSize];
         private void Awake()
