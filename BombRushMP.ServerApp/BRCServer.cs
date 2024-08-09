@@ -29,6 +29,8 @@ namespace BombRushMP.ServerApp
         public Dictionary<ushort, Player> Players = new();
         private Server _server;
         private Stopwatch _tickStopWatch;
+        private HashSet<int> _activeStages;
+        private float _playerCountTickTimer = 0f;
 
         public BRCServer(ushort port, ushort maxPlayers)
         {
@@ -66,12 +68,32 @@ namespace BombRushMP.ServerApp
             {
                 player.Value.Tick(deltaTime);
             }
-            var stages = GetActiveStages();
-            foreach(var stage in stages)
+            _activeStages = GetActiveStages();
+            foreach(var stage in _activeStages)
             {
                 TickStage(stage);
             }
             OnTick?.Invoke(deltaTime);
+        }
+
+        private void TickPlayerCount(float deltaTime)
+        {
+            _playerCountTickTimer += deltaTime;
+            if (_playerCountTickTimer >= ServerConstants.PlayerCountTickRate)
+            {
+                _playerCountTickTimer = 0f;
+                var playerCountDictionary = new Dictionary<int, int>();
+                foreach(var player in Players)
+                {
+                    if (player.Value.ClientState == null) continue;
+
+                    if (playerCountDictionary.TryGetValue(player.Value.ClientState.Stage, out var playerCount))
+                        playerCountDictionary[player.Value.ClientState.Stage] = playerCount + 1;
+                    else
+                        playerCountDictionary[player.Value.ClientState.Stage] = 1;
+                }
+                SendPacket(new ServerPlayerCount(playerCountDictionary), MessageSendMode.Unreliable);
+            }
         }
 
         private void TickStage(int stage)
@@ -94,6 +116,17 @@ namespace BombRushMP.ServerApp
         public void Dispose()
         {
             _server.Stop();
+        }
+
+        public void SendPacket(Packet packet, MessageSendMode sendMode, ushort[] except = null)
+        {
+            var message = PacketFactory.MessageFromPacket(packet, sendMode);
+            foreach (var player in Players)
+            {
+                if (player.Value.ClientState == null) continue;
+                if (except != null && except.Contains(player.Key)) continue;
+                player.Value.Client.Send(message);
+            }
         }
 
         public void SendPacketToStage(Packet packet, MessageSendMode sendMode, int stage, ushort[] except = null)
