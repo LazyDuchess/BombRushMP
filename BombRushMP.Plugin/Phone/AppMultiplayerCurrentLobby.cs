@@ -57,8 +57,6 @@ namespace BombRushMP.Plugin.Phone
                     {
                         if (currentLobby.CurrentGamemode == null)
                         {
-                            PhoneUtility.BackToHomescreen(MyPhone);
-                            MyPhone.TurnOff();
                             lobbyManager.StartGame();
                         }
                     };

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Reptile;
+using BombRushMP.Plugin.Phone;
 
 namespace BombRushMP.Plugin
 {
@@ -197,6 +198,9 @@ namespace BombRushMP.Plugin
             CurrentLobby.CurrentGamemode.Lobby = CurrentLobby;
             CurrentLobby.LobbyState.InGame = true;
             CurrentLobby.CurrentGamemode.OnStart();
+            var player = _worldHandler.GetCurrentPlayer();
+            PhoneUtility.BackToHomescreen(player.phone);
+            player.phone.TurnOff();
         }
 
         private void OnLobbyDeleted(Lobby lobby)
