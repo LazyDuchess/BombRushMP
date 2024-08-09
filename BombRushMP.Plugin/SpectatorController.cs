@@ -19,9 +19,11 @@ namespace BombRushMP.Plugin
         private GameplayCamera _gameplayCamera = null;
         private WorldHandler _worldHandler = null;
         private GameInput _gameInput = null;
+        private UIManager _uiManager = null;
 
         private void Awake()
         {
+            _uiManager = Core.instance.UIManager;
             _gameInput = Core.Instance.GameInput;
             _worldHandler = WorldHandler.instance;
             var currentPlayer = _worldHandler.GetCurrentPlayer();
@@ -30,6 +32,7 @@ namespace BombRushMP.Plugin
                 EndSpectating();
                 return;
             }
+            _uiManager.gameplay.gameObject.SetActive(false);
             _gameInput.DisableAllControllerMaps(0);
             _gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS);
             _gameInput.EnableControllerMaps(BaseModule.MENU_INPUT_MAPS);
@@ -124,6 +127,7 @@ namespace BombRushMP.Plugin
             {
                 _currentSpectatingPlayer.cam = null;
             }
+            _uiManager.gameplay.gameObject.SetActive(true);
             _gameInput.DisableAllControllerMaps(0);
             _gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS, 0);
             var currentPlayer = _worldHandler.GetCurrentPlayer();
