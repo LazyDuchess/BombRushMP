@@ -45,6 +45,7 @@ namespace BombRushMP.ServerApp
             foreach(var player in lobby.LobbyState.Players)
             {
                 player.Value.Score = 0;
+                player.Value.Ready = false;
             }
             SendLobbiesToStage(lobby.LobbyState.Stage);
             SendPacketToLobby(new ServerLobbyStart(), MessageSendMode.Reliable, lobbyId);
@@ -222,6 +223,16 @@ namespace BombRushMP.ServerApp
                     {
                         if (existingLobby != null && existingLobby.LobbyState.HostId == playerId && existingLobby.LobbyState.InGame == true)
                             EndGame(existingLobby.LobbyState.Id, true);
+                    }
+                    break;
+
+                case Packets.ClientLobbySetReady:
+                    {
+                        if (existingLobby != null)
+                        {
+                            existingLobby.LobbyState.Players[playerId].Ready = ((ClientLobbySetReady)packet).Ready;
+                            QueueStageUpdate(existingLobby.LobbyState.Stage);
+                        }
                     }
                     break;
             }

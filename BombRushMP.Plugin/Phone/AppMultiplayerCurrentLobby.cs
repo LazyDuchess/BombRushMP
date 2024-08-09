@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common;
+using BombRushMP.Common.Packets;
 using CommonAPI.Phone;
 using System;
 using System.Collections.Generic;
@@ -100,6 +101,15 @@ namespace BombRushMP.Plugin.Phone
                 button.OnConfirm += () =>
                 {
 
+                };
+                ScrollView.AddButton(button);
+            }
+            else
+            {
+                button = PhoneUIUtility.CreateSimpleButton("Toggle Ready");
+                button.OnConfirm += () =>
+                {
+                    clientController.SendPacket(new ClientLobbySetReady(!currentLobby.LobbyState.Players[clientController.LocalID].Ready), Riptide.MessageSendMode.Reliable);
                 };
                 ScrollView.AddButton(button);
             }

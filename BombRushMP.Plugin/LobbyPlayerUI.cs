@@ -17,11 +17,15 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _score;
         private ClientController _clientController;
         private LobbyPlayer _lobbyPlayer = null;
+        private GameObject _readySprite;
+        private GameObject _notReadySprite;
         public int Position = -1;
         private void Awake()
         {
             _playerName = transform.Find("Label").GetComponent<TextMeshProUGUI>();
             _score = transform.Find("Score").GetComponent<TextMeshProUGUI>();
+            _readySprite = transform.Find("Ready").gameObject;
+            _notReadySprite = transform.Find("Not Ready").gameObject;
             _clientController = ClientController.Instance;
         }
 
@@ -34,12 +38,22 @@ namespace BombRushMP.Plugin
 
         public void SetPlayer(LobbyPlayer player)
         {
+            _readySprite.SetActive(false);
+            _notReadySprite.SetActive(false);
+
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
 
             var playername = _clientController.Players[player.Id].ClientState.Name;
 
             if (lobby.LobbyState.HostId == player.Id)
                 playername = $"<color=yellow>[Host]</color> {playername}";
+            else if (!lobby.LobbyState.InGame)
+            {
+                if (player.Ready)
+                    _readySprite.SetActive(true);
+                else
+                    _notReadySprite.SetActive(true);
+            }
 
             _lobbyPlayer = player;
             _playerName.text = playername;
