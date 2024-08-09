@@ -75,6 +75,7 @@ public class AppMultiplayer : CustomApp
         {
             _waitingForLobbyCreateResponse = false;
             ClientController.Instance.PacketReceived -= OnPacketReceived_LobbyCreation;
+            MyPhone.OpenApp(typeof(AppMultiplayerCurrentLobby));
         }
     }
 
