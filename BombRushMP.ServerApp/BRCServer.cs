@@ -73,6 +73,7 @@ namespace BombRushMP.ServerApp
             {
                 TickStage(stage);
             }
+            TickPlayerCount(deltaTime);
             OnTick?.Invoke(deltaTime);
         }
 

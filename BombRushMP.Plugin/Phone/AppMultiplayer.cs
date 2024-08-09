@@ -1,4 +1,5 @@
 using BombRushMP.Common.Packets;
+using BombRushMP.MapStation;
 using BombRushMP.Plugin;
 using BombRushMP.Plugin.Phone;
 using CommonAPI.Phone;
@@ -93,7 +94,17 @@ public class AppMultiplayer : CustomApp
     {
         ScrollView.RemoveAllButtons();
 
-        var button = PhoneUIUtility.CreateSimpleButton("Spectate");
+        var button = PhoneUIUtility.CreateSimpleButton("Stages");
+        button.OnConfirm += () =>
+        {
+            if (MapStationSupport.Stages.Count > 0)
+                MyPhone.OpenApp(typeof(AppMultiplayerStages));
+            else
+                MyPhone.OpenApp(typeof(AppMultiplayerBaseStages));
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Spectate");
         button.OnConfirm += () =>
         {
             SpectatorController.StartSpectating();

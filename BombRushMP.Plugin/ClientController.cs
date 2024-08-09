@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin
     public class ClientController : MonoBehaviour
     {
         public static ClientController Instance { get; private set; }
+        public Dictionary<int, int> PlayerCountByStage = new();
         public ClientLobbyManager ClientLobbyManager = null;
         public Dictionary<Player, MPPlayer> MultiplayerPlayerByPlayer = new();
         public Dictionary<ushort, MPPlayer> Players = new();
@@ -36,6 +37,13 @@ namespace BombRushMP.Plugin
             Instance = this;
             _mpSettings = MPSettings.Instance;
             ClientLobbyManager = new();
+        }
+
+        public int GetPlayerCountForStage(Stage stage)
+        {
+            if (PlayerCountByStage.TryGetValue((int)stage, out var playerCount))
+                return playerCount;
+            return 0;
         }
 
         public void Connect()
@@ -308,6 +316,13 @@ namespace BombRushMP.Plugin
                         {
                             ExecuteGenericEvent(evPacket.Event, player);
                         }
+                    }
+                    break;
+
+                case Packets.ServerPlayerCount:
+                    {
+                        var playerCountPacket = (ServerPlayerCount)packet;
+                        PlayerCountByStage = playerCountPacket.PlayerCountByStage;
                     }
                     break;
             }

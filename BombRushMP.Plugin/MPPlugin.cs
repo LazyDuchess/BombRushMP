@@ -7,11 +7,13 @@ using System.IO;
 using BepInEx.Bootstrap;
 using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Phone;
+using BombRushMP.MapStation;
 
 namespace BombRushMP.Plugin
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     [BepInDependency("CrewBoom", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
     {
         private void Awake()
@@ -21,6 +23,10 @@ namespace BombRushMP.Plugin
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
             {
                 CrewBoomSupport.Initialize();
+            }
+            if (Chainloader.PluginInfos.ContainsKey("MapStation.Plugin"))
+            {
+                MapStationSupport.Initialize();
             }
             ProxyEncounter.Initialize();
             InitializePhone();
@@ -38,6 +44,9 @@ namespace BombRushMP.Plugin
             AppMultiplayerDebug.Initialize();
             AppJoinLobbyDebug.Initialize();
             AppMultiplayerCurrentLobby.Initialize();
+            AppMultiplayerStages.Initialize();
+            AppMultiplayerBaseStages.Initialize();
+            AppMultiplayerCustomStages.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

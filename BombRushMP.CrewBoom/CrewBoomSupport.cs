@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Reptile;
 using System.Reflection;
+using BombRushMP.Common;
 
 namespace BombRushMP.CrewBoom
 {
@@ -22,7 +23,7 @@ namespace BombRushMP.CrewBoom
         public static void Initialize()
         {
             Installed = true;
-            var characterDatabase = GetTypeByName("CrewBoom.CharacterDatabase");
+            var characterDatabase = ReflectionUtility.GetTypeByName("CrewBoom.CharacterDatabase");
             _characterIds = characterDatabase.GetField("_characterIds", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as Dictionary<Characters, List<Guid>>;
         }
 
@@ -46,19 +47,6 @@ namespace BombRushMP.CrewBoom
             if (_characterIds.TryGetValue(character, out var guids))
                 return guids[0];
             return Guid.Empty;
-        }
-
-        private static Type GetTypeByName(string name)
-        {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Reverse())
-            {
-                var tt = assembly.GetType(name);
-                if (tt != null)
-                {
-                    return tt;
-                }
-            }
-            return null;
         }
     }
 }

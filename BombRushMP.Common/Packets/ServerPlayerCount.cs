@@ -29,6 +29,7 @@ namespace BombRushMP.Common.Packets
             {
                 var stageId = reader.ReadInt32();
                 var playerCount = reader.ReadInt32();
+                PlayerCountByStage[stageId] = playerCount;
             }
         }
 
