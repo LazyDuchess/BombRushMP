@@ -70,11 +70,12 @@ namespace BombRushMP.Plugin
 
         private bool ShouldDisplayMap()
         {
-            if (Core.Instance.BaseModule.IsInGamePaused)
+            if (_baseModule.IsInGamePaused)
                 return false;
 
             if (!_uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
                 return false;
+
             var player = _worldHandler.GetCurrentPlayer();
 
             if (player.phone.state != Reptile.Phone.Phone.PhoneState.OFF && player.phone.state != Reptile.Phone.Phone.PhoneState.SHUTTINGDOWN)
