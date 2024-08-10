@@ -22,6 +22,8 @@ namespace BombRushMP.Plugin
             worldHandler.RegisterPlayer(player);
             worldHandler.InitPlayer(player, character, outfit, PlayerType.NONE, MoveStyle.SKATEBOARD, Crew.PLAYERS);
             clientController.MultiplayerPlayerByPlayer[player] = multiplayerPlayer;
+            Core.OnCoreUpdatePaused -= player.OnCoreUpdatePaused;
+            Core.OnCoreUpdateUnPaused -= player.OnCoreUpdateUnPaused;
             return player;
         }
 
