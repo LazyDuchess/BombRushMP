@@ -12,6 +12,7 @@ namespace BombRushMP.Plugin
 {
     public class ClientController : MonoBehaviour
     {
+        public int GraffitiRaceGraffiti = 10;
         public static ClientController Instance { get; private set; }
         public Dictionary<int, int> PlayerCountByStage = new();
         public ClientLobbyManager ClientLobbyManager = null;

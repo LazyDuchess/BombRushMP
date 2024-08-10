@@ -118,6 +118,14 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnEnd(bool cancelled)
         {
+            var mapController = Mapcontroller.Instance;
+            foreach (var pin in _mapPins.Values)
+            {
+                mapController.m_MapPins.Remove(pin);
+                pin.isMapPinValid = false;
+                pin.DisableMapPinGameObject();
+                GameObject.Destroy(pin.gameObject);
+            }
             if (_indicators != null)
             {
                 GameObject.Destroy(_indicators.gameObject);
@@ -198,7 +206,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
             var raceSpots = new List<string>();
 
-            var spotAmount = 10;
+            var spotAmount = ClientController.GraffitiRaceGraffiti;
 
             if (validSpots.Count <= 0)
             {
@@ -206,7 +214,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 return;
             }
 
-            if (validSpots.Count < 10)
+            if (validSpots.Count < spotAmount)
                 spotAmount = Mathf.CeilToInt(validSpots.Count * 0.5f);
 
             for (var i = 0; i < spotAmount; i++)
