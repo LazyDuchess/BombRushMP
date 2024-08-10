@@ -79,7 +79,7 @@ namespace BombRushMP.Plugin.Phone
                     button = PhoneUIUtility.CreateSimpleButton("Invite Players");
                     button.OnConfirm += () =>
                     {
-
+                        MyPhone.OpenApp(typeof(AppMultiplayerLobbyInvite));
                     };
                     ScrollView.AddButton(button);
                 }

@@ -47,6 +47,7 @@ namespace BombRushMP.Plugin
             AppMultiplayerStages.Initialize();
             AppMultiplayerBaseStages.Initialize();
             AppMultiplayerCustomStages.Initialize();
+            AppMultiplayerLobbyInvite.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

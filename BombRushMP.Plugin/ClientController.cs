@@ -26,6 +26,7 @@ namespace BombRushMP.Plugin
         public GraffitiGame CurrentGraffitiGame = null;
         public Action ServerDisconnect;
         public Action ServerConnect;
+        public Action<ushort> PlayerDisconnected;
         public Action<Packets, Packet> PacketReceived;
         private Client _client;
         private float _tickTimer = 0f;
@@ -183,6 +184,7 @@ namespace BombRushMP.Plugin
                 player.Delete();
                 Players.Remove(e.Id);
             }
+            PlayerDisconnected?.Invoke(e.Id);
         }
 
         private void ExecuteGenericEvent(GenericEvents ev, MPPlayer player)
