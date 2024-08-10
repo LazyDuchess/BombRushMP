@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -25,6 +26,9 @@ namespace BombRushMP.Plugin.Gamemodes
         private WorldHandler _worldHandler;
         private Dictionary<GraffitiSpot, GraffitiSpotProgress> _originalProgress = new();
         private HashSet<GraffitiSpot> _otherSpots = new();
+        private UIScreenIndicators _indicators;
+        private Dictionary<GraffitiSpot, MapPin> _mapPins = new();
+
         public GraffitiRace() : base()
         {
             _worldHandler = WorldHandler.instance;
@@ -54,6 +58,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnStart()
         {
+            _indicators = UIScreenIndicators.Create();
             var timerUI = TimerUI.Instance;
             timerUI.Activate();
             if (ClientController.LocalID == Lobby.LobbyState.HostId)
@@ -87,7 +92,21 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public bool IsRaceGraffitiSpot(GraffitiSpot grafSpot)
         {
-            return _originalProgress.ContainsKey(grafSpot);
+            return _originalProgress.ContainsKey(grafSpot) && grafSpot.topCrew == Crew.NONE;
+        }
+
+        public void MarkGraffitiSpotDone(GraffitiSpot grafSpot)
+        {
+            var mapController = Mapcontroller.Instance;
+            _indicators.RemoveIndicator(grafSpot.transform);
+            if (_mapPins.TryGetValue(grafSpot, out var pin))
+            {
+                mapController.m_MapPins.Remove(pin);
+                pin.isMapPinValid = false;
+                pin.DisableMapPinGameObject();
+                GameObject.Destroy(pin.gameObject);
+                _mapPins.Remove(grafSpot);
+            }
         }
 
         public void AddScore()
@@ -99,6 +118,10 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnEnd(bool cancelled)
         {
+            if (_indicators != null)
+            {
+                GameObject.Destroy(_indicators.gameObject);
+            }
             foreach(var spot in _otherSpots)
             {
                 spot.gameObject.SetActive(true);
@@ -134,6 +157,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         private void OnReceive_GraffitiRaceData(ClientGraffitiRaceData packet)
         {
+            var mapController = Mapcontroller.Instance;
             _worldHandler.PlaceCurrentPlayerAt(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion(), true);
             _otherSpots.Clear();
             _originalProgress.Clear();
@@ -149,6 +173,13 @@ namespace BombRushMP.Plugin.Gamemodes
                 _originalProgress[grafSpot] = (GraffitiSpotProgress)grafSpot.progressableData;
                 grafSpot.ClearPaint();
                 grafSpot.bottomCrew = Crew.PLAYERS;
+                _indicators.AddIndicator(grafSpot.transform);
+
+                var pin = mapController.CreatePin(MapPin.PinType.StoryObjectivePin);
+                pin.AssignGameplayEvent(grafSpot.gameObject);
+                pin.InitMapPin(MapPin.PinType.StoryObjectivePin);
+                pin.OnPinEnable();
+                _mapPins[grafSpot] = pin;
             }
         }
 
@@ -161,6 +192,7 @@ namespace BombRushMP.Plugin.Gamemodes
                x.attachedTo == GraffitiSpot.AttachType.DEFAULT &&
                x.notAllowedToPaint != PlayerType.HUMAN &&
                x.GetComponentInParent<Rigidbody>() == null &&
+               x.GetComponentInParent<SoloMoveAlongUpdater>() == null &&
                x.beTargetForObjective == Story.ObjectiveID.NONE
             ).ToList();
 

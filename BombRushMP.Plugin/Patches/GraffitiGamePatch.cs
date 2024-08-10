@@ -62,6 +62,7 @@ namespace BombRushMP.Plugin.Patches
             var grafRace = lobby.CurrentGamemode as GraffitiRace;
             if (!grafRace.IsRaceGraffitiSpot(__instance.gSpot)) return;
             grafRace.AddScore();
+            grafRace.MarkGraffitiSpotDone(__instance.gSpot);
         }
     }
 }

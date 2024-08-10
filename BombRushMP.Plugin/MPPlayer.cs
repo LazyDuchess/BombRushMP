@@ -22,6 +22,50 @@ namespace BombRushMP.Plugin
         public int Outfit = 0;
         private PlayerStates _previousState = PlayerStates.None;
         public Nameplate NamePlate;
+        private MapPin _mapPin = null;
+        private Material _mapPinMaterial = null;
+
+        private void MakeMapPin()
+        {
+            var mapController = Mapcontroller.Instance;
+            _mapPin = mapController.CreatePin(MapPin.PinType.StoryObjectivePin);
+
+            _mapPin.AssignGameplayEvent(Player.gameObject);
+            _mapPin.InitMapPin(MapPin.PinType.StoryObjectivePin);
+            _mapPin.OnPinEnable();
+
+            // THX SLOPCREW! For code below.
+            var pinInObj = _mapPin.transform.Find("InViewVisualization").gameObject;
+
+            // Particles. Get rid of them.
+            var pinInPartObj = pinInObj.transform.Find("Particle System").gameObject;
+            GameObject.Destroy(pinInPartObj);
+
+            var pinOutObj = _mapPin.transform.Find("OutOfViewVisualization").gameObject;
+            var pinOutPartS = pinOutObj.GetComponent<ParticleSystem>();
+            var pinOutPartR = pinOutObj.GetComponent<ParticleSystemRenderer>();
+            GameObject.Destroy(pinOutPartS);
+            GameObject.Destroy(pinOutPartR);
+
+            // Color
+            var pinInMeshR = pinInObj.GetComponent<MeshRenderer>();
+            if (_mapPinMaterial == null)
+            {
+                _mapPinMaterial = new Material(pinInMeshR.sharedMaterial);
+                _mapPinMaterial.color = new Color(1f, 1f, 1f);
+            }
+
+            pinInMeshR.sharedMaterial = _mapPinMaterial;
+        }
+
+        private bool InSameLobbyAsLocalPlayer()
+        {
+            var clientController = ClientController.Instance;
+            var localLobby = clientController.ClientLobbyManager.CurrentLobby;
+            if (localLobby == null) return false;
+            if (localLobby.LobbyState.Players.ContainsKey(ClientId) && localLobby.LobbyState.Players.ContainsKey(clientController.LocalID)) return true;
+            return false;
+        }
 
         public void FrameUpdate()
         {
@@ -51,8 +95,7 @@ namespace BombRushMP.Plugin
             {
                 if (Player != null)
                 {
-                    GameObject.Destroy(Player.gameObject);
-                    Player = null;
+                    DeletePlayer();
                 }
                 return;
             }
@@ -176,6 +219,14 @@ namespace BombRushMP.Plugin
             UpdatePhone();
             UpdateSprayCan();
             UpdateNameplate();
+            if (_mapPin == null)
+                MakeMapPin();
+            _mapPin.SetLocation();
+
+            if (InSameLobbyAsLocalPlayer())
+                _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
+            else
+                _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
                 Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);
@@ -259,6 +310,15 @@ namespace BombRushMP.Plugin
         {
             var clientController = ClientController.Instance;
             var worldHandler = WorldHandler.instance;
+            var mapController = Mapcontroller.Instance;
+            if (_mapPin != null)
+            {
+                mapController.m_MapPins.Remove(_mapPin);
+                _mapPin.isMapPinValid = false;
+                _mapPin.DisableMapPinGameObject();
+                GameObject.Destroy(_mapPin.gameObject);
+                UnityEngine.Object.Destroy(_mapPinMaterial);
+            }
             if (Player != null)
             {
                 clientController?.MultiplayerPlayerByPlayer?.Remove(Player);

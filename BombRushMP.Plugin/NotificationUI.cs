@@ -53,8 +53,6 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F8))
-                TestNotification();
             _stateTimer += Time.deltaTime;
             UpdateAnimation();
             if (_state == States.Open && _stateTimer >= _stayTime)
@@ -92,13 +90,13 @@ namespace BombRushMP.Plugin
 
         public bool CanOpenAtThisTime()
         {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return false;
             var uiManager = Core.Instance.UIManager;
             if (!CanQueueAtThisTime()) return false;
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (player.phone.state != Reptile.Phone.Phone.PhoneState.OFF) return false;
             if (!uiManager.gameplay.gameplayScreen.gameObject.activeSelf) return false;
-            var clientController = ClientController.Instance;
-            if (clientController == null) return false;
             var currentLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (currentLobby != null && currentLobby.CurrentGamemode != null) return false;
             return true;
@@ -155,12 +153,6 @@ namespace BombRushMP.Plugin
             if (state != _state)
                 _stateTimer = 0f;
             _state = state;
-        }
-
-        private void TestNotification()
-        {
-            var notif = new Notification($"Testing Guy {UnityEngine.Random.Range(0, 100)}", $"Testing Lobby {UnityEngine.Random.Range(0, 100)}", UnityEngine.Random.Range(1, 20));
-            _notificationQueue.Enqueue(notif);
         }
 
         private void SnapOpen()

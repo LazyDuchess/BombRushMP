@@ -245,7 +245,8 @@ namespace BombRushMP.Plugin.Patches
             if (currentLobby.CurrentGamemode == null) return true;
             if (currentLobby.CurrentGamemode is GraffitiRace)
             {
-                __instance.UpdateUIIndicatorData();
+                __instance.GrafSpotVisualizationStop();
+                __instance.StoryObjectVisualizationStop();
                 return false;
             }
             return true;
