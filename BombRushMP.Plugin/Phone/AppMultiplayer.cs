@@ -94,7 +94,14 @@ public class AppMultiplayer : CustomApp
     {
         ScrollView.RemoveAllButtons();
 
-        var button = PhoneUIUtility.CreateSimpleButton("Stages");
+        var button = PhoneUIUtility.CreateSimpleButton("Invites");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppMultiplayerInvites));
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Stages");
         button.OnConfirm += () =>
         {
             if (MapStationSupport.Stages.Count > 0)

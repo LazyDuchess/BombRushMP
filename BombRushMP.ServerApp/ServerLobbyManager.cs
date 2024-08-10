@@ -152,6 +152,18 @@ namespace BombRushMP.ServerApp
             }
         }
 
+        public void ClearAllInvitesForPlayer(ushort playerId)
+        {
+            foreach (var lobby in Lobbies)
+            {
+                if (lobby.Value.LobbyState.InvitedPlayers.ContainsKey(playerId))
+                {
+                    lobby.Value.LobbyState.InvitedPlayers.Remove(playerId);
+                    QueueStageUpdate(lobby.Value.LobbyState.Stage);
+                }
+            }
+        }
+
         private void OnTick(float deltaTime)
         {
             foreach (var stage in _queuedStageUpdates)
@@ -171,6 +183,7 @@ namespace BombRushMP.ServerApp
 
         private void OnClientDisconnected(Connection client)
         {
+            ClearAllInvitesForPlayer(client.Id);
             var lobby = GetLobbyPlayerIsIn(client.Id);
             if (lobby != null)
             {
@@ -283,6 +296,19 @@ namespace BombRushMP.ServerApp
                             if (InvitePlayer(existingLobby.LobbyState.Id, invitePacket.InviteeId))
                                 _server.SendPacketToClient(new ServerLobbyInvite(invitePacket.InviteeId, playerId, existingLobby.LobbyState.Id), MessageSendMode.Reliable, _server.Players[invitePacket.InviteeId].Client);
                         }
+                    }
+                    break;
+
+                case Packets.ClientLobbyDeclineInvite:
+                    {
+                        var declinePacket = (ClientLobbyDeclineInvite)packet;
+                        UninvitePlayer(declinePacket.LobbyId, playerId);
+                    }
+                    break;
+
+                case Packets.ClientLobbyDeclineAllInvites:
+                    {
+                        ClearAllInvitesForPlayer(playerId);
                     }
                     break;
             }

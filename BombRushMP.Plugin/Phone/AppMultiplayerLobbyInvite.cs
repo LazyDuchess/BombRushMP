@@ -19,5 +19,15 @@ namespace BombRushMP.Plugin.Phone
             base.OnAppInit();
             CreateIconlessTitleBar("Invite Players", 70f);
         }
+
+        public override void PlayerChosen(ushort[] playerIds)
+        {
+            base.PlayerChosen(playerIds);
+            var clientController = ClientController.Instance;
+            foreach(var player in playerIds)
+            {
+                clientController.ClientLobbyManager.InvitePlayer(player);
+            }
+        }
     }
 }

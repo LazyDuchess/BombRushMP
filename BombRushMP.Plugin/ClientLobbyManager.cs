@@ -115,6 +115,21 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbySetGamemode(gamemode), MessageSendMode.Reliable);
         }
 
+        public void InvitePlayer(ushort playerId)
+        {
+            _clientController.SendPacket(new ClientLobbyInvite(playerId), MessageSendMode.Reliable);
+        }
+
+        public void DeclineInvite(uint lobbyId)
+        {
+            _clientController.SendPacket(new ClientLobbyDeclineInvite(lobbyId), MessageSendMode.Reliable);
+        }
+
+        public void DeclineAllInvites()
+        {
+            _clientController.SendPacket(new ClientLobbyDeclineAllInvites(), MessageSendMode.Reliable);
+        }
+
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
             if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)

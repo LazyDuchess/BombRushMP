@@ -35,6 +35,8 @@ namespace BombRushMP.Common.Packets
         ServerPlayerCount,
         ClientLobbySetReady,
         ClientLobbyInvite,
-        ServerLobbyInvite
+        ServerLobbyInvite,
+        ClientLobbyDeclineInvite,
+        ClientLobbyDeclineAllInvites
     }
 }
