@@ -9,12 +9,22 @@ namespace BombRushMP.Plugin.Phone
 {
     public class AppMultiplayerAcceptInvite : CustomApp
     {
-        public static uint LobbyId = 0;
+        private static uint LobbyId = 0;
+        private static Action OnAccept;
+        private static Action OnDecline;
         public override bool Available => false;
 
         public static void Initialize()
         {
             PhoneAPI.RegisterApp<AppMultiplayerAcceptInvite>("accept invite");
+        }
+
+        public static void Show(uint lobbyId, Reptile.Phone.Phone phone, Action onAccept = null, Action onDecline = null)
+        {
+            LobbyId = lobbyId;
+            OnAccept = onAccept;
+            OnDecline = onDecline;
+            phone.OpenApp(typeof(AppMultiplayerAcceptInvite));
         }
 
         public override void OnAppInit()
@@ -39,6 +49,9 @@ namespace BombRushMP.Plugin.Phone
             {
                 Accept();
                 MyPhone.CloseCurrentApp();
+                OnAccept?.Invoke();
+                OnAccept = null;
+                OnDecline = null;
             };
             ScrollView.AddButton(button);
 
@@ -47,6 +60,9 @@ namespace BombRushMP.Plugin.Phone
             {
                 Decline();
                 MyPhone.CloseCurrentApp();
+                OnDecline?.Invoke();
+                OnAccept = null;
+                OnDecline = null;
             };
             ScrollView.AddButton(button);
         }

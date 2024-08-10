@@ -58,6 +58,16 @@ namespace BombRushMP.Plugin.Phone
                 button = PhoneUIUtility.CreateSimpleButton($"({lobby.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(invite)} - {clientController.Players[lobby.LobbyState.HostId].ClientState.Name}");
                 button.OnConfirm += () =>
                 {
+                    AppMultiplayerAcceptInvite.Show(invite, MyPhone,
+                        onAccept: () =>
+                        {
+                            PhoneUtility.BackToHomescreen(MyPhone);
+                            MyPhone.OpenApp(typeof(AppMultiplayer));
+                        },
+                        onDecline: () =>
+                        {
+                            PopulateButtons();
+                        });
                     clientController.ClientLobbyManager.JoinLobby(invite);
                     MyPhone.CloseCurrentApp();
                 };
