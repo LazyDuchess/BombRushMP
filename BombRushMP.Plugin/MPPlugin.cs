@@ -50,6 +50,7 @@ namespace BombRushMP.Plugin
             AppMultiplayerLobbyInvite.Initialize();
             AppMultiplayerInvites.Initialize();
             AppMultiplayerAcceptInvite.Initialize();
+            AppMultiplayerLobbyKick.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

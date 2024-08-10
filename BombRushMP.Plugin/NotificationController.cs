@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.Common.Packets;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +12,44 @@ namespace BombRushMP.Plugin
     public class NotificationController : MonoBehaviour
     {
         public static NotificationController Instance { get; private set; }
+        private NotificationUI _notificationUI;
+        private UIManager _uiManager;
 
         private void Awake()
         {
             Instance = this;
             var notifUIGameObject = transform.Find("Canvas").Find("Notification").gameObject;
-            notifUIGameObject.AddComponent<NotificationUI>();
+            _notificationUI = notifUIGameObject.AddComponent<NotificationUI>();
+            var clientController = ClientController.Instance;
+            clientController.PacketReceived += OnPacketReceived;
+        }
+
+        public void RemoveNotificationForLobby(uint lobby)
+        {
+            _notificationUI.RemoveNotificationForLobby(lobby);
+        }
+
+        public void RemoveAllNotifications()
+        {
+            _notificationUI.RemoveAllNotifications();
+        }
+
+        private void OnPacketReceived(Packets packetId, Packet packet)
+        {
+            var clientController = ClientController.Instance;
+            var lobbyManager = clientController.ClientLobbyManager;
+            if (packetId == Packets.ServerLobbyInvite)
+            {
+                var invitePacket = (ServerLobbyInvite)packet;
+                var inviter = invitePacket.InviterId;
+                var invitee = invitePacket.InviteeId;
+                var lobby = invitePacket.LobbyId;
+                if (invitee != clientController.LocalID) return;
+                if (_notificationUI.CanQueueAtThisTime())
+                {
+                    _notificationUI.QueueInviteNotification(lobbyManager.Lobbies[lobby]);
+                }
+            }
         }
 
         public static void Create()

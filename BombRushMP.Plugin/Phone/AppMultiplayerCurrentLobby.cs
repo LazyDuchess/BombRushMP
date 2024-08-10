@@ -100,7 +100,7 @@ namespace BombRushMP.Plugin.Phone
                 button = PhoneUIUtility.CreateSimpleButton("Kick Players");
                 button.OnConfirm += () =>
                 {
-
+                    MyPhone.OpenApp(typeof(AppMultiplayerLobbyKick));
                 };
                 ScrollView.AddButton(button);
             }

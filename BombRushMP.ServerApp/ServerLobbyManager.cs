@@ -311,6 +311,20 @@ namespace BombRushMP.ServerApp
                         ClearAllInvitesForPlayer(playerId);
                     }
                     break;
+
+                case Packets.ClientLobbyKick:
+                    {
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                        {
+                            var kickPacket = (ClientLobbyKick)packet;
+                            var playerToKick = kickPacket.PlayerId;
+                            if (existingLobby.LobbyState.Players.ContainsKey(playerToKick))
+                            {
+                                RemovePlayer(existingLobby.LobbyState.Id, playerToKick);
+                            }
+                        }
+                    }
+                    break;
             }
         }
 

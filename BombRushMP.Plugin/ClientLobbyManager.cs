@@ -93,6 +93,7 @@ namespace BombRushMP.Plugin
         {
             if (!CanJoinLobby()) return;
             _clientController.SendPacket(new ClientLobbyJoin(lobbyId), MessageSendMode.Reliable);
+            NotificationController.Instance.RemoveNotificationForLobby(lobbyId);
         }
 
         public void LeaveLobby()
@@ -123,11 +124,18 @@ namespace BombRushMP.Plugin
         public void DeclineInvite(uint lobbyId)
         {
             _clientController.SendPacket(new ClientLobbyDeclineInvite(lobbyId), MessageSendMode.Reliable);
+            NotificationController.Instance.RemoveNotificationForLobby(lobbyId);
         }
 
         public void DeclineAllInvites()
         {
             _clientController.SendPacket(new ClientLobbyDeclineAllInvites(), MessageSendMode.Reliable);
+            NotificationController.Instance.RemoveAllNotifications();
+        }
+
+        public void KickPlayer(ushort playerId)
+        {
+            _clientController.SendPacket(new ClientLobbyKick(playerId), MessageSendMode.Reliable);
         }
 
         private void OnPacketReceived(Packets packetId, Packet packet)

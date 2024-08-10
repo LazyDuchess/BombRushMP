@@ -56,6 +56,7 @@ namespace BombRushMP.Plugin.Phone
             {
                 var lobby = lobbyManager.Lobbies[invite];
                 button = PhoneUIUtility.CreateSimpleButton($"({lobby.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(invite)} - {clientController.Players[lobby.LobbyState.HostId].ClientState.Name}");
+                ScrollView.AddButton(button);
                 button.OnConfirm += () =>
                 {
                     AppMultiplayerAcceptInvite.Show(invite, MyPhone,
@@ -66,12 +67,10 @@ namespace BombRushMP.Plugin.Phone
                         },
                         onDecline: () =>
                         {
-                            PopulateButtons();
+                            PhoneUtility.BackToHomescreen(MyPhone);
+                            MyPhone.OpenApp(typeof(AppMultiplayer));
                         });
-                    clientController.ClientLobbyManager.JoinLobby(invite);
-                    MyPhone.CloseCurrentApp();
                 };
-                ScrollView.AddButton(button);
             }
         }
     }

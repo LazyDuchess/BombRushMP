@@ -100,6 +100,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool ShowNotifications
+        {
+            get
+            {
+                return _showNotifications.Value;
+            }
+
+            set
+            {
+                _showNotifications.Value = value;
+            }
+        }
+
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
@@ -107,6 +120,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _debugLocalPlayer;
         private ConfigEntry<bool> _showNamePlates;
         private ConfigEntry<bool> _showMinimap;
+        private ConfigEntry<bool> _showNotifications;
         private string _savePath;
         private ConfigFile _configFile;
         public MPSettings(ConfigFile configFile)
@@ -120,6 +134,7 @@ namespace BombRushMP.Plugin
             _showNamePlates = configFile.Bind("Settings", "Show Nameplates", true, "Whether to show nameplates above players.");
             _showMinimap = configFile.Bind("Settings", "Show Minimap", true, "Whether to always show the minimap in-game.");
             _debugLocalPlayer = configFile.Bind("Debug", "Debug Local Player", false, "Render the networked local player in the game.");
+            _showNotifications = configFile.Bind("Settings", "Show Notifications", true, "Whether to show notifications when you're invited to a lobby.");
             _playerName.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
