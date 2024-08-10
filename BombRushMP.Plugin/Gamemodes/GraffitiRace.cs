@@ -201,7 +201,8 @@ namespace BombRushMP.Plugin.Gamemodes
                x.notAllowedToPaint != PlayerType.HUMAN &&
                x.GetComponentInParent<Rigidbody>() == null &&
                x.GetComponentInParent<SoloMoveAlongUpdater>() == null &&
-               x.beTargetForObjective == Story.ObjectiveID.NONE
+               x.beTargetForObjective == Story.ObjectiveID.NONE &&
+               x.GetComponentInParent<ActiveOnChapter>()
             ).ToList();
 
             var raceSpots = new List<string>();
