@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HarmonyLib;
 using Reptile.Phone;
 using System.Reflection.Emit;
+using BombRushMP.Plugin.Phone;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -14,32 +15,22 @@ namespace BombRushMP.Plugin.Patches
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Reptile.Phone.Phone.OpenCloseHandeling))]
-        private static bool OpenCloseHandeling_Prefix()
+        private static bool OpenCloseHandeling_Prefix(Reptile.Phone.Phone __instance, ref bool __state)
         {
+            __state = __instance.state == Reptile.Phone.Phone.PhoneState.BOOTINGUP;
             if (SpectatorController.Instance != null)
                 return false;
             return true;
         }
 
-        [HarmonyTranspiler]
+        [HarmonyPostfix]
         [HarmonyPatch(nameof(Reptile.Phone.Phone.OpenCloseHandeling))]
-        private static IEnumerable<CodeInstruction> OpenCloseHandeling_Transpiler(IEnumerable<CodeInstruction> instructions)
+        private static void OpenCloseHandeling_Postfix(Reptile.Phone.Phone __instance, ref bool __state)
         {
-            var pastCloseHandling = false;
-            foreach (var instruction in instructions)
+            if (!__state && __instance.state == Reptile.Phone.Phone.PhoneState.BOOTINGUP && __instance.gameInput.GetButtonNew(21, 0))
             {
-                if (instruction.LoadsConstant(57) && !pastCloseHandling)
-                {
-                    pastCloseHandling = true;
-                    yield return instruction;
-                    continue;
-                }
-                if (instruction.LoadsConstant(21) || instruction.LoadsConstant(29) || instruction.LoadsConstant(57))
-                {
-                    yield return new CodeInstruction(OpCodes.Ldc_I4_S, 21);
-                }
-                else
-                    yield return instruction;
+                PhoneUtility.BackToHomescreen(__instance);
+                __instance.OpenApp(typeof(AppMultiplayer));
             }
         }
     }
