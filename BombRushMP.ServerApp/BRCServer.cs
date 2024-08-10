@@ -35,6 +35,7 @@ namespace BombRushMP.ServerApp
         public BRCServer(ushort port, ushort maxPlayers)
         {
             Instance = this;
+            Message.MaxPayloadSize = Constants.MaxPayloadSize;
             ServerLobbyManager = new();
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();

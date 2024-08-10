@@ -199,10 +199,9 @@ namespace BombRushMP.Plugin.Gamemodes
                x is not GraffitiSpotFinisher &&
                x.attachedTo == GraffitiSpot.AttachType.DEFAULT &&
                x.notAllowedToPaint != PlayerType.HUMAN &&
-               x.GetComponentInParent<Rigidbody>() == null &&
-               x.GetComponentInParent<SoloMoveAlongUpdater>() == null &&
+               x.GetComponentInParent<Rigidbody>(true) == null &&
                x.beTargetForObjective == Story.ObjectiveID.NONE &&
-               x.GetComponentInParent<ActiveOnChapter>()
+               x.GetComponentInParent<ActiveOnChapter>(true) == null
             ).ToList();
 
             var raceSpots = new List<string>();

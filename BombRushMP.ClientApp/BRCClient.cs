@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using Riptide;
 using Riptide.Utils;
@@ -30,6 +31,7 @@ namespace BombRushMP.ClientApp
 
         public BRCClient(string address, Tasks task)
         {
+            Message.MaxPayloadSize = Constants.MaxPayloadSize;
             PacketFactory.Initialize();
             _task = task;
             _client = new Client();

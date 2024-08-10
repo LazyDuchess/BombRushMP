@@ -8,6 +8,8 @@ using BepInEx.Bootstrap;
 using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Phone;
 using BombRushMP.MapStation;
+using BombRushMP.Common;
+using Riptide;
 
 namespace BombRushMP.Plugin
 {
@@ -18,6 +20,7 @@ namespace BombRushMP.Plugin
     {
         private void Awake()
         {
+            Message.MaxPayloadSize = Constants.MaxPayloadSize;
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
