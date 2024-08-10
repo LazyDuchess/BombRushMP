@@ -47,6 +47,7 @@ namespace BombRushMP.ServerApp
                 player.Value.Score = 0;
                 player.Value.Ready = false;
             }
+            ClearAllInvitesForLobby(lobbyId);
             SendLobbiesToStage(lobby.LobbyState.Stage);
             SendPacketToLobby(new ServerLobbyStart(), MessageSendMode.Reliable, lobbyId);
             lobby.CurrentGamemode.OnStart();
@@ -98,6 +99,7 @@ namespace BombRushMP.ServerApp
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
                 lobby.LobbyState.Players[clientId] = new LobbyPlayer(lobbyId, clientId);
+                UninvitePlayer(lobbyId, clientId);
                 QueueStageUpdate(lobby.LobbyState.Stage);
             }
         }
@@ -109,6 +111,43 @@ namespace BombRushMP.ServerApp
                 lobby.LobbyState.Players.Remove(clientId);
                 if (lobby.LobbyState.HostId == clientId)
                     DeleteLobby(lobbyId);
+                QueueStageUpdate(lobby.LobbyState.Stage);
+            }
+        }
+
+        public bool InvitePlayer(uint lobbyId, ushort inviteeId)
+        {
+            if (Lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                if (lobby.LobbyState.Players.ContainsKey(inviteeId)) return false;
+                if (lobby.LobbyState.InGame) return false;
+                if (!lobby.LobbyState.InvitedPlayers.ContainsKey(inviteeId))
+                {
+                    lobby.LobbyState.InvitedPlayers[inviteeId] = DateTime.UtcNow;
+                    QueueStageUpdate(lobby.LobbyState.Stage);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void UninvitePlayer(uint lobbyId, ushort inviteeId)
+        {
+            if (Lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                if (lobby.LobbyState.InvitedPlayers.ContainsKey(inviteeId))
+                {
+                    lobby.LobbyState.InvitedPlayers.Remove(inviteeId);
+                    QueueStageUpdate(lobby.LobbyState.Stage);
+                }
+            }
+        }
+
+        public void ClearAllInvitesForLobby(uint lobbyId)
+        {
+            if (Lobbies.TryGetValue(lobbyId, out var lobby))
+            {
+                lobby.LobbyState.InvitedPlayers.Clear();
                 QueueStageUpdate(lobby.LobbyState.Stage);
             }
         }
@@ -232,6 +271,17 @@ namespace BombRushMP.ServerApp
                         {
                             existingLobby.LobbyState.Players[playerId].Ready = ((ClientLobbySetReady)packet).Ready;
                             QueueStageUpdate(existingLobby.LobbyState.Stage);
+                        }
+                    }
+                    break;
+
+                case Packets.ClientLobbyInvite:
+                    {
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                        {
+                            var invitePacket = (ClientLobbyInvite)packet;
+                            if (InvitePlayer(existingLobby.LobbyState.Id, invitePacket.InviteeId))
+                                _server.SendPacketToClient(new ServerLobbyInvite(invitePacket.InviteeId, playerId, existingLobby.LobbyState.Id), MessageSendMode.Reliable, _server.Players[invitePacket.InviteeId].Client);
                         }
                     }
                     break;

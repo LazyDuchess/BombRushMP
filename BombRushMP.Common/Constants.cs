@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        public const uint ProtocolVersion = 3;
+        public const uint ProtocolVersion = 4;
         public const float NetworkingTickRate = 0.03125f;
         public const float ScoreBattleDuration = 180f;
     }

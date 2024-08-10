@@ -33,6 +33,8 @@ namespace BombRushMP.Common.Packets
         ClientGraffitiRaceData,
         ClientLobbySetGamemode,
         ServerPlayerCount,
-        ClientLobbySetReady
+        ClientLobbySetReady,
+        ClientLobbyInvite,
+        ServerLobbyInvite
     }
 }

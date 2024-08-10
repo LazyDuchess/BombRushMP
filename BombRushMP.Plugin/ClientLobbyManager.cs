@@ -18,6 +18,7 @@ namespace BombRushMP.Plugin
         public Dictionary<uint, Lobby> Lobbies = new();
         public Action LobbiesUpdated;
         public Action LobbyChanged;
+        public List<uint> LobbiesInvited = new();
         private ClientController _clientController;
         private WorldHandler _worldHandler;
 
@@ -222,6 +223,13 @@ namespace BombRushMP.Plugin
         {
             var oldLobby = CurrentLobby;
             UpdateCurrentLobby();
+            LobbiesInvited.Clear();
+            foreach(var lobby in Lobbies)
+            {
+                if (lobby.Value == CurrentLobby) continue;
+                if (lobby.Value.LobbyState.InvitedPlayers.Keys.Contains(_clientController.LocalID))
+                    LobbiesInvited.Add(lobby.Key);
+            }
             if (oldLobby != CurrentLobby)
             {
                 if (oldLobby != null)

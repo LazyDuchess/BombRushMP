@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin
     public class MPMapUI : MonoBehaviour
     {
         private TextMeshProUGUI _personCountLabel;
+        private TextMeshProUGUI _notificationCountLabel;
         private ClientController _clientController;
 
         private void Awake()
@@ -21,6 +22,7 @@ namespace BombRushMP.Plugin
             _clientController = ClientController.Instance;
             var mapRawImage = transform.Find("Map Texture").GetComponent<RawImage>();
             _personCountLabel = transform.Find("People Count").GetComponent<TextMeshProUGUI>();
+            _notificationCountLabel = transform.Find("Notification Count").GetComponent<TextMeshProUGUI>();
             mapRawImage.texture = mapController.m_Camera.targetTexture;
         }
 
@@ -30,6 +32,7 @@ namespace BombRushMP.Plugin
                 _personCountLabel.text = "Offline";
             else
                 _personCountLabel.text = _clientController.Players.Count.ToString();
+            _notificationCountLabel.text = _clientController.ClientLobbyManager.LobbiesInvited.Count.ToString();
         }
     }
 }
