@@ -56,6 +56,7 @@ namespace BombRushMP.Plugin
             LobbyUI.Create();
             TimerUI.Create();
             MPMapController.Create();
+            NotificationController.Create();
         }
 
         private string GetServerAddress(string address, int port)
