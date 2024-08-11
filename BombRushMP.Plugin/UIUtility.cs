@@ -33,6 +33,7 @@ namespace BombRushMP.Plugin
         {
             if (!_initialized)
                 Initialize();
+            text.gameObject.SetActive(false);
             text.font = _referenceLabel.font;
             text.fontMaterial = _referenceLabel.fontMaterial;
             var glyph = text.gameObject.AddComponent<UIButtonGlyphComponent>();
@@ -40,6 +41,7 @@ namespace BombRushMP.Plugin
             glyph.localizedGlyphTextComponent = text;
             glyph.localizedTextComponent = text;
             glyph.enabled = true;
+            text.gameObject.SetActive(true);
         }
     }
 }

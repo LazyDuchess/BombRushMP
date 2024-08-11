@@ -113,6 +113,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool LeaveJoinMessages
+        {
+            get
+            {
+                return _leaveJoinMessages.Value;
+            }
+
+            set
+            {
+                _leaveJoinMessages.Value = value;
+            }
+        }
+
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
@@ -121,6 +134,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _showNamePlates;
         private ConfigEntry<bool> _showMinimap;
         private ConfigEntry<bool> _showNotifications;
+        private ConfigEntry<bool> _leaveJoinMessages;
         private string _savePath;
         private ConfigFile _configFile;
         public MPSettings(ConfigFile configFile)
@@ -141,6 +155,7 @@ namespace BombRushMP.Plugin
                 if (clientController.Connected)
                     clientController.SendClientState();
             };
+            _leaveJoinMessages = configFile.Bind("Settings", "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

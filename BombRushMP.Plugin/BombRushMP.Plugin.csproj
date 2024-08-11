@@ -53,6 +53,10 @@
       <HintPath>$(ManagedPath)/EasyDecal.Runtime.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  <Reference Include="Rewired_Core">
+      <HintPath>$(ManagedPath)/Rewired_Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">

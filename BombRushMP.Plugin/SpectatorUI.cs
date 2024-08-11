@@ -37,11 +37,13 @@ namespace BombRushMP.Plugin
         static TextMeshProUGUI MakeGlyph(TextMeshProUGUI reference, int actionID)
         {
             var label = MakeLabel(reference, "");
+            label.gameObject.SetActive(false);
             var glyph = label.gameObject.AddComponent<UIButtonGlyphComponent>();
             glyph.inputActionID = actionID;
             glyph.localizedGlyphTextComponent = label;
             glyph.localizedTextComponent = label;
             glyph.enabled = true;
+            label.gameObject.SetActive(true);
             return label;
         }
 
