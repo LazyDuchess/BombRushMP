@@ -57,7 +57,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             var lobby = clientController.ClientLobbyManager.CurrentLobby;
             if (lobby == null) return;
-            if (lobby.CurrentGamemode == null) return;
+            if (!lobby.InGame) return;
             if (lobby.CurrentGamemode is not GraffitiRace) return;
             var grafRace = lobby.CurrentGamemode as GraffitiRace;
             if (!grafRace.IsRaceGraffitiSpot(__instance.gSpot)) return;

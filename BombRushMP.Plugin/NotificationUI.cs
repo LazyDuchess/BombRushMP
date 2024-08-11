@@ -98,7 +98,7 @@ namespace BombRushMP.Plugin
             if (player.phone.state != Reptile.Phone.Phone.PhoneState.OFF) return false;
             if (!uiManager.gameplay.gameplayScreen.gameObject.activeSelf) return false;
             var currentLobby = clientController.ClientLobbyManager.CurrentLobby;
-            if (currentLobby != null && currentLobby.CurrentGamemode != null) return false;
+            if (currentLobby != null && currentLobby.InGame) return false;
             return true;
         }
 

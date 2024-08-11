@@ -35,7 +35,7 @@ namespace BombRushMP.Plugin
         {
             _clientController.PacketReceived -= OnPacketReceived;
             _clientController.ServerDisconnect -= OnDisconnect;
-            if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)
+            if (CurrentLobby != null && CurrentLobby.InGame)
                 CurrentLobby.CurrentGamemode.OnEnd(true);
             if (_worldHandler.currentEncounter != null && _worldHandler.currentEncounter is ProxyEncounter)
                 _worldHandler.currentEncounter.SetEncounterState(Encounter.EncounterState.CLOSED);
@@ -56,9 +56,9 @@ namespace BombRushMP.Plugin
 
         public void OnUpdate()
         {
-            if (CurrentLobby != null && CurrentLobby.LobbyState.InGame && CurrentLobby.CurrentGamemode != null)
+            if (CurrentLobby != null && CurrentLobby.InGame)
             {
-                CurrentLobby.CurrentGamemode.OnUpdate();
+                CurrentLobby.CurrentGamemode.OnUpdate_InGame();
             }
         }
 
@@ -71,9 +71,9 @@ namespace BombRushMP.Plugin
 
         public void OnTick()
         {
-            if (CurrentLobby != null && CurrentLobby.LobbyState.InGame && CurrentLobby.CurrentGamemode != null)
+            if (CurrentLobby != null && CurrentLobby.InGame)
             {
-                CurrentLobby.CurrentGamemode.OnTick();
+                CurrentLobby.CurrentGamemode.OnTick_InGame();
             }
         }
 
@@ -140,8 +140,8 @@ namespace BombRushMP.Plugin
 
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
-            if (CurrentLobby != null && CurrentLobby.CurrentGamemode != null)
-                CurrentLobby.CurrentGamemode.OnPacketReceived(packetId, packet);
+            if (CurrentLobby != null && CurrentLobby.InGame)
+                CurrentLobby.CurrentGamemode.OnPacketReceived_InGame(packetId, packet);
             switch (packetId)
             {
                 case Packets.ServerLobbyDeleted:
@@ -204,7 +204,7 @@ namespace BombRushMP.Plugin
 
         private void OnEndGame(bool cancelled)
         {
-            if (CurrentLobby.CurrentGamemode != null)
+            if (CurrentLobby.InGame)
             {
                 CurrentLobby.CurrentGamemode.OnEnd(cancelled);
             }
@@ -214,7 +214,7 @@ namespace BombRushMP.Plugin
 
         private void OnStartGame()
         {
-            if (CurrentLobby.CurrentGamemode != null)
+            if (CurrentLobby.InGame)
             {
                 CurrentLobby.CurrentGamemode.OnEnd(true);
             }
@@ -232,7 +232,7 @@ namespace BombRushMP.Plugin
             if (lobby == CurrentLobby)
             {
                 CurrentLobby = null;
-                if (lobby.CurrentGamemode != null)
+                if (lobby.InGame)
                 {
                     lobby.CurrentGamemode.OnEnd(true);
                 }
@@ -257,7 +257,7 @@ namespace BombRushMP.Plugin
             {
                 if (oldLobby != null)
                 {
-                    if (oldLobby.CurrentGamemode != null)
+                    if (oldLobby.InGame)
                     {
                         oldLobby.CurrentGamemode.OnEnd(true);
                         oldLobby.CurrentGamemode = null;

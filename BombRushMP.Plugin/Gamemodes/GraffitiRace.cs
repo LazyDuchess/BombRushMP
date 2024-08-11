@@ -35,7 +35,7 @@ namespace BombRushMP.Plugin.Gamemodes
             MinimapOverrideMode = MinimapOverrideModes.ForceOn;
         }
 
-        public override void OnPacketReceived(Packets packetId, Packet packet)
+        public override void OnPacketReceived_InGame(Packets packetId, Packet packet)
         {
             var player = _worldHandler.GetCurrentPlayer();
             switch (packetId)
@@ -58,6 +58,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnStart()
         {
+            base.OnStart();
             _indicators = UIScreenIndicators.Create();
             var timerUI = TimerUI.Instance;
             timerUI.Activate();
@@ -68,7 +69,7 @@ namespace BombRushMP.Plugin.Gamemodes
             player.userInputEnabled = false;
         }
 
-        public override void OnUpdate()
+        public override void OnUpdate_InGame()
         {
             var timerUI = TimerUI.Instance;
             switch (_state)
@@ -118,6 +119,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnEnd(bool cancelled)
         {
+            base.OnEnd(cancelled);
             var mapController = Mapcontroller.Instance;
             foreach (var pin in _mapPins.Values)
             {

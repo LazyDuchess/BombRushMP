@@ -242,7 +242,7 @@ namespace BombRushMP.Plugin.Patches
             if (ClientController.Instance == null) return true;
             var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
             if (currentLobby == null) return true;
-            if (currentLobby.CurrentGamemode == null) return true;
+            if (!currentLobby.InGame) return true;
             if (currentLobby.CurrentGamemode is GraffitiRace)
             {
                 __instance.GrafSpotVisualizationStop();

@@ -69,7 +69,7 @@ namespace BombRushMP.Plugin
             var currentLobby = _clientController.ClientLobbyManager.CurrentLobby;
             if (currentLobby == null)
                 return MinimapOverrideModes.None;
-            if (currentLobby.CurrentGamemode == null)
+            if (!currentLobby.CurrentGamemode.InGame)
                 return MinimapOverrideModes.None;
             return currentLobby.CurrentGamemode.MinimapOverrideMode;
         }

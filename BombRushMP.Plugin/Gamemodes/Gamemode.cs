@@ -11,6 +11,7 @@ namespace BombRushMP.Plugin.Gamemodes
     {
         public MinimapOverrideModes MinimapOverrideMode = MinimapOverrideModes.None;
         public Lobby Lobby;
+        public bool InGame { get; private set; }
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;
 
@@ -22,25 +23,25 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public virtual void OnStart()
         {
-
+            InGame = true;
         }
 
         public virtual void OnEnd(bool cancelled)
         {
-
+            InGame = false;
         }
 
-        public virtual void OnUpdate()
+        public virtual void OnUpdate_InGame()
         {
 
         }
 
-        public virtual void OnTick()
+        public virtual void OnTick_InGame()
         {
 
         }
 
-        public virtual void OnPacketReceived(Packets packetId, Packet packet)
+        public virtual void OnPacketReceived_InGame(Packets packetId, Packet packet)
         {
 
         }

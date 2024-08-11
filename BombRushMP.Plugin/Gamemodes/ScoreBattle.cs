@@ -28,10 +28,11 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnStart()
         {
+            base.OnStart();
             TimerUI.Instance.Activate();
         }
 
-        public override void OnUpdate()
+        public override void OnUpdate_InGame()
         {
             var timerUI = TimerUI.Instance;
             switch (_state)
@@ -86,6 +87,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnEnd(bool cancelled)
         {
+            base.OnEnd(cancelled);
             TimerUI.Instance.DeactivateDelayed();
 
             if (!cancelled)
@@ -110,7 +112,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 player.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.COMBAT, true);
         }
 
-        public override void OnPacketReceived(Packets packetId, Packet packet)
+        public override void OnPacketReceived_InGame(Packets packetId, Packet packet)
         {
             switch(packetId){
                 case Packets.ServerGamemodeBegin:
@@ -121,7 +123,7 @@ namespace BombRushMP.Plugin.Gamemodes
             }
         }
 
-        public override void OnTick()
+        public override void OnTick_InGame()
         {
             if (_state == States.Main)
             {

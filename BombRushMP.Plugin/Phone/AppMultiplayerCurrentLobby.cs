@@ -51,12 +51,12 @@ namespace BombRushMP.Plugin.Phone
             PhoneButton button = null;
             if (currentLobby.LobbyState.HostId == clientController.LocalID)
             {
-                if (currentLobby.CurrentGamemode == null)
+                if (!currentLobby.InGame)
                 {
                     button = PhoneUIUtility.CreateSimpleButton("Start Game");
                     button.OnConfirm += () =>
                     {
-                        if (currentLobby.CurrentGamemode == null)
+                        if (!currentLobby.InGame)
                         {
                             lobbyManager.StartGame();
                         }
@@ -88,7 +88,7 @@ namespace BombRushMP.Plugin.Phone
                     button = PhoneUIUtility.CreateSimpleButton("End Game");
                     button.OnConfirm += () =>
                     {
-                        if (currentLobby.CurrentGamemode != null)
+                        if (currentLobby.InGame)
                         {
                             MyPhone.CloseCurrentApp();
                             lobbyManager.EndGame();

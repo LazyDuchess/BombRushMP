@@ -19,7 +19,7 @@ namespace BombRushMP.Plugin.Patches
             var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
 
             if (currentLobby != null &&
-                currentLobby.CurrentGamemode != null &&
+                currentLobby.InGame &&
                 currentLobby.CurrentGamemode is GraffitiRace)
                 return false;
 
