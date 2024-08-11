@@ -29,7 +29,7 @@ namespace BombRushMP.Plugin
             _indicator.SetActive(false);
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!_uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
             {
