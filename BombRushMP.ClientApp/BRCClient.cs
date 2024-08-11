@@ -26,7 +26,8 @@ namespace BombRushMP.ClientApp
         public enum Tasks
         {
             CreateLobbyAndInvitePlayer,
-            JoinPlayersLobby
+            JoinPlayersLobby,
+            SendChatMessage
         }
 
         public BRCClient(string address, Tasks task)
@@ -56,6 +57,24 @@ namespace BombRushMP.ClientApp
 
                 case Tasks.JoinPlayersLobby:
                     JoinPlayersLobby_Update();
+                    break;
+
+                case Tasks.SendChatMessage:
+                    SendChatMessage_Update();
+                    break;
+            }
+        }
+
+        private void SendChatMessage_Update()
+        {
+            if (_localId == 0)
+                return;
+            switch (_taskStep)
+            {
+                case 0:
+                    Log("Sending chat message.");
+                    SendPacket(new ClientChat("Hello, world!"));
+                    _taskStep++;
                     break;
             }
         }

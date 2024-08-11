@@ -81,7 +81,7 @@ namespace BombRushMP.Plugin
         public void AddMessage(string text)
         {
             var scrollToBottom = true;
-            if (_state == States.Focused && _scrollRect.normalizedPosition.y > 0f)
+            if (_state == States.Focused && _scrollRect.normalizedPosition.y > 0.1f)
                 scrollToBottom = false;
             ShowMessages();
             if (_messages.Count >= MaxMessages)
@@ -176,6 +176,8 @@ namespace BombRushMP.Plugin
                     SetState(States.Unfocused);
                 }
             }
+            if (Input.GetKeyDown(KeyCode.End))
+                _scrollRect.normalizedPosition = new Vector2(0, 0);
             if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) && EventSystem.current.currentSelectedGameObject == _inputField.gameObject)
                 TrySendChatMessage();
             if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(_chatKey))
