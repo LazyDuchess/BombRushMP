@@ -17,7 +17,7 @@ namespace BombRushMP.Plugin
     public class ChatUI : MonoBehaviour
     {
         public static ChatUI Instance { get; private set; }
-        private const int MaxMessages = 1000;
+        private const int MaxMessages = 500;
         private KeyCode _chatKey = KeyCode.Tab;
         private Button _sendButton;
         private TMP_InputField _inputField;
