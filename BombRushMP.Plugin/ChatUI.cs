@@ -32,13 +32,13 @@ namespace BombRushMP.Plugin
         private bool _messagesHidden = false;
         private float _messageHideTimer = 0f;
 
-        private enum States
+        public enum States
         {
             None,
             Unfocused,
             Focused
         }
-        private States _state = States.None;
+        public States State { get; private set; } = States.None;
 
         private void Awake()
         {
@@ -81,7 +81,7 @@ namespace BombRushMP.Plugin
         public void AddMessage(string text)
         {
             var scrollToBottom = true;
-            if (_state == States.Focused && _scrollRect.normalizedPosition.y > 0.1f)
+            if (State == States.Focused && _scrollRect.normalizedPosition.y > 0.1f)
                 scrollToBottom = false;
             ShowMessages();
             if (_messages.Count >= MaxMessages)
@@ -129,7 +129,7 @@ namespace BombRushMP.Plugin
                 return;
             }
 
-            switch (_state)
+            switch (State)
             {
                 case States.Unfocused:
                     UnfocusedUpdate();
@@ -166,29 +166,37 @@ namespace BombRushMP.Plugin
 
         private void FocusedUpdate()
         {
-            _messageHideTimer = 0f;
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
+            InputUtils.Override = true;
+            try
             {
-                if (!RectTransformUtility.RectangleContainsScreenPoint(_chatWindow.RectTransform(), Input.mousePosition))
+                _messageHideTimer = 0f;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
                 {
-                    SetState(States.Unfocused);
+                    if (!RectTransformUtility.RectangleContainsScreenPoint(_chatWindow.RectTransform(), Input.mousePosition))
+                    {
+                        SetState(States.Unfocused);
+                    }
                 }
+                if (Input.GetKeyDown(KeyCode.End))
+                    _scrollRect.normalizedPosition = new Vector2(0, 0);
+                if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) && EventSystem.current.currentSelectedGameObject == _inputField.gameObject)
+                    TrySendChatMessage();
+                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(_chatKey))
+                    SetState(States.Unfocused);
             }
-            if (Input.GetKeyDown(KeyCode.End))
-                _scrollRect.normalizedPosition = new Vector2(0, 0);
-            if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) && EventSystem.current.currentSelectedGameObject == _inputField.gameObject)
-                TrySendChatMessage();
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(_chatKey))
-                SetState(States.Unfocused);
+            finally
+            {
+                InputUtils.Override = false;
+            }
         }
 
         private void SetState(States newState)
         {
-            if (_state == newState) return;
-            _state = newState;
-            switch (_state)
+            if (State == newState) return;
+            State = newState;
+            switch (State)
             {
                 case States.Unfocused:
                     EnterUnfocusedState();

@@ -10,6 +10,7 @@ using BombRushMP.Plugin.Phone;
 using BombRushMP.MapStation;
 using BombRushMP.Common;
 using Riptide;
+using BombRushMP.Plugin.Patches;
 
 namespace BombRushMP.Plugin
 {
@@ -37,6 +38,7 @@ namespace BombRushMP.Plugin
             PacketFactory.Initialize();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
+            InputPatch.Patch(harmony);
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }

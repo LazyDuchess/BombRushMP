@@ -10,6 +10,7 @@ namespace BombRushMP.Plugin
     public static class ClientConstants
     {
         public const string ChatMessage = "{0} : {1}";
+        public const string LobbyChatMessage = "{0} (LOBBY) : {1}";
         public const int MinimumPlayersToCheer = 2;
         public const float MinimumScoreToCheer = 500000f;
         public const float PlayerInterpolation = 12f;
