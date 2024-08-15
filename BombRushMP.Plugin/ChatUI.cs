@@ -193,7 +193,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void SetState(States newState)
+        public void SetState(States newState)
         {
             if (State == newState) return;
             State = newState;

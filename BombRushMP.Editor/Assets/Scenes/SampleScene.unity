@@ -690,10 +690,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4555082207696001417, guid: 4cc90050a5785a947b145ff72812e7f7, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 5.2001953
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4cc90050a5785a947b145ff72812e7f7, type: 3}
 --- !u!1001 &2482948338926353467
@@ -760,6 +756,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7897996184239655419, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7897996184239655419, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7897996184528747842, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
       propertyPath: m_Name
       value: Chat UI
@@ -806,6 +810,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7897996184528747853, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7897996185232694118, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8646635358493668095, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8646635358493668095, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8646635358493668095, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8646635358493668095, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 234.87013
+      objectReference: {fileID: 0}
+    - target: {fileID: 8646635358493668095, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

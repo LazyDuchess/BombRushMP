@@ -23,6 +23,9 @@ namespace BombRushMP.Plugin
 
         private void Awake()
         {
+            var chatUi = ChatUI.Instance;
+            if (chatUi != null)
+                chatUi.SetState(ChatUI.States.Unfocused);
             _uiManager = Core.instance.UIManager;
             _gameInput = Core.Instance.GameInput;
             _worldHandler = WorldHandler.instance;
@@ -122,6 +125,9 @@ namespace BombRushMP.Plugin
 
         public void EndSpectating()
         {
+            var chatUi = ChatUI.Instance;
+            if (chatUi != null)
+                chatUi.SetState(ChatUI.States.Unfocused);
             SpectatorUI.Instance.Deactivate();
             if (_currentSpectatingPlayer != null)
             {
@@ -130,6 +136,8 @@ namespace BombRushMP.Plugin
             _uiManager.gameplay.gameObject.SetActive(true);
             _gameInput.DisableAllControllerMaps(0);
             _gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS, 0);
+            if (SpectatorController.Instance != null)
+                _gameInput.EnableControllerMaps(BaseModule.MENU_INPUT_MAPS, 0);
             var currentPlayer = _worldHandler.GetCurrentPlayer();
             currentPlayer.userInputEnabled = true;
             currentPlayer.cam = _gameplayCamera;
