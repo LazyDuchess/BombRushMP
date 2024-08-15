@@ -156,6 +156,7 @@ namespace BombRushMP.Plugin
 
         private void UnfocusedUpdate()
         {
+            _scrollRect.normalizedPosition = new Vector2(0, 0);
             _messageHideTimer += Time.deltaTime;
             if (_messageHideTimer >= TimeForMessagesToHide)
                 HideMessages();
@@ -240,7 +241,11 @@ namespace BombRushMP.Plugin
         {
             var uiManager = Core.Instance.UIManager;
             if (uiManager == null || uiManager.gameplay == null || uiManager.gameplay.gameplayScreen == null) return false;
-            if (!uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy) return false;
+            if (!uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
+            {
+                if (SpectatorController.Instance == null)
+                    return false;
+            }
             return true;
         }
 
