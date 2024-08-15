@@ -216,6 +216,8 @@ namespace BombRushMP.Plugin
             var gameInput = Core.Instance.GameInput;
             gameInput.DisableAllControllerMaps();
             gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS);
+            if (SpectatorController.Instance != null)
+                gameInput.EnableControllerMaps(BaseModule.MENU_INPUT_MAPS);
             _scrollRectImage.enabled = false;
             _inputField.gameObject.SetActive(false);
             _sendButton.gameObject.SetActive(false);
