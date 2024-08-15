@@ -88,6 +88,7 @@ namespace BombRushMP.Plugin
             var prefab = mpAssets.Bundle.LoadAsset<GameObject>("Screen Indicators UI");
             var indicatorUI = Instantiate(prefab);
             indicatorUI.transform.SetParent(Core.Instance.UIManager.transform, false);
+            indicatorUI.transform.SetAsFirstSibling();
             return indicatorUI.AddComponent<UIScreenIndicators>();
         }
     }
