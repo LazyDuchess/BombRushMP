@@ -350,14 +350,18 @@ namespace BombRushMP.Plugin
         public void SendClientState()
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
+            var playerComp = PlayerComponent.Get(player);
             var statePacket = new ClientState()
             {
                 Name = _mpSettings.PlayerName,
                 Character = (int)player.character,
                 Outfit = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
-                ProtocolVersion = Constants.ProtocolVersion
+                ProtocolVersion = Constants.ProtocolVersion,
+                SpecialSkin = playerComp.SpecialSkin,
+                SpecialSkinVariant = playerComp.SpecialSkinVariant
             };
+
             if (CrewBoomSupport.Installed)
             {
                 statePacket.CrewBoomCharacter = CrewBoomSupport.GetGuidForCharacter(player.character);

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using BombRushMP.Common;
 
 namespace BombRushMP.Plugin
 {
@@ -73,6 +74,9 @@ namespace BombRushMP.Plugin
             player.SetCharacter(oldChar, Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(oldChar).outfit);
             player.InitVisual();
             player.usingEquippedMovestyle = false;
+            var clientController = ClientController.Instance;
+            if (clientController != null)
+                clientController.SendClientState();
         }
 
         public void ApplyRandomVariantToPlayer(Player player)
@@ -94,6 +98,9 @@ namespace BombRushMP.Plugin
             var variantMaterial = definition.Variants[variant];
             playerComponent.MainRenderer.sharedMaterial = variantMaterial;
             playerComponent.SpecialSkinVariant = variant;
+            var clientController = ClientController.Instance;
+            if (clientController != null)
+                clientController.SendClientState();
         }
 
         public void ApplySpecialSkinToPlayer(Player player, SpecialSkins skin)
@@ -153,6 +160,9 @@ namespace BombRushMP.Plugin
                 playerComponent.MainRenderer = player.visualTf.FindRecursive(definition.MainRendererName).GetComponent<SkinnedMeshRenderer>();
                 ApplySpecialSkinVariantToPlayer(player, 0);
             }
+            var clientController = ClientController.Instance;
+            if (clientController != null)
+                clientController.SendClientState();
         }
     }
 }

@@ -139,6 +139,17 @@ namespace BombRushMP.Plugin
                 Outfit = fit;
             }
 
+            var playerComp = PlayerComponent.Get(Player);
+            if (ClientState.SpecialSkin != playerComp.SpecialSkin)
+            {
+                SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(Player, ClientState.SpecialSkin);
+                justCreated = true;
+            }
+            if (ClientState.SpecialSkinVariant != playerComp.SpecialSkinVariant)
+            {
+                SpecialSkinManager.Instance.ApplySpecialSkinVariantToPlayer(Player, ClientState.SpecialSkinVariant);
+            }
+
             if (justCreated)
             {
                 if (ClientVisualState.CurrentAnimation != 0)
