@@ -35,7 +35,13 @@ public class AppMultiplayerDebug : CustomApp
         button.OnConfirm += () =>
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
-            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.FemaleCop);
+            var gender = UnityEngine.Random.Range(0, 2);
+
+            if (gender == 0)
+                SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.FemaleCop);
+            else
+                SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.MaleCop);
+
             SpecialSkinManager.Instance.ApplyRandomVariantToPlayer(player);
         };
         ScrollView.AddButton(button);

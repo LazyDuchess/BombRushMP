@@ -9,6 +9,7 @@ namespace BombRushMP.Common
     public enum SpecialSkins
     {
         None = -1,
-        FemaleCop
+        FemaleCop,
+        MaleCop
     }
 }

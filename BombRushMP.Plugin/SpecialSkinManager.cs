@@ -16,6 +16,7 @@ namespace BombRushMP.Plugin
         private Dictionary<SpecialSkins, string> _specialSkinPrefabs = new()
         {
             {SpecialSkins.FemaleCop, "PlayerFemaleCopPrefab" },
+            {SpecialSkins.MaleCop, "PlayerMaleCopPrefab" }
         };
         private Dictionary<SpecialSkins, GameObject> _specialSkinVisuals = new();
         private Dictionary<SpecialSkins, AudioLibrary> _specialSkinAudio = new();
