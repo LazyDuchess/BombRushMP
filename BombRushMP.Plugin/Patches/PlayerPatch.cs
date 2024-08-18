@@ -109,6 +109,19 @@ namespace BombRushMP.Plugin.Patches
             return true;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.SetOutfit))]
+        private static bool SetOutfit_Prefix(Player __instance, int setOutfit)
+        {
+            var playerComponent = PlayerComponent.Get(__instance);
+            if (playerComponent.SpecialSkin == SpecialSkins.None) return true;
+            if (!__instance.isAI)
+            {
+                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(__instance.character).outfit = setOutfit;
+            }
+            return false;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.SetOutfit))]
         private static void SetOutfit_Postfix(Player __instance)
@@ -124,6 +137,8 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.SetCharacter))]
         private static void SetCharacter_Postfix(Player __instance)
         {
+            var playerComponent = PlayerComponent.Get(__instance);
+            playerComponent.SpecialSkin = SpecialSkins.None;
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
@@ -259,6 +274,13 @@ namespace BombRushMP.Plugin.Patches
             if (!__instance.IsComboing()) return;
             if (WorldHandler.instance.currentEncounter != null && WorldHandler.instance.currentEncounter is ProxyEncounter)
                 __instance.ClearMultipliersDone();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.Awake))]
+        private static void Awake_Prefix(Player __instance)
+        {
+            __instance.gameObject.AddComponent<PlayerComponent>();
         }
     }
 }

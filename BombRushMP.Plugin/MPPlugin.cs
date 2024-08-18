@@ -36,6 +36,7 @@ namespace BombRushMP.Plugin
             InitializePhone();
             new MPSettings(Config);
             PacketFactory.Initialize();
+            new SpecialSkinManager();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             InputPatch.Patch(harmony);
