@@ -24,11 +24,17 @@ namespace BombRushMP.Plugin.Gamemodes
         public virtual void OnStart()
         {
             InGame = true;
+            var spectatorController = SpectatorController.Instance;
+            if (spectatorController != null)
+                spectatorController.EndSpectating();
         }
 
         public virtual void OnEnd(bool cancelled)
         {
             InGame = false;
+            var spectatorController = SpectatorController.Instance;
+            if (spectatorController != null)
+                spectatorController.EndSpectating();
         }
 
         public virtual void OnUpdate_InGame()
