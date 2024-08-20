@@ -35,6 +35,12 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            if (!Core.Instance.UIManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
+            {
+                _grindUI.SetActive(false);
+                _manualUI.SetActive(false);
+                return;
+            }
             var worldHandler = WorldHandler.instance;
             if (worldHandler == null) return;
             var player = worldHandler.GetCurrentPlayer();
