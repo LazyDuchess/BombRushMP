@@ -53,5 +53,21 @@ public class AppMultiplayerDebug : CustomApp
             SpecialSkinManager.Instance.RemoveSpecialSkinFromPlayer(player);
         };
         ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Enable ProSkater Mode");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            ProSkaterPlayer.Set(player, true);
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Disable ProSkater Mode");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            ProSkaterPlayer.Set(player, false);
+        };
+        ScrollView.AddButton(button);
     }
 }

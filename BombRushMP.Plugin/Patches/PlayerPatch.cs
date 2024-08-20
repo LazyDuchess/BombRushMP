@@ -272,8 +272,21 @@ namespace BombRushMP.Plugin.Patches
         private static void LandCombo_Prefix(Player __instance)
         {
             if (!__instance.IsComboing()) return;
+            var proSkater = ProSkaterPlayer.Get(__instance);
+            if (proSkater != null)
+                proSkater.OnEndCombo();
             if (WorldHandler.instance.currentEncounter != null && WorldHandler.instance.currentEncounter is ProxyEncounter)
                 __instance.ClearMultipliersDone();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.DropCombo))]
+        private static void DropCombo_Prefix(Player __instance)
+        {
+            if (!__instance.IsComboing()) return;
+            var proSkater = ProSkaterPlayer.Get(__instance);
+            if (proSkater != null)
+                proSkater.OnEndCombo();
         }
 
         [HarmonyPrefix]
