@@ -17,6 +17,8 @@ namespace BombRushMP.Plugin
         private Image _grindUIBG;
         private GameObject _grindUIIndicator;
         private GameObject _manualUI;
+        private Image _manualUIBG;
+        private GameObject _manualUIIndicator;
         private void Awake()
         {
             Instance = this;
@@ -25,6 +27,8 @@ namespace BombRushMP.Plugin
             _manualUI = canvas.Find("Manual Balance UI").gameObject;
             _grindUIBG = _grindUI.transform.Find("Image").GetComponent<Image>();
             _grindUIIndicator = _grindUI.transform.Find("Indicator").gameObject;
+            _manualUIBG = _manualUI.transform.Find("Image").GetComponent<Image>();
+            _manualUIIndicator = _manualUI.transform.Find("Indicator").gameObject;
             _manualUI.SetActive(false);
             _grindUI.SetActive(false);
         }
@@ -42,6 +46,7 @@ namespace BombRushMP.Plugin
                 _manualUI.SetActive(false);
                 return;
             }
+
             if (!proSkater.DidGrind)
                 _grindUI.SetActive(false);
             else
@@ -52,7 +57,20 @@ namespace BombRushMP.Plugin
                 if (player.ability != null && (player.ability is GrindAbility || player.ability is HandplantAbility))
                     col.a = 1f;
                 _grindUIBG.color = col;
-                _grindUIIndicator.transform.rotation = Quaternion.Euler(0f, 0f, -proSkater.GrindBalance.Current * 50f);
+                _grindUIIndicator.transform.localRotation = Quaternion.Euler(0f, 0f, -proSkater.GrindBalance.Current * 50f);
+            }
+
+            if (!proSkater.DidManual)
+                _manualUI.SetActive(false);
+            else
+            {
+                _manualUI.SetActive(true);
+                var col = _manualUIBG.color;
+                col.a = 0.5f;
+                if (proSkater.IsOnManual())
+                    col.a = 1f;
+                _manualUIBG.color = col;
+                _manualUIIndicator.transform.localRotation = Quaternion.Euler(0f, 0f, -proSkater.ManualBalance.Current * 50f);
             }
         }
 

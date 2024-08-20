@@ -98,6 +98,15 @@ namespace BombRushMP.Plugin
         private const float GrindPenalty = 1.25f;
         private const float GrindSensitivityPenalty = 1.1f;
         private const float GrindPenaltyMinimumBalance = 0.2f;
+        public const float LeaveGrindSensitivity = 0.0025f;
+
+        public const float ManualPenaltyTime = 0.2f;
+        private const float ManualSoftReset = 0.5f;
+        private const float ManualPenalty = 1.25f;
+        private const float ManualSensitivityPenalty = 1.1f;
+        private const float ManualPenaltyMinimumBalance = 0.2f;
+        public const float LeaveManualSensitivity = 0.0025f;
+
         public bool DidGrind = false;
         public bool DidManual = false;
         public BalanceMeter GrindBalance = new();
@@ -125,6 +134,16 @@ namespace BombRushMP.Plugin
         public void SoftResetGrinding()
         {
             GrindBalance.DoSoftReset(GrindSoftReset);
+        }
+
+        public void PenalizeManual()
+        {
+            ManualBalance.DoPenalty(ManualPenalty, ManualSensitivityPenalty, ManualPenaltyMinimumBalance);
+        }
+
+        public void SoftResetManual()
+        {
+            ManualBalance.DoSoftReset(ManualSoftReset);
         }
 
         private void HandplantUpdate(HandplantAbility handplantAbility)
@@ -162,11 +181,30 @@ namespace BombRushMP.Plugin
             if (_player.ability == null) return;
             if (_player.ability is HandplantAbility)
                 HandplantUpdate(_player.ability as HandplantAbility);
+            if (IsOnManual())
+                ManualUpdate();
         }
 
-        public void ManualUpdate()
+        public bool IsOnManual()
         {
+            if (_player.ability == null) return false;
+            if (_player.ability is SlideAbility) return true;
+            if (_player.ability is GroundTrickAbility && _player.IsGrounded()) return true;
+            return false;
+        }
+
+        private void ManualUpdate()
+        {
+            DidManual = true;
             ManualBalance.TickActive();
+            ManualBalance.Nudge(Core.Instance.GameInput.GetAxis(6));
+            if (ManualBalance.Current >= 1f || ManualBalance.Current <= -1f)
+            {
+                var balance = ManualBalance.Current;
+                _player.DropCombo();
+                _player.GetHit(0, -transform.forward * Mathf.Sign(balance), KnockbackAbility.KnockbackType.FAR);     
+            }
+            _player.comboTimeOutTimer = 1f;
         }
 
         public static void Set(Player player, bool set)

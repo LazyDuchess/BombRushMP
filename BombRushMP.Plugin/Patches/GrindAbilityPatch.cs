@@ -51,6 +51,7 @@ namespace BombRushMP.Plugin.Patches
                     proSkater.PenalizeGrinding();
                 else
                     proSkater.SoftResetGrinding();
+                proSkater.GrindBalance.CurrentSensitivity += ProSkaterPlayer.LeaveGrindSensitivity;
             }
             var clientController = ClientController.Instance;
             if (clientController == null) return;

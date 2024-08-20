@@ -162,6 +162,17 @@ namespace BombRushMP.Plugin.Patches
             return true;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.SetInputs))]
+        private static void SetInputs_Prefix(Player __instance, ref UserInputHandler.InputBuffer inputBuffer)
+        {
+            if (__instance.isAI) return;
+            var proSkater = ProSkaterPlayer.Get(__instance);
+            if (proSkater == null) return;
+            if (proSkater.IsOnManual())
+                inputBuffer.moveAxisY = 0f;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.SetInputs))]
         private static void SetInputs_Postfix(Player __instance)
