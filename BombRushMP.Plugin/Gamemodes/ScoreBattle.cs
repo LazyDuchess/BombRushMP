@@ -23,6 +23,8 @@ namespace BombRushMP.Plugin.Gamemodes
         private States _state = States.Countdown;
         private float _stateTimer = 0f;
         private DateTime _startTime = DateTime.UtcNow;
+        public bool ComboBased = false;
+        private bool _comboOverRegistered = false;
 
         public ScoreBattle() : base() { }
 
@@ -34,6 +36,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnUpdate_InGame()
         {
+            var player = WorldHandler.instance.GetCurrentPlayer();
             var timerUI = TimerUI.Instance;
             switch (_state)
             {
@@ -51,7 +54,18 @@ namespace BombRushMP.Plugin.Gamemodes
                     var timeElapsed = (float)(DateTime.UtcNow - _startTime).TotalSeconds;
                     var timeLeft = Constants.ScoreBattleDuration - timeElapsed;
                     if (timeLeft <= 0f)
+                    {
                         timeLeft = 0f;
+                        if (ComboBased && !player.IsComboing())
+                        {
+                            if (!_comboOverRegistered)
+                            {
+                                _comboOverRegistered = true;
+                                ClientController.SendPacket(new ClientComboOver(), MessageSendMode.Reliable);
+                            }
+                            player.userInputEnabled = false;
+                        }
+                    }
                     timerUI.SetTime(timeLeft);
                     break;
             }
@@ -89,7 +103,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             base.OnEnd(cancelled);
             TimerUI.Instance.DeactivateDelayed();
-
+            var player = WorldHandler.instance.GetCurrentPlayer();
             if (!cancelled)
             {
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
@@ -98,11 +112,11 @@ namespace BombRushMP.Plugin.Gamemodes
                     var winner = Lobby.GetHighestScoringPlayer();
                     if (winner.Id == ClientController.Instance.LocalID && winner.Score >= ClientConstants.MinimumScoreToCheer)
                     {
-                        var player = WorldHandler.instance.GetCurrentPlayer();
                         player.StartCoroutine(Cheer(player));
                     }
                 }
             }
+            player.userInputEnabled = true;
         }
 
         private IEnumerator Cheer(Player player)
@@ -129,7 +143,7 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 var player = WorldHandler.instance.GetCurrentPlayer();
                 var score = player.score;
-                if (player.IsComboing())
+                if (player.IsComboing() && !ComboBased)
                     score += player.baseScore * player.scoreMultiplier;
                 ClientController.SendPacket(new ClientGamemodeScore(score), MessageSendMode.Reliable);
             }

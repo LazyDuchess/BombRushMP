@@ -297,7 +297,11 @@ namespace BombRushMP.Plugin.Patches
             if (!__instance.IsComboing()) return;
             var proSkater = ProSkaterPlayer.Get(__instance);
             if (proSkater != null)
+            {
                 proSkater.OnEndCombo();
+                __instance.baseScore = 0f;
+                __instance.scoreMultiplier = 0f;
+            }
         }
 
         [HarmonyPrefix]

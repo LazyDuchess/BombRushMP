@@ -19,6 +19,10 @@ namespace BombRushMP.ServerApp.Gamemodes
         private States _state = States.Countdown;
         private float _stateTimer = 0f;
         private DateTime _startTime = DateTime.UtcNow;
+        public bool ComboBased = false;
+        private HashSet<ushort> _clientsFinishedCombo = new();
+        private float _timeElapsed = 0f;
+        private float _timeLeft = 1f;
 
         public ScoreBattle() : base()
         {
@@ -39,12 +43,15 @@ namespace BombRushMP.ServerApp.Gamemodes
                     break;
 
                 case States.Main:
-                    var timeElapsed = (float)(DateTime.UtcNow - _startTime).TotalSeconds;
-                    var timeLeft = Constants.ScoreBattleDuration - timeElapsed;
-                    if (timeLeft <= 0f)
+                    _timeElapsed = (float)(DateTime.UtcNow - _startTime).TotalSeconds;
+                    _timeLeft = Constants.ScoreBattleDuration - _timeElapsed;
+                    if (!ComboBased)
                     {
-                        ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
-                        _state = States.Finished;
+                        if (_timeLeft <= 0f)
+                        {
+                            ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                            _state = States.Finished;
+                        }
                     }
                     break;
             }
@@ -60,6 +67,18 @@ namespace BombRushMP.ServerApp.Gamemodes
                     case Packets.ClientGameModeScore:
                         var scorePacket = (ClientGamemodeScore)packet;
                         ServerLobbyManager.SetPlayerScore(playerId, scorePacket.Score);
+                        break;
+
+                    case Packets.ClientComboOver:
+                        if (ComboBased)
+                        {
+                            _clientsFinishedCombo.Add(playerId);
+                            if (Lobby.LobbyState.Players.Count == _clientsFinishedCombo.Count && _state == States.Main && _timeLeft <= 0f)
+                            {
+                                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                                _state = States.Finished;
+                            }
+                        }
                         break;
                 }
             }

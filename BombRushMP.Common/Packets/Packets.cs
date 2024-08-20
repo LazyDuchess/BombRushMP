@@ -40,6 +40,7 @@ namespace BombRushMP.Common.Packets
         ClientLobbyDeclineAllInvites,
         ClientLobbyKick,
         ClientChat,
-        ServerChat
+        ServerChat,
+        ClientComboOver
     }
 }
