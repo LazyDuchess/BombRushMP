@@ -40,6 +40,7 @@ namespace BombRushMP.ServerApp
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
             _server = new Server();
+            _server.TimeoutTime = 10000;
             _server.ClientConnected += OnClientConnected;
             _server.ClientDisconnected += OnClientDisconnected;
             _server.MessageReceived += OnMessageReceived;
@@ -244,11 +245,12 @@ namespace BombRushMP.ServerApp
             player.Client = e.Client;
             player.Server = this;
             Players[e.Client.Id] = player;
+            e.Client.CanQualityDisconnect = false;
         }
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
-            ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}.");
+            ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}. Reason: {e.Reason}");
             ClientDisconnected?.Invoke(e.Client);
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))

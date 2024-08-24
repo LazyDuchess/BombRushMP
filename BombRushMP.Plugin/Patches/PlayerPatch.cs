@@ -292,16 +292,32 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.DropCombo))]
-        private static void DropCombo_Prefix(Player __instance)
+        private static bool DropCombo_Prefix(Player __instance)
         {
-            if (!__instance.IsComboing()) return;
+            if (!__instance.IsComboing()) return true;
             var proSkater = ProSkaterPlayer.Get(__instance);
             if (proSkater != null)
             {
                 proSkater.OnEndCombo();
                 __instance.baseScore = 0f;
                 __instance.scoreMultiplier = 0f;
+                __instance.lastScore = 0f;
+                __instance.lastCornered = 0;
+                __instance.ClearMultipliersDone();
+                __instance.comboTimeOutTimer = 1f;
+                __instance.currentTrickType = Player.TrickType.NONE;
+                __instance.RefreshAirTricks();
+                __instance.tricksInCombo = 0;
+                __instance.RefreshAllDegrade();
+                GameplayUI gameplayUI = __instance.ui;
+                if (gameplayUI != null)
+                {
+                    gameplayUI.SetTrickingChargeBarActive(false);
+                }
+                WorldHandler.instance.AllowRedoGrafspots();
+                return false;
             }
+            return true;
         }
 
         [HarmonyPrefix]
