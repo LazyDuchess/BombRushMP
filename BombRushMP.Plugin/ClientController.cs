@@ -110,6 +110,7 @@ namespace BombRushMP.Plugin
                 state = PlayerStates.Graffiti;
             var packet = new ClientVisualState();
             packet.State = state;
+            packet.AFK = PlayerComponent.Get(player).AFK;
             if (state == PlayerStates.None)
             {
                 packet.MoveStyleEquipped = player.usingEquippedMovestyle;

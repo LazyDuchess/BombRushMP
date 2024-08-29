@@ -140,6 +140,7 @@ namespace BombRushMP.Plugin
             }
 
             var playerComp = PlayerComponent.Get(Player);
+            playerComp.AFK = ClientVisualState.AFK;
             if (ClientState.SpecialSkin != playerComp.SpecialSkin)
             {
                 SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(Player, ClientState.SpecialSkin);

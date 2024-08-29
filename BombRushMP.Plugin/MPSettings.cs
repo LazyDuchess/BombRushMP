@@ -126,6 +126,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool ShowAFKEffects
+        {
+            get
+            {
+                return _showAFKEffects.Value;
+            }
+
+            set
+            {
+                _showAFKEffects.Value = value;
+            }
+        }
+
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
@@ -135,6 +148,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _showMinimap;
         private ConfigEntry<bool> _showNotifications;
         private ConfigEntry<bool> _leaveJoinMessages;
+        private ConfigEntry<bool> _showAFKEffects;
         private string _savePath;
         private ConfigFile _configFile;
         public MPSettings(ConfigFile configFile)
@@ -156,6 +170,7 @@ namespace BombRushMP.Plugin
                     clientController.SendClientState();
             };
             _leaveJoinMessages = configFile.Bind("Settings", "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
+            _showAFKEffects = configFile.Bind("Settings", "Show AFK Effects on Players", true, "Whether to render sleeping Z's on AFK players.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

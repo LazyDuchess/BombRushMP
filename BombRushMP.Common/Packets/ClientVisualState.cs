@@ -34,6 +34,7 @@ namespace BombRushMP.Common.Packets
         public int FrictionEffectMode = 0;
         public int CurrentAnimation = 0;
         public float CurrentAnimationTime = 0f;
+        public bool AFK = false;
 
         public override void Write(BinaryWriter writer)
         {
@@ -83,6 +84,8 @@ namespace BombRushMP.Common.Packets
 
             writer.Write(CurrentAnimation);
             writer.Write(CurrentAnimationTime);
+
+            writer.Write(AFK);
         }
 
         public override void Read(BinaryReader reader)
@@ -139,6 +142,8 @@ namespace BombRushMP.Common.Packets
 
             CurrentAnimation = reader.ReadInt32();
             CurrentAnimationTime = reader.ReadSingle();
+
+            AFK = reader.ReadBoolean();
         }
     }
 }
