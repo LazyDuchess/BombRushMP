@@ -5,6 +5,7 @@ using Reptile;
 using Riptide;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -52,7 +53,7 @@ namespace BombRushMP.Plugin
         {
             ClientLogger.Log($"Connecting to {Address}");
             _client = new Client();
-            _client.Connect(Address);
+            Task.Run(() => { _client.Connect(Address); });
             _client.Connected += OnConnected;
             _client.Disconnected += OnDisconnect;
             _client.ConnectionFailed += OnConnectionFailed;
