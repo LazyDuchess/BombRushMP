@@ -23,6 +23,7 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.PlayAnim))]
         private static bool PlayAnim_Prefix(Player __instance, int newAnim, bool forceOverwrite, bool instant, float atTime)
         {
+            if (!__instance.isAI && newAnim == __instance.idleFidget1Hash && PlayerComponent.Get(__instance).AFK) return false;
             var clientController = ClientController.Instance;
             if (clientController == null) return true;
             if (clientController.Connected && !__instance.isAI)
