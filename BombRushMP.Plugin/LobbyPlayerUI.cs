@@ -17,6 +17,7 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _score;
         private ClientController _clientController;
         private LobbyPlayer _lobbyPlayer = null;
+        private Lobby _lobby = null;
         private GameObject _readySprite;
         private GameObject _notReadySprite;
         private GameObject _afkSprite;
@@ -38,6 +39,22 @@ namespace BombRushMP.Plugin
             var playerVisualState = player.ClientVisualState;
             if (playerVisualState == null) return;
             _afkSprite.SetActive(playerVisualState.AFK);
+            if (!_lobby.InGame)
+            {
+                _readySprite.SetActive(_lobbyPlayer.Ready);
+                _notReadySprite.SetActive(!_lobbyPlayer.Ready);
+            }
+            else
+            {
+                _readySprite.SetActive(false);
+                _notReadySprite.SetActive(false);
+            }
+
+            if (_lobby.LobbyState.HostId == _lobbyPlayer.Id)
+            {
+                _readySprite.SetActive(false);
+                _notReadySprite.SetActive(false);
+            }
         }
 
         private string FormatScore(float score)
@@ -50,25 +67,13 @@ namespace BombRushMP.Plugin
         public void SetPlayer(LobbyPlayer player)
         {
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
+            _lobby = lobby;
 
             var playername = _clientController.Players[player.Id].ClientState.Name;
-
-            if (!lobby.InGame)
-            {
-                _readySprite.SetActive(player.Ready);
-                _notReadySprite.SetActive(!player.Ready);
-            }
-            else
-            {
-                _readySprite.SetActive(false);
-                _notReadySprite.SetActive(false);
-            }
 
             if (lobby.LobbyState.HostId == player.Id)
             {
                 playername = $"<color=yellow>[Host]</color> {playername}";
-                _readySprite.SetActive(false);
-                _notReadySprite.SetActive(false);
             }
 
             _lobbyPlayer = player;
