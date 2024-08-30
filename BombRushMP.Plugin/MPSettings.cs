@@ -179,28 +179,33 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _showAFKEffects;
         private string _savePath;
         private ConfigFile _configFile;
+
+        private const string General = "1. General";
+        private const string Settings = "2. Settings";
+        private const string ChatSettings = "3. Chat Settings";
+        private const string Debug = "4. Debug";
         public MPSettings(ConfigFile configFile)
         {
             Instance = this;
             _configFile = configFile;
-            _playerName = configFile.Bind("General", "Player Name", "Goofiest Gooner", "Your player name.");
-            _serverAddress = configFile.Bind("General", "Server Address", "brcmp.lazyduchess.me", "Address of the server to connect to.");
-            _serverPort = configFile.Bind("General", "Server Port", 41585, "Port of the server to connect to.");
-            _playerAudioEnabled = configFile.Bind("Settings", "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
-            _showNamePlates = configFile.Bind("Settings", "Show Nameplates", true, "Whether to show nameplates above players.");
-            _showMinimap = configFile.Bind("Settings", "Show Minimap", true, "Whether to always show the minimap in-game.");
-            _debugLocalPlayer = configFile.Bind("Debug", "Debug Local Player", false, "Render the networked local player in the game.");
-            _showNotifications = configFile.Bind("Settings", "Show Notifications", true, "Whether to show notifications when you're invited to a lobby.");
+            _playerName = configFile.Bind(General, "Player Name", "Goofiest Gooner", "Your player name.");
+            _serverAddress = configFile.Bind(General, "Server Address", "brcmp.lazyduchess.me", "Address of the server to connect to.");
+            _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
+            _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
+            _showNamePlates = configFile.Bind(Settings, "Show Nameplates", true, "Whether to show nameplates above players.");
+            _showMinimap = configFile.Bind(Settings, "Show Minimap", true, "Whether to always show the minimap in-game.");
+            _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
+            _showNotifications = configFile.Bind(Settings, "Show Notifications", true, "Whether to show notifications when you're invited to a lobby.");
             _playerName.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
                 if (clientController.Connected)
                     clientController.SendClientState();
             };
-            _showAFKEffects = configFile.Bind("Settings", "Show AFK Effects on Players", true, "Whether to render sleeping Z's on AFK players.");
-            _leaveJoinMessages = configFile.Bind("Chat Settings", "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
-            _afkMessages = configFile.Bind("Chat Settings", "Show Player AFK Messages", true, "Whether to show a message in chat when a player goes AFK.");
-            _inviteMessages = configFile.Bind("Chat Settings", "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
+            _showAFKEffects = configFile.Bind(Settings, "Show AFK Effects on Players", true, "Whether to render sleeping Z's on AFK players.");
+            _leaveJoinMessages = configFile.Bind(ChatSettings, "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
+            _afkMessages = configFile.Bind(ChatSettings, "Show Player AFK Messages", true, "Whether to show a message in chat when a player goes AFK.");
+            _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
