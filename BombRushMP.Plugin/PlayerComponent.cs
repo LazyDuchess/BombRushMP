@@ -28,6 +28,7 @@ namespace BombRushMP.Plugin
             _player = GetComponent<Player>();
             var afkParticlesPrefab = MPAssets.Instance.Bundle.LoadAsset<GameObject>("AFK Particles");
             _afkParticles = Instantiate(afkParticlesPrefab).GetComponent<ParticleSystem>();
+            _afkParticles.transform.SetParent(transform);
         }
 
         public void StopAFK()
@@ -90,8 +91,8 @@ namespace BombRushMP.Plugin
             var charVisual = _player.characterVisual;
             if (_afkWeight >= 1f)
             {
-                if (!_afkParticles.isPlaying)
-                    _afkParticles.Play();
+                var emission = _afkParticles.emission;
+                emission.enabled = true;
                 if (charVisual != null && charVisual.canBlink)
                 {
                     charVisual.mainRenderer.SetBlendShapeWeight(0, 100f);
@@ -99,8 +100,8 @@ namespace BombRushMP.Plugin
             }
             else
             {
-                if (_afkParticles.isPlaying)
-                    _afkParticles.Stop();
+                var emission = _afkParticles.emission;
+                emission.enabled = false;
             }
             if (charVisual != null)
             {

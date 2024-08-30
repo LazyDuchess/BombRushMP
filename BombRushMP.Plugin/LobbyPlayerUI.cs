@@ -19,8 +19,7 @@ namespace BombRushMP.Plugin
         private LobbyPlayer _lobbyPlayer = null;
         private GameObject _readySprite;
         private GameObject _notReadySprite;
-        private bool _readySpriteActive = true;
-        private bool _notReadySpriteActive = true;
+        private GameObject _afkSprite;
         public int Position = -1;
         private void Awake()
         {
@@ -28,9 +27,17 @@ namespace BombRushMP.Plugin
             _score = transform.Find("Score").GetComponent<TextMeshProUGUI>();
             _readySprite = transform.Find("Ready").gameObject;
             _notReadySprite = transform.Find("Not Ready").gameObject;
+            _afkSprite = transform.Find("AFK").gameObject;
             _clientController = ClientController.Instance;
-            _readySpriteActive = _readySprite.activeSelf;
-            _notReadySpriteActive = _notReadySprite.activeSelf;
+        }
+
+        private void Update()
+        {
+            if (_lobbyPlayer == null) return;
+            var player = _clientController.Players[_lobbyPlayer.Id];
+            var playerVisualState = player.ClientVisualState;
+            if (playerVisualState == null) return;
+            _afkSprite.SetActive(playerVisualState.AFK);
         }
 
         private string FormatScore(float score)
@@ -42,33 +49,26 @@ namespace BombRushMP.Plugin
 
         public void SetPlayer(LobbyPlayer player)
         {
-            var readySpriteNewActive = false;
-            var notReadySpriteNewActive = false;
-
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
 
             var playername = _clientController.Players[player.Id].ClientState.Name;
 
+            if (!lobby.InGame)
+            {
+                _readySprite.SetActive(player.Ready);
+                _notReadySprite.SetActive(!player.Ready);
+            }
+            else
+            {
+                _readySprite.SetActive(false);
+                _notReadySprite.SetActive(false);
+            }
+
             if (lobby.LobbyState.HostId == player.Id)
+            {
                 playername = $"<color=yellow>[Host]</color> {playername}";
-            else if (!lobby.LobbyState.InGame)
-            {
-                if (player.Ready)
-                    readySpriteNewActive = true;
-                else
-                    notReadySpriteNewActive = true;
-            }
-
-            if (readySpriteNewActive != _readySpriteActive)
-            {
-                _readySpriteActive = readySpriteNewActive;
-                _readySprite.SetActive(_readySpriteActive);
-            }
-
-            if (notReadySpriteNewActive != _notReadySpriteActive)
-            {
-                _notReadySpriteActive = notReadySpriteNewActive;
-                _notReadySprite.SetActive(_notReadySpriteActive);
+                _readySprite.SetActive(false);
+                _notReadySprite.SetActive(false);
             }
 
             _lobbyPlayer = player;

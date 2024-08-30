@@ -69,21 +69,5 @@ public class AppMultiplayerDebug : CustomApp
             ProSkaterPlayer.Set(player, false);
         };
         ScrollView.AddButton(button);
-
-        button = PhoneUIUtility.CreateSimpleButton("Enter AFK State");
-        button.OnConfirm += () =>
-        {
-            var player = WorldHandler.instance.GetCurrentPlayer();
-            PlayerComponent.Get(player).ForceAFK();
-        };
-        ScrollView.AddButton(button);
-
-        button = PhoneUIUtility.CreateSimpleButton("Exit AFK State");
-        button.OnConfirm += () =>
-        {
-            var player = WorldHandler.instance.GetCurrentPlayer();
-            PlayerComponent.Get(player).StopAFK();
-        };
-        ScrollView.AddButton(button);
     }
 }

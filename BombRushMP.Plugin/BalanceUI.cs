@@ -35,7 +35,10 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
-            if (!Core.Instance.UIManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
+            var uiManager = Core.Instance.UIManager;
+            if (uiManager.gameplay == null) return;
+            if (uiManager.gameplay.gameplayScreen == null) return;
+            if (!uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
             {
                 _grindUI.SetActive(false);
                 _manualUI.SetActive(false);

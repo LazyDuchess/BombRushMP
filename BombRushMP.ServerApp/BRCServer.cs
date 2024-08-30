@@ -187,8 +187,26 @@ namespace BombRushMP.ServerApp
 
                 case Packets.ClientVisualState:
                     {
+                        var clientState = Players[client.Id].ClientState;
                         var clientVisualState = (ClientVisualState)packet;
+                        var oldVisualState = Players[client.Id].ClientVisualState;
                         Players[client.Id].ClientVisualState = clientVisualState;
+
+                        if (oldVisualState != null && oldVisualState.AFK != clientVisualState.AFK)
+                        {
+                            if (clientVisualState.AFK)
+                            {
+                                SendPacketToStage(new ServerChat(
+                                    string.Format(ServerConstants.AFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
+                                    MessageSendMode.Reliable, clientState.Stage);
+                            }
+                            else
+                            {
+                                SendPacketToStage(new ServerChat(
+                                    string.Format(ServerConstants.LeaveAFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
+                                    MessageSendMode.Reliable, clientState.Stage);
+                            }
+                        }
                     }
                     break;
 

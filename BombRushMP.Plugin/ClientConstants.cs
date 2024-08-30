@@ -11,6 +11,7 @@ namespace BombRushMP.Plugin
     {
         public const string ChatMessage = "{0} : {1}";
         public const string LobbyChatMessage = "{0} (LOBBY) : {1}";
+        public const string LobbyInviteMessage = "{0} Has invited you to their {1} lobby.";
         public const int MinimumPlayersToCheer = 2;
         public const float MinimumScoreToCheer = 500000f;
         public const float PlayerInterpolation = 12f;

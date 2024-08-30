@@ -139,6 +139,32 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool AFKMessages
+        {
+            get
+            {
+                return _afkMessages.Value;
+            }
+
+            set
+            {
+                _afkMessages.Value = value;
+            }
+        }
+
+        public bool InviteMessages
+        {
+            get
+            {
+                return _inviteMessages.Value;
+            }
+
+            set
+            {
+                _inviteMessages.Value = value;
+            }
+        }
+
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
@@ -148,6 +174,8 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _showMinimap;
         private ConfigEntry<bool> _showNotifications;
         private ConfigEntry<bool> _leaveJoinMessages;
+        private ConfigEntry<bool> _afkMessages;
+        private ConfigEntry<bool> _inviteMessages;
         private ConfigEntry<bool> _showAFKEffects;
         private string _savePath;
         private ConfigFile _configFile;
@@ -169,8 +197,10 @@ namespace BombRushMP.Plugin
                 if (clientController.Connected)
                     clientController.SendClientState();
             };
-            _leaveJoinMessages = configFile.Bind("Settings", "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
             _showAFKEffects = configFile.Bind("Settings", "Show AFK Effects on Players", true, "Whether to render sleeping Z's on AFK players.");
+            _leaveJoinMessages = configFile.Bind("Chat Settings", "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
+            _afkMessages = configFile.Bind("Chat Settings", "Show Player AFK Messages", true, "Whether to show a message in chat when a player goes AFK.");
+            _inviteMessages = configFile.Bind("Chat Settings", "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

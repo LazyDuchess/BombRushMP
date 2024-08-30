@@ -11,6 +11,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.ServerApp.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -59,12 +60,27 @@ namespace BombRushMP.Plugin
 
         private void OnPacketReceived(Packets packetId, Packet packet)
         {
+            var mpSettings = MPSettings.Instance;
             var clientController = ClientController.Instance;
             var lobbyManager = clientController.ClientLobbyManager;
-            if (packetId == Packets.ServerChat)
+            switch (packetId)
             {
-                HandleServerMessage((ServerChat)packet);
+                case Packets.ServerChat:
+                    HandleServerMessage((ServerChat)packet);
+                    break;
+                case Packets.ServerLobbyInvite:
+                    if (!mpSettings.InviteMessages) break;
+                    var invitePacket = (ServerLobbyInvite)packet;
+                    var inviter = invitePacket.InviterId;
+                    var invitee = invitePacket.InviteeId;
+                    var lobby = invitePacket.LobbyId;
+                    if (invitee != clientController.LocalID) return;
+                    var inviterName = TMPFilter.CloseAllTags(clientController.Players[inviter].ClientState.Name);
+                    var gamemodeName = clientController.ClientLobbyManager.GetLobbyName(lobby);
+                    AddMessage(string.Format(ClientConstants.LobbyInviteMessage, inviterName, gamemodeName));
+                    break;
             }
+            
         }
 
         private void HandleServerMessage(ServerChat serverMessage)
@@ -72,6 +88,8 @@ namespace BombRushMP.Plugin
             var mpSettings = MPSettings.Instance;
             var text = serverMessage.Message;
             if (serverMessage.MessageType == ChatMessageTypes.PlayerJoinedOrLeft && mpSettings.LeaveJoinMessages == false)
+                return;
+            if (serverMessage.MessageType == ChatMessageTypes.PlayerAFK && mpSettings.AFKMessages == false)
                 return;
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
                 text = string.Format(ClientConstants.ChatMessage, TMPFilter.CloseAllTags(serverMessage.Author), serverMessage.Message);
