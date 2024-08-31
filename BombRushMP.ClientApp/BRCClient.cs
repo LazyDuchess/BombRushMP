@@ -27,7 +27,8 @@ namespace BombRushMP.ClientApp
         {
             CreateLobbyAndInvitePlayer,
             JoinPlayersLobby,
-            SendChatMessage
+            SendChatMessage,
+            CreateLobbyInvitePlayerAndStartGameOnReady
         }
 
         public BRCClient(string address, Tasks task)
@@ -52,7 +53,7 @@ namespace BombRushMP.ClientApp
             switch (_task)
             {
                 case Tasks.CreateLobbyAndInvitePlayer:
-                    CreateLobbyAndInvitePlayer_Update();
+                    CreateLobbyAndInvitePlayer_Update(false);
                     break;
 
                 case Tasks.JoinPlayersLobby:
@@ -61,6 +62,10 @@ namespace BombRushMP.ClientApp
 
                 case Tasks.SendChatMessage:
                     SendChatMessage_Update();
+                    break;
+
+                case Tasks.CreateLobbyInvitePlayerAndStartGameOnReady:
+                    CreateLobbyAndInvitePlayer_Update(true);
                     break;
             }
         }
@@ -103,10 +108,12 @@ namespace BombRushMP.ClientApp
             }
         }
 
-        private void CreateLobbyAndInvitePlayer_Update()
+        private void CreateLobbyAndInvitePlayer_Update(bool startGameOnReady)
         {
             if (_localId == 0)
                 return;
+            var myLobby = GetMyLobby();
+            var player = GetPlayer();
             switch (_taskStep)
             {
                 case 0:
@@ -115,19 +122,55 @@ namespace BombRushMP.ClientApp
                     _taskStep++;
                     break;
                 case 1:
-                    var myLobby = GetMyLobby();
                     if (myLobby == 0)
                         return;
-                    var player = GetPlayer();
                     if (player == 0)
                         return;
                     SendPacket(new ClientLobbyInvite(player));
-                    Log("Inviting player to lobby.");
+                    Log("Inviting player to lobby and waiting for them to join.");
                     _taskStep++;
                     break;
                 case 2:
-                    Log("Finished.");
+                    if (myLobby == 0)
+                        return;
+                    if (player == 0)
+                        return;
+                    if (GetPlayersLobby(player) == myLobby)
+                    Log("Player joined.");
                     _taskStep++;
+                    break;
+                case 3:
+                    if (!startGameOnReady)
+                    {
+                        Log("Finished.");
+                        _taskStep++;
+                    }
+                    else
+                    {
+                        Log("Waiting for player to be ready.");
+                        _taskStep++;
+                    }
+                    break;
+                case 4:
+                    if (myLobby == 0)
+                        return;
+                    if (startGameOnReady)
+                    {
+                        foreach(var lobby in _lobbies.Lobbies)
+                        {
+                            foreach(var play in lobby.Players)
+                            {
+                                if (play.Value.Id == player && play.Value.Ready)
+                                {
+                                    Log("Starting game!");
+                                    SendPacket(new ClientLobbyStart());
+                                    _taskStep++;
+                                    Log("Finished.");
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     break;
             }
         }
