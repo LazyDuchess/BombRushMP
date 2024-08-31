@@ -157,6 +157,12 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientState:
                     {
                         var clientState = (ClientState)packet;
+                        if (clientState.ProtocolVersion != Constants.ProtocolVersion)
+                        {
+                            ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
+                            _server.DisconnectClient(client);
+                            return;
+                        }
                         var oldClientState = Players[client.Id].ClientState;
                         Players[client.Id].ClientState = clientState;
                         if (oldClientState != null)
@@ -164,12 +170,6 @@ namespace BombRushMP.ServerApp
                             var clientStateUpdatePacket = new ServerClientStates();
                             clientStateUpdatePacket.ClientStates[client.Id] = clientState;
                             SendPacketToStage(clientStateUpdatePacket, MessageSendMode.Reliable, oldClientState.Stage);
-                            return;
-                        }
-                        if (clientState.ProtocolVersion != Constants.ProtocolVersion)
-                        {
-                            ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
-                            _server.DisconnectClient(client);
                             return;
                         }
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
@@ -269,10 +269,10 @@ namespace BombRushMP.ServerApp
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
             ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}. Reason: {e.Reason}");
-            ClientDisconnected?.Invoke(e.Client);
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))
             {
+                ClientDisconnected?.Invoke(e.Client);
                 Players.Remove(e.Client.Id);
                 clientState = result.ClientState;
             }
