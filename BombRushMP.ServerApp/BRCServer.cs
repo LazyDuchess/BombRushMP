@@ -259,7 +259,7 @@ namespace BombRushMP.ServerApp
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
-            if (PlayersByAddress.TryGetValue(e.Client.ToString(), out var playerAlreadyIngame))
+            if (PlayersByAddress.TryGetValue(GetAddressWithoutPort(e.Client.ToString()), out var playerAlreadyIngame))
             {
                 DisconnectClient(playerAlreadyIngame.Client.Id);
                 return;
@@ -269,8 +269,13 @@ namespace BombRushMP.ServerApp
             player.Client = e.Client;
             player.Server = this;
             Players[e.Client.Id] = player;
-            PlayersByAddress[e.Client.ToString()] = player;
+            PlayersByAddress[GetAddressWithoutPort(e.Client.ToString())] = player;
             e.Client.CanQualityDisconnect = false;
+        }
+
+        private string GetAddressWithoutPort(string address)
+        {
+            return address.Split(":")[0];
         }
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
