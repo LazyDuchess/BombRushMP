@@ -4,6 +4,7 @@ using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -65,6 +66,25 @@ namespace BombRushMP.Plugin
             if (localLobby == null) return false;
             if (localLobby.LobbyState.Players.ContainsKey(ClientId) && localLobby.LobbyState.Players.ContainsKey(clientController.LocalID)) return true;
             return false;
+        }
+
+        private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
+        {
+            for(var i = 0; i < 2; i++)
+                yield return null;
+            PlayerPatch.PlayAnimPatchEnabled = false;
+            try
+            {
+                player.PlayAnim(animation, true, true, time);
+                //hax
+                var stateInfo = player.anim.GetCurrentAnimatorStateInfo(-1);
+                time = time / stateInfo.length;
+                player.anim.ForceStateNormalizedTime(time);
+            }
+            finally
+            {
+                PlayerPatch.PlayAnimPatchEnabled = true;
+            }
         }
 
         public void FrameUpdate()
@@ -155,15 +175,9 @@ namespace BombRushMP.Plugin
             {
                 if (ClientVisualState.CurrentAnimation != 0)
                 {
-                    PlayerPatch.PlayAnimPatchEnabled = false;
-                    try
-                    {
-                        Player.PlayAnim(ClientVisualState.CurrentAnimation, true, true, ClientVisualState.CurrentAnimationTime);
-                    }
-                    finally
-                    {
-                        PlayerPatch.PlayAnimPatchEnabled = true;
-                    }
+                    if (mpSettings.DebugInfo)
+                            Debug.Log($"BRCMP: Applying animation {ClientVisualState.CurrentAnimation} at time {ClientVisualState.CurrentAnimationTime} to player {ClientState.Name} (justCreated == true)");
+                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                 }
             }
 

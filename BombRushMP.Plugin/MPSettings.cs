@@ -165,6 +165,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool DebugInfo
+        {
+            get
+            {
+                return _debugInfo.Value;
+            }
+
+            set
+            {
+                _debugInfo.Value = value;
+            }
+        }
+
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
@@ -177,6 +190,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _afkMessages;
         private ConfigEntry<bool> _inviteMessages;
         private ConfigEntry<bool> _showAFKEffects;
+        private ConfigEntry<bool> _debugInfo;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -206,6 +220,7 @@ namespace BombRushMP.Plugin
             _leaveJoinMessages = configFile.Bind(ChatSettings, "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
             _afkMessages = configFile.Bind(ChatSettings, "Show Player AFK Messages", true, "Whether to show a message in chat when a player goes AFK.");
             _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
+            _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
