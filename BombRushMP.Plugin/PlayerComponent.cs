@@ -23,6 +23,16 @@ namespace BombRushMP.Plugin
         private float _afkWeight = 0f;
         private float _afkTimer = 0f;
 
+        public void ApplyMoveStyleSkin(Texture texture, Mesh mesh = null)
+        {
+            if (_player.moveStyleEquipped != MoveStyle.SKATEBOARD) return;
+            if (mesh == null)
+                mesh = _player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
+            _player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = mesh;
+            var renderer = _player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial.mainTexture = texture;
+        }
+
         private void Awake()
         {
             _player = GetComponent<Player>();

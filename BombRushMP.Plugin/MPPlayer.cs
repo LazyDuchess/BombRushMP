@@ -71,6 +71,19 @@ namespace BombRushMP.Plugin
         private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
         {
             yield return null;
+            switch (player.moveStyle)
+            {
+                case MoveStyle.BMX:
+                    player.anim.runtimeAnimatorController = player.animatorControllerBMX;
+                    break;
+                case MoveStyle.SPECIAL_SKATEBOARD:
+                case MoveStyle.SKATEBOARD:
+                    player.anim.runtimeAnimatorController = player.animatorControllerSkateboard;
+                    break;
+                case MoveStyle.INLINE:
+                    player.anim.runtimeAnimatorController = player.animatorControllerSkates;
+                    break;
+            }
             PlayerPatch.PlayAnimPatchEnabled = false;
             try
             {
