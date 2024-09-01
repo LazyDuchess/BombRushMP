@@ -76,10 +76,13 @@ namespace BombRushMP.Plugin
             try
             {
                 player.PlayAnim(animation, true, true, time);
+                PlayerPatch.PlayAnimPatchEnabled = true;
+                yield return null;
+                PlayerPatch.PlayAnimPatchEnabled = false;
                 //hax
-                var stateInfo = player.anim.GetCurrentAnimatorStateInfo(-1);
-                time = time / stateInfo.length;
-                player.anim.ForceStateNormalizedTime(time);
+                var clipInfo = player.anim.GetCurrentAnimatorClipInfo(0);
+                time = time / clipInfo[0].clip.length;
+                player.PlayAnim(animation, true, true, time);
             }
             finally
             {
