@@ -27,6 +27,7 @@ namespace BombRushMP.ServerApp
         public Action<Connection, Packets, Packet> PacketReceived;
         public Action<float> OnTick;
         public Dictionary<ushort, Player> Players = new();
+        public Dictionary<string, Player> PlayersByAddress = new();
         private Server _server;
         private Stopwatch _tickStopWatch;
         private HashSet<int> _activeStages;
@@ -258,11 +259,17 @@ namespace BombRushMP.ServerApp
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
+            if (PlayersByAddress.TryGetValue(e.Client.ToString(), out var playerAlreadyIngame))
+            {
+                DisconnectClient(playerAlreadyIngame.Client.Id);
+                return;
+            }
             ServerLogger.Log($"Client connected from {e.Client}. ID: {e.Client.Id}.");
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
             Players[e.Client.Id] = player;
+            PlayersByAddress[e.Client.ToString()] = player;
             e.Client.CanQualityDisconnect = false;
         }
 
@@ -274,6 +281,7 @@ namespace BombRushMP.ServerApp
             {
                 ClientDisconnected?.Invoke(e.Client);
                 Players.Remove(e.Client.Id);
+                PlayersByAddress.Remove(e.Client.ToString());
                 clientState = result.ClientState;
             }
             if (clientState != null)
