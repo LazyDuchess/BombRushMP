@@ -70,8 +70,7 @@ namespace BombRushMP.Plugin
 
         private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
         {
-            for(var i = 0; i < 2; i++)
-                yield return null;
+            yield return null;
             PlayerPatch.PlayAnimPatchEnabled = false;
             try
             {
