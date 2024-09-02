@@ -25,7 +25,6 @@ namespace BombRushMP.Plugin
             if (mesh == null)
                 mesh = player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
             player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = mesh;
-            Debug.Log("APPLIED SKATEBOARD");
         }
     }
 }

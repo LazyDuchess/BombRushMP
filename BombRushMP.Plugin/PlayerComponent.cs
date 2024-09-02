@@ -49,43 +49,43 @@ namespace BombRushMP.Plugin
             moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = deckMesh;
             if (SkateboardMaterial == null)
             {
-                SkateboardMaterial = new Material(moveStyleProps.skateboard.GetComponentInChildren<Renderer>().sharedMaterial);
+                SkateboardMaterial = new Material(moveStyleProps.skateboard.GetComponentInChildren<MeshRenderer>().sharedMaterial);
             }
             if (InlineMaterial == null)
             {
-                InlineMaterial = new Material(moveStyleProps.skateL.GetComponentInChildren<Renderer>().sharedMaterial);
+                InlineMaterial = new Material(moveStyleProps.skateL.GetComponentInChildren<MeshRenderer>().sharedMaterial);
             }
             if (BMXMaterial == null)
             {
-                BMXMaterial = new Material(moveStyleProps.bmxFrame.GetComponentInChildren<Renderer>().sharedMaterial);
+                BMXMaterial = new Material(moveStyleProps.bmxFrame.GetComponentInChildren<MeshRenderer>().sharedMaterial);
             }
             if (BMXSpokesMaterial == null)
             {
-                BMXSpokesMaterial = new Material(moveStyleProps.bmxWheelF.GetComponentInChildren<Renderer>().sharedMaterials[1]);
+                BMXSpokesMaterial = new Material(moveStyleProps.bmxWheelF.GetComponentInChildren<MeshRenderer>().sharedMaterials[1]);
             }
 
-            var allRenderers = moveStyleProps.bmxPedalR.GetComponentsInChildren<Renderer>().ToList();
-            allRenderers.AddRange(moveStyleProps.bmxPedalL.GetComponentsInChildren<Renderer>());
-            allRenderers.AddRange(moveStyleProps.bmxFrame.GetComponentsInChildren<Renderer>());
-            allRenderers.AddRange(moveStyleProps.bmxGear.GetComponentsInChildren<Renderer>());
-            allRenderers.AddRange(moveStyleProps.bmxHandlebars.GetComponentsInChildren<Renderer>());
-            allRenderers.AddRange(moveStyleProps.bmxWheelF.GetComponentsInChildren<Renderer>());
-            allRenderers.AddRange(moveStyleProps.bmxWheelR.GetComponentsInChildren<Renderer>());
+            var allRenderers = moveStyleProps.bmxPedalR.GetComponentsInChildren<MeshRenderer>().ToList();
+            allRenderers.AddRange(moveStyleProps.bmxPedalL.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxFrame.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxGear.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxHandlebars.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxWheelF.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxWheelR.GetComponentsInChildren<MeshRenderer>());
 
             foreach (var renderer in allRenderers)
             {
                 renderer.sharedMaterials = [BMXMaterial, BMXSpokesMaterial];
             }
 
-            allRenderers = moveStyleProps.skateL.GetComponentsInChildren<Renderer>().ToList();
-            allRenderers.AddRange(moveStyleProps.skateR.GetComponentsInChildren<Renderer>());
+            allRenderers = moveStyleProps.skateL.GetComponentsInChildren<MeshRenderer>().ToList();
+            allRenderers.AddRange(moveStyleProps.skateR.GetComponentsInChildren<MeshRenderer>());
 
             foreach (var renderer in allRenderers)
             {
                 renderer.sharedMaterials = [InlineMaterial];
             }
 
-            allRenderers = moveStyleProps.skateboard.GetComponentsInChildren<Renderer>().ToList();
+            allRenderers = moveStyleProps.skateboard.GetComponentsInChildren<MeshRenderer>().ToList();
 
             foreach (var renderer in allRenderers)
             {
