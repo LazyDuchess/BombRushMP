@@ -13,7 +13,7 @@ namespace BombRushMP.Plugin
         public Mesh SkateboardMesh = null;
         public override MoveStyle MoveStyle => MoveStyle.SKATEBOARD;
 
-        public MPSkateboardSkin(string title, string howToUnlock, string id, bool unlockedByDefault, Texture texture, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, texture)
+        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Texture texture, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, texture)
         {
             SkateboardMesh = mesh;
         }
@@ -21,11 +21,11 @@ namespace BombRushMP.Plugin
         public override void ApplyToPlayer(Player player)
         {
             base.ApplyToPlayer(player);
-            if (player.moveStyle != MoveStyle.SKATEBOARD) return;
             var mesh = SkateboardMesh;
             if (mesh == null)
                 mesh = player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
             player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = mesh;
+            Debug.Log("APPLIED SKATEBOARD");
         }
     }
 }

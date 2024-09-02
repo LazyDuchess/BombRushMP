@@ -15,7 +15,7 @@ namespace BombRushMP.Plugin
         public Texture Texture = null;
         public abstract MoveStyle MoveStyle { get; }
 
-        public MPMoveStyleSkin(string title, string howToUnlock, string id, bool unlockedByDefault, Texture texture) : base(id, unlockedByDefault)
+        public MPMoveStyleSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Texture texture) : base(id, unlockedByDefault)
         {
             Title = title;
             Texture = texture;
@@ -24,22 +24,36 @@ namespace BombRushMP.Plugin
 
         public virtual void ApplyToPlayer(Player player)
         {
-            switch (player.moveStyle)
+            var playerComp = PlayerComponent.Get(player);
+            playerComp.ApplyMoveStyleSkin(0);
+            switch (MoveStyle)
             {
                 case MoveStyle.INLINE:
-                    player.characterVisual.moveStyleProps.skateL.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
-                    player.characterVisual.moveStyleProps.skateR.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
+                    {
+                        var mats = MoveStyleLoader.GetMoveStyleMaterials(player, MoveStyle.INLINE);
+                        foreach (var mat in mats)
+                        {
+                            mat.mainTexture = Texture;
+                        }
+                    }
                     break;
                 case MoveStyle.BMX:
-                    player.characterVisual.moveStyleProps.bmxPedalL.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
-                    player.characterVisual.moveStyleProps.bmxPedalR.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
-                    player.characterVisual.moveStyleProps.bmxFrame.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
-                    player.characterVisual.moveStyleProps.bmxHandlebars.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
-                    player.characterVisual.moveStyleProps.bmxWheelF.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
-                    player.characterVisual.moveStyleProps.bmxWheelR.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
+                    {
+                        var mats = MoveStyleLoader.GetMoveStyleMaterials(player, MoveStyle.BMX);
+                        foreach (var mat in mats)
+                        {
+                            mat.mainTexture = Texture;
+                        }
+                    }
                     break;
                 case MoveStyle.SKATEBOARD:
-                    player.characterVisual.moveStyleProps.skateboard.GetComponent<Renderer>().sharedMaterial.mainTexture = Texture;
+                    {
+                        var mats = MoveStyleLoader.GetMoveStyleMaterials(player, MoveStyle.SKATEBOARD);
+                        foreach (var mat in mats)
+                        {
+                            mat.mainTexture = Texture;
+                        }
+                    }
                     break;
             }
         }

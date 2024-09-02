@@ -8,10 +8,10 @@ namespace BombRushMP.Plugin
 {
     public class MPUnlockable
     {
-        public string Identifier = "";
+        public int Identifier = -1;
         public bool UnlockedByDefault = true;
 
-        public MPUnlockable(string id, bool unlockedByDefault = true)
+        public MPUnlockable(int id, bool unlockedByDefault = true)
         {
             Identifier = id;
             UnlockedByDefault = unlockedByDefault;

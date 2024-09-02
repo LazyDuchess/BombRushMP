@@ -136,8 +136,22 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.SetCharacter))]
-        private static void SetCharacter_Postfix(Player __instance)
+        private static void SetCharacter_Postfix(Characters setChar, Player __instance)
         {
+            if (!__instance.isAI)
+            {
+                var saveData = MPSaveData.Instance.GetCharacterData(setChar);
+                if (saveData.MPMoveStyleSkin != -1)
+                {
+                    var mpUnlockManager = MPUnlockManager.Instance;
+                    if (mpUnlockManager.UnlockByID.ContainsKey(saveData.MPMoveStyleSkin))
+                    {
+                        var skin = mpUnlockManager.UnlockByID[saveData.MPMoveStyleSkin] as MPMoveStyleSkin;
+                        if (skin != null)
+                            skin.ApplyToPlayer(__instance);
+                    }
+                }
+            }
             var playerComponent = PlayerComponent.Get(__instance);
             playerComponent.SpecialSkin = SpecialSkins.None;
             var clientController = ClientController.Instance;

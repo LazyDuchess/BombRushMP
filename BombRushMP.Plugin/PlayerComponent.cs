@@ -6,6 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using BombRushMP.Common;
+using MonoMod.Cil;
+using UnityEngine.UIElements;
+using ch.sycoforge.Decal.Projectors.Geometry;
 
 namespace BombRushMP.Plugin
 {
@@ -22,15 +25,82 @@ namespace BombRushMP.Plugin
         private Player _player = null;
         private float _afkWeight = 0f;
         private float _afkTimer = 0f;
+        public Material SkateboardMaterial = null;
+        public Material InlineMaterial = null;
+        public Material BMXMaterial = null;
+        public Material BMXSpokesMaterial = null;
 
-        public void ApplyMoveStyleSkin(Texture texture, Mesh mesh = null)
+        private void OnDestroy()
         {
-            if (_player.moveStyleEquipped != MoveStyle.SKATEBOARD) return;
-            if (mesh == null)
-                mesh = _player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
-            _player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = mesh;
-            var renderer = _player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshRenderer>();
-            renderer.sharedMaterial.mainTexture = texture;
+            if (SkateboardMaterial != null)
+                Destroy(SkateboardMaterial);
+            if (BMXMaterial != null)
+                Destroy(BMXMaterial);
+            if (InlineMaterial != null)
+                Destroy(InlineMaterial);
+            if (BMXSpokesMaterial != null)
+                Destroy(BMXSpokesMaterial);
+        }
+
+        public void ApplyMoveStyleSkin(int skinIndex)
+        {
+            var moveStyleProps = _player.characterVisual.moveStyleProps;
+            var deckMesh = _player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
+            moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = deckMesh;
+            if (SkateboardMaterial == null)
+            {
+                SkateboardMaterial = new Material(moveStyleProps.skateboard.GetComponentInChildren<Renderer>().sharedMaterial);
+            }
+            if (InlineMaterial == null)
+            {
+                InlineMaterial = new Material(moveStyleProps.skateL.GetComponentInChildren<Renderer>().sharedMaterial);
+            }
+            if (BMXMaterial == null)
+            {
+                BMXMaterial = new Material(moveStyleProps.bmxFrame.GetComponentInChildren<Renderer>().sharedMaterial);
+            }
+            if (BMXSpokesMaterial == null)
+            {
+                BMXSpokesMaterial = new Material(moveStyleProps.bmxWheelF.GetComponentInChildren<Renderer>().sharedMaterials[1]);
+            }
+
+            var allRenderers = moveStyleProps.bmxPedalR.GetComponentsInChildren<Renderer>().ToList();
+            allRenderers.AddRange(moveStyleProps.bmxPedalL.GetComponentsInChildren<Renderer>());
+            allRenderers.AddRange(moveStyleProps.bmxFrame.GetComponentsInChildren<Renderer>());
+            allRenderers.AddRange(moveStyleProps.bmxGear.GetComponentsInChildren<Renderer>());
+            allRenderers.AddRange(moveStyleProps.bmxHandlebars.GetComponentsInChildren<Renderer>());
+            allRenderers.AddRange(moveStyleProps.bmxWheelF.GetComponentsInChildren<Renderer>());
+            allRenderers.AddRange(moveStyleProps.bmxWheelR.GetComponentsInChildren<Renderer>());
+
+            foreach (var renderer in allRenderers)
+            {
+                renderer.sharedMaterials = [BMXMaterial, BMXSpokesMaterial];
+            }
+
+            allRenderers = moveStyleProps.skateL.GetComponentsInChildren<Renderer>().ToList();
+            allRenderers.AddRange(moveStyleProps.skateR.GetComponentsInChildren<Renderer>());
+
+            foreach (var renderer in allRenderers)
+            {
+                renderer.sharedMaterials = [InlineMaterial];
+            }
+
+            allRenderers = moveStyleProps.skateboard.GetComponentsInChildren<Renderer>().ToList();
+
+            foreach (var renderer in allRenderers)
+            {
+                renderer.sharedMaterials = [SkateboardMaterial];
+            }
+
+            for (var i=MoveStyle.BMX; i<=MoveStyle.INLINE; i++)
+            {
+                var moveStyleSkinTexture = _player.CharacterConstructor.GetMoveStyleSkinTexture(i, skinIndex);
+                if (moveStyleSkinTexture == null) continue;
+                var mats = MoveStyleLoader.GetMoveStyleMaterials(_player, i);
+                if (mats == null) continue;
+                foreach (var mat in mats)
+                    mat.mainTexture = moveStyleSkinTexture;
+            }
         }
 
         private void Awake()

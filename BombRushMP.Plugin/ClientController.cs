@@ -112,6 +112,10 @@ namespace BombRushMP.Plugin
             var packet = new ClientVisualState();
             packet.State = state;
             packet.AFK = PlayerComponent.Get(player).AFK;
+            packet.MoveStyleSkin = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin;
+            var charData = MPSaveData.Instance.GetCharacterData(player.character);
+            if (charData != null)
+                packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
             if (state == PlayerStates.None)
             {
                 packet.MoveStyleEquipped = player.usingEquippedMovestyle;
@@ -361,7 +365,7 @@ namespace BombRushMP.Plugin
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 ProtocolVersion = Constants.ProtocolVersion,
                 SpecialSkin = playerComp.SpecialSkin,
-                SpecialSkinVariant = playerComp.SpecialSkinVariant
+                SpecialSkinVariant = playerComp.SpecialSkinVariant,
             };
 
             if (CrewBoomSupport.Installed)

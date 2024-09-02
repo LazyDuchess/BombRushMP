@@ -25,6 +25,8 @@ namespace BombRushMP.Plugin
         public Nameplate NamePlate;
         private MapPin _mapPin = null;
         private Material _mapPinMaterial = null;
+        private int _lastMoveStyleSkin = -1;
+        private int _lastMPMoveStyleSkin = -1;
 
         private void MakeMapPin()
         {
@@ -279,6 +281,21 @@ namespace BombRushMP.Plugin
 
             if (ClientVisualState.State != PlayerStates.Graffiti)
                 Player.RemoveGraffitiSlash();
+
+            if (ClientVisualState.MoveStyleSkin != _lastMoveStyleSkin || ClientVisualState.MPMoveStyleSkin != _lastMPMoveStyleSkin || justCreated)
+            {
+                _lastMoveStyleSkin = ClientVisualState.MoveStyleSkin;
+                _lastMPMoveStyleSkin = ClientVisualState.MPMoveStyleSkin;
+                if (ClientVisualState.MPMoveStyleSkin != -1)
+                {
+                    if (MPUnlockManager.Instance.UnlockByID.ContainsKey(ClientVisualState.MPMoveStyleSkin))
+                    {
+                        (MPUnlockManager.Instance.UnlockByID[ClientVisualState.MPMoveStyleSkin] as MPMoveStyleSkin).ApplyToPlayer(Player);
+                    }
+                }
+                else
+                    playerComp.ApplyMoveStyleSkin(ClientVisualState.MoveStyleSkin);
+            }
 
             _previousState = ClientVisualState.State;
         }

@@ -7,6 +7,8 @@ using Reptile;
 using HarmonyLib;
 using UnityEngine;
 using ch.sycoforge.Decal;
+using UnityEngine.Events;
+using BombRushMP.CrewBoom;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -23,6 +25,20 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(StyleSwitchMenu.Activate))]
         private static void Activate_Postfix(StyleSwitchMenu __instance)
         {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var charData = MPSaveData.Instance.GetCharacterData(player.character);
+            var user = Core.Instance.Platform.User;
+            if (charData.MPMoveStyleSkin != -1)
+            {
+                for (var i=0;i<__instance.texts.Length; i++)
+                {
+                    var unlockableSaveDataFor = user.GetUnlockableSaveDataFor(__instance.currentUnlockables[i]);
+                    if (!unlockableSaveDataFor.isUnlocked)
+                        __instance.texts[i].AssignAndUpdateText("???", GroupOptions.Text);
+                    else
+                        __instance.texts[i].AssignAndUpdateTextWithTags(__instance.currentUnlockables[i].Title, GroupOptions.Skin, null, null);
+                }
+            }
             _descriptionText = __instance.transform.Find("DescriptionText").GetComponent<TMProLocalizationAddOn>();
             var resetTextures = GameObject.FindObjectsOfType<StyleSwitchResetTexture>();
             foreach(var resetTexture in resetTextures)
@@ -35,7 +51,8 @@ namespace BombRushMP.Plugin.Patches
             }
             foreach(var button in ExtraButtons)
             {
-                GameObject.Destroy(button.gameObject);
+                if (button != null && button.gameObject != null)
+                    GameObject.Destroy(button.gameObject);
             }
             ExtraButtons.Clear();
             ExtraTexts.Clear();
@@ -68,7 +85,10 @@ namespace BombRushMP.Plugin.Patches
                 var button = ExtraButtons[i];
                 var text = ExtraTexts[i];
                 var skin = ExtraButtonSkins[i];
-                text.AssignAndUpdateText(skin.Title, GroupOptions.Text);
+                string tag = null;
+                if (skin.Identifier == charData.MPMoveStyleSkin)
+                    tag = "<u>";
+                text.AssignAndUpdateTextWithTags(skin.Title, GroupOptions.Text, tag, null);
                 var buttonUp = __instance.buttons[__instance.buttons.Length - 1];
                 if (i > 0)
                 {
@@ -83,23 +103,68 @@ namespace BombRushMP.Plugin.Patches
                 {
                     CustomSkinButtonSelected(__instance, button, skin);
                 }, skin.UnlockedByDefault, buttonUp, buttonDown, __instance.normalGameFontType, __instance.selectedGameFontType, __instance.nonSelectableAlphaValue);
+                button.interactable = true;
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(delegate
+                {
+                    CustomSkinButtonClicked(__instance, button, skin);
+                });
+                button.gameObject.SetActive(true);
             }
             var cancelNavi = __instance.cancelButton.navigation;
             cancelNavi.selectOnUp = ExtraButtons[ExtraButtons.Count - 1];
             __instance.cancelButton.navigation = cancelNavi;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(StyleSwitchMenu.SkinButtonClicked))]
+        private static void SkinButtonClicked_Prefix(StyleSwitchMenu __instance, MenuTimelineButton clickedButton, int skinIndex)
+        {
+            if (__instance.IsTransitioning) return;
+            if (__instance.buttonClicked != null) return;
+            if (!clickedButton.canBeSelected) return;
+            var currentPlayer = WorldHandler.instance.GetCurrentPlayer();
+            PlayerComponent.Get(currentPlayer).ApplyMoveStyleSkin(0);
+            MPSaveData.Instance.GetCharacterData(currentPlayer.character).MPMoveStyleSkin = -1;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(StyleSwitchMenu.SkinButtonSelected))]
-        private static void SkinButtonSelected_Postfix(MenuTimelineButton clickedButton, int skinIndex)
+        private static void SkinButtonSelected_Postfix(StyleSwitchMenu __instance, MenuTimelineButton clickedButton, int skinIndex)
         {
-            var styleSwitchMenu = clickedButton.GetComponentInParent<StyleSwitchMenu>();
             _descriptionText.AssignAndUpdateText("MOVESTYLE_DESCRIPTION", GroupOptions.Text);
-            if (styleSwitchMenu == null) return;
-            if (styleSwitchMenu.moveStyleType != MoveStyle.SKATEBOARD) return;
+            if (__instance == null) return;
+            if (__instance.moveStyleType != MoveStyle.SKATEBOARD) return;
             var mesh = WorldHandler.instance.GetCurrentPlayer().MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
             foreach (var previewMesh in _skateboardPreviewMeshes)
                 previewMesh.sharedMesh = mesh;
+        }
+
+        private static void CustomSkinButtonClicked(StyleSwitchMenu menu, MenuTimelineButton clickedButton, MPMoveStyleSkin skin)
+        {
+            if (!menu.IsTransitioning && menu.buttonClicked == null)
+            {
+                if (!clickedButton.canBeSelected)
+                {
+                    if (menu.travelButtonCoroutine == null)
+                    {
+                        menu.travelButtonCoroutine = menu.StartCoroutine(menu.CanNotPerformButtonActionAnimation(clickedButton));
+                        return;
+                    }
+                }
+                else
+                {
+                    menu.buttonClicked = clickedButton;
+                    Core instance = Core.Instance;
+                    instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm, 0f);
+                    var currentPlayer = WorldHandler.instance.GetCurrentPlayer();
+                    MPSaveData.Instance.GetCharacterData(currentPlayer.character).MPMoveStyleSkin = skin.Identifier;
+                    Core.Instance.SaveManager.SaveCurrentSaveSlot();
+
+                    skin.ApplyToPlayer(currentPlayer);
+                    menu.StartCoroutine(menu.clipBehaviour.FlickerDelayedButtonPress(clickedButton, new UnityAction(menu.clipBehaviour.ExitMenu)));
+                }
+            }
         }
 
         private static void CustomSkinButtonSelected(StyleSwitchMenu menu, MenuTimelineButton button, MPMoveStyleSkin skin)

@@ -15,6 +15,7 @@ using BombRushMP.Plugin.Patches;
 namespace BombRushMP.Plugin
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency("CommonAPI", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("CrewBoom", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
@@ -38,6 +39,7 @@ namespace BombRushMP.Plugin
             PacketFactory.Initialize();
             new SpecialSkinManager();
             new MPUnlockManager();
+            new MPSaveData();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             InputPatch.Patch(harmony);

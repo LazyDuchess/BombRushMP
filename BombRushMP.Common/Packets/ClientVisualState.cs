@@ -35,6 +35,8 @@ namespace BombRushMP.Common.Packets
         public int CurrentAnimation = 0;
         public float CurrentAnimationTime = 0f;
         public bool AFK = false;
+        public int MoveStyleSkin = 0;
+        public int MPMoveStyleSkin = -1;
 
         public override void Write(BinaryWriter writer)
         {
@@ -86,6 +88,9 @@ namespace BombRushMP.Common.Packets
             writer.Write(CurrentAnimationTime);
 
             writer.Write(AFK);
+
+            writer.Write(MoveStyleSkin);
+            writer.Write(MPMoveStyleSkin);
         }
 
         public override void Read(BinaryReader reader)
@@ -144,6 +149,9 @@ namespace BombRushMP.Common.Packets
             CurrentAnimationTime = reader.ReadSingle();
 
             AFK = reader.ReadBoolean();
+
+            MoveStyleSkin = reader.ReadInt32();
+            MPMoveStyleSkin = reader.ReadInt32();
         }
     }
 }
