@@ -28,6 +28,13 @@ namespace BombRushMP.Plugin
         private int _lastMoveStyleSkin = -1;
         private int _lastMPMoveStyleSkin = -1;
 
+        public void UpdateVisualState(ClientVisualState newVisualState)
+        {
+            ClientVisualState = newVisualState;
+            if (ClientVisualState.MoveStyle >= (int)MoveStyle.MAX || ClientVisualState.MoveStyle < 0)
+                ClientVisualState.MoveStyle = Mathf.Clamp(ClientVisualState.MoveStyle, 0, (int)MoveStyle.MAX - 1);
+        }
+
         private void MakeMapPin()
         {
             var mapController = Mapcontroller.Instance;

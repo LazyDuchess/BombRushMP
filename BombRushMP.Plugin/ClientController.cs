@@ -258,7 +258,7 @@ namespace BombRushMP.Plugin
                         foreach (var clientVisualState in clientVisualStates.ClientVisualStates)
                         {
                             if (!Players.TryGetValue(clientVisualState.Key, out var player)) continue;
-                            player.ClientVisualState = clientVisualState.Value;
+                            player.UpdateVisualState(clientVisualState.Value);
                         }
                     }
                     break;
