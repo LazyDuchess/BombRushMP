@@ -13,7 +13,12 @@ namespace BombRushMP.Plugin
         public Mesh SkateboardMesh = null;
         public override MoveStyle MoveStyle => MoveStyle.SKATEBOARD;
 
-        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Texture texture, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, texture)
+        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Texture texture, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, texture, null)
+        {
+            SkateboardMesh = mesh;
+        }
+
+        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Material material, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, null, material)
         {
             SkateboardMesh = mesh;
         }

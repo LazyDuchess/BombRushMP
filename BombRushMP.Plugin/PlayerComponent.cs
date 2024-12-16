@@ -9,6 +9,7 @@ using BombRushMP.Common;
 using MonoMod.Cil;
 using UnityEngine.UIElements;
 using ch.sycoforge.Decal.Projectors.Geometry;
+using System.Drawing.Text;
 
 namespace BombRushMP.Plugin
 {
@@ -40,6 +41,53 @@ namespace BombRushMP.Plugin
                 Destroy(InlineMaterial);
             if (BMXSpokesMaterial != null)
                 Destroy(BMXSpokesMaterial);
+        }
+
+        public void ApplyMoveStyleMaterial(Material customMaterial)
+        {
+            if (SkateboardMaterial == null)
+                throw CreateException("SkateboardMaterial");
+            if (InlineMaterial == null)
+                throw CreateException("InlineMaterial");
+            if (BMXMaterial == null)
+                throw CreateException("BMXMaterial");
+            if (BMXSpokesMaterial == null)
+                throw CreateException("BMXSpokesMaterial");
+
+            var moveStyleProps = _player.characterVisual.moveStyleProps;
+
+            var allRenderers = moveStyleProps.bmxPedalR.GetComponentsInChildren<MeshRenderer>().ToList();
+            allRenderers.AddRange(moveStyleProps.bmxPedalL.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxFrame.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxGear.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxHandlebars.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxWheelF.GetComponentsInChildren<MeshRenderer>());
+            allRenderers.AddRange(moveStyleProps.bmxWheelR.GetComponentsInChildren<MeshRenderer>());
+
+            foreach (var renderer in allRenderers)
+            {
+                renderer.sharedMaterials = [customMaterial, customMaterial];
+            }
+
+            allRenderers = moveStyleProps.skateL.GetComponentsInChildren<MeshRenderer>().ToList();
+            allRenderers.AddRange(moveStyleProps.skateR.GetComponentsInChildren<MeshRenderer>());
+
+            foreach (var renderer in allRenderers)
+            {
+                renderer.sharedMaterials = [customMaterial];
+            }
+
+            allRenderers = moveStyleProps.skateboard.GetComponentsInChildren<MeshRenderer>().ToList();
+
+            foreach (var renderer in allRenderers)
+            {
+                renderer.sharedMaterials = [customMaterial];
+            }
+
+            Exception CreateException(string variableName)
+            {
+                return new Exception($"Tried to apply a custom MoveStyle material before caching {variableName} in PlayerComponent. Call ApplyMoveStyleSkin first!");
+            }
         }
 
         public void ApplyMoveStyleSkin(int skinIndex)

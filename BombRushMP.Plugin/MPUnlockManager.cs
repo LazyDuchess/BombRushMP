@@ -15,6 +15,13 @@ namespace BombRushMP.Plugin
             RegisterUnlock(new MPSkateboardSkin("Knuckles", "Win 1 Graffiti Race", Animator.StringToHash("knucklesskateboard"), true, GetTextureFromAssets("KnucklesSkateboardTex")));
             RegisterUnlock(new MPSkateboardSkin("Moe Shop", "Win 1 Pro Skater Score Battle", Animator.StringToHash("moeshopskateboard"), true, GetTextureFromAssets("MoeShopSkateboardTex")));
             RegisterUnlock(new MPSkateboardSkin("Glassboard", "Win 1 Score Battle against 5 players or more", Animator.StringToHash("glassboardskateboard"), true, GetTextureFromAssets("DreamcastSkateboardTex"), GetMeshFromAssets("GlassboardMesh")));
+            RegisterUnlock(new MPSkateboardSkin("Iced Board", "Kiss me on the lips", Animator.StringToHash("icedboardskateboard"), true, GetMaterialFromAssets("IcedBoardMat"), GetMeshFromAssets("IcedBoard")));
+        }
+
+        private Material GetMaterialFromAssets(string name)
+        {
+            var mpAssets = MPAssets.Instance;
+            return mpAssets.Bundle.LoadAsset<Material>(name);
         }
 
         private Texture2D GetTextureFromAssets(string name)

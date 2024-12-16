@@ -9,6 +9,7 @@ using UnityEngine;
 using ch.sycoforge.Decal;
 using UnityEngine.Events;
 using BombRushMP.CrewBoom;
+using MonoMod.Cil;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -138,6 +139,15 @@ namespace BombRushMP.Plugin.Patches
             var mesh = WorldHandler.instance.GetCurrentPlayer().MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
             foreach (var previewMesh in _skateboardPreviewMeshes)
                 previewMesh.sharedMesh = mesh;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(StyleSwitchMenu.SkinButtonClicked))]
+        private static void SkinButtonClicked_Prefix(StyleSwitchMenu __instance)
+        {
+            var playerComp = PlayerComponent.Get(WorldHandler.instance.GetCurrentPlayer());
+            playerComp.ApplyMoveStyleSkin(0);
+            __instance.moveStyleMaterials = MoveStyleLoader.GetMoveStyleMaterials(WorldHandler.instance.GetCurrentPlayer(), __instance.moveStyleType);
         }
 
         private static void CustomSkinButtonClicked(StyleSwitchMenu menu, MenuTimelineButton clickedButton, MPMoveStyleSkin skin)
