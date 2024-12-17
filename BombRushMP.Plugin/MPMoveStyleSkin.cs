@@ -13,24 +13,24 @@ namespace BombRushMP.Plugin
         public string Title = "";
         public string HowToUnlock = string.Empty;
         public Texture Texture = null;
-        public Material Material = null;
+        public Material[] Materials = null;
         public abstract MoveStyle MoveStyle { get; }
 
-        public MPMoveStyleSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Texture texture, Material material) : base(id, unlockedByDefault)
+        public MPMoveStyleSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Texture texture, Material[] materials) : base(id, unlockedByDefault)
         {
             Title = title;
             Texture = texture;
             HowToUnlock = howToUnlock;
-            Material = material;
+            Materials = materials;
         }
 
         public virtual void ApplyToPlayer(Player player)
         {
             var playerComp = PlayerComponent.Get(player);
             playerComp.ApplyMoveStyleSkin(0);
-            if (Material != null)
+            if (Materials != null)
             {
-                playerComp.ApplyMoveStyleMaterial(Material);
+                playerComp.ApplyMoveStyleMaterial(Materials);
             }
             else if (Texture != null)
             {

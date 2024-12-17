@@ -1,44 +1,9 @@
 fileFormatVersion: 2
-guid: 17bb6aefdee45e347831af96729a13a2
+guid: b50f1a7dc4863c545a0d3cf08450a68a
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Emerald
-    second: {fileID: 2100000, guid: 26feccd9ce12c95499a1f5af9ab84e67, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Emission
-    second: {fileID: 2100000, guid: 02defc153bc08e24792b293cee3765af, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Gold
-    second: {fileID: 2100000, guid: b15ca481167edd542a1df5cb5ab2e245, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: GoonieGold
-    second: {fileID: 2100000, guid: 17fbc549583cb274492d334784528d0c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Metal
-    second: {fileID: 2100000, guid: bdb9850628876a1479763115164b27ae, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Outline
-    second: {fileID: 2100000, guid: 65ad8f2a9b192a24aae86c336958de63, type: 2}
-  - first:
-      type: UnityEngine:Texture2D
-      assembly: UnityEngine.CoreModule
-      name: goonieboardnormal
-    second: {fileID: 2800000, guid: ed55b33aa8567e948bd3ad81169d12f4, type: 3}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -137,5 +102,5 @@ ModelImporter:
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
-  assetBundleName: 
+  assetBundleName: assets
   assetBundleVariant: 

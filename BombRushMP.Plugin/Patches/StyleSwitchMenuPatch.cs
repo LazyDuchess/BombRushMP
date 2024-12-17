@@ -168,6 +168,9 @@ namespace BombRushMP.Plugin.Patches
         private static void SkinButtonSelected_Prefix(StyleSwitchMenu __instance, MenuTimelineButton clickedButton, int skinIndex)
         {
             ApplyMaterials(StyleSwitchMenuEx.Get(__instance).OriginalMaterials, __instance);
+            var mesh = WorldHandler.instance.GetCurrentPlayer().MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
+            foreach (var previewMesh in _skateboardPreviewMeshes)
+                previewMesh.sharedMesh = mesh;
         }
 
         [HarmonyPostfix]
@@ -240,16 +243,16 @@ namespace BombRushMP.Plugin.Patches
                 {
                     foreach (var previewMaterial in menu.previewMaterials)
                     {
-                        for (var i = 0; i < menu.moveStyleMaterials.Length; i++)
+                        for (var i = 0; i < menu.previewMaterials.Length; i++)
                         {
                             menu.previewMaterials[i].mainTexture = skin.Texture;
                         }
                     }
                 }
             }
-            else if (skin.Material != null)
+            else if (skin.Materials != null)
             {
-                ApplyMaterials(new Material[] { skin.Material, skin.Material }, menu);
+                ApplyMaterials(skin.Materials, menu);
             }
 
             var deckSkin = skin as MPSkateboardSkin;

@@ -44,6 +44,7 @@ namespace BombRushMP.Plugin
             harmony.PatchAll();
             InputPatch.Patch(harmony);
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
+            ReflectionController.Initialize();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 

@@ -18,7 +18,12 @@ namespace BombRushMP.Plugin
             SkateboardMesh = mesh;
         }
 
-        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Material material, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, null, material)
+        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Material material, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, null, [material])
+        {
+            SkateboardMesh = mesh;
+        }
+
+        public MPSkateboardSkin(string title, string howToUnlock, int id, bool unlockedByDefault, Material[] materials, Mesh mesh = null) : base(title, howToUnlock, id, unlockedByDefault, null, materials)
         {
             SkateboardMesh = mesh;
         }

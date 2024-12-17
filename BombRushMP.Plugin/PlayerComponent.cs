@@ -43,7 +43,7 @@ namespace BombRushMP.Plugin
                 Destroy(BMXSpokesMaterial);
         }
 
-        public void ApplyMoveStyleMaterial(Material customMaterial)
+        public void ApplyMoveStyleMaterial(Material[] customMaterials)
         {
             if (SkateboardMaterial == null)
                 throw CreateException("SkateboardMaterial");
@@ -66,7 +66,7 @@ namespace BombRushMP.Plugin
 
             foreach (var renderer in allRenderers)
             {
-                renderer.sharedMaterials = [customMaterial, customMaterial];
+                renderer.sharedMaterials = customMaterials;
             }
 
             allRenderers = moveStyleProps.skateL.GetComponentsInChildren<MeshRenderer>().ToList();
@@ -74,14 +74,14 @@ namespace BombRushMP.Plugin
 
             foreach (var renderer in allRenderers)
             {
-                renderer.sharedMaterials = [customMaterial];
+                renderer.sharedMaterials = customMaterials;
             }
 
             allRenderers = moveStyleProps.skateboard.GetComponentsInChildren<MeshRenderer>().ToList();
 
             foreach (var renderer in allRenderers)
             {
-                renderer.sharedMaterials = [customMaterial];
+                renderer.sharedMaterials = customMaterials;
             }
 
             Exception CreateException(string variableName)
