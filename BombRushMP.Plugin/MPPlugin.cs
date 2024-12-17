@@ -61,6 +61,8 @@ namespace BombRushMP.Plugin
             AppMultiplayerInvites.Initialize();
             AppMultiplayerAcceptInvite.Initialize();
             AppMultiplayerLobbyKick.Initialize();
+            MoveStylePickerApp.Initialize();
+            MoveStyleSkinPickerApp.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

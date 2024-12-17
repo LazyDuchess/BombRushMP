@@ -126,6 +126,13 @@ public class AppMultiplayer : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Movestyle");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(MoveStylePickerApp));
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Debug");
         button.OnConfirm += () =>
         {
