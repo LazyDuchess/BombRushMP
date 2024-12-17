@@ -40,6 +40,7 @@ namespace BombRushMP.ServerApp
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
             _server = new Server();
+            _server.TimeoutTime = 10000;
             _server.ClientConnected += OnClientConnected;
             _server.ClientDisconnected += OnClientDisconnected;
             _server.MessageReceived += OnMessageReceived;
@@ -156,6 +157,12 @@ namespace BombRushMP.ServerApp
                 case Packets.ClientState:
                     {
                         var clientState = (ClientState)packet;
+                        if (clientState.ProtocolVersion != Constants.ProtocolVersion)
+                        {
+                            ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
+                            _server.DisconnectClient(client);
+                            return;
+                        }
                         var oldClientState = Players[client.Id].ClientState;
                         Players[client.Id].ClientState = clientState;
                         if (oldClientState != null)
@@ -163,12 +170,6 @@ namespace BombRushMP.ServerApp
                             var clientStateUpdatePacket = new ServerClientStates();
                             clientStateUpdatePacket.ClientStates[client.Id] = clientState;
                             SendPacketToStage(clientStateUpdatePacket, MessageSendMode.Reliable, oldClientState.Stage);
-                            return;
-                        }
-                        if (clientState.ProtocolVersion != Constants.ProtocolVersion)
-                        {
-                            ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
-                            _server.DisconnectClient(client);
                             return;
                         }
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
@@ -186,8 +187,26 @@ namespace BombRushMP.ServerApp
 
                 case Packets.ClientVisualState:
                     {
+                        var clientState = Players[client.Id].ClientState;
                         var clientVisualState = (ClientVisualState)packet;
+                        var oldVisualState = Players[client.Id].ClientVisualState;
                         Players[client.Id].ClientVisualState = clientVisualState;
+
+                        if (oldVisualState != null && oldVisualState.AFK != clientVisualState.AFK)
+                        {
+                            if (clientVisualState.AFK)
+                            {
+                                SendPacketToStage(new ServerChat(
+                                    string.Format(ServerConstants.AFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
+                                    MessageSendMode.Reliable, clientState.Stage);
+                            }
+                            else
+                            {
+                                SendPacketToStage(new ServerChat(
+                                    string.Format(ServerConstants.LeaveAFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
+                                    MessageSendMode.Reliable, clientState.Stage);
+                            }
+                        }
                     }
                     break;
 
@@ -244,15 +263,21 @@ namespace BombRushMP.ServerApp
             player.Client = e.Client;
             player.Server = this;
             Players[e.Client.Id] = player;
+            e.Client.CanQualityDisconnect = false;
+        }
+
+        private string GetAddressWithoutPort(string address)
+        {
+            return address.Split(":")[0];
         }
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
-            ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}.");
-            ClientDisconnected?.Invoke(e.Client);
+            ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}. Reason: {e.Reason}");
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))
             {
+                ClientDisconnected?.Invoke(e.Client);
                 Players.Remove(e.Client.Id);
                 clientState = result.ClientState;
             }

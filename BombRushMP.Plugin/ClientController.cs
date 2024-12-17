@@ -5,6 +5,7 @@ using Reptile;
 using Riptide;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -52,7 +53,7 @@ namespace BombRushMP.Plugin
         {
             ClientLogger.Log($"Connecting to {Address}");
             _client = new Client();
-            _client.Connect(Address);
+            Task.Run(() => { _client.Connect(Address); });
             _client.Connected += OnConnected;
             _client.Disconnected += OnDisconnect;
             _client.ConnectionFailed += OnConnectionFailed;
@@ -110,6 +111,11 @@ namespace BombRushMP.Plugin
                 state = PlayerStates.Graffiti;
             var packet = new ClientVisualState();
             packet.State = state;
+            packet.AFK = PlayerComponent.Get(player).AFK;
+            packet.MoveStyleSkin = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin;
+            var charData = MPSaveData.Instance.GetCharacterData(player.character);
+            if (charData != null)
+                packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
             if (state == PlayerStates.None)
             {
                 packet.MoveStyleEquipped = player.usingEquippedMovestyle;
@@ -252,7 +258,7 @@ namespace BombRushMP.Plugin
                         foreach (var clientVisualState in clientVisualStates.ClientVisualStates)
                         {
                             if (!Players.TryGetValue(clientVisualState.Key, out var player)) continue;
-                            player.ClientVisualState = clientVisualState.Value;
+                            player.UpdateVisualState(clientVisualState.Value);
                         }
                     }
                     break;
@@ -350,14 +356,18 @@ namespace BombRushMP.Plugin
         public void SendClientState()
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
+            var playerComp = PlayerComponent.Get(player);
             var statePacket = new ClientState()
             {
                 Name = _mpSettings.PlayerName,
                 Character = (int)player.character,
                 Outfit = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
-                ProtocolVersion = Constants.ProtocolVersion
+                ProtocolVersion = Constants.ProtocolVersion,
+                SpecialSkin = playerComp.SpecialSkin,
+                SpecialSkinVariant = playerComp.SpecialSkinVariant,
             };
+
             if (CrewBoomSupport.Installed)
             {
                 statePacket.CrewBoomCharacter = CrewBoomSupport.GetGuidForCharacter(player.character);

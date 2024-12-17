@@ -23,6 +23,7 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.PlayAnim))]
         private static bool PlayAnim_Prefix(Player __instance, int newAnim, bool forceOverwrite, bool instant, float atTime)
         {
+            if (!__instance.isAI && newAnim == __instance.idleFidget1Hash && PlayerComponent.Get(__instance).AFK) return false;
             var clientController = ClientController.Instance;
             if (clientController == null) return true;
             if (clientController.Connected && !__instance.isAI)
@@ -109,6 +110,19 @@ namespace BombRushMP.Plugin.Patches
             return true;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.SetOutfit))]
+        private static bool SetOutfit_Prefix(Player __instance, int setOutfit)
+        {
+            var playerComponent = PlayerComponent.Get(__instance);
+            if (playerComponent.SpecialSkin == SpecialSkins.None) return true;
+            if (!__instance.isAI)
+            {
+                Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(__instance.character).outfit = setOutfit;
+            }
+            return false;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.SetOutfit))]
         private static void SetOutfit_Postfix(Player __instance)
@@ -122,8 +136,24 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.SetCharacter))]
-        private static void SetCharacter_Postfix(Player __instance)
+        private static void SetCharacter_Postfix(Characters setChar, Player __instance)
         {
+            if (!__instance.isAI)
+            {
+                var saveData = MPSaveData.Instance.GetCharacterData(setChar);
+                if (saveData.MPMoveStyleSkin != -1)
+                {
+                    var mpUnlockManager = MPUnlockManager.Instance;
+                    if (mpUnlockManager.UnlockByID.ContainsKey(saveData.MPMoveStyleSkin))
+                    {
+                        var skin = mpUnlockManager.UnlockByID[saveData.MPMoveStyleSkin] as MPMoveStyleSkin;
+                        if (skin != null)
+                            skin.ApplyToPlayer(__instance);
+                    }
+                }
+            }
+            var playerComponent = PlayerComponent.Get(__instance);
+            playerComponent.SpecialSkin = SpecialSkins.None;
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
@@ -145,6 +175,17 @@ namespace BombRushMP.Plugin.Patches
         {
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
             return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.SetInputs))]
+        private static void SetInputs_Prefix(Player __instance, ref UserInputHandler.InputBuffer inputBuffer)
+        {
+            if (__instance.isAI) return;
+            var proSkater = ProSkaterPlayer.Get(__instance);
+            if (proSkater == null) return;
+            if (proSkater.IsOnManual())
+                inputBuffer.moveAxisY = 0f;
         }
 
         [HarmonyPostfix]
@@ -257,8 +298,48 @@ namespace BombRushMP.Plugin.Patches
         private static void LandCombo_Prefix(Player __instance)
         {
             if (!__instance.IsComboing()) return;
+            var proSkater = ProSkaterPlayer.Get(__instance);
+            if (proSkater != null)
+                proSkater.OnEndCombo();
             if (WorldHandler.instance.currentEncounter != null && WorldHandler.instance.currentEncounter is ProxyEncounter)
                 __instance.ClearMultipliersDone();
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.DropCombo))]
+        private static bool DropCombo_Prefix(Player __instance)
+        {
+            if (!__instance.IsComboing()) return true;
+            var proSkater = ProSkaterPlayer.Get(__instance);
+            if (proSkater != null)
+            {
+                proSkater.OnEndCombo();
+                __instance.baseScore = 0f;
+                __instance.scoreMultiplier = 0f;
+                __instance.lastScore = 0f;
+                __instance.lastCornered = 0;
+                __instance.ClearMultipliersDone();
+                __instance.comboTimeOutTimer = 1f;
+                __instance.currentTrickType = Player.TrickType.NONE;
+                __instance.RefreshAirTricks();
+                __instance.tricksInCombo = 0;
+                __instance.RefreshAllDegrade();
+                GameplayUI gameplayUI = __instance.ui;
+                if (gameplayUI != null)
+                {
+                    gameplayUI.SetTrickingChargeBarActive(false);
+                }
+                WorldHandler.instance.AllowRedoGrafspots();
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.Awake))]
+        private static void Awake_Prefix(Player __instance)
+        {
+            __instance.gameObject.AddComponent<PlayerComponent>();
         }
     }
 }

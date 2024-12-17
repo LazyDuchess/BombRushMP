@@ -11,11 +11,13 @@ namespace BombRushMP.Plugin
     {
         public const string ChatMessage = "{0} : {1}";
         public const string LobbyChatMessage = "{0} (LOBBY) : {1}";
+        public const string LobbyInviteMessage = "{0} Has invited you to their {1} lobby.";
         public const int MinimumPlayersToCheer = 2;
         public const float MinimumScoreToCheer = 500000f;
         public const float PlayerInterpolation = 12f;
         public const float PlayerGraffitiDistance = 1f;
         public const float PlayerGraffitiDownDistance = 1f;
+        public const float AFKTime = 60f * 5f;
         public static int GrindDirectionHash = Animator.StringToHash("grindDirection");
         public static int PhoneDirectionXHash = Animator.StringToHash("phoneDirectionX");
         public static int PhoneDirectionYHash = Animator.StringToHash("phoneDirectionY");

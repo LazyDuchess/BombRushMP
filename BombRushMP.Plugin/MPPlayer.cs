@@ -4,6 +4,7 @@ using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,15 @@ namespace BombRushMP.Plugin
         public Nameplate NamePlate;
         private MapPin _mapPin = null;
         private Material _mapPinMaterial = null;
+        private int _lastMoveStyleSkin = -1;
+        private int _lastMPMoveStyleSkin = -1;
+
+        public void UpdateVisualState(ClientVisualState newVisualState)
+        {
+            ClientVisualState = newVisualState;
+            if (ClientVisualState.MoveStyle >= (int)MoveStyle.MAX || ClientVisualState.MoveStyle < 0)
+                ClientVisualState.MoveStyle = Mathf.Clamp(ClientVisualState.MoveStyle, 0, (int)MoveStyle.MAX - 1);
+        }
 
         private void MakeMapPin()
         {
@@ -65,6 +75,40 @@ namespace BombRushMP.Plugin
             if (localLobby == null) return false;
             if (localLobby.LobbyState.Players.ContainsKey(ClientId) && localLobby.LobbyState.Players.ContainsKey(clientController.LocalID)) return true;
             return false;
+        }
+
+        private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
+        {
+            yield return null;
+            switch (player.moveStyle)
+            {
+                case MoveStyle.BMX:
+                    player.anim.runtimeAnimatorController = player.animatorControllerBMX;
+                    break;
+                case MoveStyle.SPECIAL_SKATEBOARD:
+                case MoveStyle.SKATEBOARD:
+                    player.anim.runtimeAnimatorController = player.animatorControllerSkateboard;
+                    break;
+                case MoveStyle.INLINE:
+                    player.anim.runtimeAnimatorController = player.animatorControllerSkates;
+                    break;
+            }
+            PlayerPatch.PlayAnimPatchEnabled = false;
+            try
+            {
+                player.PlayAnim(animation, true, true, time);
+                PlayerPatch.PlayAnimPatchEnabled = true;
+                yield return null;
+                PlayerPatch.PlayAnimPatchEnabled = false;
+                //hax
+                var clipInfo = player.anim.GetCurrentAnimatorClipInfo(0);
+                time = time / clipInfo[0].clip.length;
+                player.PlayAnim(animation, true, true, time);
+            }
+            finally
+            {
+                PlayerPatch.PlayAnimPatchEnabled = true;
+            }
         }
 
         public void FrameUpdate()
@@ -139,19 +183,25 @@ namespace BombRushMP.Plugin
                 Outfit = fit;
             }
 
+            var playerComp = PlayerComponent.Get(Player);
+            playerComp.AFK = ClientVisualState.AFK;
+            if (ClientState.SpecialSkin != playerComp.SpecialSkin)
+            {
+                SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(Player, ClientState.SpecialSkin);
+                justCreated = true;
+            }
+            if (ClientState.SpecialSkinVariant != playerComp.SpecialSkinVariant)
+            {
+                SpecialSkinManager.Instance.ApplySpecialSkinVariantToPlayer(Player, ClientState.SpecialSkinVariant);
+            }
+
             if (justCreated)
             {
                 if (ClientVisualState.CurrentAnimation != 0)
                 {
-                    PlayerPatch.PlayAnimPatchEnabled = false;
-                    try
-                    {
-                        Player.PlayAnim(ClientVisualState.CurrentAnimation, true, true, ClientVisualState.CurrentAnimationTime);
-                    }
-                    finally
-                    {
-                        PlayerPatch.PlayAnimPatchEnabled = true;
-                    }
+                    if (mpSettings.DebugInfo)
+                            Debug.Log($"BRCMP: Applying animation {ClientVisualState.CurrentAnimation} at time {ClientVisualState.CurrentAnimationTime} to player {ClientState.Name} (justCreated == true)");
+                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                 }
             }
 
@@ -238,6 +288,21 @@ namespace BombRushMP.Plugin
 
             if (ClientVisualState.State != PlayerStates.Graffiti)
                 Player.RemoveGraffitiSlash();
+
+            if (ClientVisualState.MoveStyleSkin != _lastMoveStyleSkin || ClientVisualState.MPMoveStyleSkin != _lastMPMoveStyleSkin || justCreated)
+            {
+                _lastMoveStyleSkin = ClientVisualState.MoveStyleSkin;
+                _lastMPMoveStyleSkin = ClientVisualState.MPMoveStyleSkin;
+                if (ClientVisualState.MPMoveStyleSkin != -1)
+                {
+                    if (MPUnlockManager.Instance.UnlockByID.ContainsKey(ClientVisualState.MPMoveStyleSkin))
+                    {
+                        (MPUnlockManager.Instance.UnlockByID[ClientVisualState.MPMoveStyleSkin] as MPMoveStyleSkin).ApplyToPlayer(Player);
+                    }
+                }
+                else
+                    playerComp.ApplyMoveStyleSkin(ClientVisualState.MoveStyleSkin);
+            }
 
             _previousState = ClientVisualState.State;
         }

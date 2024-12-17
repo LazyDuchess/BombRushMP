@@ -15,6 +15,7 @@ using BombRushMP.Plugin.Patches;
 namespace BombRushMP.Plugin
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInDependency("CommonAPI", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("CrewBoom", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
@@ -36,10 +37,14 @@ namespace BombRushMP.Plugin
             InitializePhone();
             new MPSettings(Config);
             PacketFactory.Initialize();
+            new SpecialSkinManager();
+            new MPUnlockManager();
+            new MPSaveData();
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             InputPatch.Patch(harmony);
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
+            ReflectionController.Initialize();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 
@@ -56,6 +61,8 @@ namespace BombRushMP.Plugin
             AppMultiplayerInvites.Initialize();
             AppMultiplayerAcceptInvite.Initialize();
             AppMultiplayerLobbyKick.Initialize();
+            MoveStylePickerApp.Initialize();
+            MoveStyleSkinPickerApp.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()
@@ -66,6 +73,9 @@ namespace BombRushMP.Plugin
             MPMapController.Create();
             NotificationController.Create();
             ChatUI.Create();
+            BalanceUI.Create();
+            if (MPSettings.Instance.DebugInfo)
+                DebugUI.Create();
         }
 
         private string GetServerAddress(string address, int port)

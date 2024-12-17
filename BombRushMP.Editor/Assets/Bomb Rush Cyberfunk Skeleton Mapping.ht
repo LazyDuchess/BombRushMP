@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1105 &110500000
+HumanTemplate:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Bomb Rush Cyberfunk Skeleton Mapping
+  m_BoneTemplate:
+    Head: head
+    Hips: root
+    LeftFoot: footl
+    LeftHand: handl
+    LeftLowerArm: arm2l
+    LeftLowerLeg: leg2l
+    LeftShoulder: shldl
+    LeftToes: toesl
+    LeftUpperArm: arm1l
+    LeftUpperLeg: leg1l
+    Neck: neck
+    RightFoot: footr
+    RightHand: handr
+    RightLowerArm: arm2r
+    RightLowerLeg: leg2r
+    RightShoulder: shldr
+    RightToes: toesr
+    RightUpperArm: arm1r
+    RightUpperLeg: leg1r
+    Spine: s1

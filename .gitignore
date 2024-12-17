@@ -3,3 +3,4 @@ obj/
 [Bb]uild/
 .vs/
 *.user
+*.dll

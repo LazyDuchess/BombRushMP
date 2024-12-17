@@ -3,7 +3,35 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Spawner
+  - GraffitiSpot
+  - StageIntro
+  - NPC
+  - Encounter
+  - Dialogue
+  - StageExit
+  - MovingObject
+  - Teleport
+  - Collectable
+  - stageTransition
+  - launcherZone
+  - ProgressObject
+  - CameraZone
+  - walkZone
+  - speedZone
+  - TempRacerWithDialogue
+  - EnemyDeathbox
+  - EnemyMovementTargetA
+  - PublicToilet
+  - EnemyMovementTargetB
+  - Battle
+  - Checkpoint
+  - CypherZone
+  - Center
+  - SkateboardScrewPole
+  - GasBarrier
+  - SnakebossHead
   layers:
   - Default
   - TransparentFX
@@ -13,30 +41,30 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Sun
+  - PlayerInteract
+  - NonStableSurface
+  - Grinding
+  - CameraIgnore
+  - Wallrun
+  - TriggerDetectDefault
+  - Player
+  - Pickups
+  - Enemies
+  - PlayerHitbox
+  - TriggerDetectPlayer
+  - EnemyHitbox
+  - Junk
+  - DetectObstructions
+  - VertSurface
+  - Phone
+  - StreetLife
+  - DetectGrind
+  - Minimap
+  - Projectile
+  - NonCollidingJunk
+  - TriggerDetectDynamic
+  - DontUseThisLayer
   m_SortingLayers:
   - name: Default
     uniqueID: 0

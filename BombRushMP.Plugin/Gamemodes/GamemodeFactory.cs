@@ -14,12 +14,14 @@ namespace BombRushMP.ServerApp.Gamemodes
         {
             {GamemodeIDs.ScoreBattle, typeof(ScoreBattle) },
             {GamemodeIDs.GraffitiRace, typeof(GraffitiRace) },
+            {GamemodeIDs.ProSkaterScoreBattle, typeof(ProSkaterScoreBattle) }
         };
 
         private static Dictionary<GamemodeIDs, string> GamemodeNames = new()
         {
             {GamemodeIDs.ScoreBattle, "Score Battle" },
-            {GamemodeIDs.GraffitiRace, "Graffiti Race" }
+            {GamemodeIDs.GraffitiRace, "Graffiti Race" },
+            {GamemodeIDs.ProSkaterScoreBattle, "Pro Skater Score Battle" }
         };
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)

@@ -13,6 +13,7 @@ namespace BombRushMP.ServerApp.Gamemodes
         {
             {GamemodeIDs.ScoreBattle, typeof(ScoreBattle) },
             {GamemodeIDs.GraffitiRace, typeof(GraffitiRace) },
+            {GamemodeIDs.ProSkaterScoreBattle, typeof(ProSkaterScoreBattle) }
         };
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)

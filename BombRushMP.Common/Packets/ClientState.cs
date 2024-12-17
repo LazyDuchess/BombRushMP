@@ -16,6 +16,8 @@ namespace BombRushMP.Common.Packets
         public Guid CrewBoomCharacter = Guid.Empty;
         public int Character = 0;
         public int Outfit = 0;
+        public SpecialSkins SpecialSkin = SpecialSkins.None;
+        public int SpecialSkinVariant = -1;
         public string Name = "Player";
         public int Stage = 0;
         public uint ProtocolVersion = Constants.ProtocolVersion;
@@ -29,6 +31,8 @@ namespace BombRushMP.Common.Packets
             ProtocolVersion = reader.ReadUInt32();
             Stage = reader.ReadInt32();
             Name = reader.ReadString();
+            SpecialSkin = (SpecialSkins)reader.ReadInt32();
+            SpecialSkinVariant = reader.ReadInt32();
         }
 
         public override void Write(BinaryWriter writer)
@@ -39,6 +43,8 @@ namespace BombRushMP.Common.Packets
             writer.Write(ProtocolVersion);
             writer.Write(Stage);
             writer.Write(Name);
+            writer.Write((int)SpecialSkin);
+            writer.Write(SpecialSkinVariant);
         }
     }
 }

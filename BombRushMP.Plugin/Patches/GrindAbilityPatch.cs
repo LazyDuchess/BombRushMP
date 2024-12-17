@@ -44,10 +44,30 @@ namespace BombRushMP.Plugin.Patches
         private static void OnStopAbility_Postfix(GrindAbility __instance)
         {
             if (__instance.p.isAI) return;
+            var proSkater = ProSkaterPlayer.Get(__instance.p);
+            if (proSkater != null)
+            {
+                if (__instance.p.abilityTimer <= ProSkaterPlayer.GrindPenaltyTime)
+                    proSkater.PenalizeGrinding();
+                else
+                    proSkater.SoftResetGrinding();
+                proSkater.GrindBalance.CurrentSensitivity += ProSkaterPlayer.LeaveGrindSensitivity;
+            }
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
             clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(GrindAbility.UpdateTilting))]
+        private static bool UpdateTilting_Prefix(GrindAbility __instance)
+        {
+            if (__instance.p.isAI) return true;
+            var proSkater = ProSkaterPlayer.Get(__instance.p);
+            if (proSkater == null) return true;
+            proSkater.GrindUpdateTilting(__instance);
+            return false;
         }
     }
 }

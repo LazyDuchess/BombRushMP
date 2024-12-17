@@ -29,6 +29,7 @@
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
     <ProjectReference Include="..\BombRushMP.CrewBoom\BombRushMP.CrewBoom.csproj" />
     <ProjectReference Include="..\BombRushMP.MapStation\BombRushMP.MapStation.csproj" />
+    <ProjectReference Include="..\BombRushMP.Mono\BombRushMP.Mono.csproj" />
     <ProjectReference Include="..\libs\BRC-CommonAPI\CommonAPI.csproj">
       <Private>False</Private>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
@@ -43,6 +44,10 @@
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(ManagedPath)/Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+	<Reference Include="Unity.Timeline">
+      <HintPath>$(ManagedPath)/Unity.Timeline.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
