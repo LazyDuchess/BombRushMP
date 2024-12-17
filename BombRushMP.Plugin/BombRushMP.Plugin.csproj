@@ -46,6 +46,10 @@
       <HintPath>$(ManagedPath)/Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
     </Reference>
+	<Reference Include="Unity.Timeline">
+      <HintPath>$(ManagedPath)/Unity.Timeline.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(ManagedPath)/UnityEngine.UI.dll</HintPath>
       <Private>false</Private>

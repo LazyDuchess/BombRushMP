@@ -10,6 +10,7 @@ using ch.sycoforge.Decal;
 using UnityEngine.Events;
 using BombRushMP.CrewBoom;
 using MonoMod.Cil;
+using UnityEngine.Playables;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -21,6 +22,39 @@ namespace BombRushMP.Plugin.Patches
         private static List<MPMoveStyleSkin> ExtraButtonSkins = new();
         private static MeshFilter[] _skateboardPreviewMeshes = null;
         private static TMProLocalizationAddOn _descriptionText = null;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(StyleSwitchMenu.StartMenu))]
+        private static void StartMenu_Prefix(StyleSwitchMenu __instance, StyleSwitchBehaviour clipBehaviour)
+        {
+            __instance.clipBehaviour = clipBehaviour;
+            var menuEx = StyleSwitchMenuEx.Get(__instance);
+            if (menuEx.OriginalMaterials == null)
+            {
+                menuEx.OriginalMaterials = __instance.clipBehaviour.GetPreviewMaterials();
+            }
+            ApplyMaterials(menuEx.OriginalMaterials, __instance);
+        }
+
+        private static void ApplyMaterials(Material[] materials, StyleSwitchMenu menu)
+        {
+            GameObject gameObject = null;
+            foreach (PlayableBinding playableBinding in menu.clipBehaviour.director.playableAsset.outputs)
+            {
+                if (playableBinding.sourceObject is StyleSwitchTrack)
+                {
+                    gameObject = (GameObject)menu.clipBehaviour.director.GetGenericBinding(playableBinding.sourceObject);
+                }
+            }
+            if (gameObject != null)
+            {
+                var comps = gameObject.GetComponentsInChildren<Renderer>();
+                foreach(var comp in comps)
+                {
+                    comp.sharedMaterials = materials;
+                }
+            }
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(StyleSwitchMenu.Activate))]
@@ -129,6 +163,13 @@ namespace BombRushMP.Plugin.Patches
             MPSaveData.Instance.GetCharacterData(currentPlayer.character).MPMoveStyleSkin = -1;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(StyleSwitchMenu.SkinButtonSelected))]
+        private static void SkinButtonSelected_Prefix(StyleSwitchMenu __instance, MenuTimelineButton clickedButton, int skinIndex)
+        {
+            ApplyMaterials(StyleSwitchMenuEx.Get(__instance).OriginalMaterials, __instance);
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(StyleSwitchMenu.SkinButtonSelected))]
         private static void SkinButtonSelected_Postfix(StyleSwitchMenu __instance, MenuTimelineButton clickedButton, int skinIndex)
@@ -184,6 +225,8 @@ namespace BombRushMP.Plugin.Patches
                 return;
             }
 
+            ApplyMaterials(StyleSwitchMenuEx.Get(menu).OriginalMaterials, menu);
+
             if (!string.IsNullOrEmpty(skin.HowToUnlock))
             {
                 _descriptionText.AssignAndUpdateText($"To unlock: {skin.HowToUnlock}", GroupOptions.Text);
@@ -191,16 +234,24 @@ namespace BombRushMP.Plugin.Patches
             else
                 _descriptionText.AssignAndUpdateText("MOVESTYLE_DESCRIPTION", GroupOptions.Text);
 
-            if (menu.previewMaterials != null)
+            if (skin.Texture != null)
             {
-                foreach (var previewMaterial in menu.previewMaterials)
+                if (menu.previewMaterials != null)
                 {
-                    for (var i = 0; i < menu.moveStyleMaterials.Length; i++)
+                    foreach (var previewMaterial in menu.previewMaterials)
                     {
-                        menu.previewMaterials[i].mainTexture = skin.Texture;
+                        for (var i = 0; i < menu.moveStyleMaterials.Length; i++)
+                        {
+                            menu.previewMaterials[i].mainTexture = skin.Texture;
+                        }
                     }
                 }
             }
+            else if (skin.Material != null)
+            {
+                ApplyMaterials(new Material[] { skin.Material, skin.Material }, menu);
+            }
+
             var deckSkin = skin as MPSkateboardSkin;
             if (deckSkin != null)
             {
