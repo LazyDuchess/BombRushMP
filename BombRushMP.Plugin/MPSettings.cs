@@ -12,6 +12,19 @@ namespace BombRushMP.Plugin
     {
         public static MPSettings Instance { get; private set; }
         private const byte Version = 0;
+
+        public ReflectionQualities ReflectionQuality
+        {
+            get
+            {
+                return _reflectionQuality.Value;
+            }
+
+            set
+            {
+                _reflectionQuality.Value = value;
+            }
+        }
         public bool PlayerAudioEnabled
         {
             get
@@ -178,6 +191,7 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
@@ -202,6 +216,7 @@ namespace BombRushMP.Plugin
         {
             Instance = this;
             _configFile = configFile;
+            _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
             _playerName = configFile.Bind(General, "Player Name", "Goofiest Gooner", "Your player name.");
             _serverAddress = configFile.Bind(General, "Server Address", "brcmp.lazyduchess.me", "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
