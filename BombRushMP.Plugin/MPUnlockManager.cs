@@ -25,6 +25,11 @@ namespace BombRushMP.Plugin
                 GetMaterialFromAssets("GoonieGold2"),
                 GetMaterialFromAssets("GoonieOutline")
             ], GetMeshFromAssets("GoonieMesh")));
+            RegisterUnlock(new MPSkateboardSkin("GWMA", "hehe", Animator.StringToHash("gwmaskateboard"), true, GetTextureFromAssets("GWMASkateboardTex")));
+            RegisterUnlock(new MPSkateboardSkin("BAKER", "get baked", Animator.StringToHash("bakerskateboard"), true, GetTextureFromAssets("BAKERSkateboardTex")));
+            RegisterUnlock(new MPSkateboardSkin("Smash", "OR PASS!", Animator.StringToHash("smashskateboard"), true, GetTextureFromAssets("SmashSkateboardTex")));
+            RegisterUnlock(new MPSkateboardSkin("Aqua", "hello i'm lazy duchess", Animator.StringToHash("aquaskateboard"), true, GetTextureFromAssets("AquaSkateboardTex")));
+            RegisterUnlock(new MPSkateboardSkin("Rave", "yeaaa this one don't need no trucks", Animator.StringToHash("raveskateboard"), true, GetMaterialFromAssets("RaveboardMat"), GetMeshFromAssets("RaveboardMesh")));
         }
 
         private Material GetMaterialFromAssets(string name)
