@@ -30,6 +30,7 @@ namespace BombRushMP.Plugin
             RegisterUnlock(new MPSkateboardSkin("Smash", "OR PASS!", Animator.StringToHash("smashskateboard"), true, GetTextureFromAssets("SmashSkateboardTex")));
             RegisterUnlock(new MPSkateboardSkin("Aqua", "hello i'm lazy duchess", Animator.StringToHash("aquaskateboard"), true, GetTextureFromAssets("AquaSkateboardTex")));
             RegisterUnlock(new MPSkateboardSkin("Rave", "yeaaa this one don't need no trucks", Animator.StringToHash("raveskateboard"), true, GetMaterialFromAssets("RaveboardMat"), GetMeshFromAssets("RaveboardMesh")));
+            RegisterUnlock(new MPSkateboardSkin("Futurism", "how the fuck do you pop the tail", Animator.StringToHash("fismboard"), true, GetMaterialFromAssets("fismboardMat"), GetMeshFromAssets("fismboardMesh")));
         }
 
         private Material GetMaterialFromAssets(string name)
