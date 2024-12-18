@@ -36,7 +36,7 @@ namespace BombRushMP.Plugin
                 mesh = player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
             player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = mesh;
             var refController = ReflectionController.Instance;
-            if (refController != null && refController.Anchor != null)
+            if (refController != null && refController.Probe != null)
             {
                 player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshRenderer>().probeAnchor = refController.Anchor;
             }
