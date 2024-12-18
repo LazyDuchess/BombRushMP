@@ -8,6 +8,7 @@ namespace BombRushMP.Plugin
 {
     public enum ReflectionQualities
     {
+        Off,
         Low,
         Medium,
         High

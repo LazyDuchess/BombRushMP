@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using CommonAPI;
+using Reptile;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,17 +12,20 @@ namespace BombRushMP.Plugin
 {
     public class ReflectionController : MonoBehaviour
     {
+        public static ReflectionController Instance { get; private set; }
+        public ReflectionProbe Probe { get; private set; }
+        public Transform Anchor;
         private const int MediumQualityReflectionResolution = 32;
+        private static Vector3 PlaceholderLocation = new Vector3(50000f, 50000f, 50000f);
         private static GameObject Prefab;
-        private ReflectionProbe _probeInstance;
 
         public static void Initialize()
         {
             Prefab = MPAssets.Instance.Bundle.LoadAsset<GameObject>("Camera Reflection Probe");
-            StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
+            StageAPI.OnStagePreInitialization += OnStagePreInitialization;
         }
 
-        private static void StageManager_OnStagePostInitialization()
+        private static void OnStagePreInitialization(Stage newStage, Stage previousStage)
         {
             var refController = new GameObject("Reflection Controller");
             refController.AddComponent<ReflectionController>();
@@ -29,31 +33,43 @@ namespace BombRushMP.Plugin
 
         private void Awake()
         {
-            _probeInstance = Instantiate(Prefab).GetComponent<ReflectionProbe>();
+            Instance = this;
             var reflectionQuality = MPSettings.Instance.ReflectionQuality;
+            var anchorGo = new GameObject("Reflection Anchor");
+            anchorGo.transform.SetPositionAndRotation(PlaceholderLocation, Quaternion.identity);
+            Anchor = anchorGo.transform;
 
-            if (reflectionQuality == ReflectionQualities.Low)
+            if (reflectionQuality != ReflectionQualities.Off)
             {
-                _probeInstance.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.ViaScripting;
-                _probeInstance.RenderProbe();
-            }
+                Probe = Instantiate(Prefab).GetComponent<ReflectionProbe>();
 
-            if (reflectionQuality == ReflectionQualities.Medium)
-            {
-                _probeInstance.resolution = MediumQualityReflectionResolution;
-                _probeInstance.timeSlicingMode = UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.IndividualFaces;
+                if (reflectionQuality == ReflectionQualities.Low)
+                {
+                    Probe.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.ViaScripting;
+                    StartCoroutine(RenderLowReflection());
+                }
+
+                if (reflectionQuality == ReflectionQualities.Medium)
+                {
+                    Probe.resolution = MediumQualityReflectionResolution;
+                    Probe.timeSlicingMode = UnityEngine.Rendering.ReflectionProbeTimeSlicingMode.IndividualFaces;
+                }
             }
+        }
+
+        private IEnumerator RenderLowReflection()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            Probe.transform.position = WorldHandler.instance.CurrentCameraPosition;
+            Probe.RenderProbe();
         }
 
         private void Update()
         {
-            _probeInstance.transform.position = WorldHandler.instance.CurrentCameraPosition;
-        }
-
-        private IEnumerator BakeReflections()
-        {
-            yield return new WaitForSecondsRealtime(0.5f);
-            
+            if (Probe == null) return;
+            Probe.center = PlaceholderLocation;
+            Probe.transform.position = WorldHandler.instance.CurrentCameraPosition;
+            Anchor.transform.position = Probe.transform.position + Probe.center;
         }
     }
 }
