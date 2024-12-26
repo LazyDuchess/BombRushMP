@@ -53,9 +53,13 @@ namespace BombRushMP.Plugin
             _referenceText = _scrollRect.content.Find("Text").GetComponent<TextMeshProUGUI>();
             _referenceText.gameObject.SetActive(false);
             _sendButton.onClick.AddListener(TrySendChatMessage);
-            var clientController = ClientController.Instance;
-            clientController.PacketReceived += OnPacketReceived;
+            ClientController.PacketReceived += OnPacketReceived;
             SetState(States.Unfocused);
+        }
+
+        private void OnDestroy()
+        {
+            ClientController.PacketReceived -= OnPacketReceived;
         }
 
         private void OnPacketReceived(Packets packetId, Packet packet)

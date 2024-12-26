@@ -25,11 +25,16 @@ namespace BombRushMP.Plugin
             _canvas = transform.Find("Canvas").gameObject;
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
-            _lobbyManager.LobbiesUpdated += OnLobbiesUpdated;
+            ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
             _playerName = _canvas.transform.Find("Player Name").gameObject;
             _playerName.SetActive(false);
             InitializePlayerUIPool();
             Deactivate();
+        }
+
+        private void OnDestroy()
+        {
+            ClientLobbyManager.LobbiesUpdated -= OnLobbiesUpdated;
         }
 
         private void InitializePlayerUIPool()

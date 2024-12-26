@@ -14,10 +14,10 @@ namespace BombRushMP.Plugin
 {
     public class ClientLobbyManager : IDisposable
     {
+        public static Action LobbiesUpdated;
+        public static Action LobbyChanged;
         public Lobby CurrentLobby { get; private set; }
         public Dictionary<uint, Lobby> Lobbies = new();
-        public Action LobbiesUpdated;
-        public Action LobbyChanged;
         public List<uint> LobbiesInvited = new();
         private ClientController _clientController;
         private WorldHandler _worldHandler;
@@ -25,16 +25,16 @@ namespace BombRushMP.Plugin
         public ClientLobbyManager()
         {
             _clientController = ClientController.Instance;
-            _clientController.PacketReceived += OnPacketReceived;
-            _clientController.ServerDisconnect += OnDisconnect;
+            ClientController.PacketReceived += OnPacketReceived;
+            ClientController.ServerDisconnect += OnDisconnect;
             _worldHandler = WorldHandler.instance;
             LobbyChanged += HandleEncounter;
         }
 
         public void Dispose()
         {
-            _clientController.PacketReceived -= OnPacketReceived;
-            _clientController.ServerDisconnect -= OnDisconnect;
+            ClientController.PacketReceived -= OnPacketReceived;
+            ClientController.ServerDisconnect -= OnDisconnect;
             if (CurrentLobby != null && CurrentLobby.InGame)
                 CurrentLobby.CurrentGamemode.OnEnd(true);
             if (_worldHandler.currentEncounter != null && _worldHandler.currentEncounter is ProxyEncounter)

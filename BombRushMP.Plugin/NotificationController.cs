@@ -20,8 +20,12 @@ namespace BombRushMP.Plugin
             Instance = this;
             var notifUIGameObject = transform.Find("Canvas").Find("Notification").gameObject;
             _notificationUI = notifUIGameObject.AddComponent<NotificationUI>();
-            var clientController = ClientController.Instance;
-            clientController.PacketReceived += OnPacketReceived;
+            ClientController.PacketReceived += OnPacketReceived;
+        }
+
+        private void OnDestroy()
+        {
+            ClientController.PacketReceived += OnPacketReceived;
         }
 
         public void RemoveNotificationForLobby(uint lobby)

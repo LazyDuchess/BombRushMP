@@ -111,12 +111,12 @@ namespace BombRushMP.Plugin.Phone
 
         private void SubToEvents()
         {
-            ClientController.Instance.PlayerDisconnected += OnPlayerDisconnected;
+            ClientController.PlayerDisconnected += OnPlayerDisconnected;
         }
         
         private void UnSubToEvents()
         {
-            ClientController.Instance.PlayerDisconnected -= OnPlayerDisconnected;
+            ClientController.PlayerDisconnected -= OnPlayerDisconnected;
         }
     }
 }

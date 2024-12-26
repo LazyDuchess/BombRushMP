@@ -29,7 +29,7 @@ public class AppMultiplayer : CustomApp
         if (!clientController.Connected)
         {
             _waitingForLobbyCreateResponse = false;
-            ClientController.Instance.PacketReceived -= OnPacketReceived_LobbyCreation;
+            ClientController.PacketReceived -= OnPacketReceived_LobbyCreation;
         }
         var lobbyManager = clientController.ClientLobbyManager;
         if (lobbyManager.CurrentLobby != null)
@@ -64,7 +64,7 @@ public class AppMultiplayer : CustomApp
             {
                 lobbyManager.CreateLobby();
                 _waitingForLobbyCreateResponse = true;
-                ClientController.Instance.PacketReceived += OnPacketReceived_LobbyCreation;
+                ClientController.PacketReceived += OnPacketReceived_LobbyCreation;
             }
         };
         ScrollView.InsertButton(0, _createLobbyButton);
@@ -75,7 +75,7 @@ public class AppMultiplayer : CustomApp
         if (packetId == Packets.ServerLobbyCreateResponse)
         {
             _waitingForLobbyCreateResponse = false;
-            ClientController.Instance.PacketReceived -= OnPacketReceived_LobbyCreation;
+            ClientController.PacketReceived -= OnPacketReceived_LobbyCreation;
             MyPhone.OpenApp(typeof(AppMultiplayerCurrentLobby));
         }
     }
@@ -133,11 +133,13 @@ public class AppMultiplayer : CustomApp
         };
         ScrollView.AddButton(button);
 
+#if DEBUG
         button = PhoneUIUtility.CreateSimpleButton("Debug");
         button.OnConfirm += () =>
         {
             MyPhone.OpenApp(typeof(AppMultiplayerDebug));
         };
         ScrollView.AddButton(button);
+#endif
     }
 }

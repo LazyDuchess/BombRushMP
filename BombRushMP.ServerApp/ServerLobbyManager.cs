@@ -22,18 +22,18 @@ namespace BombRushMP.ServerApp
         public ServerLobbyManager()
         {
             _server = BRCServer.Instance;
-            _server.PacketReceived += OnPacketReceived;
-            _server.OnTick += OnTick;
-            _server.ClientDisconnected += OnClientDisconnected;
-            _server.ClientHandshook += OnClientHandshook;
+            BRCServer.PacketReceived += OnPacketReceived;
+            BRCServer.OnTick += OnTick;
+            BRCServer.ClientDisconnected += OnClientDisconnected;
+            BRCServer.ClientHandshook += OnClientHandshook;
         }
 
         public void Dispose()
         {
-            _server.PacketReceived -= OnPacketReceived;
-            _server.OnTick -= OnTick;
-            _server.ClientDisconnected -= OnClientDisconnected;
-            _server.ClientHandshook -= OnClientHandshook;
+            BRCServer.PacketReceived -= OnPacketReceived;
+            BRCServer.OnTick -= OnTick;
+            BRCServer.ClientDisconnected -= OnClientDisconnected;
+            BRCServer.ClientHandshook -= OnClientHandshook;
         }
 
         public void StartGame(uint lobbyId)

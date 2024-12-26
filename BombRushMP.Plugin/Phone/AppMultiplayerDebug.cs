@@ -23,13 +23,15 @@ public class AppMultiplayerDebug : CustomApp
     private void PopulateButtons()
     {
         ScrollView.RemoveAllButtons();
-
-        var button = PhoneUIUtility.CreateSimpleButton("Join Lobby");
+        SimplePhoneButton button;
+#if DEVELOPER_DEBUG
+        button = PhoneUIUtility.CreateSimpleButton("Join Lobby");
         button.OnConfirm += () =>
         {
             MyPhone.OpenApp(typeof(AppJoinLobbyDebug));
         };
         ScrollView.AddButton(button);
+#endif
 
         button = PhoneUIUtility.CreateSimpleButton("Cop Skin Test");
         button.OnConfirm += () =>
@@ -54,6 +56,7 @@ public class AppMultiplayerDebug : CustomApp
         };
         ScrollView.AddButton(button);
 
+#if DEVELOPER_DEBUG
         button = PhoneUIUtility.CreateSimpleButton("Enable ProSkater Mode");
         button.OnConfirm += () =>
         {
@@ -69,5 +72,6 @@ public class AppMultiplayerDebug : CustomApp
             ProSkaterPlayer.Set(player, false);
         };
         ScrollView.AddButton(button);
+#endif
     }
 }
