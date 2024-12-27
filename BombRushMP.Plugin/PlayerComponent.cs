@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin
 {
     public class PlayerComponent : MonoBehaviour
     {
+        private const float HelloCooldown = 2f;
         private const float AFKEnterSpeed = 4f;
         private const float AFKExitSpeed = 8f;
         public SpecialSkins SpecialSkin = SpecialSkins.None;
@@ -26,6 +27,7 @@ namespace BombRushMP.Plugin
         private Player _player = null;
         private float _afkWeight = 0f;
         private float _afkTimer = 0f;
+        private float _helloTimer = 0f;
         public Material SkateboardMaterial = null;
         public Material InlineMaterial = null;
         public Material BMXMaterial = null;
@@ -151,6 +153,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool CanSayHello()
+        {
+            if (_helloTimer > 0f) return false;
+            if (_player.IsBusyWithSequence()) return false;
+            if (_player.IsDead()) return false;
+            return true;
+        }
+
+        public void DoSayHello()
+        {
+            _player.PlayVoice(AudioClipID.VoiceTalk, VoicePriority.COMBAT);
+        }
+
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -176,7 +191,24 @@ namespace BombRushMP.Plugin
             var mpSettings = MPSettings.Instance;
             if (Local)
             {
+                _helloTimer -= Core.dt;
+                if (_helloTimer <= 0f)
+                    _helloTimer = 0f;
+
                 var gameInput = Core.Instance.GameInput;
+                var controllerMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs();
+                if (controllerMaps.controllerMapCategoryIDs.Contains(0))
+                {
+                    if (Input.GetKeyDown(MPSettings.Instance.TalkKey))
+                    {
+                        if (CanSayHello())
+                        {
+                            DoSayHello();
+                            _helloTimer = HelloCooldown;
+                        }
+                    }
+                }
+                
                 var axisArray = new float[] { gameInput.GetAxis(13), gameInput.GetAxis(14), gameInput.GetAxis(8), gameInput.GetAxis(18)};
                 foreach(var axis in axisArray)
                 {
@@ -242,7 +274,13 @@ namespace BombRushMP.Plugin
 
         public static PlayerComponent Get(Player player)
         {
+            if (player == null) return null;
             return player.GetComponent<PlayerComponent>();
+        }
+
+        public static PlayerComponent GetLocal()
+        {
+            return Get(WorldHandler.instance.GetCurrentPlayer());
         }
     }
 }

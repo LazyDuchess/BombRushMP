@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin
 {
     public class MPPlayer
     {
+        public bool Local => ClientId == ClientController.Instance.LocalID;
         public ushort ClientId = 0;
         public ClientState ClientState = null;
         public ClientVisualState ClientVisualState = null;
