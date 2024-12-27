@@ -19,7 +19,6 @@ namespace BombRushMP.Plugin
     {
         public static ChatUI Instance { get; private set; }
         private const int MaxMessages = 500;
-        private KeyCode _chatKey = KeyCode.Tab;
         private Button _sendButton;
         private TMP_InputField _inputField;
         private ScrollRect _scrollRect;
@@ -183,7 +182,7 @@ namespace BombRushMP.Plugin
             if (_messageHideTimer >= TimeForMessagesToHide)
                 HideMessages();
 
-            if (Input.GetKeyDown(_chatKey) && CanOpenChat())
+            if (Input.GetKeyDown(MPSettings.Instance.ChatKey) && CanOpenChat())
                 SetState(States.Focused);
         }
 
@@ -206,7 +205,7 @@ namespace BombRushMP.Plugin
                     _scrollRect.normalizedPosition = new Vector2(0, 0);
                 if (Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return) && EventSystem.current.currentSelectedGameObject == _inputField.gameObject)
                     TrySendChatMessage();
-                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(_chatKey))
+                if (Input.GetKeyDown(KeyCode.Escape))
                     SetState(States.Unfocused);
             }
             finally

@@ -205,6 +205,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public KeyCode ChatKey
+        {
+            get
+            {
+                return _chatKey.Value;
+            }
+
+            set
+            {
+                _chatKey.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
@@ -220,6 +233,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _showAFKEffects;
         private ConfigEntry<bool> _debugInfo;
         private ConfigEntry<KeyCode> _talkKey;
+        private ConfigEntry<KeyCode> _chatKey;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -253,6 +267,7 @@ namespace BombRushMP.Plugin
             _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
+            _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
