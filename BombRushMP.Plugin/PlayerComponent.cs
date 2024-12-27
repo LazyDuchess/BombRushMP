@@ -27,6 +27,7 @@ namespace BombRushMP.Plugin
         private Player _player = null;
         private float _afkWeight = 0f;
         private float _afkTimer = 0f;
+        private bool _afkForced = false;
         private float _helloTimer = 0f;
         public Material SkateboardMaterial = null;
         public Material InlineMaterial = null;
@@ -178,12 +179,14 @@ namespace BombRushMP.Plugin
         {
             _afkTimer = 0f;
             AFK = false;
+            _afkForced = false;
         }
 
         public void ForceAFK()
         {
             _afkTimer = ClientConstants.AFKTime;
             AFK = true;
+            _afkForced = true;
         }
 
         private void LateUpdate()
@@ -208,16 +211,19 @@ namespace BombRushMP.Plugin
                         }
                     }
                 }
-                
-                var axisArray = new float[] { gameInput.GetAxis(13), gameInput.GetAxis(14), gameInput.GetAxis(8), gameInput.GetAxis(18)};
-                foreach(var axis in axisArray)
+
+                if (!_afkForced)
                 {
-                    if (axis != 0f)
-                        _afkTimer = 0f;
-                }
-                if (gameInput.GetAnyButtonNew())
-                {
-                    _afkTimer = 0f;
+                    var axisArray = new float[] { gameInput.GetAxis(13), gameInput.GetAxis(14), gameInput.GetAxis(8), gameInput.GetAxis(18) };
+                    foreach (var axis in axisArray)
+                    {
+                        if (axis != 0f)
+                            StopAFK();
+                    }
+                    if (gameInput.GetAnyButtonNew())
+                    {
+                        StopAFK();
+                    }
                 }
                 _afkTimer += Core.dt;
 
@@ -229,6 +235,7 @@ namespace BombRushMP.Plugin
                 else
                 {
                     AFK = false;
+                    _afkForced = false;
                 }
             }
             if (mpSettings.ShowAFKEffects)

@@ -126,6 +126,14 @@ public class AppMultiplayer : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Stop AFK");
+        button.OnConfirm += () =>
+        {
+            PlayerComponent.Get(MyPhone.player).StopAFK();
+            MyPhone.TurnOff(true);
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Movestyle");
         button.OnConfirm += () =>
         {
