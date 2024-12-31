@@ -48,5 +48,16 @@ namespace BombRushMP.MapStation
                 Stages.Add(mpStage);
             }
         }
+
+        public static bool IsMapOptionToggleable(GameObject go)
+        {
+            var comps = go.GetComponentsInParent<MonoBehaviour>(true);
+            foreach(var comp in comps)
+            {
+                if (comp.GetType().Name == "ActiveOnMapOption")
+                    return true;
+            }
+            return false;
+        }
     }
 }

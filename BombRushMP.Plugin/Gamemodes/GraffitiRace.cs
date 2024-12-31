@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.MapStation;
 using Reptile;
 using System;
 using System.Collections;
@@ -203,7 +204,8 @@ namespace BombRushMP.Plugin.Gamemodes
                x.notAllowedToPaint != PlayerType.HUMAN &&
                x.GetComponentInParent<Rigidbody>(true) == null &&
                x.beTargetForObjective == Story.ObjectiveID.NONE &&
-               x.GetComponentInParent<ActiveOnChapter>(true) == null
+               x.GetComponentInParent<ActiveOnChapter>(true) == null &&
+               !MapStationSupport.IsMapOptionToggleable(x.gameObject)
             ).ToList();
 
             var raceSpots = new List<string>();
