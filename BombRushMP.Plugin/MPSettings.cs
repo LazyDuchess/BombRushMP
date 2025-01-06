@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using BepInEx.Configuration;
 using UnityEngine;
+using BombRushMP.Common;
 
 namespace BombRushMP.Plugin
 {
@@ -15,6 +16,24 @@ namespace BombRushMP.Plugin
         private const byte Version = 0;
 
         public string Directory { get; private set; }
+
+        public const int MaxMessageLength = 256;
+        public const int MaxNameLength = 64;
+
+        public TMPFilter.Criteria ChatCriteria = new TMPFilter.Criteria(
+            [
+                "b",
+                "color",
+                "i",
+                "mark",
+                "sprite",
+                "s",
+                "sub",
+                "sup",
+                "u",
+                ]
+            , TMPFilter.Criteria.Kinds.Whitelist
+        );
 
         public ReflectionQualities ReflectionQuality
         {
@@ -74,19 +93,6 @@ namespace BombRushMP.Plugin
             set
             {
                 _playerName.Value = value;
-            }
-        }
-
-        public bool DebugLocalPlayer
-        {
-            get
-            {
-                return _debugLocalPlayer.Value;
-            }
-
-            set
-            {
-                _debugLocalPlayer.Value = value;
             }
         }
 
@@ -181,19 +187,6 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public bool DebugInfo
-        {
-            get
-            {
-                return _debugInfo.Value;
-            }
-
-            set
-            {
-                _debugInfo.Value = value;
-            }
-        }
-
         public KeyCode TalkKey
         {
             get
@@ -220,6 +213,51 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool FilterProfanity
+        {
+            get
+            {
+                return _filterProfanity.Value;
+            }
+
+            set
+            {
+                _filterProfanity.Value = value;
+            }
+        }
+
+#if DEBUG
+        public bool DebugLocalPlayer
+        {
+            get
+            {
+                return _debugLocalPlayer.Value;
+            }
+
+            set
+            {
+                _debugLocalPlayer.Value = value;
+            }
+        }
+
+        public bool DebugInfo
+        {
+            get
+            {
+                return _debugInfo.Value;
+            }
+
+            set
+            {
+                _debugInfo.Value = value;
+            }
+        }
+
+#else
+        public bool DebugLocalPlayer => false;
+        public bool DebugInfo => false;
+#endif
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
@@ -236,6 +274,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _debugInfo;
         private ConfigEntry<KeyCode> _talkKey;
         private ConfigEntry<KeyCode> _chatKey;
+        private ConfigEntry<bool> _filterProfanity;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -256,7 +295,6 @@ namespace BombRushMP.Plugin
             _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
             _showNamePlates = configFile.Bind(Settings, "Show Nameplates", true, "Whether to show nameplates above players.");
             _showMinimap = configFile.Bind(Settings, "Show Minimap", true, "Whether to always show the minimap in-game.");
-            _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _showNotifications = configFile.Bind(Settings, "Show Notifications", true, "Whether to show notifications when you're invited to a lobby.");
             _playerName.SettingChanged += (sender, args) =>
             {
@@ -268,9 +306,14 @@ namespace BombRushMP.Plugin
             _leaveJoinMessages = configFile.Bind(ChatSettings, "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
             _afkMessages = configFile.Bind(ChatSettings, "Show Player AFK Messages", true, "Whether to show a message in chat when a player goes AFK.");
             _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
-            _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
+            _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
+
+#if DEBUG
+            _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
+            _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
+#endif
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

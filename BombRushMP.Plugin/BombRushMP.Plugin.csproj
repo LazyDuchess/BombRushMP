@@ -19,6 +19,18 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <None Remove="res\badwords.txt" />
+    <None Remove="res\profanity.txt" />
+    <None Remove="res\safewords.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="res\badwords.txt" />
+    <EmbeddedResource Include="res\profanity.txt" />
+    <EmbeddedResource Include="res\safewords.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1">
       <PrivateAssets>all</PrivateAssets>

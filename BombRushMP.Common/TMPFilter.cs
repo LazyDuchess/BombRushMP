@@ -146,6 +146,14 @@ namespace BombRushMP.Common
             return strBuilder.ToString();
         }
 
+        public static string SanitizeInput(string text)
+        {
+            text = text.Replace("\n", "");
+            text = text.Replace("\t", "");
+            text = text.Replace("\r", "");
+            return text;
+        }
+
         public static string CloseAllTags(string text)
         {
             var inTag = false;

@@ -247,7 +247,7 @@ namespace BombRushMP.Plugin
                                 player = new MPPlayer();
                                 Players[clientState.Key] = player;
                             }
-                            player.ClientState = clientState.Value;
+                            player.SetClientState(clientState.Value);
                             player.ClientId = clientState.Key;
                         }
                     }

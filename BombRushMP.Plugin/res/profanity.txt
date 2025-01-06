@@ -1,0 +1,137 @@
+# This profanity list was originally from github.com/stephenhaunts/ProfanityDetector
+# ...but it had a lot of false positives and a 'scorched earth' approach
+# yungotachi cut it out - thanks!
+# further edits made for slopchat - brought over from slopcrew
+acrotomophilia
+arian
+aryan
+assmonkey
+assnigger
+batty boy
+beaner
+beaners
+beastial
+beastiality
+bestial
+bestiality
+bukkake
+bulldyke
+bum boy
+carpet muncher
+carpetmuncher
+chick with a dick
+child-fucker
+childpredator
+child-predator
+child-molester
+chinc
+chincs
+chink
+chinky
+coon
+coonnass
+coons
+darkie
+dike
+dyke
+dykes
+eunuch
+fagbag
+fagfucker
+fagged
+fagging
+faggit
+faggitt
+faggot
+faggotcock
+faggots
+faggs
+fagot
+fagots
+fags
+fagtard
+fucktard
+fuck-tard
+fucktards
+gaytard
+grope
+hitler
+hailhitler
+heilhitler
+jail bait
+jailbait
+japseye
+jigaboo
+jiggaboo
+jiggerboo
+kukluxklan
+kuklux
+klansman
+kike
+kikes
+klan
+kraut
+kyke
+fagget
+midget
+molest
+molester
+molestation
+n1gga
+n1gger
+nambla
+nazi
+nazism
+negro
+neonazi
+nig nog
+nigaboo
+nigg3r
+nigg4h
+nigga
+niggah
+niggas
+niggaz
+nigger
+niggers
+niggle
+niglet
+nig-nog
+niggerfaggot
+nonce
+paedophile
+paki
+pedobear
+pedophile
+pedophilia
+pedophiliac
+pikey
+pinko
+polack
+porch monkey
+porchmonkey
+reetard
+reich
+retard
+retarded
+ritard
+rtard
+r-tard
+sand nigger
+sandbar
+sandnigger
+sanger
+santorum
+shemale
+slanteye
+slave
+smegma
+suicide
+suicidal
+swastika
+tranny
+urophilia
+vorarephilia
+white power
+wigger
+zoophilia

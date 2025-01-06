@@ -46,6 +46,7 @@ namespace BombRushMP.Plugin
             _chatWindow = transform.Find("Canvas").Find("Chat Window").gameObject;
             _sendButton = _chatWindow.transform.Find("Send Button").GetComponent<Button>();
             _inputField = _chatWindow.transform.Find("Input Field").GetComponent<TMP_InputField>();
+            _inputField.characterLimit = MPSettings.MaxMessageLength;
             _scrollRect = _chatWindow.transform.Find("Scroll View").GetComponent<ScrollRect>();
             _scrollBarImages = _scrollRect.transform.Find("Scrollbar Vertical").GetComponentsInChildren<Image>(true);
             _scrollRectImage = _scrollRect.GetComponent<Image>();
@@ -90,12 +91,31 @@ namespace BombRushMP.Plugin
         {
             var mpSettings = MPSettings.Instance;
             var text = serverMessage.Message;
+            if (text.Length >= MPSettings.MaxMessageLength)
+                text = text.Substring(0, MPSettings.MaxMessageLength);
+            text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(text, MPSettings.Instance.ChatCriteria));
+            if (MPSettings.Instance.FilterProfanity)
+            {
+                if (ProfanityFilter.TMPContainsProfanity(text))
+                    text = ProfanityFilter.CensoredMessage;
+            }
             if (serverMessage.MessageType == ChatMessageTypes.PlayerJoinedOrLeft && mpSettings.LeaveJoinMessages == false)
                 return;
             if (serverMessage.MessageType == ChatMessageTypes.PlayerAFK && mpSettings.AFKMessages == false)
                 return;
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
-                text = string.Format(ClientConstants.ChatMessage, TMPFilter.CloseAllTags(serverMessage.Author), serverMessage.Message);
+            {
+                var authorname = serverMessage.Author;
+                if (authorname.Length >= MPSettings.MaxNameLength)
+                    authorname = authorname.Substring(0, MPSettings.MaxNameLength);
+                authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
+                if (MPSettings.Instance.FilterProfanity)
+                {
+                    if (ProfanityFilter.TMPContainsProfanity(authorname))
+                        authorname = ProfanityFilter.CensoredName;
+                }
+                text = string.Format(ClientConstants.ChatMessage, authorname, text);
+            }
             AddMessage(text);
         }
 
