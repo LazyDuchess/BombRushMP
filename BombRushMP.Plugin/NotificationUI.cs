@@ -11,6 +11,7 @@ namespace BombRushMP.Plugin
 {
     public class NotificationUI : MonoBehaviour
     {
+        public bool HasNotificationUp => _state == States.Open;
         private float _speed = 750f;
         private float _stayTime = 4f;
         private TextMeshProUGUI _gamemodeLabel;
@@ -105,6 +106,7 @@ namespace BombRushMP.Plugin
         private void OpenNextNotificationIfPossible()
         {
             if (_notificationQueue.Count == 0) return;
+            Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_RingTone);
             var nextNotif = _notificationQueue.Dequeue();
             SetNotification(nextNotif);
             SetState(States.Opening);

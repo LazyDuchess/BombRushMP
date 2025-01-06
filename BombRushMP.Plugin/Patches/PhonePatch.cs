@@ -31,6 +31,8 @@ namespace BombRushMP.Plugin.Patches
             {
                 PhoneUtility.BackToHomescreen(__instance);
                 __instance.OpenApp(typeof(AppMultiplayer));
+                if (NotificationController.Instance.HasNotificationUp)
+                    __instance.OpenApp(typeof(AppMultiplayerInvites));
             }
         }
     }

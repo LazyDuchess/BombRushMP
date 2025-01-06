@@ -14,6 +14,8 @@ namespace BombRushMP.Plugin
         public static MPSettings Instance { get; private set; }
         private const byte Version = 0;
 
+        public string Directory { get; private set; }
+
         public ReflectionQualities ReflectionQuality
         {
             get
@@ -242,8 +244,9 @@ namespace BombRushMP.Plugin
         private const string ChatSettings = "3. Chat Settings";
         private const string Input = "4. Input";
         private const string Debug = "5. Debug";
-        public MPSettings(ConfigFile configFile)
+        public MPSettings(ConfigFile configFile, string dir)
         {
+            Directory = dir;
             Instance = this;
             _configFile = configFile;
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");

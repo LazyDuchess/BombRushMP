@@ -2,7 +2,9 @@ using BombRushMP.Common.Packets;
 using BombRushMP.MapStation;
 using BombRushMP.Plugin;
 using BombRushMP.Plugin.Phone;
+using CommonAPI;
 using CommonAPI.Phone;
+using System.IO;
 
 public class AppMultiplayer : CustomApp
 {
@@ -11,7 +13,8 @@ public class AppMultiplayer : CustomApp
     private bool _waitingForLobbyCreateResponse = false;
     public static void Initialize()
     {
-        PhoneAPI.RegisterApp<AppMultiplayer>("multiplayer");
+        var icon = TextureUtility.LoadSprite(Path.Combine(MPSettings.Instance.Directory, "acn_icon.png"));
+        PhoneAPI.RegisterApp<AppMultiplayer>("multiplayer", icon);
     }
 
     public override void OnAppInit()

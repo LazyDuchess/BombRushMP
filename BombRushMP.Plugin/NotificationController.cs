@@ -12,6 +12,7 @@ namespace BombRushMP.Plugin
     public class NotificationController : MonoBehaviour
     {
         public static NotificationController Instance { get; private set; }
+        public bool HasNotificationUp => _notificationUI.HasNotificationUp;
         private NotificationUI _notificationUI;
         private UIManager _uiManager;
 

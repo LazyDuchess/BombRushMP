@@ -23,6 +23,7 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             Message.MaxPayloadSize = Constants.MaxPayloadSize;
+            new MPSettings(Config, Path.GetDirectoryName(Info.Location));
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
@@ -35,7 +36,6 @@ namespace BombRushMP.Plugin
             }
             ProxyEncounter.Initialize();
             InitializePhone();
-            new MPSettings(Config);
             PacketFactory.Initialize();
             new SpecialSkinManager();
             new MPUnlockManager();
