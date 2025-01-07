@@ -21,8 +21,15 @@ namespace BombRushMP.Plugin.Gamemodes
             Main,
             Finished
         }
+        private enum FetchingStates
+        {
+            None,
+            Started,
+            Finished
+        }
         public int Score = 0;
         private States _state = States.Countdown;
+        private FetchingStates _fetchingState = FetchingStates.None;
         private float _countdownTimer = 0f;
         private WorldHandler _worldHandler;
         private Dictionary<GraffitiSpot, GraffitiSpotProgress> _originalProgress = new();
@@ -60,6 +67,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnStart()
         {
             base.OnStart();
+            _fetchingState = FetchingStates.None;
             _indicators = UIScreenIndicators.Create();
             var timerUI = TimerUI.Instance;
             timerUI.Activate();
@@ -121,6 +129,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnEnd(bool cancelled)
         {
             base.OnEnd(cancelled);
+            _fetchingState = FetchingStates.None;
             var mapController = Mapcontroller.Instance;
             foreach (var pin in _mapPins.Values)
             {
@@ -168,10 +177,17 @@ namespace BombRushMP.Plugin.Gamemodes
 
         private void OnReceive_GraffitiRaceData(ClientGraffitiRaceData packet)
         {
+            if (_fetchingState != FetchingStates.Started)
+            {
+                _worldHandler.PlaceCurrentPlayerAt(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion(), true);
+                _otherSpots.Clear();
+                _originalProgress.Clear();
+            }
+            _fetchingState = FetchingStates.Started;
+            if (packet.FinalPacket)
+                _fetchingState = FetchingStates.Finished;
             var mapController = Mapcontroller.Instance;
-            _worldHandler.PlaceCurrentPlayerAt(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion(), true);
-            _otherSpots.Clear();
-            _originalProgress.Clear();
+            
             foreach(var spot in _worldHandler.SceneObjectsRegister.grafSpots)
             {
                 if (packet.GraffitiSpots.Contains(spot.Uid)) continue;
@@ -236,8 +252,29 @@ namespace BombRushMP.Plugin.Gamemodes
             spawnForward = spawnForward.normalized;
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
 
-            var packet = new ClientGraffitiRaceData(spawnPosition.ToSystemVector3(), spawnRotation.ToSystemQuaternion(), raceSpots);
-            ClientController.SendPacket(packet, Riptide.MessageSendMode.Reliable);
+            var spotLists = new List<List<string>>();
+            var curSpotAmount = 0;
+            var currentList = new List<string>();
+            foreach(var raceSpot in raceSpots)
+            {
+                if (curSpotAmount >= ClientGraffitiRaceData.MaxGraffitiSpotsPerPacket)
+                {
+                    spotLists.Add(currentList);
+                    currentList = new List<string>();
+                    curSpotAmount = 0;
+                }
+                currentList.Add(raceSpot);
+                curSpotAmount++;
+            }
+            spotLists.Add(currentList);
+
+            for (var i = 0; i < spotLists.Count; i++)
+            {
+                var spotList = spotLists[i];
+                var final = i >= spotLists.Count - 1;
+                var packet = new ClientGraffitiRaceData(spawnPosition.ToSystemVector3(), spawnRotation.ToSystemQuaternion(), spotList, final);
+                ClientController.SendPacket(packet, Riptide.MessageSendMode.Reliable);
+            }
         }
     }
 }
