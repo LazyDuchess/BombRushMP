@@ -53,9 +53,27 @@ namespace BombRushMP.ServerApp.Gamemodes
                             _state = States.Finished;
                         }
                     }
+                    else
+                    {
+                        if (EveryoneFinishedComboing() && _timeLeft <= 0f)
+                        {
+                            ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                            _state = States.Finished;
+                        }
+                    }
                     break;
             }
             _stateTimer += deltaTime;
+        }
+
+        private bool EveryoneFinishedComboing()
+        {
+            foreach(var player in Lobby.LobbyState.Players)
+            {
+                if (!_clientsFinishedCombo.Contains(player.Key))
+                    return false;
+            }
+            return true;
         }
 
         public override void OnPacketFromLobbyReceived(Packets packetId, Packet packet, ushort playerId)
@@ -72,12 +90,10 @@ namespace BombRushMP.ServerApp.Gamemodes
                     case Packets.ClientComboOver:
                         if (ComboBased)
                         {
-                            _clientsFinishedCombo.Add(playerId);
-                            ServerLobbyManager.SetPlayerScore(playerId, ((ClientComboOver)packet).Score);
-                            if (Lobby.LobbyState.Players.Count == _clientsFinishedCombo.Count && _state == States.Main && _timeLeft <= 0f)
+                            if (!_clientsFinishedCombo.Contains(playerId))
                             {
-                                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
-                                _state = States.Finished;
+                                _clientsFinishedCombo.Add(playerId);
+                                ServerLobbyManager.SetPlayerScore(playerId, ((ClientComboOver)packet).Score);
                             }
                         }
                         break;
