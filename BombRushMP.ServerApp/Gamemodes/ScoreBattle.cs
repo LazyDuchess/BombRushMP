@@ -72,10 +72,9 @@ namespace BombRushMP.ServerApp.Gamemodes
                     case Packets.ClientComboOver:
                         if (ComboBased)
                         {
-                            if (_clientsFinishedCombo.Contains(playerId)) return;
                             _clientsFinishedCombo.Add(playerId);
                             ServerLobbyManager.SetPlayerScore(playerId, ((ClientComboOver)packet).Score);
-                            if (Lobby.LobbyState.Players.Count <= _clientsFinishedCombo.Count && _state == States.Main && _timeLeft <= 0f)
+                            if (Lobby.LobbyState.Players.Count == _clientsFinishedCombo.Count && _state == States.Main && _timeLeft <= 0f)
                             {
                                 ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
                                 _state = States.Finished;
