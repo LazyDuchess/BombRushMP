@@ -266,6 +266,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public BalanceUI.Types BalanceUIType
+        {
+            get
+            {
+                return _balanceUIType.Value;
+            }
+
+            set
+            {
+                _balanceUIType.Value = value;
+            }
+        }
+
 #else
         public bool DebugLocalPlayer => false;
         public bool DebugInfo => false;
@@ -289,6 +302,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<KeyCode> _chatKey;
         private ConfigEntry<bool> _filterProfanity;
         private ConfigEntry<bool> _showChat;
+        private ConfigEntry<BalanceUI.Types> _balanceUIType;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -297,6 +311,7 @@ namespace BombRushMP.Plugin
         private const string ChatSettings = "3. Chat Settings";
         private const string Input = "4. Input";
         private const string Debug = "5. Debug";
+        private const string Visuals = "6. Visuals";
 #if DEVELOPER_DEBUG
         private const string MainServerAddress = "ggdev.lazyduchess.me";
 #else
@@ -329,6 +344,7 @@ namespace BombRushMP.Plugin
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
+            _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeB, "Balance UI theme.");
 
 #if DEBUG
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");

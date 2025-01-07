@@ -66,7 +66,11 @@ namespace BombRushMP.Plugin.Gamemodes
                             player.userInputEnabled = false;
                         }
                     }
-                    timerUI.SetTime(timeLeft);
+                    if (_comboOverRegistered) {
+                        timerUI.SetText("Waiting for other players...");
+                    }
+                    else
+                        timerUI.SetTime(timeLeft);
                     break;
             }
             _stateTimer += Time.deltaTime;
