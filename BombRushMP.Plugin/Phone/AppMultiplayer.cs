@@ -5,6 +5,7 @@ using BombRushMP.Plugin.Phone;
 using CommonAPI;
 using CommonAPI.Phone;
 using System.IO;
+using UnityEngine;
 
 public class AppMultiplayer : CustomApp
 {
@@ -13,7 +14,11 @@ public class AppMultiplayer : CustomApp
     private bool _waitingForLobbyCreateResponse = false;
     public static void Initialize()
     {
-        var icon = TextureUtility.LoadSprite(Path.Combine(MPSettings.Instance.Directory, "acn_icon.png"));
+        var txtFile = File.ReadAllBytes(Path.Combine(MPSettings.Instance.Directory, "acn_icon.png"));
+        var texture = new Texture2D(1, 1);
+        texture.LoadImage(txtFile);
+        texture.wrapMode = TextureWrapMode.Clamp;
+        var icon = TextureUtility.CreateSpriteFromTexture(texture);
         PhoneAPI.RegisterApp<AppMultiplayer>("multiplayer", icon);
     }
 
