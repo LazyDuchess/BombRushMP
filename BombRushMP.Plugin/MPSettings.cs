@@ -297,6 +297,11 @@ namespace BombRushMP.Plugin
         private const string ChatSettings = "3. Chat Settings";
         private const string Input = "4. Input";
         private const string Debug = "5. Debug";
+#if DEVELOPER_DEBUG
+        private const string MainServerAddress = "ggdev.lazyduchess.me";
+#else
+        private const string MainServerAddress = "acn.lazyduchess.me";
+#endif
         public MPSettings(ConfigFile configFile, string dir)
         {
             Directory = dir;
@@ -304,7 +309,7 @@ namespace BombRushMP.Plugin
             _configFile = configFile;
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
             _playerName = configFile.Bind(General, "Player Name", "Goofiest Gooner", "Your player name.");
-            _serverAddress = configFile.Bind(General, "Server Address", "brcmp.lazyduchess.me", "Address of the server to connect to.");
+            _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
             _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
             _showNamePlates = configFile.Bind(Settings, "Show Nameplates", true, "Whether to show nameplates above players.");
