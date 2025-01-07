@@ -253,6 +253,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool ShowChat
+        {
+            get
+            {
+                return _showChat.Value;
+            }
+
+            set
+            {
+                _showChat.Value = value;
+            }
+        }
+
 #else
         public bool DebugLocalPlayer => false;
         public bool DebugInfo => false;
@@ -275,6 +288,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<KeyCode> _talkKey;
         private ConfigEntry<KeyCode> _chatKey;
         private ConfigEntry<bool> _filterProfanity;
+        private ConfigEntry<bool> _showChat;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -309,6 +323,7 @@ namespace BombRushMP.Plugin
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
+            _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
 
 #if DEBUG
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");

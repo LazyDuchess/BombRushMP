@@ -282,6 +282,7 @@ namespace BombRushMP.Plugin
 
         private bool ShouldDisplay()
         {
+            if (!MPSettings.Instance.ShowChat) return false;
             var uiManager = Core.Instance.UIManager;
             if (uiManager == null || uiManager.gameplay == null || uiManager.gameplay.gameplayScreen == null) return false;
             if (!uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
