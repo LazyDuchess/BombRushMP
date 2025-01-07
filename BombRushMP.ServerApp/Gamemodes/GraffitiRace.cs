@@ -17,10 +17,22 @@ namespace BombRushMP.ServerApp.Gamemodes
         }
         private States _state = States.Countdown;
         private float _countdownTimer = 0f;
-        private float _maxScore = 1;
+        private float _maxScore = 0;
         public GraffitiRace() : base()
         {
 
+        }
+
+        public override void OnEnd(bool cancelled)
+        {
+            base.OnEnd(cancelled);
+            _maxScore = 0;
+        }
+
+        public override void OnStart()
+        {
+            base.OnStart();
+            _maxScore = 0;
         }
 
         public override void Tick(float deltaTime)
@@ -48,7 +60,7 @@ namespace BombRushMP.ServerApp.Gamemodes
                         {
                             var racePacket = (ClientGraffitiRaceData)packet;
                             ServerLobbyManager.SendPacketToLobby(racePacket, Riptide.MessageSendMode.Reliable, Lobby.LobbyState.Id);
-                            _maxScore = racePacket.GraffitiSpots.Count;
+                            _maxScore += racePacket.GraffitiSpots.Count;
                         }
                     }
                     break;

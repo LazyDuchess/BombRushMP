@@ -182,6 +182,11 @@ namespace BombRushMP.Plugin.Gamemodes
                 _worldHandler.PlaceCurrentPlayerAt(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion(), true);
                 _otherSpots.Clear();
                 _originalProgress.Clear();
+                foreach (var spot in _worldHandler.SceneObjectsRegister.grafSpots)
+                {
+                    spot.gameObject.SetActive(false);
+                    _otherSpots.Add(spot);
+                }
             }
             _fetchingState = FetchingStates.Started;
             if (packet.FinalPacket)
@@ -190,9 +195,11 @@ namespace BombRushMP.Plugin.Gamemodes
             
             foreach(var spot in _worldHandler.SceneObjectsRegister.grafSpots)
             {
-                if (packet.GraffitiSpots.Contains(spot.Uid)) continue;
-                spot.gameObject.SetActive(false);
-                _otherSpots.Add(spot);
+                if (packet.GraffitiSpots.Contains(spot.Uid))
+                {
+                    spot.gameObject.SetActive(true);
+                    _otherSpots.Remove(spot);
+                }
             }
             foreach(var uid in packet.GraffitiSpots)
             {
