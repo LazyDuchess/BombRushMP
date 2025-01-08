@@ -106,6 +106,8 @@ namespace BombRushMP.Plugin
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
                 var authorname = serverMessage.Author;
+                if (string.IsNullOrEmpty(authorname))
+                    authorname = "";
                 if (authorname.Length >= MPSettings.MaxNameLength)
                     authorname = authorname.Substring(0, MPSettings.MaxNameLength);
                 authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
@@ -115,6 +117,21 @@ namespace BombRushMP.Plugin
                         authorname = ProfanityFilter.CensoredName;
                 }
                 text = string.Format(ClientConstants.ChatMessage, authorname, text);
+            }
+            else
+            {
+                var authorname = serverMessage.Author;
+                if (string.IsNullOrEmpty(authorname))
+                    authorname = "";
+                if (authorname.Length >= MPSettings.MaxNameLength)
+                    authorname = authorname.Substring(0, MPSettings.MaxNameLength);
+                authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
+                if (MPSettings.Instance.FilterProfanity)
+                {
+                    if (ProfanityFilter.TMPContainsProfanity(authorname))
+                        authorname = ProfanityFilter.CensoredName;
+                }
+                text = string.Format(text, authorname);
             }
             AddMessage(text);
         }

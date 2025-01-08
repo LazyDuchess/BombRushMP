@@ -178,7 +178,7 @@ namespace BombRushMP.ServerApp
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
                         SendPacketToStage(new ServerChat(
-                            string.Format(ServerConstants.JoinMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerJoinedOrLeft),
+                            TMPFilter.CloseAllTags(clientState.Name), ServerConstants.JoinMessage, ChatMessageTypes.PlayerJoinedOrLeft),
                             IMessage.SendModes.Reliable, clientState.Stage);
 
                         ClientHandshook?.Invoke(client);
@@ -197,13 +197,13 @@ namespace BombRushMP.ServerApp
                             if (clientVisualState.AFK)
                             {
                                 SendPacketToStage(new ServerChat(
-                                    string.Format(ServerConstants.AFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
+                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.AFKMessage, ChatMessageTypes.PlayerAFK),
                                     IMessage.SendModes.Reliable, clientState.Stage);
                             }
                             else
                             {
                                 SendPacketToStage(new ServerChat(
-                                    string.Format(ServerConstants.LeaveAFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
+                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveAFKMessage, ChatMessageTypes.PlayerAFK),
                                     IMessage.SendModes.Reliable, clientState.Stage);
                             }
                         }
@@ -287,7 +287,7 @@ namespace BombRushMP.ServerApp
                 SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
                 SendPacketToStage(new ServerChat(
-                    string.Format(ServerConstants.LeaveMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerJoinedOrLeft),
+                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveMessage, ChatMessageTypes.PlayerJoinedOrLeft),
                     IMessage.SendModes.Reliable, clientState.Stage);
             }
         }

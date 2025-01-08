@@ -95,6 +95,7 @@ namespace BombRushMP.ServerApp.Gamemodes
                         {
                             if (!_clientsFinishedCombo.Contains(playerId))
                             {
+                                ServerLobbyManager.SendPacketToLobby(new ServerChat(TMPFilter.CloseAllTags(BRCServer.Instance.Players[playerId].ClientState.Name), "{0} landed their combo!", ChatMessageTypes.PlayerSystem), IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
                                 _clientsFinishedCombo.Add(playerId);
                                 ServerLobbyManager.SetPlayerScore(playerId, ((ClientComboOver)packet).Score);
                             }

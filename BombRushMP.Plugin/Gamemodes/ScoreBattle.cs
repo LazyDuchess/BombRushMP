@@ -108,7 +108,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnEnd(bool cancelled)
         {
             base.OnEnd(cancelled);
-            TimerUI.Instance.SetTime(0f);
+            TimerUI.Instance.SetText("Finish!");
             TimerUI.Instance.DeactivateDelayed();
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (!cancelled)
