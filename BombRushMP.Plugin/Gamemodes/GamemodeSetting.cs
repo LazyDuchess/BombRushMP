@@ -57,9 +57,15 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public virtual void Next()
         {
+            var prevValue = Value;
             Value++;
             if (Value > MaxValue)
-                Value = MinValue;
+            {
+                if (prevValue != MaxValue)
+                    Value = MaxValue;
+                else
+                    Value = MinValue;
+            }
         }
 
         public virtual void Write(BinaryWriter writer)

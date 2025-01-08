@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,31 @@ namespace BombRushMP.Plugin.Gamemodes
                 }
             }
             return str;
+        }
+
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write(SettingByID.Count);
+            foreach(var setting in SettingByID)
+            {
+                writer.Write(setting.Key);
+                setting.Value.Write(writer);
+            }
+        }
+
+        public void Read(BinaryReader reader)
+        {
+            var count = reader.ReadInt32();
+            for(var i = 0; i < count; i++)
+            {
+                var key = reader.ReadInt32();
+                if (SettingByID.TryGetValue(key, out var setting))
+                {
+                    setting.Read(reader);
+                }
+                else
+                    return;
+            }
         }
     }
 }

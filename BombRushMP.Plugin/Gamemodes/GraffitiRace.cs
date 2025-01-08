@@ -340,7 +340,9 @@ namespace BombRushMP.Plugin.Gamemodes
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
             settings.SettingByID[SettingQuickGraffitiID] = new GamemodeSetting("Quick Graffiti", QuickGraffiti.ON);
             var maxSpots = GetValidSpots().Count;
-            var minSpots = Mathf.Min(MinGraffiti, maxSpots);
+            var minSpots = MinGraffiti;
+            if (maxSpots < MinGraffiti)
+                minSpots = 0;
             settings.SettingByID[SettingGraffitiAmountID] = new GamemodeSetting("Graffiti Amount", DefaultGraffiti, minSpots, maxSpots, 5);
             return settings;
         }
