@@ -1,22 +1,22 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
-using BombRushMP.ServerApp.Gamemodes;
+using BombRushMP.Server.Gamemodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.ServerApp
+namespace BombRushMP.Server
 {
     public class ServerLobbyManager : IDisposable
     {
-        public Dictionary<uint, Lobby> Lobbies = new();
+        public Dictionary<uint, Lobby> Lobbies = new Dictionary<uint, Lobby>();
         private BRCServer _server = null;
-        private UIDProvider _uidProvider = new();
-        private HashSet<int> _queuedStageUpdates = new();
-        private List<Action> _queuedActions = new();
+        private UIDProvider _uidProvider = new UIDProvider();
+        private HashSet<int> _queuedStageUpdates = new HashSet<int>();
+        private List<Action> _queuedActions = new List<Action>();
 
         public ServerLobbyManager()
         {

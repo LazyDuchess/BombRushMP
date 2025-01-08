@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.ServerApp.Gamemodes
+namespace BombRushMP.Server.Gamemodes
 {
     public class ProSkaterScoreBattle : ScoreBattle
     {

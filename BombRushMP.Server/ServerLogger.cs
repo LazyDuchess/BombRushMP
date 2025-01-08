@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BombRushMP.ServerApp
+namespace BombRushMP.Server
 {
     public static class ServerLogger
     {

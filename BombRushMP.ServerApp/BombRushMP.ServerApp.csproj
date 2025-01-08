@@ -14,5 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
     <ProjectReference Include="..\BombRushMP.NetworkInterfaceProvider\BombRushMP.NetworkInterfaceProvider.csproj" />
+    <ProjectReference Include="..\BombRushMP.Server\BombRushMP.Server.csproj" />
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common.Networking;
 
-namespace BombRushMP.ServerApp.Gamemodes
+namespace BombRushMP.Server.Gamemodes
 {
     public class ScoreBattle : Gamemode
     {
@@ -21,7 +21,7 @@ namespace BombRushMP.ServerApp.Gamemodes
         private float _stateTimer = 0f;
         private DateTime _startTime = DateTime.UtcNow;
         public bool ComboBased = false;
-        private HashSet<ushort> _clientsFinishedCombo = new();
+        private HashSet<ushort> _clientsFinishedCombo = new HashSet<ushort>();
         private float _timeElapsed = 0f;
         private float _timeLeft = 1f;
 

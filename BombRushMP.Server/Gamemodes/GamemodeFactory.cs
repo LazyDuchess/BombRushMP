@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
 
-namespace BombRushMP.ServerApp.Gamemodes
+namespace BombRushMP.Server.Gamemodes
 {
     public static class GamemodeFactory
     {

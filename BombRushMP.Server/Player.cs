@@ -1,13 +1,13 @@
 ﻿using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
-using BombRushMP.ServerApp.Gamemodes;
+using BombRushMP.Server.Gamemodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.ServerApp
+namespace BombRushMP.Server
 {
     public class Player
     {

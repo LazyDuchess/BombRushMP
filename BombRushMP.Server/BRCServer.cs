@@ -13,7 +13,7 @@ using BombRushMP.Common.Networking;
 using System.Diagnostics;
 using System.Security.Policy;
 
-namespace BombRushMP.ServerApp
+namespace BombRushMP.Server
 {
     public class BRCServer : IDisposable
     {
@@ -36,7 +36,7 @@ namespace BombRushMP.ServerApp
             Instance = this;
             _tickRate = tickRate;
             NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
-            ServerLobbyManager = new();
+            ServerLobbyManager = new ServerLobbyManager();
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
             _server = NetworkingInterface.CreateServer();
@@ -268,7 +268,7 @@ namespace BombRushMP.ServerApp
 
         private string GetAddressWithoutPort(string address)
         {
-            return address.Split(":")[0];
+            return address.Split(':')[0];
         }
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
