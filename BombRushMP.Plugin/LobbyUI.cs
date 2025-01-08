@@ -70,6 +70,8 @@ namespace BombRushMP.Plugin
 
         public void UpdateUI()
         {
+            var lobby = _lobbyManager.CurrentLobby;
+            if (lobby == null) return;
             var lobbySettings = Gamemodes.GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
             _lobbySettings.text = lobbySettings.GetDisplayString(_lobbyManager.CurrentLobby.LobbyState.HostId == ClientController.Instance.LocalID, _lobbyManager.CurrentLobby.InGame);
             _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);

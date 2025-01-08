@@ -16,6 +16,7 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class GraffitiRace : Gamemode
     {
+        public bool QuickGraffitiEnabled => Settings.SettingByID[SettingQuickGraffitiID].Value == (int)QuickGraffiti.ON;
         public enum SpawnMode
         {
             Automatic,
@@ -154,7 +155,9 @@ namespace BombRushMP.Plugin.Gamemodes
             var mapController = Mapcontroller.Instance;
             foreach (var pin in _mapPins.Values)
             {
-                mapController.m_MapPins.Remove(pin);
+                if (pin == null) continue;
+                if (mapController != null)
+                    mapController.m_MapPins.Remove(pin);
                 pin.isMapPinValid = false;
                 pin.DisableMapPinGameObject();
                 GameObject.Destroy(pin.gameObject);
@@ -165,20 +168,24 @@ namespace BombRushMP.Plugin.Gamemodes
             }
             foreach(var spot in _otherSpots)
             {
+                if (spot == null) continue;
                 spot.gameObject.SetActive(true);
             }
             foreach(var og in _originalProgress)
             {
+                if (og.Key == null) continue;
                 og.Key.progressableData = og.Value;
                 og.Key.ReadFromData();
             }
             if (_state == States.Countdown)
             {
                 var player = _worldHandler.GetCurrentPlayer();
-                player.userInputEnabled = true;
+                if (player != null)
+                    player.userInputEnabled = true;
             }
             var timerUI = TimerUI.Instance;
-            timerUI.DeactivateDelayed();
+            if (timerUI != null)
+                timerUI.DeactivateDelayed();
             if (!cancelled)
             {
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);

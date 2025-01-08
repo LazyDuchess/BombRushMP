@@ -67,7 +67,14 @@ namespace BombRushMP.Plugin.OfflineInterface
             {
                 foreach (var packet in OfflineInterface.ClientToServerMessages)
                 {
-                    MessageReceived?.Invoke(this, new MessageReceivedEventArgs(packet.PacketId, packet, new OfflineConnection(false)));
+                    try
+                    {
+                        MessageReceived?.Invoke(this, new MessageReceivedEventArgs(packet.PacketId, packet, new OfflineConnection(false)));
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.LogError(e);
+                    }
                 }
                 OfflineInterface.ClientToServerMessages.Clear();
             }

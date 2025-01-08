@@ -243,6 +243,63 @@ namespace BombRushMP.Plugin.Patches
             return false;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.StartGraffitiMode))]
+        private static bool StartGraffitiMode_Prefix(Player __instance, GraffitiSpot graffitiSpot)
+        {
+            if (__instance.IsBusyWithSequence() || __instance.IsDead() || __instance.ability == __instance.danceAbility || __instance.isAI)
+            {
+                return true;
+            }
+            var clientController = ClientController.Instance;
+            if (clientController == null) return true;
+            var lobbyManager = clientController.ClientLobbyManager;
+            if (lobbyManager == null) return true;
+            var lobby = lobbyManager.CurrentLobby;
+            if (lobby == null || lobby.CurrentGamemode == null || !lobby.InGame) return true;
+            var grafRace = lobby.CurrentGamemode as GraffitiRace;
+            if (grafRace == null) return true;
+            if (!grafRace.QuickGraffitiEnabled) return true;
+            if (grafRace.IsRaceGraffitiSpot(graffitiSpot))
+            {
+                grafRace.AddScore();
+                grafRace.MarkGraffitiSpotDone(graffitiSpot);
+            }
+            Player.TrickType trickType = Player.TrickType.GRAFFITI_S;
+            if (graffitiSpot.size == GraffitiSize.M)
+            {
+                trickType = Player.TrickType.GRAFFITI_M;
+            }
+            if (graffitiSpot.size == GraffitiSize.L)
+            {
+                trickType = Player.TrickType.GRAFFITI_L;
+            }
+            if (graffitiSpot.size == GraffitiSize.XL)
+            {
+                trickType = Player.TrickType.GRAFFITI_XL;
+            }
+            var art = GetRandomGraffitiArt(graffitiSpot, __instance);
+            __instance.DoTrick(trickType, art.title, 0);
+            graffitiSpot.Paint(Crew.PLAYERS, art, null);
+            __instance.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.BOOST_TRICK, false);
+            __instance.audioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, 0f);
+            __instance.RemoveGraffitiSlash();
+            __instance.CreateGraffitiFinishEffect(__instance.transform, graffitiSpot.size);
+            clientController.SendPacket(new PlayerGraffitiFinisher((int)graffitiSpot.size), IMessage.SendModes.Reliable);
+            return false;
+        }
+
+        private static GraffitiArt GetRandomGraffitiArt(GraffitiSpot spot, Player player)
+        {
+            if (spot.size == GraffitiSize.S)
+                return spot.GraffitiArtInfo.FindByCharacter(player.character);
+            var grafs = spot.GraffitiArtInfo.graffitiArt.Where((art) =>
+            {
+                return art.graffitiSize == spot.size;
+            }).ToList();
+            return grafs[UnityEngine.Random.Range(0, grafs.Count)];
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.StartGraffitiMode))]
         private static void StartGraffitiMode_Postfix(Player __instance, GraffitiSpot graffitiSpot)

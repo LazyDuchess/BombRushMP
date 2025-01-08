@@ -108,22 +108,30 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnEnd(bool cancelled)
         {
             base.OnEnd(cancelled);
-            TimerUI.Instance.SetText("Finish!");
-            TimerUI.Instance.DeactivateDelayed();
-            var player = WorldHandler.instance.GetCurrentPlayer();
-            if (!cancelled)
+            if (TimerUI.Instance != null)
             {
-                Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
-                if (Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer)
+                TimerUI.Instance.SetText("Finish!");
+                TimerUI.Instance.DeactivateDelayed();
+            }
+            if (WorldHandler.instance != null)
+            {
+                var player = WorldHandler.instance.GetCurrentPlayer();
+                if (!cancelled)
                 {
-                    var winner = Lobby.GetHighestScoringPlayer();
-                    if (winner.Id == ClientController.Instance.LocalID && winner.Score >= ClientConstants.MinimumScoreToCheer)
+                    Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
+                    if (Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer)
                     {
-                        player.StartCoroutine(Cheer(player));
+                        var winner = Lobby.GetHighestScoringPlayer();
+                        if (winner.Id == ClientController.Instance.LocalID && winner.Score >= ClientConstants.MinimumScoreToCheer)
+                        {
+                            if (player != null)
+                                player.StartCoroutine(Cheer(player));
+                        }
                     }
                 }
+                if (player != null)
+                    player.userInputEnabled = true;
             }
-            player.userInputEnabled = true;
         }
 
         private IEnumerator Cheer(Player player)

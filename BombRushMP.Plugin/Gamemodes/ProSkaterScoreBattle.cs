@@ -25,9 +25,15 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnEnd(bool cancelled)
         {
             base.OnEnd(cancelled);
-            var player = WorldHandler.instance.GetCurrentPlayer();
-            player.CompletelyStop();
-            ProSkaterPlayer.Set(player, false);
+            if (WorldHandler.instance != null)
+            {
+                var player = WorldHandler.instance.GetCurrentPlayer();
+                if (player != null)
+                {
+                    player.CompletelyStop();
+                    ProSkaterPlayer.Set(player, false);
+                }
+            }
         }
     }
 }
