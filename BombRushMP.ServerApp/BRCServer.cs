@@ -24,15 +24,17 @@ namespace BombRushMP.ServerApp
         public static Action<INetConnection, Packets, Packet> PacketReceived;
         public static Action<float> OnTick;
         public Dictionary<ushort, Player> Players = new();
+        private float _tickRate = Constants.DefaultNetworkingTickRate;
         private INetServer _server;
         private Stopwatch _tickStopWatch;
         private HashSet<int> _activeStages;
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public BRCServer(ushort port, ushort maxPlayers)
+        public BRCServer(ushort port, ushort maxPlayers, float tickRate)
         {
             Instance = this;
+            _tickRate = tickRate;
             NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             ServerLobbyManager = new();
             _tickStopWatch = new Stopwatch();
@@ -54,7 +56,7 @@ namespace BombRushMP.ServerApp
         public void Update()
         {
             var deltaTime = _tickStopWatch.Elapsed.TotalSeconds;
-            if (deltaTime >= Constants.NetworkingTickRate)
+            if (deltaTime >= _tickRate)
             {
                 Tick((float)_tickStopWatch.Elapsed.TotalSeconds);
                 _tickStopWatch.Restart();
@@ -171,7 +173,7 @@ namespace BombRushMP.ServerApp
                             return;
                         }
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, IMessage.SendModes.Reliable, client);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 

@@ -14,15 +14,18 @@ namespace BombRushMP.Common.Packets
     {
         public override Packets PacketId => Packets.ServerConnectionResponse;
         public ushort LocalClientId = 0;
+        public float TickRate = Constants.DefaultNetworkingTickRate;
 
         public override void Read(BinaryReader reader)
         {
             LocalClientId = reader.ReadUInt16();
+            TickRate = reader.ReadSingle();
         }
 
         public override void Write(BinaryWriter writer)
         {
             writer.Write(LocalClientId);
+            writer.Write(TickRate);
         }
     }
 }

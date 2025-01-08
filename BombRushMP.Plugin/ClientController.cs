@@ -24,6 +24,7 @@ namespace BombRushMP.Plugin
         /// </summary>
         public bool Connected => _client != null && _client.IsConnected && _handShook;
         public ushort LocalID = 0;
+        public float TickRate = Constants.DefaultNetworkingTickRate;
         public string Address = "";
         public int Port = 0;
         public GraffitiGame CurrentGraffitiGame = null;
@@ -175,7 +176,7 @@ namespace BombRushMP.Plugin
         private void Update()
         {
             _tickTimer += Time.deltaTime;
-            if (_tickTimer >= Constants.NetworkingTickRate)
+            if (_tickTimer >= TickRate)
             {
                 Tick();
                 _tickTimer = 0f;
@@ -234,6 +235,7 @@ namespace BombRushMP.Plugin
                     {
                         var connectionResponse = (ServerConnectionResponse)packet;
                         LocalID = connectionResponse.LocalClientId;
+                        TickRate = connectionResponse.TickRate;
                         _handShook = true;
                         ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}.");
                     }
