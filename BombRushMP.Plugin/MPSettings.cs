@@ -7,6 +7,7 @@ using System.IO;
 using BepInEx.Configuration;
 using UnityEngine;
 using BombRushMP.Common;
+using BombRushMP.NetworkInterfaceProvider;
 
 namespace BombRushMP.Plugin
 {
@@ -258,13 +259,30 @@ namespace BombRushMP.Plugin
             get
             {
                 return _showChat.Value;
-            }
-
-            set
+			}
+			set
             {
                 _showChat.Value = value;
             }
         }
+		
+#else
+        public bool DebugLocalPlayer => false;
+        public bool DebugInfo => false;
+#endif
+		
+        public NetworkInterfaces NetworkInterface
+        {
+            get
+            {
+                return _networkInterface.Value;
+            }
+			set
+			{
+				_networkInterface.Value = value;
+            }
+        }
+            
 
         public BalanceUI.Types BalanceUIType
         {
@@ -278,12 +296,7 @@ namespace BombRushMP.Plugin
                 _balanceUIType.Value = value;
             }
         }
-
-#else
-        public bool DebugLocalPlayer => false;
-        public bool DebugInfo => false;
-#endif
-
+		
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
@@ -303,6 +316,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _filterProfanity;
         private ConfigEntry<bool> _showChat;
         private ConfigEntry<BalanceUI.Types> _balanceUIType;
+        private ConfigEntry<NetworkInterfaces> _networkInterface;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -350,6 +364,7 @@ namespace BombRushMP.Plugin
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
 #endif
+            _networkInterface = configFile.Bind(Debug, "Network Interface", NetworkInterfaces.Riptide, "Networking library to use.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

@@ -7,9 +7,9 @@ using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
 using UnityEngine;
-using Riptide;
 using BombRushMP.Common;
 using BombRushMP.Plugin.Gamemodes;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -23,9 +23,9 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), Riptide.MessageSendMode.Reliable);
+            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), IMessage.SendModes.Reliable);
             if (anim == "grafSlashFinisher")
-                clientController.SendPacket(new PlayerGraffitiFinisher((int)__instance.gSpot.size), MessageSendMode.Reliable);
+                clientController.SendPacket(new PlayerGraffitiFinisher((int)__instance.gSpot.size), IMessage.SendModes.Reliable);
         }
 
         [HarmonyPostfix]
@@ -35,7 +35,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash("grafSlash" + side.ToString() + (outAnim ? "_Out" : ""))), Riptide.MessageSendMode.Reliable);
+            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash("grafSlash" + side.ToString() + (outAnim ? "_Out" : ""))), IMessage.SendModes.Reliable);
         }
 
         [HarmonyPostfix]
@@ -45,7 +45,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerGraffitiSlash(__instance.slashCardinal.ToSystemVector3()), MessageSendMode.Reliable);
+            clientController.SendPacket(new PlayerGraffitiSlash(__instance.slashCardinal.ToSystemVector3()), IMessage.SendModes.Reliable);
         }
 
         [HarmonyPrefix]

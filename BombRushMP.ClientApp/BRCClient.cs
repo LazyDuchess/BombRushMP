@@ -6,20 +6,20 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
-using Riptide;
-using Riptide.Utils;
 
 namespace BombRushMP.ClientApp
 {
     public class BRCClient : IDisposable
     {
         private const string BotName = "BRCMP BOT";
-        private Client _client;
+        private INetClient _client;
         private ServerClientStates _clientStates;
         private ServerLobbies _lobbies;
         private ushort _localId = 0;
         private Tasks _task = Tasks.CreateLobbyAndInvitePlayer;
+        private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
         private int _taskStep = 0;
 
@@ -33,10 +33,10 @@ namespace BombRushMP.ClientApp
 
         public BRCClient(string address, Tasks task)
         {
-            Message.MaxPayloadSize = Constants.MaxPayloadSize;
+            NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             PacketFactory.Initialize();
             _task = task;
-            _client = new Client();
+            _client = NetworkingInterface.CreateClient();
             _client.Connect(address);
             _client.Connected += OnConnected;
             _client.MessageReceived += OnMessage;
@@ -220,7 +220,7 @@ namespace BombRushMP.ClientApp
             Stop();
         }
 
-        private void OnMessage(object sender, MessageReceivedEventArgs e)
+        private void OnMessage(object sender, IMessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
@@ -273,8 +273,8 @@ namespace BombRushMP.ClientApp
 
         public void SendPacket(Packet packet)
         {
-           var  message = PacketFactory.MessageFromPacket(packet, MessageSendMode.Reliable);
-            _client.Send(message);
+           var  message = PacketFactory.MessageFromPacket(packet, IMessage.SendModes.Reliable);
+           _client.Send(message);
         }
     }
 }

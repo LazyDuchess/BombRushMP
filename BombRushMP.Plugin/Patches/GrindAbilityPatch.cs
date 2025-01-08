@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Riptide;
 using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -25,7 +25,7 @@ namespace BombRushMP.Plugin.Patches
             var voicePacket = new PlayerVoice();
             voicePacket.AudioClipId = (int)AudioClipID.VoiceJump;
             voicePacket.VoicePriority = (int)VoicePriority.MOVEMENT;
-            clientController.SendPacket(voicePacket, MessageSendMode.Reliable);
+            clientController.SendPacket(voicePacket, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPostfix]
@@ -36,7 +36,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPostfix]
@@ -56,7 +56,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPrefix]

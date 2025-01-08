@@ -8,10 +8,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="RiptideNetworking.Riptide" Version="2.2.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
+    <ProjectReference Include="..\BombRushMP.NetworkInterfaceProvider\BombRushMP.NetworkInterfaceProvider.csproj" />
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.NetworkInterfaceProvider;
 
 namespace BombRushMP.ClientApp
 {
@@ -10,6 +11,7 @@ namespace BombRushMP.ClientApp
     {
         static void Main(string[] args)
         {
+            NetworkInterfaceFactory.InitializeNetworkInterface(NetworkInterfaces.Riptide);
             Console.WriteLine("Please, type in the ID of a task you'd like the client to perform:");
             var taskValues = Enum.GetValues(typeof(BRCClient.Tasks));
             foreach(var taskValue in taskValues)

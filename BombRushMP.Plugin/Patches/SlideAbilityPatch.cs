@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using BombRushMP.Common;
 using HarmonyLib;
 using Reptile;
-using Riptide;
 
 namespace BombRushMP.Plugin.Patches
 {

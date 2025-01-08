@@ -38,7 +38,6 @@
     </PackageReference>
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
-    <PackageReference Include="RiptideNetworking.Riptide" Version="2.2.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.27" IncludeAssets="compile" />
   </ItemGroup>
 
@@ -47,6 +46,7 @@
     <ProjectReference Include="..\BombRushMP.CrewBoom\BombRushMP.CrewBoom.csproj" />
     <ProjectReference Include="..\BombRushMP.MapStation\BombRushMP.MapStation.csproj" />
     <ProjectReference Include="..\BombRushMP.Mono\BombRushMP.Mono.csproj" />
+    <ProjectReference Include="..\BombRushMP.NetworkInterfaceProvider\BombRushMP.NetworkInterfaceProvider.csproj" />
     <ProjectReference Include="..\libs\BRC-CommonAPI\CommonAPI.csproj">
       <Private>False</Private>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>

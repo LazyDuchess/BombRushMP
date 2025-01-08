@@ -1,8 +1,8 @@
 ﻿using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
 using Reptile;
-using Riptide;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -31,10 +31,15 @@ namespace BombRushMP.Plugin
         public ushort LocalID = 0;
         public string Address = "";
         public GraffitiGame CurrentGraffitiGame = null;
-        private Client _client;
+        public Action ServerDisconnect;
+        public Action ServerConnect;
+        public Action<ushort> PlayerDisconnected;
+        public Action<Packets, Packet> PacketReceived;
+        private INetClient _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
         private MPSettings _mpSettings = null;
+        private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
         private void Awake()
         {
@@ -53,7 +58,7 @@ namespace BombRushMP.Plugin
         public void Connect()
         {
             ClientLogger.Log($"Connecting to {Address}");
-            _client = new Client();
+            _client = NetworkingInterface.CreateClient();
             Task.Run(() => { _client.Connect(Address); });
             _client.Connected += OnConnected;
             _client.Disconnected += OnDisconnect;
@@ -85,12 +90,12 @@ namespace BombRushMP.Plugin
             ServerDisconnect?.Invoke();
         }
         
-        public void SendGenericEvent(GenericEvents ev, MessageSendMode sendMode)
+        public void SendGenericEvent(GenericEvents ev, IMessage.SendModes sendMode)
         {
             SendPacket(new PlayerGenericEvent(ev), sendMode);
         }
 
-        public void SendPacket(Packet packet, MessageSendMode sendMode)
+        public void SendPacket(Packet packet, IMessage.SendModes sendMode)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode);
             _client.Send(message);
@@ -157,7 +162,7 @@ namespace BombRushMP.Plugin
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (player == null) return;
             var packet = CreateVisualStatePacket(player);
-            SendPacket(packet, MessageSendMode.Unreliable);
+            SendPacket(packet, IMessage.SendModes.Unreliable);
         }
 
         private void Tick()
@@ -185,14 +190,14 @@ namespace BombRushMP.Plugin
             ClientLobbyManager.OnUpdate();
         }
 
-        private void OnClientDisconnected(object sender, ClientDisconnectedEventArgs e)
+        private void OnClientDisconnected(object sender, ushort id)
         {
-            if (Players.TryGetValue(e.Id, out var player))
+            if (Players.TryGetValue(id, out var player))
             {
                 player.Delete();
-                Players.Remove(e.Id);
+                Players.Remove(id);
             }
-            PlayerDisconnected?.Invoke(e.Id);
+            PlayerDisconnected?.Invoke(id);
         }
 
         private void ExecuteGenericEvent(GenericEvents ev, MPPlayer player)
@@ -215,7 +220,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        private void OnMessageReceived(object sender, IMessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
@@ -338,7 +343,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void OnConnectionFailed(object sender, ConnectionFailedEventArgs e)
+        private void OnConnectionFailed(object sender, IConnectionFailedEventArgs e)
         {
             ClientLogger.Log($"Failed to connect to server. Reason: {e.Reason}");
             ClientLogger.Log("Will attempt to re-connect");
@@ -346,7 +351,7 @@ namespace BombRushMP.Plugin
             Connect();
         }
 
-        private void OnDisconnect(object sender, DisconnectedEventArgs e)
+        private void OnDisconnect(object sender, IDisconnectedEventArgs e)
         {
             ClientLogger.Log($"Disconnected! Reason: {e.Reason}");
             ClientLogger.Log("Will attempt to re-connect");
@@ -373,7 +378,7 @@ namespace BombRushMP.Plugin
             {
                 statePacket.CrewBoomCharacter = CrewBoomSupport.GetGuidForCharacter(player.character);
             }
-            SendPacket(statePacket, MessageSendMode.Reliable);
+            SendPacket(statePacket, IMessage.SendModes.Reliable);
         }
 
         private void OnConnected(object sender, EventArgs e)

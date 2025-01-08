@@ -9,8 +9,9 @@ using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Phone;
 using BombRushMP.MapStation;
 using BombRushMP.Common;
-using Riptide;
 using BombRushMP.Plugin.Patches;
+using BombRushMP.Common.Networking;
+using BombRushMP.NetworkInterfaceProvider;
 
 namespace BombRushMP.Plugin
 {
@@ -22,8 +23,9 @@ namespace BombRushMP.Plugin
     {
         private void Awake()
         {
-            Message.MaxPayloadSize = Constants.MaxPayloadSize;
             new MPSettings(Config, Path.GetDirectoryName(Info.Location));
+            NetworkInterfaceFactory.InitializeNetworkInterface(MPSettings.Instance.NetworkInterface);
+            NetworkingEnvironment.NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
