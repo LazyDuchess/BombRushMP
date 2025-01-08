@@ -24,7 +24,7 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             new MPSettings(Config, Path.GetDirectoryName(Info.Location));
-            NetworkInterfaceFactory.InitializeNetworkInterface(MPSettings.Instance.NetworkInterface);
+            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(MPSettings.Instance.NetworkInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
             {
                 ClientLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");

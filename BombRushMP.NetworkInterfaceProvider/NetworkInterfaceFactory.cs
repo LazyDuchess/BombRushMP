@@ -9,7 +9,7 @@ namespace BombRushMP.NetworkInterfaceProvider
 {
     public static class NetworkInterfaceFactory
     {
-        public static void InitializeNetworkInterface(NetworkInterfaces netInterface)
+        public static INetworkingInterface GetNetworkInterface(NetworkInterfaces netInterface)
         {
             INetworkingInterface instance = null;
             switch (netInterface)
@@ -21,7 +21,7 @@ namespace BombRushMP.NetworkInterfaceProvider
                     instance = new LiteNetLibInterface.LiteNetLibInterface();
                     break;
             }
-            NetworkingEnvironment.NetworkingInterface = instance;
+            return instance;
         }
     }
 }

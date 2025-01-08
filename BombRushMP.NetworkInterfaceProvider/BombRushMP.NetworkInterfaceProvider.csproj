@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NetworkInterfaces.cs" />
-    <Compile Include="Provider.cs" />
+    <Compile Include="NetworkInterfaceFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -29,7 +29,7 @@ namespace BombRushMP.ServerApp
             var netInterface = NetworkInterfaces.LiteNetLib;
             if (Enum.TryParse<NetworkInterfaces>(serverSettings.NetworkInterface, out var result))
                 netInterface = result;
-            NetworkInterfaceFactory.InitializeNetworkInterface(netInterface);
+            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(netInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
             {
                 ServerLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");

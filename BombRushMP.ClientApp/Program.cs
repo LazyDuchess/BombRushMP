@@ -28,7 +28,7 @@ namespace BombRushMP.ClientApp
             var netInterface = NetworkInterfaces.LiteNetLib;
             if (Enum.TryParse<NetworkInterfaces>(clientSettings.NetworkInterface, out var result))
                 netInterface = result;
-            NetworkInterfaceFactory.InitializeNetworkInterface(netInterface);
+            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(netInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
             {
                 Console.WriteLine($"[{nameof(NetworkingEnvironment)}] {log}");
