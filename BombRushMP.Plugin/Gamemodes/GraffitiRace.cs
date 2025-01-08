@@ -254,11 +254,36 @@ namespace BombRushMP.Plugin.Gamemodes
             }
 
             var spawnSpot = GetGraffitiSpotByUID(raceSpots[0]);
+
+
             var spawnForward = -spawnSpot.transform.forward;
             var spawnPosition = spawnSpot.transform.position - (spawnForward * 1f);
             spawnForward.y = 0f;
             spawnForward = spawnForward.normalized;
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
+
+            foreach(var raceSpot in raceSpots)
+            {
+                var grafSpot = GetGraffitiSpotByUID(raceSpot);
+                var spotFw = -grafSpot.transform.forward;
+                var spotPos = grafSpot.transform.position - (spotFw * 1f);
+
+                var ray = new Ray(spotPos, Vector3.down);
+
+                if (Physics.Raycast(ray, out var hit, 1000f, 1 << Layers.Default))
+                {
+                    if (Vector3.Angle(hit.normal, Vector3.up) <= 20f)
+                    {
+                        spawnPosition = hit.point;
+                        spawnForward = -grafSpot.transform.forward;
+                        spawnForward.y = 0f;
+                        spawnForward = spawnForward.normalized;
+                        spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
+                        break;
+                    }
+                }
+            }
+
             var spotLists = new List<List<string>>();
             var curSpotAmount = 0;
             var currentList = new List<string>();
