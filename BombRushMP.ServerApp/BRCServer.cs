@@ -17,16 +17,12 @@ namespace BombRushMP.ServerApp
 {
     public class BRCServer : IDisposable
     {
-        public static Action<Connection> ClientHandshook;
-        public static Action<Connection> ClientDisconnected;
-        public static Action<float> OnTick;
-        public static Action<Connection, Packets, Packet> PacketReceived;
         public static BRCServer Instance { get; private set; }
         public ServerLobbyManager ServerLobbyManager;
-        public Action<INetConnection> ClientHandshook;
-        public Action<INetConnection> ClientDisconnected;
-        public Action<INetConnection, Packets, Packet> PacketReceived;
-        public Action<float> OnTick;
+        public static Action<INetConnection> ClientHandshook;
+        public static Action<INetConnection> ClientDisconnected;
+        public static Action<INetConnection, Packets, Packet> PacketReceived;
+        public static Action<float> OnTick;
         public Dictionary<ushort, Player> Players = new();
         private INetServer _server;
         private Stopwatch _tickStopWatch;

@@ -13,11 +13,6 @@ namespace BombRushMP.Plugin
 {
     public class ClientController : MonoBehaviour
     {
-        public static Action ServerDisconnect;
-        public static Action ServerConnect;
-        public static Action<ushort> PlayerDisconnected;
-        public static Action<Packets, Packet> PacketReceived;
-
         public int GraffitiRaceGraffiti = 10;
         public static ClientController Instance { get; private set; }
         public Dictionary<int, int> PlayerCountByStage = new();
@@ -31,10 +26,10 @@ namespace BombRushMP.Plugin
         public ushort LocalID = 0;
         public string Address = "";
         public GraffitiGame CurrentGraffitiGame = null;
-        public Action ServerDisconnect;
-        public Action ServerConnect;
-        public Action<ushort> PlayerDisconnected;
-        public Action<Packets, Packet> PacketReceived;
+        public static Action ServerDisconnect;
+        public static Action ServerConnect;
+        public static Action<ushort> PlayerDisconnected;
+        public static Action<Packets, Packet> PacketReceived;
         private INetClient _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
