@@ -73,6 +73,7 @@ namespace BombRushMP.Plugin
 
         private void InitializePhone()
         {
+            AppGamemodeSettings.Initialize();
             AppMultiplayer.Initialize();
             AppMultiplayerDebug.Initialize();
             AppJoinLobbyDebug.Initialize();

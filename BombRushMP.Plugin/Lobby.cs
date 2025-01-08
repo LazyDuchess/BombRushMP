@@ -12,7 +12,6 @@ namespace BombRushMP.Plugin
     {
         public LobbyState LobbyState = null;
         public Gamemode CurrentGamemode = null;
-        public byte[] SerializedGameModeSettings = null;
         public bool InGame => CurrentGamemode != null && CurrentGamemode.InGame;
 
         public LobbyPlayer GetHighestScoringPlayer()

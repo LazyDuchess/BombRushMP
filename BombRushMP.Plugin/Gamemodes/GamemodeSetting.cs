@@ -50,7 +50,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             if (EnumType != null)
             {
-                return Enum.GetName(EnumType, Value).Replace('_', ' ');
+                return $"{Label} = {Enum.GetName(EnumType, Value).Replace('_', ' ')}";
             }
             return $"{Label} = {Value}";
         }
@@ -58,7 +58,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public virtual void Next()
         {
             var prevValue = Value;
-            Value++;
+            Value += AddSteps;
             if (Value > MaxValue)
             {
                 if (prevValue != MaxValue)

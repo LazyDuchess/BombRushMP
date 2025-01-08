@@ -259,7 +259,8 @@ namespace BombRushMP.Plugin.Gamemodes
 
             var raceSpots = new List<string>();
 
-            var spotAmount = ClientController.GraffitiRaceGraffiti;
+            var spotAmount = Settings.SettingByID[SettingGraffitiAmountID].Value;
+            var spawnMode = (SpawnMode)Settings.SettingByID[SettingSpawnModeID].Value;
 
             if (validSpots.Count <= 0)
             {
@@ -287,26 +288,36 @@ namespace BombRushMP.Plugin.Gamemodes
             spawnForward = spawnForward.normalized;
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
 
-            foreach(var raceSpot in raceSpots)
+            if (spawnMode == SpawnMode.Automatic)
             {
-                var grafSpot = GetGraffitiSpotByUID(raceSpot);
-                var spotFw = -grafSpot.transform.forward;
-                var spotPos = grafSpot.transform.position - (spotFw * 1f);
-
-                var ray = new Ray(spotPos, Vector3.down);
-
-                if (Physics.Raycast(ray, out var hit, 1000f, 1 << Layers.Default))
+                foreach (var raceSpot in raceSpots)
                 {
-                    if (Vector3.Angle(hit.normal, Vector3.up) <= 20f)
+                    var grafSpot = GetGraffitiSpotByUID(raceSpot);
+                    var spotFw = -grafSpot.transform.forward;
+                    var spotPos = grafSpot.transform.position - (spotFw * 1f);
+
+                    var ray = new Ray(spotPos, Vector3.down);
+
+                    if (Physics.Raycast(ray, out var hit, 1000f, 1 << Layers.Default))
                     {
-                        spawnPosition = hit.point;
-                        spawnForward = -grafSpot.transform.forward;
-                        spawnForward.y = 0f;
-                        spawnForward = spawnForward.normalized;
-                        spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
-                        break;
+                        if (Vector3.Angle(hit.normal, Vector3.up) <= 20f)
+                        {
+                            spawnPosition = hit.point;
+                            spawnForward = -grafSpot.transform.forward;
+                            spawnForward.y = 0f;
+                            spawnForward = spawnForward.normalized;
+                            spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
+                            break;
+                        }
                     }
                 }
+            }
+            else
+            {
+                var player = WorldHandler.instance.GetCurrentPlayer();
+                spawnPosition = player.transform.position;
+                spawnForward = player.transform.forward;
+                spawnRotation = player.transform.rotation;
             }
 
             var spotLists = new List<List<string>>();

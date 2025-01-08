@@ -79,6 +79,14 @@ namespace BombRushMP.Plugin.Phone
                     };
                     ScrollView.AddButton(button);
 
+                    button = PhoneUIUtility.CreateSimpleButton("Gamemode Settings");
+                    button.OnConfirm += () =>
+                    {
+                        MyPhone.OpenApp(typeof(AppGamemodeSettings));
+
+                    };
+                    ScrollView.AddButton(button);
+
                     button = PhoneUIUtility.CreateSimpleButton("Invite Players");
                     button.OnConfirm += () =>
                     {

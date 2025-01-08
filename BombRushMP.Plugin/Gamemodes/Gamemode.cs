@@ -12,6 +12,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public MinimapOverrideModes MinimapOverrideMode = MinimapOverrideModes.None;
         public Lobby Lobby;
         public bool InGame { get; private set; }
+        public GamemodeSettings Settings;
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;
 
@@ -27,6 +28,8 @@ namespace BombRushMP.Plugin.Gamemodes
             var spectatorController = SpectatorController.Instance;
             if (spectatorController != null)
                 spectatorController.EndSpectating();
+            Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
+            LobbyUI.Instance.UpdateUI();
         }
 
         public virtual void OnEnd(bool cancelled)
@@ -35,6 +38,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var spectatorController = SpectatorController.Instance;
             if (spectatorController != null)
                 spectatorController.EndSpectating();
+            LobbyUI.Instance.UpdateUI();
         }
 
         public virtual void OnUpdate_InGame()
