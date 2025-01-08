@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.Plugin.Gamemodes;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -160,6 +161,29 @@ namespace BombRushMP.Plugin
             GrindBalance.Nudge(grindAbility.p.moveInputPlain.x);
             grindAbility.p.anim.SetFloat(grindAbility.grindDirectionHash, GrindBalance.Current);
             grindAbility.grindTilt.x = GrindBalance.Current;
+
+            var clientController = ClientController.Instance;
+            if (clientController != null && clientController.ClientLobbyManager != null && clientController.ClientLobbyManager.CurrentLobby != null)
+            {
+                var lobby = clientController.ClientLobbyManager.CurrentLobby;
+                var gamemode = lobby.CurrentGamemode as ProSkaterScoreBattle;
+                if (gamemode != null && lobby.InGame && gamemode.RewardTilting)
+                {
+                    if (Mathf.Abs(grindAbility.grindTilt.x) > 0.25f)
+                    {
+                        grindAbility.grindTiltBuffer.x = grindAbility.grindTilt.x;
+                        grindAbility.grindTiltBufferTimer = 0.1f;
+                    }
+                    if (grindAbility.grindTiltBufferTimer > 0f)
+                    {
+                        grindAbility.grindTiltBufferTimer -= Core.dt;
+                        if (grindAbility.grindTiltBufferTimer <= 0f)
+                        {
+                            grindAbility.grindTiltBuffer.x = 0f;
+                        }
+                    }
+                }
+            }
         }
 
         private void Update()
