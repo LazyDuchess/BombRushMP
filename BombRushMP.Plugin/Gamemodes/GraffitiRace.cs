@@ -16,6 +16,26 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class GraffitiRace : Gamemode
     {
+        public enum SpawnMode
+        {
+            Automatic,
+            At_Host
+        }
+
+        public enum QuickGraffiti
+        {
+            ON,
+            OFF
+        }
+
+        private static int SettingSpawnModeID = Animator.StringToHash("SpawnMode");
+        private static int SettingQuickGraffitiID = Animator.StringToHash("QuickGraffiti");
+        private static int SettingGraffitiAmountID = Animator.StringToHash("GraffitiAmount");
+        private const int DefaultGraffiti = 10;
+        private const int MinGraffiti = 5;
+        private const int MaxGraffiti = 70;
+        private const int GraffitiSteps = 5;
+
         public enum States
         {
             Countdown,
@@ -218,9 +238,9 @@ namespace BombRushMP.Plugin.Gamemodes
             }
         }
 
-        private void OnStart_Host()
+        private List<GraffitiSpot> GetValidSpots()
         {
-            var validSpots = _worldHandler.SceneObjectsRegister.grafSpots.Where(
+            return _worldHandler.SceneObjectsRegister.grafSpots.Where(
                x =>
                x.deactivateDuringEncounters == false &&
                x is not GraffitiSpotFinisher &&
@@ -231,6 +251,11 @@ namespace BombRushMP.Plugin.Gamemodes
                x.GetComponentInParent<ActiveOnChapter>(true) == null &&
                !MapStationSupport.IsMapOptionToggleable(x.gameObject)
             ).ToList();
+        }
+
+        private void OnStart_Host()
+        {
+            var validSpots = GetValidSpots();
 
             var raceSpots = new List<string>();
 
@@ -307,6 +332,17 @@ namespace BombRushMP.Plugin.Gamemodes
                 var packet = new ClientGraffitiRaceData(spawnPosition.ToSystemVector3(), spawnRotation.ToSystemQuaternion(), spotList, final);
                 ClientController.SendPacket(packet, IMessage.SendModes.Reliable);
             }
+        }
+
+        public override GamemodeSettings GetDefaultSettings()
+        {
+            var settings = new GamemodeSettings();
+            settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
+            settings.SettingByID[SettingQuickGraffitiID] = new GamemodeSetting("Quick Graffiti", QuickGraffiti.ON);
+            var maxSpots = GetValidSpots().Count;
+            var minSpots = Mathf.Min(MinGraffiti, maxSpots);
+            settings.SettingByID[SettingGraffitiAmountID] = new GamemodeSetting("Graffiti Amount", DefaultGraffiti, minSpots, maxSpots, 5);
+            return settings;
         }
     }
 }

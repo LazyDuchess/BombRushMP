@@ -51,5 +51,10 @@ namespace BombRushMP.Plugin.Gamemodes
         {
 
         }
+
+        public virtual GamemodeSettings GetDefaultSettings()
+        {
+            return new GamemodeSettings();
+        }
     }
 }
