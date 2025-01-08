@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.RiptideInterface
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.NetworkInterfaceProvider", "BombRushMP.NetworkInterfaceProvider\BombRushMP.NetworkInterfaceProvider.csproj", "{DB50ED07-4684-485A-A962-E29460C006A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.LiteNetLibInterface", "BombRushMP.LiteNetLibInterface\BombRushMP.LiteNetLibInterface.csproj", "{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +92,12 @@ Global
 		{DB50ED07-4684-485A-A962-E29460C006A1}.Developer Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB50ED07-4684-485A-A962-E29460C006A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB50ED07-4684-485A-A962-E29460C006A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}.Developer Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}.Developer Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12CF70A5-535B-4CE2-BE8F-C0F34CAB3614}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

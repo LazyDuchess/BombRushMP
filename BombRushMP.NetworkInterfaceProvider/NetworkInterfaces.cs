@@ -8,6 +8,7 @@ namespace BombRushMP.NetworkInterfaceProvider
 {
     public enum NetworkInterfaces
     {
-        Riptide
+        Riptide,
+        LiteNetLib
     }
 }

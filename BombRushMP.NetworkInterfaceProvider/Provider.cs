@@ -17,6 +17,9 @@ namespace BombRushMP.NetworkInterfaceProvider
                 case NetworkInterfaces.Riptide:
                     instance = new RiptideInterface.RiptideInterface();
                     break;
+                case NetworkInterfaces.LiteNetLib:
+                    instance = new LiteNetLibInterface.LiteNetLibInterface();
+                    break;
             }
             NetworkingEnvironment.NetworkingInterface = instance;
         }
