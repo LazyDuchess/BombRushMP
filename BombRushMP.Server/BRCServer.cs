@@ -24,14 +24,14 @@ namespace BombRushMP.Server
         public static Action<INetConnection, Packets, Packet> PacketReceived;
         public static Action<float> OnTick;
         public Dictionary<ushort, Player> Players = new();
+        public INetServer Server;
         private float _tickRate = Constants.DefaultNetworkingTickRate;
-        private INetServer _server;
         private Stopwatch _tickStopWatch;
         private HashSet<int> _activeStages;
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public BRCServer(int port, ushort maxPlayers, float tickRate, bool local)
+        public BRCServer(int port, ushort maxPlayers, float tickRate)
         {
             Instance = this;
             _tickRate = tickRate;
@@ -39,18 +39,18 @@ namespace BombRushMP.Server
             ServerLobbyManager = new ServerLobbyManager();
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
-            _server = NetworkingInterface.CreateServer();
-            _server.TimeoutTime = 10000;
-            _server.ClientConnected += OnClientConnected;
-            _server.ClientDisconnected += OnClientDisconnected;
-            _server.MessageReceived += OnMessageReceived;
-            _server.Start((ushort)port, maxPlayers, local);
+            Server = NetworkingInterface.CreateServer();
+            Server.TimeoutTime = 10000;
+            Server.ClientConnected += OnClientConnected;
+            Server.ClientDisconnected += OnClientDisconnected;
+            Server.MessageReceived += OnMessageReceived;
+            Server.Start((ushort)port, maxPlayers);
             ServerLogger.Log($"Starting server on port {port} with max players {maxPlayers}, using Network Interface {NetworkingInterface}");
         }
 
         public void DisconnectClient(ushort id)
         {
-            _server.DisconnectClient(id);
+            Server.DisconnectClient(id);
         }
 
         public void Update()
@@ -65,7 +65,7 @@ namespace BombRushMP.Server
 
         private void Tick(float deltaTime)
         {
-            _server.Update();
+            Server.Update();
             foreach(var player in Players)
             {
                 player.Value.Tick(deltaTime);
@@ -118,7 +118,7 @@ namespace BombRushMP.Server
 
         public void Dispose()
         {
-            _server.Stop();
+            Server.Stop();
         }
 
         public void SendPacket(Packet packet, IMessage.SendModes sendMode, ushort[] except = null)
@@ -160,7 +160,7 @@ namespace BombRushMP.Server
                         if (clientState.ProtocolVersion != Constants.ProtocolVersion)
                         {
                             ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
-                            _server.DisconnectClient(client);
+                            Server.DisconnectClient(client);
                             return;
                         }
                         var oldClientState = Players[client.Id].ClientState;
@@ -252,7 +252,7 @@ namespace BombRushMP.Server
             catch(Exception exc)
             {
                 ServerLogger.Log($"Dropped client from {e.FromConnection} (ID: {e.FromConnection.Id}) because they sent a faulty packet. Exception:\n{exc}");
-                _server.DisconnectClient(e.FromConnection);
+                Server.DisconnectClient(e.FromConnection);
             }
         }
 

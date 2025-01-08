@@ -11,15 +11,15 @@ namespace BombRushMP.Plugin.LocalServer
 {
     public class ServerController
     {
+        public static ServerController Instance { get; private set; }
+        public BRCServer Server;
         private int _port;
-        private BRCServer _server;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public ServerController(int port, float tickRate, ushort maxPlayers, bool local)
+        public ServerController(int port, float tickRate, ushort maxPlayers)
         {
-            if (local)
-                maxPlayers = 1;
-            _server = new BRCServer(port, maxPlayers, tickRate, local);
+            Instance = this;
+            Server = new BRCServer(port, maxPlayers, tickRate);
             var serverThread = new Thread(Update);
             serverThread.IsBackground = true;
             serverThread.Start();
@@ -29,7 +29,7 @@ namespace BombRushMP.Plugin.LocalServer
         {
             while (true)
             {
-                _server.Update();
+                Server.Update();
             }
         }
     }

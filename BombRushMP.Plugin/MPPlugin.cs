@@ -13,6 +13,7 @@ using BombRushMP.Plugin.Patches;
 using BombRushMP.Common.Networking;
 using BombRushMP.NetworkInterfaceProvider;
 using BombRushMP.Plugin.LocalServer;
+using BombRushMP.Plugin.OfflineInterface;
 
 namespace BombRushMP.Plugin
 {
@@ -42,10 +43,10 @@ namespace BombRushMP.Plugin
             {
                 _selfHosting = true;
                 maxPlayers = 1;
-                NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(NetworkInterfaces.LiteNetLib);
+                NetworkingEnvironment.NetworkingInterface = new OfflineInterface.OfflineInterface();
             }
             if (_selfHosting)
-                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers, _offline);
+                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers);
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))

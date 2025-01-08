@@ -12,7 +12,7 @@ namespace BombRushMP.Common.Networking
         public EventHandler<ServerDisconnectedEventArgs> ClientDisconnected { get; set; }
         public EventHandler<ServerConnectedEventArgs> ClientConnected { get; set; }
         public int TimeoutTime { set; }
-        public void Start(ushort port, ushort maxPlayers, bool local);
+        public void Start(ushort port, ushort maxPlayers);
         public void DisconnectClient(ushort id);
         public void DisconnectClient(INetConnection client);
         public void Update();

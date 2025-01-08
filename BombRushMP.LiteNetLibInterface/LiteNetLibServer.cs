@@ -25,7 +25,6 @@ namespace BombRushMP.LiteNetLibInterface
         private NetManager _netManager;
 
         private ushort _maxPlayers = 0;
-        private bool _local = false;
 
         public LiteNetLibServer()
         {
@@ -73,24 +72,12 @@ namespace BombRushMP.LiteNetLibInterface
 
         private void _netListener_ConnectionRequestEvent(ConnectionRequest request)
         {
-            if (_local)
+            if (_netManager.ConnectedPeersCount < _maxPlayers)
             {
-                if (request.RemoteEndPoint.Address.ToString() == "127.0.0.1")
-                {
-                    request.AcceptIfKey("BRCMP");
-                }
-                else
-                    request.Reject();
+                request.AcceptIfKey("BRCMP");
             }
             else
-            {
-                if (_netManager.ConnectedPeersCount < _maxPlayers)
-                {
-                    request.AcceptIfKey("BRCMP");
-                }
-                else
-                    request.Reject();
-            }
+                request.Reject();
         }
 
         public void DisconnectClient(ushort id)
@@ -105,9 +92,8 @@ namespace BombRushMP.LiteNetLibInterface
             _netManager.DisconnectPeer(connection.Peer);
         }
 
-        public void Start(ushort port, ushort maxPlayers, bool local)
+        public void Start(ushort port, ushort maxPlayers)
         {
-            _local = local;
             if (_netManager != null)
             {
                 _netManager.Stop();
@@ -119,10 +105,7 @@ namespace BombRushMP.LiteNetLibInterface
                 _netManager.UseNativeSockets = true;
             }
             _netManager.DisconnectTimeout = _disconnectTimeout;
-            if (!local)
-                _netManager.Start(port);
-            else
-                _netManager.Start("127.0.0.1", "::1", port);
+            _netManager.Start(port);
             _maxPlayers = maxPlayers;
         }
 
