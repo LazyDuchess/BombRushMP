@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common.Networking;
@@ -38,12 +39,12 @@ namespace BombRushMP.RiptideInterface
         }
         private void InternalConnectionFailed(object sender, Riptide.ConnectionFailedEventArgs args)
         {
-            ConnectionFailed?.Invoke(sender, new ConnectionFailedEventArgs((RejectReason)args.Reason));
+            ConnectionFailed?.Invoke(sender, new ConnectionFailedEventArgs(args.Reason.ToString()));
         }
 
         private void InternalDisconnected(object sender, Riptide.DisconnectedEventArgs args)
         {
-            var genArgs = new DisconnectedEventArgs((DisconnectReason)args.Reason);
+            var genArgs = new DisconnectedEventArgs(args.Reason.ToString());
             Disconnected?.Invoke(sender, genArgs);
         }
 
@@ -53,8 +54,12 @@ namespace BombRushMP.RiptideInterface
             MessageReceived?.Invoke(sender, genArgs);
         }
 
-        public bool Connect(string address)
+        public bool Connect(string address, int port)
         {
+            var addresses = Dns.GetHostAddresses(address);
+            if (addresses.Length > 0)
+                address = addresses[0].ToString();
+            address += $":{port}";
             return _riptideClient.Connect(address);
         }
 

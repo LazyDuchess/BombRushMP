@@ -69,7 +69,7 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
-            ClientController.Create(GetServerAddress(MPSettings.Instance.ServerAddress, MPSettings.Instance.ServerPort));
+            ClientController.Create(MPSettings.Instance.ServerAddress, MPSettings.Instance.ServerPort);
             LobbyUI.Create();
             TimerUI.Create();
             MPMapController.Create();
@@ -78,15 +78,6 @@ namespace BombRushMP.Plugin
             BalanceUI.Create();
             if (MPSettings.Instance.DebugInfo)
                 DebugUI.Create();
-        }
-
-        private string GetServerAddress(string address, int port)
-        {
-            var addresses = Dns.GetHostAddresses(address);
-            if (addresses.Length > 0)
-                address = addresses[0].ToString();
-            address += $":{port}";
-            return address;
         }
     }
 }

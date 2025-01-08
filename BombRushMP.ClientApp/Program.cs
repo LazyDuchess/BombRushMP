@@ -11,7 +11,7 @@ namespace BombRushMP.ClientApp
     {
         static void Main(string[] args)
         {
-            NetworkInterfaceFactory.InitializeNetworkInterface(NetworkInterfaces.Riptide);
+            NetworkInterfaceFactory.InitializeNetworkInterface(NetworkInterfaces.LiteNetLib);
             Console.WriteLine("Please, type in the ID of a task you'd like the client to perform:");
             var taskValues = Enum.GetValues(typeof(BRCClient.Tasks));
             foreach(var taskValue in taskValues)
@@ -19,8 +19,7 @@ namespace BombRushMP.ClientApp
                 Console.WriteLine($"ID {(int)taskValue}: {(BRCClient.Tasks)taskValue}");
             }
             var taskID = int.Parse(Console.ReadLine());
-            var address = "127.0.0.1:41585";
-            var client = new BRCClient(address, (BRCClient.Tasks)taskID);
+            var client = new BRCClient("localhost", 41585, (BRCClient.Tasks)taskID);
             while (true)
             {
                 client.Update();

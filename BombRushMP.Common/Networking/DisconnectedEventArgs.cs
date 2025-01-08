@@ -8,9 +8,9 @@ namespace BombRushMP.Common.Networking
 {
     public class DisconnectedEventArgs
     {
-        public readonly DisconnectReason Reason;
+        public readonly string Reason;
 
-        public DisconnectedEventArgs(DisconnectReason reason)
+        public DisconnectedEventArgs(string reason)
         {
             Reason = reason;
         }

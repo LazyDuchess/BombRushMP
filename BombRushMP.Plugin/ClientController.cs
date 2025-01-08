@@ -25,6 +25,7 @@ namespace BombRushMP.Plugin
         public bool Connected => _client != null && _client.IsConnected && _handShook;
         public ushort LocalID = 0;
         public string Address = "";
+        public int Port = 0;
         public GraffitiGame CurrentGraffitiGame = null;
         public static Action ServerDisconnect;
         public static Action ServerConnect;
@@ -52,9 +53,9 @@ namespace BombRushMP.Plugin
 
         public void Connect()
         {
-            ClientLogger.Log($"Connecting to {Address}");
+            ClientLogger.Log($"Connecting to {Address}:{Port}");
             _client = NetworkingInterface.CreateClient();
-            Task.Run(() => { _client.Connect(Address); });
+            Task.Run(() => { _client.Connect(Address, Port); });
             _client.Connected += OnConnected;
             _client.Disconnected += OnDisconnect;
             _client.ConnectionFailed += OnConnectionFailed;
@@ -96,11 +97,12 @@ namespace BombRushMP.Plugin
             _client.Send(message);
         }
 
-        public static ClientController Create(string address)
+        public static ClientController Create(string address, int port)
         {
             var clientControllerGO = new GameObject("Client Controller");
             var clientController = clientControllerGO.AddComponent<ClientController>();
             clientController.Address = address;
+            clientController.Port = port;
             clientController.Connect();
             return clientController;
         }

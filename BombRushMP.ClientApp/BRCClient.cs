@@ -31,13 +31,13 @@ namespace BombRushMP.ClientApp
             CreateLobbyInvitePlayerAndStartGameOnReady
         }
 
-        public BRCClient(string address, Tasks task)
+        public BRCClient(string address, int port, Tasks task)
         {
             NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             PacketFactory.Initialize();
             _task = task;
             _client = NetworkingInterface.CreateClient();
-            _client.Connect(address);
+            _client.Connect(address, port);
             _client.Connected += OnConnected;
             _client.MessageReceived += OnMessage;
         }

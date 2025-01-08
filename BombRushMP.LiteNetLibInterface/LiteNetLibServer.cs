@@ -52,23 +52,7 @@ namespace BombRushMP.LiteNetLibInterface
 
         private void _netListener_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            var disconnectReason = Common.Networking.DisconnectReason.Disconnected;
-            switch (disconnectInfo.Reason)
-            {
-                case LiteNetLib.DisconnectReason.DisconnectPeerCalled:
-                    disconnectReason = Common.Networking.DisconnectReason.Kicked;
-                    break;
-                case LiteNetLib.DisconnectReason.Timeout:
-                    disconnectReason = Common.Networking.DisconnectReason.TimedOut;
-                    break;
-                case LiteNetLib.DisconnectReason.ConnectionRejected:
-                    disconnectReason = Common.Networking.DisconnectReason.ConnectionRejected;
-                    break;
-                case LiteNetLib.DisconnectReason.RemoteConnectionClose:
-                    disconnectReason = Common.Networking.DisconnectReason.ServerStopped;
-                    break;
-            }
-            ClientDisconnected?.Invoke(this, new ServerDisconnectedEventArgs(new LiteNetLibConnection(peer), disconnectReason));
+            ClientDisconnected?.Invoke(this, new ServerDisconnectedEventArgs(new LiteNetLibConnection(peer), disconnectInfo.Reason.ToString()));
             byte[] data;
             using (var ms = new MemoryStream())
             {
@@ -89,6 +73,7 @@ namespace BombRushMP.LiteNetLibInterface
 
         private void _netListener_ConnectionRequestEvent(ConnectionRequest request)
         {
+            Console.WriteLine("Got a connection request!");
             if (_netManager.ConnectedPeersCount < _maxPlayers)
             {
                 request.AcceptIfKey("BRCMP");
@@ -123,6 +108,11 @@ namespace BombRushMP.LiteNetLibInterface
         public void Update()
         {
             _netManager.PollEvents();
+        }
+
+        public override string ToString()
+        {
+            return _netManager.ToString();
         }
     }
 }

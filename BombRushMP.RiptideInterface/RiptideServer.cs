@@ -35,7 +35,7 @@ namespace BombRushMP.RiptideInterface
 
         private void InternalClientDisconnected(object sender, Riptide.ServerDisconnectedEventArgs args)
         {
-            var genArgs = new ServerDisconnectedEventArgs(new RiptideConnection(args.Client), (DisconnectReason)args.Reason);
+            var genArgs = new ServerDisconnectedEventArgs(new RiptideConnection(args.Client), args.Reason.ToString());
             ClientDisconnected?.Invoke(sender, genArgs);
         }
 

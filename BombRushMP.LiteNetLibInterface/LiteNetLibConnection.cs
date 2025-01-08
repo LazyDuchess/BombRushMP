@@ -35,5 +35,10 @@ namespace BombRushMP.LiteNetLibInterface
             var messageData = (message as LiteNetLibMessage).GetBytesForSend();
             Peer.Send(messageData, (message as LiteNetLibMessage).DeliveryMethod);
         }
+
+        public override string ToString()
+        {
+            return Peer.ToString();
+        }
     }
 }

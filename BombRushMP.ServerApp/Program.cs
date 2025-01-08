@@ -12,7 +12,7 @@ namespace BombRushMP.ServerApp
     {
         static void Main(string[] args)
         {
-            NetworkInterfaceFactory.InitializeNetworkInterface(NetworkInterfaces.Riptide);
+            NetworkInterfaceFactory.InitializeNetworkInterface(NetworkInterfaces.LiteNetLib);
             PacketFactory.Initialize();
             var port = (ushort)41585;
             var server = new BRCServer(port, 65534);

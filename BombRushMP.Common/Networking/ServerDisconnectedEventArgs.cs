@@ -9,8 +9,8 @@ namespace BombRushMP.Common.Networking
     public class ServerDisconnectedEventArgs
     {
         public readonly INetConnection Client;
-        public readonly DisconnectReason Reason;
-        public ServerDisconnectedEventArgs(INetConnection client, DisconnectReason reason)
+        public readonly string Reason;
+        public ServerDisconnectedEventArgs(INetConnection client, string reason)
         {
             Client = client;
             Reason = reason;

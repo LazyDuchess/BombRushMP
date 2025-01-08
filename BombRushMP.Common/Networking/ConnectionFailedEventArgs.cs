@@ -8,8 +8,8 @@ namespace BombRushMP.Common.Networking
 {
     public class ConnectionFailedEventArgs
     {
-        public readonly RejectReason Reason;
-        public ConnectionFailedEventArgs(RejectReason reason)
+        public readonly string Reason;
+        public ConnectionFailedEventArgs(string reason)
         {
             Reason = reason;
         }

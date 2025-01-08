@@ -44,5 +44,10 @@ namespace BombRushMP.LiteNetLibInterface
         {
             return new LiteNetLibServer(_netListener, _netManager);
         }
+
+        public override string ToString()
+        {
+            return _netManager.ToString();
+        }
     }
 }

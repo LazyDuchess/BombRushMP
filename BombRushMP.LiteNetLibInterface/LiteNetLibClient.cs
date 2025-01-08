@@ -10,7 +10,7 @@ namespace BombRushMP.LiteNetLibInterface
 {
     public class LiteNetLibClient : INetClient
     {
-        public bool IsConnected => _netManager.FirstPeer.ConnectionState == ConnectionState.Connected;
+        public bool IsConnected => _netManager.FirstPeer != null && _netManager.FirstPeer.ConnectionState == ConnectionState.Connected;
 
         public EventHandler Connected { get; set; }
         public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
@@ -20,11 +20,13 @@ namespace BombRushMP.LiteNetLibInterface
 
         private EventBasedNetListener _netListener;
         private NetManager _netManager;
+        private bool _startResult = false;
 
         public LiteNetLibClient(EventBasedNetListener listener, NetManager manager)
         {
             _netListener = listener;
             _netManager = manager;
+            _startResult = _netManager.Start();
             _netListener.PeerConnectedEvent += _netListener_PeerConnectedEvent;
             _netListener.NetworkReceiveEvent += _netListener_NetworkReceiveEvent;
             _netListener.PeerDisconnectedEvent += _netListener_PeerDisconnectedEvent;
@@ -32,28 +34,12 @@ namespace BombRushMP.LiteNetLibInterface
 
         private void _netListener_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            var disconnectReason = Common.Networking.DisconnectReason.Disconnected;
-            if (disconnectInfo.Reason == LiteNetLib.DisconnectReason.ConnectionFailed)
+            if (disconnectInfo.Reason == DisconnectReason.ConnectionFailed)
             {
-                ConnectionFailed?.Invoke(this, new ConnectionFailedEventArgs(RejectReason.NoConnection));
+                ConnectionFailed?.Invoke(this, new ConnectionFailedEventArgs(DisconnectReason.ConnectionFailed.ToString()));
                 return;
             }
-            switch (disconnectInfo.Reason)
-            {
-                case LiteNetLib.DisconnectReason.DisconnectPeerCalled:
-                    disconnectReason = Common.Networking.DisconnectReason.Kicked;
-                    break;
-                case LiteNetLib.DisconnectReason.Timeout:
-                    disconnectReason = Common.Networking.DisconnectReason.TimedOut;
-                    break;
-                case LiteNetLib.DisconnectReason.ConnectionRejected:
-                    disconnectReason = Common.Networking.DisconnectReason.ConnectionRejected;
-                    break;
-                case LiteNetLib.DisconnectReason.RemoteConnectionClose:
-                    disconnectReason = Common.Networking.DisconnectReason.ServerStopped;
-                    break;
-            }
-            Disconnected?.Invoke(this, new DisconnectedEventArgs(disconnectReason));
+            Disconnected?.Invoke(this, new DisconnectedEventArgs(disconnectInfo.Reason.ToString()));
         }
 
         private void _netListener_NetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod)
@@ -81,23 +67,18 @@ namespace BombRushMP.LiteNetLibInterface
             Connected?.Invoke(this, null);
         }
 
-        public bool Connect(string address)
+        public bool Connect(string address, int port)
         {
-            var startResult = _netManager.Start();
-            if (startResult)
+            if (_startResult)
             {
-                var split = address.Split(':');
-                var addr = split[0];
-                var port = int.Parse(split[1]);
                 _netManager.Connect(address, port, "BRCMP");
             }
-            return startResult;
+            return _startResult;
         }
 
         public void Disconnect()
         {
             _netManager.DisconnectAll();
-            _netManager.Stop();
         }
 
         public void Send(IMessage message)
@@ -108,6 +89,11 @@ namespace BombRushMP.LiteNetLibInterface
         public void Update()
         {
             _netManager.PollEvents();
+        }
+
+        public override string ToString()
+        {
+            return _netManager.ToString();
         }
     }
 }
