@@ -1,7 +1,6 @@
-﻿using BombRushMP.Common.Packets;
+﻿using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
 using BombRushMP.ServerApp.Gamemodes;
-using Riptide;
-using Riptide.Transports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace BombRushMP.ServerApp
         public ClientState ClientState = null;
         public ClientVisualState ClientVisualState = null;
         public float SecondsWithoutSendingClientState = 0f;
-        public Connection Client;
+        public INetConnection Client;
 
         public void Tick(float deltaTime)
         {

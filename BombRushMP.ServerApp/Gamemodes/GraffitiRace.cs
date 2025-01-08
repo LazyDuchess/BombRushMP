@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common.Packets;
+﻿using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace BombRushMP.ServerApp.Gamemodes
                 case States.Countdown:
                     if (_countdownTimer > 3f)
                     {
-                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), Riptide.MessageSendMode.Reliable, Lobby.LobbyState.Id);
+                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
                         _state = States.Main;
                     }
                     break;
@@ -47,7 +48,7 @@ namespace BombRushMP.ServerApp.Gamemodes
                         if (playerId == Lobby.LobbyState.HostId)
                         {
                             var racePacket = (ClientGraffitiRaceData)packet;
-                            ServerLobbyManager.SendPacketToLobby(racePacket, Riptide.MessageSendMode.Reliable, Lobby.LobbyState.Id);
+                            ServerLobbyManager.SendPacketToLobby(racePacket, IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
                             _maxScore = racePacket.GraffitiSpots.Count;
                         }
                     }

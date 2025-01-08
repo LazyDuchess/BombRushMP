@@ -8,8 +8,12 @@ namespace BombRushMP.Common.Networking
 {
     public interface INetClient : IDisposable
     {
+        public bool IsConnected { get; }
         public EventHandler Connected { get; set; }
         public EventHandler<IMessageReceivedEventArgs> MessageReceived { get; set; }
+        public EventHandler<IDisconnectedEventArgs> Disconnected { get; set; }
+        public EventHandler<IConnectionFailedEventArgs> ConnectionFailed { get; set; }
+        public EventHandler<ushort> ClientDisconnected { get; set; }
         public bool Connect(string address);
         public void Disconnect();
         public void Update();

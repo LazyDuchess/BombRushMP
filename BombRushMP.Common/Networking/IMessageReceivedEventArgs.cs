@@ -10,5 +10,6 @@ namespace BombRushMP.Common.Networking
     {
         public ushort MessageId { get; }
         public IMessage Message { get; }
+        public INetConnection FromConnection { get; }
     }
 }

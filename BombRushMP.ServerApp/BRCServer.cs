@@ -1,5 +1,4 @@
-﻿using Riptide;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,12 +7,10 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Riptide.Utils;
-using Riptide.Transports.Udp;
 using BombRushMP.Common.Packets;
 using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using System.Diagnostics;
-using Riptide.Transports;
 using System.Security.Policy;
 
 namespace BombRushMP.ServerApp
@@ -22,24 +19,25 @@ namespace BombRushMP.ServerApp
     {
         public static BRCServer Instance { get; private set; }
         public ServerLobbyManager ServerLobbyManager;
-        public Action<Connection> ClientHandshook;
-        public Action<Connection> ClientDisconnected;
-        public Action<Connection, Packets, Packet> PacketReceived;
+        public Action<INetConnection> ClientHandshook;
+        public Action<INetConnection> ClientDisconnected;
+        public Action<INetConnection, Packets, Packet> PacketReceived;
         public Action<float> OnTick;
         public Dictionary<ushort, Player> Players = new();
-        private Server _server;
+        private INetServer _server;
         private Stopwatch _tickStopWatch;
         private HashSet<int> _activeStages;
         private float _playerCountTickTimer = 0f;
+        private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
         public BRCServer(ushort port, ushort maxPlayers)
         {
             Instance = this;
-            Message.MaxPayloadSize = Constants.MaxPayloadSize;
+            NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             ServerLobbyManager = new();
             _tickStopWatch = new Stopwatch();
             _tickStopWatch.Start();
-            _server = new Server();
+            _server = NetworkingInterface.CreateServer();
             _server.TimeoutTime = 10000;
             _server.ClientConnected += OnClientConnected;
             _server.ClientDisconnected += OnClientDisconnected;
@@ -95,14 +93,14 @@ namespace BombRushMP.ServerApp
                     else
                         playerCountDictionary[player.Value.ClientState.Stage] = 1;
                 }
-                SendPacket(new ServerPlayerCount(playerCountDictionary), MessageSendMode.Unreliable);
+                SendPacket(new ServerPlayerCount(playerCountDictionary), IMessage.SendModes.Unreliable);
             }
         }
 
         private void TickStage(int stage)
         {
             var clientVisualStates = CreateClientVisualStatesPacket(stage);
-            SendPacketToStage(clientVisualStates, MessageSendMode.Unreliable, stage);
+            SendPacketToStage(clientVisualStates, IMessage.SendModes.Unreliable, stage);
         }
 
         private HashSet<int> GetActiveStages()
@@ -121,7 +119,7 @@ namespace BombRushMP.ServerApp
             _server.Stop();
         }
 
-        public void SendPacket(Packet packet, MessageSendMode sendMode, ushort[] except = null)
+        public void SendPacket(Packet packet, IMessage.SendModes sendMode, ushort[] except = null)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode);
             foreach (var player in Players)
@@ -132,7 +130,7 @@ namespace BombRushMP.ServerApp
             }
         }
 
-        public void SendPacketToStage(Packet packet, MessageSendMode sendMode, int stage, ushort[] except = null)
+        public void SendPacketToStage(Packet packet, IMessage.SendModes sendMode, int stage, ushort[] except = null)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode);
             foreach (var player in Players)
@@ -144,13 +142,13 @@ namespace BombRushMP.ServerApp
             }
         }
 
-        public void SendPacketToClient(Packet packet, MessageSendMode sendMode, Connection client)
+        public void SendPacketToClient(Packet packet, IMessage.SendModes sendMode, INetConnection client)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode);
             client.Send(message);
         }
 
-        private void OnPacketReceived(Connection client, Packets packetId, Packet packet)
+        private void OnPacketReceived(INetConnection client, Packets packetId, Packet packet)
         {
             switch (packetId)
             {
@@ -169,17 +167,17 @@ namespace BombRushMP.ServerApp
                         {
                             var clientStateUpdatePacket = new ServerClientStates();
                             clientStateUpdatePacket.ClientStates[client.Id] = clientState;
-                            SendPacketToStage(clientStateUpdatePacket, MessageSendMode.Reliable, oldClientState.Stage);
+                            SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage);
                             return;
                         }
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, MessageSendMode.Reliable, client);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
-                        SendPacketToStage(clientStates, MessageSendMode.Reliable, clientState.Stage);
+                        SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
                         SendPacketToStage(new ServerChat(
                             string.Format(ServerConstants.JoinMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerJoinedOrLeft),
-                            MessageSendMode.Reliable, clientState.Stage);
+                            IMessage.SendModes.Reliable, clientState.Stage);
 
                         ClientHandshook?.Invoke(client);
                     }
@@ -198,13 +196,13 @@ namespace BombRushMP.ServerApp
                             {
                                 SendPacketToStage(new ServerChat(
                                     string.Format(ServerConstants.AFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
-                                    MessageSendMode.Reliable, clientState.Stage);
+                                    IMessage.SendModes.Reliable, clientState.Stage);
                             }
                             else
                             {
                                 SendPacketToStage(new ServerChat(
                                     string.Format(ServerConstants.LeaveAFKMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerAFK),
-                                    MessageSendMode.Reliable, clientState.Stage);
+                                    IMessage.SendModes.Reliable, clientState.Stage);
                             }
                         }
                     }
@@ -217,7 +215,7 @@ namespace BombRushMP.ServerApp
                         var player = Players[client.Id];
                         if (player.ClientState == null) return;
                         var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, ChatMessageTypes.Chat);
-                        SendPacketToStage(serverChatPacket, MessageSendMode.Reliable, player.ClientState.Stage);
+                        SendPacketToStage(serverChatPacket, IMessage.SendModes.Reliable, player.ClientState.Stage);
                     }
                     break;
 
@@ -231,14 +229,14 @@ namespace BombRushMP.ServerApp
                             if (player.ClientState == null) return;
                             // Exclude sender - will break things if you're trying to display the networked local player clientside.
                             // SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage, [client.Id]);
-                            SendPacketToStage(playerPacket, MessageSendMode.Reliable, Players[client.Id].ClientState.Stage);
+                            SendPacketToStage(playerPacket, IMessage.SendModes.Reliable, Players[client.Id].ClientState.Stage);
                         }
                     }
                     break;
             }
         }
 
-        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+        private void OnMessageReceived(object sender, IMessageReceivedEventArgs e)
         {
             try
             {
@@ -256,7 +254,7 @@ namespace BombRushMP.ServerApp
             }
         }
 
-        private void OnClientConnected(object sender, ServerConnectedEventArgs e)
+        private void OnClientConnected(object sender, IServerConnectedEventArgs e)
         {
             ServerLogger.Log($"Client connected from {e.Client}. ID: {e.Client.Id}.");
             var player = new Player();
@@ -271,7 +269,7 @@ namespace BombRushMP.ServerApp
             return address.Split(":")[0];
         }
 
-        private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
+        private void OnClientDisconnected(object sender, IServerDisconnectedEventArgs e)
         {
             ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}. Reason: {e.Reason}");
             ClientState clientState = null;
@@ -284,11 +282,11 @@ namespace BombRushMP.ServerApp
             if (clientState != null)
             {
                 var clientStates = CreateClientStatesPacket(clientState.Stage);
-                SendPacketToStage(clientStates, MessageSendMode.Reliable, clientState.Stage);
+                SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
                 SendPacketToStage(new ServerChat(
                     string.Format(ServerConstants.LeaveMessage, TMPFilter.CloseAllTags(clientState.Name)), ChatMessageTypes.PlayerJoinedOrLeft),
-                    MessageSendMode.Reliable, clientState.Stage);
+                    IMessage.SendModes.Reliable, clientState.Stage);
             }
         }
 

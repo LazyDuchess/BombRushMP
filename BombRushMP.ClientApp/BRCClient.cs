@@ -33,6 +33,7 @@ namespace BombRushMP.ClientApp
 
         public BRCClient(string address, Tasks task)
         {
+            NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             PacketFactory.Initialize();
             _task = task;
             _client = NetworkingInterface.CreateClient();

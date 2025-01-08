@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Riptide;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
@@ -61,7 +62,7 @@ namespace BombRushMP.Plugin.Gamemodes
                             if (!_comboOverRegistered)
                             {
                                 _comboOverRegistered = true;
-                                ClientController.SendPacket(new ClientComboOver(player.score), MessageSendMode.Reliable);
+                                ClientController.SendPacket(new ClientComboOver(player.score), IMessage.SendModes.Reliable);
                             }
                             player.userInputEnabled = false;
                         }
@@ -145,7 +146,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 var score = player.score;
                 if (player.IsComboing() && !ComboBased)
                     score += player.baseScore * player.scoreMultiplier;
-                ClientController.SendPacket(new ClientGamemodeScore(score), MessageSendMode.Reliable);
+                ClientController.SendPacket(new ClientGamemodeScore(score), IMessage.SendModes.Reliable);
             }
         }
     }

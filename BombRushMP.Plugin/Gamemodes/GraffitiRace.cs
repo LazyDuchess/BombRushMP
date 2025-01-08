@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using Reptile;
 using System;
@@ -114,7 +115,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             Score++;
             var packet = new ClientGamemodeScore(Score);
-            ClientController.SendPacket(packet, Riptide.MessageSendMode.Reliable);
+            ClientController.SendPacket(packet, IMessage.SendModes.Reliable);
         }
 
         public override void OnEnd(bool cancelled)
@@ -235,7 +236,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
 
             var packet = new ClientGraffitiRaceData(spawnPosition.ToSystemVector3(), spawnRotation.ToSystemQuaternion(), raceSpots);
-            ClientController.SendPacket(packet, Riptide.MessageSendMode.Reliable);
+            ClientController.SendPacket(packet, IMessage.SendModes.Reliable);
         }
     }
 }

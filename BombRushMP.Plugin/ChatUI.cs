@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.ServerApp.Gamemodes;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.Plugin
 {
@@ -133,7 +134,7 @@ namespace BombRushMP.Plugin
             SetState(States.Unfocused);
             if (!TMPFilter.IsValidChatMessage(message)) return;
             var clientController = ClientController.Instance;
-            clientController.SendPacket(new ClientChat(message), MessageSendMode.Reliable);
+            clientController.SendPacket(new ClientChat(message), IMessage.SendModes.Reliable);
         }
 
         private void LateUpdate()

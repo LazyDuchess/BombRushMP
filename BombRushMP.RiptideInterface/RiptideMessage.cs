@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common.Networking;
 
-namespace BombRushMP.Common.Networking
+namespace BombRushMP.RiptideInterface
 {
     public class RiptideMessage : IMessage
     {
-        public Riptide.Message InternalRiptideMessage { get; private set; }
+        internal Riptide.Message InternalRiptideMessage { get; private set; }
         public RiptideMessage(Riptide.Message sourceMessage)
         {
             InternalRiptideMessage = sourceMessage;

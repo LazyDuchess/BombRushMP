@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.ServerApp.Gamemodes
 {
@@ -36,7 +37,7 @@ namespace BombRushMP.ServerApp.Gamemodes
                 case States.Countdown:
                     if (_stateTimer > 3f)
                     {
-                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), Riptide.MessageSendMode.Reliable, Lobby.LobbyState.Id);
+                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
                         _state = States.Main;
                         _startTime = DateTime.UtcNow;
                     }

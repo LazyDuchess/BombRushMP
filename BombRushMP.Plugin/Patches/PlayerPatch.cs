@@ -5,11 +5,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.Plugin.Gamemodes;
 using HarmonyLib;
 using Reptile;
-using Riptide;
 using UnityEngine;
 
 namespace BombRushMP.Plugin.Patches
@@ -31,7 +31,7 @@ namespace BombRushMP.Plugin.Patches
                 if (__instance.inGraffitiGame) return true;
                 var packet = new PlayerAnimation(newAnim, forceOverwrite, instant, atTime);
                 // Doesn't really need to be reliable no?
-                clientController.SendPacket(packet, MessageSendMode.Reliable);
+                clientController.SendPacket(packet, IMessage.SendModes.Reliable);
             }
             if (!PlayAnimPatchEnabled) return true;
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
@@ -57,7 +57,7 @@ namespace BombRushMP.Plugin.Patches
             var packet = new PlayerVoice();
             packet.AudioClipId = (int)audioClipID;
             packet.VoicePriority = (int)voicePriority;
-            clientController.SendPacket(packet, MessageSendMode.Reliable);
+            clientController.SendPacket(packet, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPrefix]
@@ -71,7 +71,7 @@ namespace BombRushMP.Plugin.Patches
             var packet = new PlayerVoice();
             packet.AudioClipId = (int)AudioClipID.VoiceJump;
             packet.VoicePriority = (int)VoicePriority.MOVEMENT;
-            clientController.SendPacket(packet, MessageSendMode.Reliable);
+            clientController.SendPacket(packet, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPrefix]
@@ -209,7 +209,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             if (!clientController.Connected) return;
             if (state != Player.SpraycanState.SPRAY) return;
-            clientController.SendGenericEvent(GenericEvents.Spray, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Spray, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPostfix]
@@ -220,7 +220,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPrefix]
@@ -252,7 +252,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             clientController.CurrentGraffitiGame = GameObject.FindFirstObjectByType<GraffitiGame>();
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPostfix]
@@ -263,8 +263,8 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             clientController.CurrentGraffitiGame = null;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, MessageSendMode.Reliable);
-            clientController.SendGenericEvent(GenericEvents.GraffitiGameOver, MessageSendMode.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.GraffitiGameOver, IMessage.SendModes.Reliable);
         }
 
         [HarmonyPrefix]

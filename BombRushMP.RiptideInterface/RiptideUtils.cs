@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BombRushMP.Common.Networking;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.Common.Networking
+namespace BombRushMP.RiptideInterface
 {
     public static class RiptideUtils
     {
