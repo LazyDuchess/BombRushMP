@@ -29,6 +29,7 @@
     <ProjectReference Include="..\BombRushMP.CrewBoom\BombRushMP.CrewBoom.csproj" />
     <ProjectReference Include="..\BombRushMP.MapStation\BombRushMP.MapStation.csproj" />
     <ProjectReference Include="..\BombRushMP.Mono\BombRushMP.Mono.csproj" />
+    <ProjectReference Include="..\BombRushMP.NetworkInterfaceProvider\BombRushMP.NetworkInterfaceProvider.csproj" />
     <ProjectReference Include="..\libs\BRC-CommonAPI\CommonAPI.csproj">
       <Private>False</Private>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.NetworkInterfaceProvider;
 
 namespace BombRushMP.ServerApp
 {
@@ -11,6 +12,7 @@ namespace BombRushMP.ServerApp
     {
         static void Main(string[] args)
         {
+            NetworkInterfaceFactory.InitializeNetworkInterface(NetworkInterfaces.Riptide);
             PacketFactory.Initialize();
             var port = (ushort)41585;
             var server = new BRCServer(port, 65534);

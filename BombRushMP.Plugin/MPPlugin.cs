@@ -11,6 +11,7 @@ using BombRushMP.MapStation;
 using BombRushMP.Common;
 using BombRushMP.Plugin.Patches;
 using BombRushMP.Common.Networking;
+using BombRushMP.NetworkInterfaceProvider;
 
 namespace BombRushMP.Plugin
 {
@@ -22,6 +23,8 @@ namespace BombRushMP.Plugin
     {
         private void Awake()
         {
+            new MPSettings(Config);
+            NetworkInterfaceFactory.InitializeNetworkInterface(MPSettings.Instance.NetworkInterface);
             NetworkingEnvironment.NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
@@ -35,7 +38,6 @@ namespace BombRushMP.Plugin
             }
             ProxyEncounter.Initialize();
             InitializePhone();
-            new MPSettings(Config);
             PacketFactory.Initialize();
             new SpecialSkinManager();
             new MPUnlockManager();

@@ -7,7 +7,6 @@ using BombRushMP.Common.Packets;
 using HarmonyLib;
 using Reptile;
 using UnityEngine;
-using Riptide;
 using BombRushMP.Common;
 using BombRushMP.Plugin.Gamemodes;
 using BombRushMP.Common.Networking;
