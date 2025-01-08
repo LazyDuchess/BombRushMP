@@ -309,6 +309,58 @@ namespace BombRushMP.Plugin
                 _useNativeSockets.Value = value;
             }
         }
+
+        public bool HostServer
+        {
+            get
+            {
+                return _hostServer.Value;
+            }
+
+            set
+            {
+                _hostServer.Value = value;
+            }
+        }
+
+        public float TicksPerSecond
+        {
+            get
+            {
+                return _ticksPerSecond.Value;
+            }
+
+            set
+            {
+                _ticksPerSecond.Value = value;
+            }
+        }
+
+        public ushort MaxPlayers
+        {
+            get
+            {
+                return _maxPlayers.Value;
+            }
+
+            set
+            {
+                _maxPlayers.Value = value;
+            }
+        }
+
+        public bool Offline
+        {
+            get
+            {
+                return _offline.Value;
+            }
+
+            set
+            {
+                _offline.Value = value;
+            }
+        }
 		
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
@@ -331,6 +383,10 @@ namespace BombRushMP.Plugin
         private ConfigEntry<BalanceUI.Types> _balanceUIType;
         private ConfigEntry<NetworkInterfaces> _networkInterface;
         private ConfigEntry<bool> _useNativeSockets;
+        private ConfigEntry<bool> _hostServer;
+        private ConfigEntry<float> _ticksPerSecond;
+        private ConfigEntry<ushort> _maxPlayers;
+        private ConfigEntry<bool> _offline;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -341,6 +397,7 @@ namespace BombRushMP.Plugin
         private const string Debug = "5. Debug";
         private const string Visuals = "6. Visuals";
         private const string Advanced = "7. Advanced";
+        private const string Server = "8. Server";
 #if DEVELOPER_DEBUG
         private const string MainServerAddress = "ggdev.lazyduchess.me";
 #else
@@ -374,7 +431,6 @@ namespace BombRushMP.Plugin
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
             _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeB, "Balance UI theme.");
-
 #if DEBUG
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
@@ -385,6 +441,10 @@ namespace BombRushMP.Plugin
             {
                 NetworkingEnvironment.UseNativeSocketsIfAvailable = UseNativeSockets;
             };
+            _hostServer = configFile.Bind(Server, "Host Server", false, "Host a local server.");
+            _ticksPerSecond = configFile.Bind(Server, "Ticks per second", 1f / Constants.DefaultNetworkingTickRate, "Networking updates per second for local server.");
+            _maxPlayers = configFile.Bind(Server, "Max players", (ushort)64, "Max players for local server.");
+            _offline = configFile.Bind(General, "Offline", false, "Run All City Network in singleplayer, offline mode.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

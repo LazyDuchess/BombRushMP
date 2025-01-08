@@ -31,7 +31,7 @@ namespace BombRushMP.Server
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public BRCServer(ushort port, ushort maxPlayers, float tickRate)
+        public BRCServer(int port, ushort maxPlayers, float tickRate, bool local)
         {
             Instance = this;
             _tickRate = tickRate;
@@ -44,7 +44,7 @@ namespace BombRushMP.Server
             _server.ClientConnected += OnClientConnected;
             _server.ClientDisconnected += OnClientDisconnected;
             _server.MessageReceived += OnMessageReceived;
-            _server.Start(port, maxPlayers);
+            _server.Start((ushort)port, maxPlayers, local);
             ServerLogger.Log($"Starting server on port {port} with max players {maxPlayers}, using Network Interface {NetworkingInterface}");
         }
 

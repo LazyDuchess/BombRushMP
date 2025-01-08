@@ -10,7 +10,7 @@ namespace BombRushMP.LiteNetLibInterface
 {
     public class LiteNetLibClient : INetClient
     {
-        public bool IsConnected => _netManager.FirstPeer != null && _netManager.FirstPeer.ConnectionState == ConnectionState.Connected;
+        public bool IsConnected => _netManager != null && _netManager.FirstPeer != null && _netManager.FirstPeer.ConnectionState == ConnectionState.Connected;
 
         public EventHandler Connected { get; set; }
         public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }

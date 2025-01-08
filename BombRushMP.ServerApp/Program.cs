@@ -37,7 +37,7 @@ namespace BombRushMP.ServerApp
             };
             PacketFactory.Initialize();
             var port = (ushort)41585;
-            var server = new BRCServer(port, 65534, 1f/serverSettings.TicksPerSecond);
+            var server = new BRCServer(port, 65534, 1f/serverSettings.TicksPerSecond, false);
             while(true)
             {
                 server.Update();

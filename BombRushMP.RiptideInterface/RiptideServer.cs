@@ -28,7 +28,7 @@ namespace BombRushMP.RiptideInterface
             _riptideServer.ClientDisconnected += InternalClientDisconnected;
         }
 
-        public void Start(ushort port, ushort maxPlayers)
+        public void Start(ushort port, ushort maxPlayers, bool local)
         {
             _riptideServer.Start(port, maxPlayers);
         }

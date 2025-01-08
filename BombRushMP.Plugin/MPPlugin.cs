@@ -12,6 +12,7 @@ using BombRushMP.Common;
 using BombRushMP.Plugin.Patches;
 using BombRushMP.Common.Networking;
 using BombRushMP.NetworkInterfaceProvider;
+using BombRushMP.Plugin.LocalServer;
 
 namespace BombRushMP.Plugin
 {
@@ -21,6 +22,9 @@ namespace BombRushMP.Plugin
     [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
     {
+        private bool _selfHosting = false;
+        private bool _offline = false;
+        private ServerController _localServerController;
         private void Awake()
         {
             new MPSettings(Config, Path.GetDirectoryName(Info.Location));
@@ -31,6 +35,17 @@ namespace BombRushMP.Plugin
             };
             NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
+            _offline = MPSettings.Instance.Offline;
+            _selfHosting = MPSettings.Instance.HostServer;
+            var maxPlayers = MPSettings.Instance.MaxPlayers;
+            if (_offline)
+            {
+                _selfHosting = true;
+                maxPlayers = 1;
+                NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(NetworkInterfaces.LiteNetLib);
+            }
+            if (_selfHosting)
+                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers, _offline);
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
@@ -74,7 +89,10 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
-            ClientController.Create(MPSettings.Instance.ServerAddress, MPSettings.Instance.ServerPort);
+            var addr = MPSettings.Instance.ServerAddress;
+            if (_selfHosting)
+                addr = "localhost";
+            ClientController.Create(addr, MPSettings.Instance.ServerPort);
             LobbyUI.Create();
             TimerUI.Create();
             MPMapController.Create();
