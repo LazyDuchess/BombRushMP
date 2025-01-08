@@ -47,13 +47,8 @@
     <Compile Include="RiptideClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RiptideConnection.cs" />
-    <Compile Include="RiptideConnectionFailedEventArgs.cs" />
     <Compile Include="RiptideInterface.cs" />
     <Compile Include="RiptideMessage.cs" />
-    <Compile Include="RiptideServerConnectedEventArgs.cs" />
-    <Compile Include="RiptideDisconnectedEventArgs.cs" />
-    <Compile Include="RiptideServerDisconnectedEventArgs.cs" />
-    <Compile Include="RiptideMessageReceivedEventArgs.cs" />
     <Compile Include="RiptideServer.cs" />
     <Compile Include="RiptideUtils.cs" />
   </ItemGroup>

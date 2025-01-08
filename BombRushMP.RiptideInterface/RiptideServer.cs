@@ -17,9 +17,9 @@ namespace BombRushMP.RiptideInterface
                 _riptideServer.TimeoutTime = value;
             }
         }
-        public EventHandler<IMessageReceivedEventArgs> MessageReceived { get; set; }
-        public EventHandler<IServerDisconnectedEventArgs> ClientDisconnected { get; set; }
-        public EventHandler<IServerConnectedEventArgs> ClientConnected { get; set; }
+        public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
+        public EventHandler<ServerDisconnectedEventArgs> ClientDisconnected { get; set; }
+        public EventHandler<ServerConnectedEventArgs> ClientConnected { get; set; }
 
         public RiptideServer()
         {
@@ -35,19 +35,19 @@ namespace BombRushMP.RiptideInterface
 
         private void InternalClientDisconnected(object sender, Riptide.ServerDisconnectedEventArgs args)
         {
-            var genArgs = new RiptideServerDisconnectedEventArgs(args);
+            var genArgs = new ServerDisconnectedEventArgs(new RiptideConnection(args.Client), (DisconnectReason)args.Reason);
             ClientDisconnected?.Invoke(sender, genArgs);
         }
 
         private void InternalClientConnected(object sender, Riptide.ServerConnectedEventArgs args)
         {
-            var genArgs = new RiptideServerConnectedEventArgs(args);
+            var genArgs = new ServerConnectedEventArgs(new RiptideConnection(args.Client));
             ClientConnected?.Invoke(sender, genArgs);
         }
 
         private void InternalMessageReceived(object sender, Riptide.MessageReceivedEventArgs args)
         {
-            var genArgs = new RiptideMessageReceivedEventArgs(args);
+            var genArgs = new MessageReceivedEventArgs(args.MessageId, new RiptideMessage(args.Message), new RiptideConnection(args.FromConnection));
             MessageReceived?.Invoke(sender, genArgs);
         }
 
@@ -69,6 +69,11 @@ namespace BombRushMP.RiptideInterface
         public void Stop()
         {
             _riptideServer.Stop();
+        }
+
+        public override string ToString()
+        {
+            return _riptideServer.ToString();
         }
     }
 }

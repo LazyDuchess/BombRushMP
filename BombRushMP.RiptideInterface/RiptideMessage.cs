@@ -25,5 +25,10 @@ namespace BombRushMP.RiptideInterface
             InternalRiptideMessage.Add(data);
             return this;
         }
+
+        public override string ToString()
+        {
+            return InternalRiptideMessage.ToString();
+        }
     }
 }

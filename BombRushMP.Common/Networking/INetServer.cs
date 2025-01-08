@@ -8,9 +8,9 @@ namespace BombRushMP.Common.Networking
 {
     public interface INetServer
     {
-        public EventHandler<IMessageReceivedEventArgs> MessageReceived { get; set; }
-        public EventHandler<IServerDisconnectedEventArgs> ClientDisconnected { get; set; }
-        public EventHandler<IServerConnectedEventArgs> ClientConnected { get; set; }
+        public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
+        public EventHandler<ServerDisconnectedEventArgs> ClientDisconnected { get; set; }
+        public EventHandler<ServerConnectedEventArgs> ClientConnected { get; set; }
         public int TimeoutTime { set; }
         public void Start(ushort port, ushort maxPlayers);
         public void DisconnectClient(ushort id);

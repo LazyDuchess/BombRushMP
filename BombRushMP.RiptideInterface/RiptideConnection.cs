@@ -31,5 +31,10 @@ namespace BombRushMP.RiptideInterface
         {
             _riptideConnection.Send((message as RiptideMessage).InternalRiptideMessage);
         }
+
+        public override string ToString()
+        {
+            return _riptideConnection.ToString();
+        }
     }
 }

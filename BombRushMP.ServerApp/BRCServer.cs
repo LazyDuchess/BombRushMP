@@ -236,7 +236,7 @@ namespace BombRushMP.ServerApp
             }
         }
 
-        private void OnMessageReceived(object sender, IMessageReceivedEventArgs e)
+        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             try
             {
@@ -254,7 +254,7 @@ namespace BombRushMP.ServerApp
             }
         }
 
-        private void OnClientConnected(object sender, IServerConnectedEventArgs e)
+        private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
             ServerLogger.Log($"Client connected from {e.Client}. ID: {e.Client.Id}.");
             var player = new Player();
@@ -269,7 +269,7 @@ namespace BombRushMP.ServerApp
             return address.Split(":")[0];
         }
 
-        private void OnClientDisconnected(object sender, IServerDisconnectedEventArgs e)
+        private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
             ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}. Reason: {e.Reason}");
             ClientState clientState = null;

@@ -215,7 +215,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void OnMessageReceived(object sender, IMessageReceivedEventArgs e)
+        private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
@@ -338,7 +338,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void OnConnectionFailed(object sender, IConnectionFailedEventArgs e)
+        private void OnConnectionFailed(object sender, ConnectionFailedEventArgs e)
         {
             ClientLogger.Log($"Failed to connect to server. Reason: {e.Reason}");
             ClientLogger.Log("Will attempt to re-connect");
@@ -346,7 +346,7 @@ namespace BombRushMP.Plugin
             Connect();
         }
 
-        private void OnDisconnect(object sender, IDisconnectedEventArgs e)
+        private void OnDisconnect(object sender, DisconnectedEventArgs e)
         {
             ClientLogger.Log($"Disconnected! Reason: {e.Reason}");
             ClientLogger.Log("Will attempt to re-connect");

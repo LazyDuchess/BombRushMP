@@ -12,9 +12,9 @@ namespace BombRushMP.RiptideInterface
         private Riptide.Client _riptideClient;
         public bool IsConnected => _riptideClient.IsConnected;
         public EventHandler Connected { get; set; }
-        public EventHandler<IMessageReceivedEventArgs> MessageReceived { get; set; }
-        public EventHandler<IDisconnectedEventArgs> Disconnected { get; set; }
-        public EventHandler<IConnectionFailedEventArgs> ConnectionFailed { get; set; }
+        public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
+        public EventHandler<DisconnectedEventArgs> Disconnected { get; set; }
+        public EventHandler<ConnectionFailedEventArgs> ConnectionFailed { get; set; }
         public EventHandler<ushort> ClientDisconnected { get; set; }
 
         public RiptideClient()
@@ -38,19 +38,18 @@ namespace BombRushMP.RiptideInterface
         }
         private void InternalConnectionFailed(object sender, Riptide.ConnectionFailedEventArgs args)
         {
-            var genArgs = new RiptideConnectionFailedEventArgs(args);
-            ConnectionFailed?.Invoke(sender, genArgs);
+            ConnectionFailed?.Invoke(sender, new ConnectionFailedEventArgs((RejectReason)args.Reason));
         }
 
         private void InternalDisconnected(object sender, Riptide.DisconnectedEventArgs args)
         {
-            var genArgs = new RiptideDisconnectedEventArgs(args);
+            var genArgs = new DisconnectedEventArgs((DisconnectReason)args.Reason);
             Disconnected?.Invoke(sender, genArgs);
         }
 
         private void InternalMessageReceived(object sender, Riptide.MessageReceivedEventArgs args)
         {
-            var genArgs = new RiptideMessageReceivedEventArgs(args);
+            var genArgs = new MessageReceivedEventArgs(args.MessageId, new RiptideMessage(args.Message), new RiptideConnection(args.FromConnection));
             MessageReceived?.Invoke(sender, genArgs);
         }
 
@@ -74,9 +73,9 @@ namespace BombRushMP.RiptideInterface
             _riptideClient.Update();
         }
 
-        public void Dispose()
+        public override string ToString()
         {
-            throw new NotImplementedException();
+            return _riptideClient.ToString();
         }
     }
 }
