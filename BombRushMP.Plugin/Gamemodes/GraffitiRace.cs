@@ -16,17 +16,11 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class GraffitiRace : Gamemode
     {
-        public bool QuickGraffitiEnabled => Settings.SettingByID[SettingQuickGraffitiID].Value == (int)QuickGraffiti.ON;
+        public bool QuickGraffitiEnabled => (Settings.SettingByID[SettingQuickGraffitiID] as ToggleGamemodeSetting).IsOn;
         public enum SpawnMode
         {
             Automatic,
             At_Host
-        }
-
-        public enum QuickGraffiti
-        {
-            ON,
-            OFF
         }
 
         private static int SettingSpawnModeID = Animator.StringToHash("SpawnMode");
@@ -356,7 +350,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             var settings = new GamemodeSettings();
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
-            settings.SettingByID[SettingQuickGraffitiID] = new GamemodeSetting("Quick Graffiti", QuickGraffiti.ON);
+            settings.SettingByID[SettingQuickGraffitiID] = new ToggleGamemodeSetting("Quick Graffiti", true);
             var maxSpots = GetValidSpots().Count;
             var minSpots = MinGraffiti;
             if (maxSpots < MinGraffiti)
