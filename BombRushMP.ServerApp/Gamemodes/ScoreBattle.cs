@@ -84,6 +84,8 @@ namespace BombRushMP.ServerApp.Gamemodes
                 switch (packetId)
                 {
                     case Packets.ClientGameModeScore:
+                        if (_clientsFinishedCombo.Contains(playerId))
+                            break;
                         var scorePacket = (ClientGamemodeScore)packet;
                         ServerLobbyManager.SetPlayerScore(playerId, scorePacket.Score);
                         break;

@@ -63,13 +63,15 @@ namespace BombRushMP.Plugin.Gamemodes
                                 _comboOverRegistered = true;
                                 ClientController.SendPacket(new ClientComboOver(player.score), IMessage.SendModes.Reliable);
                             }
-                            player.userInputEnabled = false;
                         }
                     }
                     timerUI.SetTime(timeLeft);
                     if (timeLeft <= 0f && ComboBased && (player.IsComboing() || _comboOverRegistered))
                     {
-                        timerUI.SetText("Overtime");
+                        if (player.IsComboing() && !_comboOverRegistered)
+                            timerUI.SetText("Overtime");
+                        else if (!player.IsComboing() && _comboOverRegistered)
+                            timerUI.SetText("Waiting for other players...");
                     }
                     break;
             }
