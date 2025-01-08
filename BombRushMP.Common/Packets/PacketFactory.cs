@@ -7,12 +7,13 @@ using System.Reflection;
 using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.Common.Packets
 {
     public static class PacketFactory
     {
-
+        private static INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
         private static Dictionary<Packets, Type> _packetTypeById = new();
 
         public static void Initialize()
@@ -29,9 +30,9 @@ namespace BombRushMP.Common.Packets
             }
         }
 
-        public static Message MessageFromPacket(Packet packet, MessageSendMode sendMode)
+        public static IMessage MessageFromPacket(Packet packet, IMessage.SendModes sendMode)
         {
-            var message = Message.Create(sendMode, packet.PacketId);
+            var message = NetworkingInterface.CreateMessage(sendMode, packet.PacketId);
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             packet.Write(writer);
@@ -39,7 +40,7 @@ namespace BombRushMP.Common.Packets
             return message;
         }
 
-        public static Packet PacketFromMessage(Packets packetId, Message message)
+        public static Packet PacketFromMessage(Packets packetId, IMessage message)
         {
             var bytes = message.GetBytes();
             using var ms = new MemoryStream(bytes);
