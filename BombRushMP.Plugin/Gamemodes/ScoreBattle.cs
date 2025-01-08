@@ -66,11 +66,11 @@ namespace BombRushMP.Plugin.Gamemodes
                             player.userInputEnabled = false;
                         }
                     }
-                    if (_comboOverRegistered) {
-                        timerUI.SetText("Waiting for other players...");
+                    timerUI.SetTime(timeLeft);
+                    if (timeLeft <= 0f && ComboBased && (player.IsComboing() || _comboOverRegistered))
+                    {
+                        timerUI.SetText("Overtime");
                     }
-                    else
-                        timerUI.SetTime(timeLeft);
                     break;
             }
             _stateTimer += Time.deltaTime;
@@ -106,6 +106,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnEnd(bool cancelled)
         {
             base.OnEnd(cancelled);
+            TimerUI.Instance.SetTime(0f);
             TimerUI.Instance.DeactivateDelayed();
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (!cancelled)

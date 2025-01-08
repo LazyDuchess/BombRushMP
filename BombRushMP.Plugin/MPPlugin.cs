@@ -25,6 +25,11 @@ namespace BombRushMP.Plugin
         {
             new MPSettings(Config, Path.GetDirectoryName(Info.Location));
             NetworkInterfaceFactory.InitializeNetworkInterface(MPSettings.Instance.NetworkInterface);
+            NetworkingEnvironment.LogEventHandler += (log) =>
+            {
+                ClientLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");
+            };
+            NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic

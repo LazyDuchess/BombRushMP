@@ -8,6 +8,7 @@ using BepInEx.Configuration;
 using UnityEngine;
 using BombRushMP.Common;
 using BombRushMP.NetworkInterfaceProvider;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.Plugin
 {
@@ -296,6 +297,19 @@ namespace BombRushMP.Plugin
                 _balanceUIType.Value = value;
             }
         }
+
+        public bool UseNativeSockets
+        {
+            get
+            {
+                return _useNativeSockets.Value;
+            }
+
+            set
+            {
+                _useNativeSockets.Value = value;
+            }
+        }
 		
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
@@ -317,6 +331,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _showChat;
         private ConfigEntry<BalanceUI.Types> _balanceUIType;
         private ConfigEntry<NetworkInterfaces> _networkInterface;
+        private ConfigEntry<bool> _useNativeSockets;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -326,6 +341,7 @@ namespace BombRushMP.Plugin
         private const string Input = "4. Input";
         private const string Debug = "5. Debug";
         private const string Visuals = "6. Visuals";
+        private const string Advanced = "7. Advanced";
 #if DEVELOPER_DEBUG
         private const string MainServerAddress = "ggdev.lazyduchess.me";
 #else
@@ -364,7 +380,12 @@ namespace BombRushMP.Plugin
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
 #endif
-            _networkInterface = configFile.Bind(General, "Network Interface", NetworkInterfaces.LiteNetLib, "Networking library to use. Should match the server.");
+            _networkInterface = configFile.Bind(Advanced, "Network Interface", NetworkInterfaces.LiteNetLib, "Networking library to use. Should match the server.");
+            _useNativeSockets = configFile.Bind(Advanced, "Use Native Sockets", true, "Whether the networking library should use native sockets if available. Potentially better performance. Currently only supported via LiteNetLib networking.");
+            _useNativeSockets.SettingChanged += (sender, args) =>
+            {
+                NetworkingEnvironment.UseNativeSocketsIfAvailable = UseNativeSockets;
+            };
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

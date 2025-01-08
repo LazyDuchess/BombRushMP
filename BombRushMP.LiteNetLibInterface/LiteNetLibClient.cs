@@ -71,6 +71,11 @@ namespace BombRushMP.LiteNetLibInterface
                 _netManager.Stop();
             }
             _netManager = new NetManager(_netListener);
+            if (NetworkingEnvironment.UseNativeSocketsIfAvailable)
+            {
+                NetworkingEnvironment.Log("LiteNetLib: Using native sockets if supported.");
+                _netManager.UseNativeSockets = true;
+            }
             if (_netManager.Start())
             {
                 _netManager.Connect(address, port, "BRCMP");
@@ -91,6 +96,7 @@ namespace BombRushMP.LiteNetLibInterface
 
         public void Update()
         {
+            _netManager.TriggerUpdate();
             _netManager.PollEvents();
         }
 

@@ -99,6 +99,11 @@ namespace BombRushMP.LiteNetLibInterface
                 _netManager.Stop();
             }
             _netManager = new NetManager(_netListener);
+            if (NetworkingEnvironment.UseNativeSocketsIfAvailable)
+            {
+                NetworkingEnvironment.Log("LiteNetLib: Using native sockets if supported.");
+                _netManager.UseNativeSockets = true;
+            }
             _netManager.DisconnectTimeout = _disconnectTimeout;
             _netManager.Start(port);
             _maxPlayers = maxPlayers;
@@ -111,6 +116,7 @@ namespace BombRushMP.LiteNetLibInterface
 
         public void Update()
         {
+            _netManager.TriggerUpdate();
             _netManager.PollEvents();
         }
 
