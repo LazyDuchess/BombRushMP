@@ -254,24 +254,23 @@ namespace BombRushMP.Plugin
                 _debugInfo.Value = value;
             }
         }
+#else
+        public bool DebugLocalPlayer => false;
+        public bool DebugInfo => false;
+#endif
 
         public bool ShowChat
         {
             get
             {
                 return _showChat.Value;
-			}
-			set
+            }
+            set
             {
                 _showChat.Value = value;
             }
         }
-		
-#else
-        public bool DebugLocalPlayer => false;
-        public bool DebugInfo => false;
-#endif
-		
+
         public NetworkInterfaces NetworkInterface
         {
             get
