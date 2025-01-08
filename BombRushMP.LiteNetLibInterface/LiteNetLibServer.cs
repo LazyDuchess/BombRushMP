@@ -17,19 +17,18 @@ namespace BombRushMP.LiteNetLibInterface
         public int TimeoutTime {
             set
             {
-                _netManager.DisconnectTimeout = value;
+                _disconnectTimeout = value;
             }
         }
-
+        private int _disconnectTimeout = 10000;
         private EventBasedNetListener _netListener;
         private NetManager _netManager;
 
         private ushort _maxPlayers = 0;
 
-        public LiteNetLibServer(EventBasedNetListener listener, NetManager manager)
+        public LiteNetLibServer()
         {
-            _netListener = listener;
-            _netManager = manager;
+            _netListener = new EventBasedNetListener();
             _netListener.ConnectionRequestEvent += _netListener_ConnectionRequestEvent;
             _netListener.PeerConnectedEvent += _netListener_PeerConnectedEvent;
             _netListener.PeerDisconnectedEvent += _netListener_PeerDisconnectedEvent;
@@ -73,7 +72,6 @@ namespace BombRushMP.LiteNetLibInterface
 
         private void _netListener_ConnectionRequestEvent(ConnectionRequest request)
         {
-            Console.WriteLine("Got a connection request!");
             if (_netManager.ConnectedPeersCount < _maxPlayers)
             {
                 request.AcceptIfKey("BRCMP");
@@ -84,7 +82,7 @@ namespace BombRushMP.LiteNetLibInterface
 
         public void DisconnectClient(ushort id)
         {
-            var peer = _netManager.GetPeerById(id);
+            var peer = _netManager.GetPeerById(LiteNetLibUtils.GameIdToPeerId(id));
             _netManager.DisconnectPeer(peer);
         }
 
@@ -96,6 +94,12 @@ namespace BombRushMP.LiteNetLibInterface
 
         public void Start(ushort port, ushort maxPlayers)
         {
+            if (_netManager != null)
+            {
+                _netManager.Stop();
+            }
+            _netManager = new NetManager(_netListener);
+            _netManager.DisconnectTimeout = _disconnectTimeout;
             _netManager.Start(port);
             _maxPlayers = maxPlayers;
         }

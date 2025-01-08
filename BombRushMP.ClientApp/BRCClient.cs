@@ -112,6 +112,8 @@ namespace BombRushMP.ClientApp
         {
             if (_localId == 0)
                 return;
+            if (_lobbies == null)
+                return;
             var myLobby = GetMyLobby();
             var player = GetPlayer();
             switch (_taskStep)
@@ -195,7 +197,9 @@ namespace BombRushMP.ClientApp
             foreach(var player in _clientStates.ClientStates)
             {
                 if (player.Value.Name != BotName)
+                {
                     return player.Key;
+                }
             }
             return 0;
         }

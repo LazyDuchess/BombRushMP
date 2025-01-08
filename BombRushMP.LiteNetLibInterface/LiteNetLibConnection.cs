@@ -21,7 +21,7 @@ namespace BombRushMP.LiteNetLibInterface
             }
         }
 
-        public ushort Id => (ushort)Peer.Id;
+        public ushort Id => LiteNetLibUtils.PeerIdToGameId(Peer.Id + 1);
 
         public NetPeer Peer;
 

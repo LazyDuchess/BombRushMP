@@ -35,5 +35,10 @@ namespace BombRushMP.RiptideInterface
         {
             return new RiptideMessage(Riptide.Message.Create(RiptideUtils.SendModeToRiptide(sendMode), packetId));
         }
+
+        public override string ToString()
+        {
+            return "Riptide Networking";
+        }
     }
 }

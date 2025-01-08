@@ -49,6 +49,7 @@
     <Compile Include="LiteNetLibInterface.cs" />
     <Compile Include="LiteNetLibMessage.cs" />
     <Compile Include="LiteNetLibServer.cs" />
+    <Compile Include="LiteNetLibUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

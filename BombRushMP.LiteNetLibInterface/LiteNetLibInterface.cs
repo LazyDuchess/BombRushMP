@@ -14,25 +14,17 @@ namespace BombRushMP.LiteNetLibInterface
         {
             get
             {
-                return _netManager.MtuOverride;
+                return 1400;
             }
             set
             {
 
             }
         }
-        private EventBasedNetListener _netListener;
-        private NetManager _netManager;
-
-        public LiteNetLibInterface()
-        {
-            _netListener = new EventBasedNetListener();
-            _netManager = new NetManager(_netListener);
-        }
 
         public INetClient CreateClient()
         {
-            return new LiteNetLibClient(_netListener, _netManager);
+            return new LiteNetLibClient();
         }
 
         public IMessage CreateMessage(IMessage.SendModes sendMode, Enum packetId)
@@ -42,12 +34,12 @@ namespace BombRushMP.LiteNetLibInterface
 
         public INetServer CreateServer()
         {
-            return new LiteNetLibServer(_netListener, _netManager);
+            return new LiteNetLibServer();
         }
 
         public override string ToString()
         {
-            return _netManager.ToString();
+            return "LiteNetLib";
         }
     }
 }

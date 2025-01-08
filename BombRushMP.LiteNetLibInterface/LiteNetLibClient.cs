@@ -20,13 +20,10 @@ namespace BombRushMP.LiteNetLibInterface
 
         private EventBasedNetListener _netListener;
         private NetManager _netManager;
-        private bool _startResult = false;
 
-        public LiteNetLibClient(EventBasedNetListener listener, NetManager manager)
+        public LiteNetLibClient()
         {
-            _netListener = listener;
-            _netManager = manager;
-            _startResult = _netManager.Start();
+            _netListener = new EventBasedNetListener();
             _netListener.PeerConnectedEvent += _netListener_PeerConnectedEvent;
             _netListener.NetworkReceiveEvent += _netListener_NetworkReceiveEvent;
             _netListener.PeerDisconnectedEvent += _netListener_PeerDisconnectedEvent;
@@ -69,11 +66,17 @@ namespace BombRushMP.LiteNetLibInterface
 
         public bool Connect(string address, int port)
         {
-            if (_startResult)
+            if (_netManager != null)
+            {
+                _netManager.Stop();
+            }
+            _netManager = new NetManager(_netListener);
+            if (_netManager.Start())
             {
                 _netManager.Connect(address, port, "BRCMP");
+                return true;
             }
-            return _startResult;
+            return false;
         }
 
         public void Disconnect()

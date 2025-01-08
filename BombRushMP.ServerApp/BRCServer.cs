@@ -43,7 +43,7 @@ namespace BombRushMP.ServerApp
             _server.ClientDisconnected += OnClientDisconnected;
             _server.MessageReceived += OnMessageReceived;
             _server.Start(port, maxPlayers);
-            ServerLogger.Log($"Starting server on port {port} with max players {maxPlayers}");
+            ServerLogger.Log($"Starting server on port {port} with max players {maxPlayers}, using Network Interface {NetworkingInterface}");
         }
 
         public void DisconnectClient(ushort id)

@@ -364,7 +364,7 @@ namespace BombRushMP.Plugin
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
 #endif
-            _networkInterface = configFile.Bind(Debug, "Network Interface", NetworkInterfaces.Riptide, "Networking library to use.");
+            _networkInterface = configFile.Bind(General, "Network Interface", NetworkInterfaces.LiteNetLib, "Networking library to use. Should match the server.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
