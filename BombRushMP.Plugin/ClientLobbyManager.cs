@@ -1,6 +1,5 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
-using BombRushMP.ServerApp.Gamemodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,8 @@ using System.Threading.Tasks;
 using Reptile;
 using BombRushMP.Plugin.Phone;
 using BombRushMP.Common.Networking;
+using BombRushMP.Plugin.Gamemodes;
+using System.IO;
 
 namespace BombRushMP.Plugin
 {
@@ -111,9 +112,18 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyEnd(), IMessage.SendModes.Reliable);
         }
 
-        public void SetGamemode(GamemodeIDs gamemode)
+        public void SetGamemode(GamemodeIDs gamemode, GamemodeSettings settings)
         {
-            _clientController.SendPacket(new ClientLobbySetGamemode(gamemode), IMessage.SendModes.Reliable);
+            byte[] data;
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(ms))
+                {
+                    settings.Write(writer);
+                    data = ms.ToArray();
+                }
+            }
+            _clientController.SendPacket(new ClientLobbySetGamemode(gamemode, data), IMessage.SendModes.Reliable);
         }
 
         public void InvitePlayer(ushort playerId)

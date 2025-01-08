@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
-using BombRushMP.Plugin.Gamemodes;
 
-namespace BombRushMP.ServerApp.Gamemodes
+namespace BombRushMP.Plugin.Gamemodes
 {
     public static class GamemodeFactory
     {
@@ -28,6 +28,29 @@ namespace BombRushMP.ServerApp.Gamemodes
         {
             var instance = Activator.CreateInstance(Gamemodes[gameModeID]) as Gamemode;
             return instance;
+        }
+
+        public static GamemodeSettings GetGamemodeSettings(GamemodeIDs gameModeID)
+        {
+            var gm = GetGamemode(gameModeID);
+            return gm.GetDefaultSettings();
+        }
+
+        public static GamemodeSettings ParseGamemodeSettings(GamemodeIDs gameModeID, byte[] serializedSettings)
+        {
+            var gm = GetGamemode(gameModeID);
+            var sets = gm.GetDefaultSettings();
+            if (serializedSettings.Length > 0)
+            {
+                using (var ms = new MemoryStream(serializedSettings))
+                {
+                    using (var reader = new BinaryReader(ms))
+                    {
+                        sets.Read(reader);
+                    }
+                }
+            }
+            return sets;
         }
 
         public static string GetGamemodeName(GamemodeIDs gameModeID)

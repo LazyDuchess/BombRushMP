@@ -11,6 +11,7 @@ namespace BombRushMP.Common
     {
         public bool InGame = false;
         public GamemodeIDs Gamemode = GamemodeIDs.GraffitiRace;
+        public byte[] GamemodeSettings = [];
         public int Stage = 0;
         public uint Id = 0;
         public ushort HostId = 0;
@@ -33,6 +34,8 @@ namespace BombRushMP.Common
         {
             InGame = reader.ReadBoolean();
             Gamemode = (GamemodeIDs)reader.ReadInt32();
+            var gameModeSettingsLength = reader.ReadInt32();
+            GamemodeSettings = reader.ReadBytes(gameModeSettingsLength);
             Stage = reader.ReadInt32();
             Id = reader.ReadUInt32();
             HostId = reader.ReadUInt16();
@@ -59,6 +62,8 @@ namespace BombRushMP.Common
         {
             writer.Write(InGame);
             writer.Write((int)Gamemode);
+            writer.Write(GamemodeSettings.Length);
+            writer.Write(GamemodeSettings);
             writer.Write(Stage);
             writer.Write(Id);
             writer.Write(HostId);

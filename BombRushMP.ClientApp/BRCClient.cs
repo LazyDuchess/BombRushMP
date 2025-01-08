@@ -128,7 +128,7 @@ namespace BombRushMP.ClientApp
                         return;
                     if (player == 0)
                         return;
-                    SendPacket(new ClientLobbySetGamemode(GamemodeIDs.ProSkaterScoreBattle));
+                    SendPacket(new ClientLobbySetGamemode(GamemodeIDs.ProSkaterScoreBattle, new byte[] { }));
                     SendPacket(new ClientLobbyInvite(player));
                     Log("Inviting player to lobby and waiting for them to join.");
                     _taskStep++;

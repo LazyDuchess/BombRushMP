@@ -1,6 +1,7 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
+using BombRushMP.Plugin.Gamemodes;
 using CommonAPI.Phone;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,8 @@ namespace BombRushMP.Plugin.Phone
                         gamemode++;
                         if (gamemode >= gamemodeValues.Length)
                             gamemode = 0;
-                        lobbyManager.SetGamemode((GamemodeIDs)gamemode);
+                        var settings = GamemodeFactory.GetGamemodeSettings((GamemodeIDs)gamemode);
+                        lobbyManager.SetGamemode((GamemodeIDs)gamemode, settings);
 
                     };
                     ScrollView.AddButton(button);

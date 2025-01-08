@@ -41,6 +41,6 @@ namespace BombRushMP.Common.Packets
         ClientLobbyKick,
         ClientChat,
         ServerChat,
-        ClientComboOver
+        ClientComboOver,
     }
 }

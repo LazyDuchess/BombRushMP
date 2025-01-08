@@ -19,10 +19,13 @@ namespace BombRushMP.Plugin
         private float _playerNameHeight = 35f;
         private const int PlayerUIPoolSize = 32;
         private LobbyPlayerUI[] _playerUIs = new LobbyPlayerUI[PlayerUIPoolSize];
+        private TextMeshProUGUI _lobbySettings;
+
         private void Awake()
         {
             Instance = this;
             _canvas = transform.Find("Canvas").gameObject;
+            _lobbySettings = _canvas.transform.Find("Lobby Settings").GetComponent<TextMeshProUGUI>();
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
             ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
@@ -67,6 +70,8 @@ namespace BombRushMP.Plugin
 
         private void UpdateUI()
         {
+            var lobbySettings = Gamemodes.GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
+            _lobbySettings.text = lobbySettings.GetDisplayString(_lobbyManager.CurrentLobby.LobbyState.HostId == ClientController.Instance.LocalID, _lobbyManager.CurrentLobby.InGame);
             _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
             var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToList();
             for(var i = 0; i < PlayerUIPoolSize; i++)

@@ -217,6 +217,7 @@ namespace BombRushMP.Server
                             break;
 
                         existingLobby.LobbyState.Gamemode = ((ClientLobbySetGamemode)packet).Gamemode;
+                        existingLobby.LobbyState.GamemodeSettings = ((ClientLobbySetGamemode)packet).GamemodeSettings;
                         QueueStageUpdate(existingLobby.LobbyState.Stage);
                     }
                     break;

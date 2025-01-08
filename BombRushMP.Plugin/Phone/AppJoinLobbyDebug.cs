@@ -1,5 +1,5 @@
 ﻿using BombRushMP.Plugin;
-using BombRushMP.ServerApp.Gamemodes;
+using BombRushMP.Plugin.Gamemodes;
 using CommonAPI.Phone;
 
 public class AppJoinLobbyDebug : CustomApp
