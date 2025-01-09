@@ -10,7 +10,7 @@
     <RootNamespace>BombRushMP.Server</RootNamespace>
     <AssemblyName>BombRushMP.Server</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-	<LangVersion>latest</LangVersion>
+    <LangVersion>latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthKeys.cs" />
+    <Compile Include="BannedUser.cs" />
+    <Compile Include="BannedUsers.cs" />
     <Compile Include="BRCServer.cs" />
     <Compile Include="Gamemodes\Gamemode.cs" />
     <Compile Include="Gamemodes\GamemodeFactory.cs" />
