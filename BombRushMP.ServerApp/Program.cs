@@ -27,6 +27,7 @@ namespace BombRushMP.ServerApp
                 serverSettings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(ServerSettingsPath));
             }
             File.WriteAllText(ServerSettingsPath, JsonConvert.SerializeObject(serverSettings, Formatting.Indented));
+            NetworkingEnvironment.UseNativeSocketsIfAvailable = serverSettings.UseNativeSockets;
             var netInterface = NetworkInterfaces.LiteNetLib;
             if (Enum.TryParse<NetworkInterfaces>(serverSettings.NetworkInterface, out var result))
                 netInterface = result;

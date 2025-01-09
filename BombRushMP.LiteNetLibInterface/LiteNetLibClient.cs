@@ -17,7 +17,6 @@ namespace BombRushMP.LiteNetLibInterface
         public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
         public EventHandler<DisconnectedEventArgs> Disconnected { get; set; }
         public EventHandler<ConnectionFailedEventArgs> ConnectionFailed { get; set; }
-        public EventHandler<ushort> ClientDisconnected { get; set; }
 
         private EventBasedNetListener _netListener;
         private NetManager _netManager;
@@ -43,13 +42,7 @@ namespace BombRushMP.LiteNetLibInterface
         private void _netListener_NetworkReceiveEvent(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod)
         {
             var isUser = reader.GetByte();
-            if (isUser == 0)
-            {
-                var userId = reader.GetUShort();
-                reader.Recycle();
-                ClientDisconnected?.Invoke(this, userId);
-                return;
-            }
+            if (isUser == 0) return;
             var packetId = reader.GetUShort();
             var data = reader.GetRemainingBytes();
             var connection = new LiteNetLibConnection(peer);

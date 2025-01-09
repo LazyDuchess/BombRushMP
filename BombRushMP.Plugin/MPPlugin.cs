@@ -29,12 +29,12 @@ namespace BombRushMP.Plugin
         private void Awake()
         {
             new MPSettings(Config, Path.GetDirectoryName(Info.Location));
+            NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(MPSettings.Instance.NetworkInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
             {
                 ClientLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");
             };
-            NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             _offline = MPSettings.Instance.Offline;
             _selfHosting = MPSettings.Instance.HostServer;

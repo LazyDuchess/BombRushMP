@@ -16,7 +16,6 @@ namespace BombRushMP.RiptideInterface
         public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
         public EventHandler<DisconnectedEventArgs> Disconnected { get; set; }
         public EventHandler<ConnectionFailedEventArgs> ConnectionFailed { get; set; }
-        public EventHandler<ushort> ClientDisconnected { get; set; }
 
         public RiptideClient()
         {
@@ -25,12 +24,6 @@ namespace BombRushMP.RiptideInterface
             _riptideClient.MessageReceived += InternalMessageReceived;
             _riptideClient.Disconnected += InternalDisconnected;
             _riptideClient.ConnectionFailed += InternalConnectionFailed;
-            _riptideClient.ClientDisconnected += InternalClientDisconnected;
-        }
-
-        private void InternalClientDisconnected(object sender, Riptide.ClientDisconnectedEventArgs args)
-        {
-            ClientDisconnected?.Invoke(sender, args.Id);
         }
 
         private void InternalConnected(object sender, EventArgs args)

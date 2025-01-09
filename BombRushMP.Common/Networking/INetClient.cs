@@ -13,7 +13,6 @@ namespace BombRushMP.Common.Networking
         public EventHandler<MessageReceivedEventArgs> MessageReceived { get; set; }
         public EventHandler<DisconnectedEventArgs> Disconnected { get; set; }
         public EventHandler<ConnectionFailedEventArgs> ConnectionFailed { get; set; }
-        public EventHandler<ushort> ClientDisconnected { get; set; }
         public bool Connect(string address, int port);
         public void Disconnect();
         public void Update();
