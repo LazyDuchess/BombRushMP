@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BombRushMP.Plugin.OfflineInterface
@@ -19,7 +20,7 @@ namespace BombRushMP.Plugin.OfflineInterface
 
             }
         }
-        public bool LocalConnected = false;
+        public volatile bool LocalConnected = false;
 
         public void DisconnectClient(ushort id)
         {
@@ -44,21 +45,15 @@ namespace BombRushMP.Plugin.OfflineInterface
         public void ConnectLocal()
         {
             if (LocalConnected) return;
-            lock (ClientConnected)
-            {
-                LocalConnected = true;
-                ClientConnected?.Invoke(this, new ServerConnectedEventArgs(new OfflineConnection(false)));
-            }
+            LocalConnected = true;
+            ClientConnected?.Invoke(this, new ServerConnectedEventArgs(new OfflineConnection(false)));
         }
 
         public void DisconnectLocal()
         {
             if (!LocalConnected) return;
-            lock (ClientConnected)
-            {
-                LocalConnected = false;
-                ClientDisconnected?.Invoke(this, new ServerDisconnectedEventArgs(new OfflineConnection(false), "Disconnect"));
-            }
+            LocalConnected = false;
+            ClientDisconnected?.Invoke(this, new ServerDisconnectedEventArgs(new OfflineConnection(false), "Disconnect"));
         }
 
         public void Update()
