@@ -203,9 +203,7 @@ namespace BombRushMP.Plugin.Gamemodes
             if (_fetchingState != FetchingStates.Started)
             {
                 var player = WorldHandler.instance.GetCurrentPlayer();
-                player.CompletelyStop();
-                _worldHandler.PlaceCurrentPlayerAt(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion(), true);
-                player.SetPosAndRotHard(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion());
+                MPUtility.PlaceCurrentPlayer(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion());
                 _otherSpots.Clear();
                 _originalProgress.Clear();
                 foreach (var spot in _worldHandler.SceneObjectsRegister.grafSpots)

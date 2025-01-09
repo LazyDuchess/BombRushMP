@@ -11,6 +11,18 @@ namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
+        public static void PlaceCurrentPlayer(Vector3 position, Quaternion rotation)
+        {
+            PlacePlayer(WorldHandler.instance.GetCurrentPlayer(), position, rotation);
+        }
+
+        public static void PlacePlayer(Player player, Vector3 position, Quaternion rotation)
+        {
+            player.CompletelyStop();
+            WorldHandler.instance.PlacePlayerAt(player, position, rotation, true);
+            player.CompletelyStop();
+            player.SetPosAndRotHard(position, rotation);
+        }
         public static Player CreateMultiplayerPlayer(Characters character, int outfit, MPPlayer multiplayerPlayer)
         {
             var clientController = ClientController.Instance;
