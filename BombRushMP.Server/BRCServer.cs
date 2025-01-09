@@ -295,6 +295,7 @@ namespace BombRushMP.Server
         private ServerClientStates CreateClientStatesPacket(int stage)
         {
             var packet = new ServerClientStates();
+            packet.Full = true;
             foreach(var player in Players)
             {
                 if (player.Value.ClientState == null) continue;

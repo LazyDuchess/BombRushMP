@@ -60,7 +60,6 @@ namespace BombRushMP.Plugin
             _client.Disconnected += OnDisconnect;
             _client.ConnectionFailed += OnConnectionFailed;
             _client.MessageReceived += OnMessageReceived;
-            _client.ClientDisconnected += OnClientDisconnected;
             ServerConnect?.Invoke();
         }
 
@@ -79,7 +78,6 @@ namespace BombRushMP.Plugin
                 _client.Disconnected -= OnDisconnect;
                 _client.ConnectionFailed -= OnConnectionFailed;
                 _client.MessageReceived -= OnMessageReceived;
-                _client.ClientDisconnected -= OnClientDisconnected;
                 _client.Disconnect();
             }
             _client = null;
@@ -252,6 +250,17 @@ namespace BombRushMP.Plugin
                             }
                             player.SetClientState(clientState.Value);
                             player.ClientId = clientState.Key;
+                        }
+                        if (clientStates.Full)
+                        {
+                            var playerValues = new List<MPPlayer>(Players.Values);
+                            foreach(var player in playerValues)
+                            {
+                                if (!clientStates.ClientStates.ContainsKey(player.ClientId))
+                                {
+                                    OnClientDisconnected(this, player.ClientId);
+                                }
+                            }
                         }
                     }
                     break;

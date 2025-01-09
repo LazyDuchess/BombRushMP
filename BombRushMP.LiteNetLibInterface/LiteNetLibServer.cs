@@ -52,17 +52,16 @@ namespace BombRushMP.LiteNetLibInterface
         private void _netListener_PeerDisconnectedEvent(NetPeer peer, DisconnectInfo disconnectInfo)
         {
             ClientDisconnected?.Invoke(this, new ServerDisconnectedEventArgs(new LiteNetLibConnection(peer), disconnectInfo.Reason.ToString()));
-            byte[] data;
             using (var ms = new MemoryStream())
             {
                 using (var writer = new BinaryWriter(ms))
                 {
                     writer.Write((byte)0);
-                    writer.Write((ushort)peer.Id);
-                    data = ms.ToArray();
+                    writer.Write(LiteNetLibUtils.PeerIdToGameId(peer.Id));
+                    var data = ms.ToArray();
+                    _netManager.SendToAll(data, DeliveryMethod.ReliableOrdered);
                 }
             }
-            _netManager.SendToAll(data, DeliveryMethod.ReliableOrdered);
         }
 
         private void _netListener_PeerConnectedEvent(NetPeer peer)
