@@ -281,10 +281,10 @@ namespace BombRushMP.Plugin.Patches
             var art = GetRandomGraffitiArt(graffitiSpot, __instance);
             __instance.DoTrick(trickType, art.title, 0);
             graffitiSpot.Paint(Crew.PLAYERS, art, null);
-            __instance.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.BOOST_TRICK, false);
+            __instance.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.BOOST_TRICK, true);
             __instance.audioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, 0f);
             __instance.RemoveGraffitiSlash();
-            __instance.CreateGraffitiFinishEffect(__instance.transform, graffitiSpot.size);
+            __instance.CreateGraffitiFinishEffect(graffitiSpot.transform, graffitiSpot.size);
             clientController.SendPacket(new PlayerGraffitiFinisher((int)graffitiSpot.size), IMessage.SendModes.Reliable);
             return false;
         }
