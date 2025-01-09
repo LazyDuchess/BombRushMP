@@ -215,6 +215,7 @@ namespace BombRushMP.Plugin
             }
         }
 
+#if DEBUG
         public bool FilterProfanity
         {
             get
@@ -228,7 +229,6 @@ namespace BombRushMP.Plugin
             }
         }
 
-#if DEBUG
         public bool DebugLocalPlayer
         {
             get
@@ -255,6 +255,7 @@ namespace BombRushMP.Plugin
             }
         }
 #else
+        public bool FilterProfanity => true;
         public bool DebugLocalPlayer => false;
         public bool DebugInfo => false;
 #endif
@@ -428,10 +429,10 @@ namespace BombRushMP.Plugin
             _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
-            _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
             _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeB, "Balance UI theme.");
 #if DEBUG
+            _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
 #endif

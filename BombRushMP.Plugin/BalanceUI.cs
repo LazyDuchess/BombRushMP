@@ -14,10 +14,12 @@ namespace BombRushMP.Plugin
     {
         public enum Types {
             TypeA,
-            TypeB
+            TypeB,
+            TypeC
         }
-        private const float TypeARotation = 68f;
+        private const float TypeARotation = 61.62f;
         private const float TypeBRotation = 90f;
+        private const float TypeCRotation = 23.7f;
         public static BalanceUI Instance { get; private set; }
         private Types Type = Types.TypeB;
         private GameObject _grindUI;
@@ -70,6 +72,8 @@ namespace BombRushMP.Plugin
             var balanceRotation = TypeARotation;
             if (Type == Types.TypeB)
                 balanceRotation = TypeBRotation;
+            else if (Type == Types.TypeC)
+                balanceRotation = TypeCRotation;
 
             if (!proSkater.DidGrind)
                 _grindUI.SetActive(false);
@@ -108,6 +112,8 @@ namespace BombRushMP.Plugin
             var prefab = mpAssets.Bundle.LoadAsset<GameObject>("Balance UI");
             if (MPSettings.Instance.BalanceUIType == Types.TypeB)
                 prefab = mpAssets.Bundle.LoadAsset<GameObject>("Balance UI B");
+            else if (MPSettings.Instance.BalanceUIType == Types.TypeC)
+                prefab = mpAssets.Bundle.LoadAsset<GameObject>("Balance UI C");
             var balanceUi = Instantiate(prefab);
             balanceUi.transform.SetParent(Core.Instance.UIManager.transform, false);
             var ui = balanceUi.AddComponent<BalanceUI>();
