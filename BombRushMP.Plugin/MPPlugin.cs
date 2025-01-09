@@ -93,7 +93,7 @@ namespace BombRushMP.Plugin
         {
             var addr = MPSettings.Instance.ServerAddress;
             if (_selfHosting)
-                addr = "localhost";
+                addr = "127.0.0.1";
             ClientController.Create(addr, MPSettings.Instance.ServerPort);
             LobbyUI.Create();
             TimerUI.Create();

@@ -30,6 +30,7 @@ namespace BombRushMP.Plugin.Gamemodes
         private const int MinGraffiti = 5;
         private const int MaxGraffiti = 70;
         private const int GraffitiSteps = 5;
+        private const float DistanceOffWall = 3f;
 
         public enum States
         {
@@ -284,7 +285,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
 
             var spawnForward = -spawnSpot.transform.forward;
-            var spawnPosition = spawnSpot.transform.position - (spawnForward * 1f);
+            var spawnPosition = spawnSpot.transform.position - (spawnForward * DistanceOffWall);
             spawnForward.y = 0f;
             spawnForward = spawnForward.normalized;
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
@@ -295,13 +296,13 @@ namespace BombRushMP.Plugin.Gamemodes
                 {
                     var grafSpot = GetGraffitiSpotByUID(raceSpot);
                     var spotFw = -grafSpot.transform.forward;
-                    var spotPos = grafSpot.transform.position - (spotFw * 1f);
+                    var spotPos = grafSpot.transform.position - (spotFw * DistanceOffWall);
 
                     var ray = new Ray(spotPos, Vector3.down);
 
-                    if (Physics.Raycast(ray, out var hit, 1000f, 1 << Layers.Default))
+                    if (Physics.Raycast(ray, out var hit, 1000f, 0x7FFFFFFF, QueryTriggerInteraction.Collide))
                     {
-                        if (Vector3.Angle(hit.normal, Vector3.up) <= 20f)
+                        if (Vector3.Angle(hit.normal, Vector3.up) <= 20f && hit.collider.gameObject.layer == Layers.Default)
                         {
                             spawnPosition = hit.point;
                             spawnForward = -grafSpot.transform.forward;

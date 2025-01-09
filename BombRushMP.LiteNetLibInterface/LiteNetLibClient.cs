@@ -3,6 +3,7 @@ using LiteNetLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,7 +79,11 @@ namespace BombRushMP.LiteNetLibInterface
             }
             if (_netManager.Start())
             {
-                _netManager.Connect(address, port, "BRCMP");
+                var addresses = Dns.GetHostAddresses(address);
+                if (addresses.Length > 0)
+                    address = addresses[0].ToString();
+                var endPoint = new IPEndPoint(IPAddress.Parse(address), port);
+                _netManager.Connect(endPoint, "BRCMP");
                 return true;
             }
             return false;
