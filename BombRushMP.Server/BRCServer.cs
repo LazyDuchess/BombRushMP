@@ -243,7 +243,7 @@ namespace BombRushMP.Server
             try
             {
                 var packetId = (Packets)e.MessageId;
-                var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
+                var packet = PacketFactory.PacketFromMessage(packetId, e.Message, false);
                 if (packet == null) return;
                 if (!Players.TryGetValue(e.FromConnection.Id, out var result)) return;
                 PacketReceived?.Invoke(e.FromConnection, packetId, packet);

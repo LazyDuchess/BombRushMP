@@ -218,7 +218,7 @@ namespace BombRushMP.Plugin
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
-            var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
+            var packet = PacketFactory.PacketFromMessage(packetId, e.Message, true);
             if (packet == null) return;
             PacketReceived?.Invoke(packetId, packet);
             if (packet is PlayerPacket)

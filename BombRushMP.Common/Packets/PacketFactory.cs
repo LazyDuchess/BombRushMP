@@ -39,7 +39,7 @@ namespace BombRushMP.Common.Packets
             return message;
         }
 
-        public static Packet PacketFromMessage(Packets packetId, IMessage message)
+        public static Packet PacketFromMessage(Packets packetId, IMessage message, bool fromServer)
         {
             var bytes = message.GetBytes();
             using var ms = new MemoryStream(bytes);
@@ -49,6 +49,7 @@ namespace BombRushMP.Common.Packets
             {
                 packet = Activator.CreateInstance(type) as Packet;
             }
+            packet.FromServer = fromServer;
             if (packet != null)
                 packet.Read(reader);
             return packet;
