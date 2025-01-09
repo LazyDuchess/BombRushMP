@@ -11,7 +11,6 @@ namespace BombRushMP.Common
         Chat,
         PlayerJoinedOrLeft,
         System,
-        PlayerSystem,
         PlayerAFK
     }
 }

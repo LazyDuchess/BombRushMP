@@ -90,46 +90,36 @@ namespace BombRushMP.Plugin
         {
             var mpSettings = MPSettings.Instance;
             var text = serverMessage.Message;
-            if (text.Length >= MPSettings.MaxMessageLength)
-                text = text.Substring(0, MPSettings.MaxMessageLength);
-            text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(text, MPSettings.Instance.ChatCriteria));
-            if (MPSettings.Instance.FilterProfanity)
-            {
-                if (ProfanityFilter.TMPContainsProfanity(text))
-                    text = ProfanityFilter.CensoredMessage;
-            }
             if (serverMessage.MessageType == ChatMessageTypes.PlayerJoinedOrLeft && mpSettings.LeaveJoinMessages == false)
                 return;
             if (serverMessage.MessageType == ChatMessageTypes.PlayerAFK && mpSettings.AFKMessages == false)
                 return;
+            var authorname = serverMessage.Author;
+            if (string.IsNullOrEmpty(authorname))
+                authorname = "";
+            if (authorname.Length >= MPSettings.MaxNameLength)
+                authorname = authorname.Substring(0, MPSettings.MaxNameLength);
+            authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
+            if (MPSettings.Instance.FilterProfanity)
+            {
+                if (ProfanityFilter.TMPContainsProfanity(authorname))
+                    authorname = ProfanityFilter.CensoredName;
+            }
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
-                var authorname = serverMessage.Author;
-                if (string.IsNullOrEmpty(authorname))
-                    authorname = "";
-                if (authorname.Length >= MPSettings.MaxNameLength)
-                    authorname = authorname.Substring(0, MPSettings.MaxNameLength);
-                authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
+                if (text.Length >= MPSettings.MaxMessageLength)
+                    text = text.Substring(0, MPSettings.MaxMessageLength);
+                text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(text, MPSettings.Instance.ChatCriteria));
                 if (MPSettings.Instance.FilterProfanity)
                 {
-                    if (ProfanityFilter.TMPContainsProfanity(authorname))
-                        authorname = ProfanityFilter.CensoredName;
+                    if (ProfanityFilter.TMPContainsProfanity(text))
+                        text = ProfanityFilter.CensoredMessage;
                 }
+
                 text = string.Format(ClientConstants.ChatMessage, authorname, text);
             }
             else
             {
-                var authorname = serverMessage.Author;
-                if (string.IsNullOrEmpty(authorname))
-                    authorname = "";
-                if (authorname.Length >= MPSettings.MaxNameLength)
-                    authorname = authorname.Substring(0, MPSettings.MaxNameLength);
-                authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
-                if (MPSettings.Instance.FilterProfanity)
-                {
-                    if (ProfanityFilter.TMPContainsProfanity(authorname))
-                        authorname = ProfanityFilter.CensoredName;
-                }
                 text = string.Format(text, authorname);
             }
             AddMessage(text);

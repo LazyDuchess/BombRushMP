@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common.Networking;
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.Server.Gamemodes;
 using System;
@@ -17,6 +18,7 @@ namespace BombRushMP.Server
         public ClientVisualState ClientVisualState = null;
         public float SecondsWithoutSendingClientState = 0f;
         public INetConnection Client;
+        public UserKinds UserKind = UserKinds.Player;
 
         public void Tick(float deltaTime)
         {

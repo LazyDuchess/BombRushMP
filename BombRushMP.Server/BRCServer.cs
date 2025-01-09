@@ -12,6 +12,7 @@ using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using System.Diagnostics;
 using System.Security.Policy;
+using System.Security.Cryptography;
 
 namespace BombRushMP.Server
 {
@@ -150,6 +151,12 @@ namespace BombRushMP.Server
             client.Send(message);
         }
 
+        private void ProcessCommand(string message, Player player)
+        {
+            var args = message.Split(' ');
+            var cmd = args[0].Substring(1, args.Length - 1);
+        }
+
         private void OnPacketReceived(INetConnection client, Packets packetId, Packet packet)
         {
             switch (packetId)
@@ -215,9 +222,16 @@ namespace BombRushMP.Server
                         var chatPacket = (ClientChat)packet;
                         if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
                         var player = Players[client.Id];
-                        if (player.ClientState == null) return;
-                        var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, ChatMessageTypes.Chat);
-                        SendPacketToStage(serverChatPacket, IMessage.SendModes.Reliable, player.ClientState.Stage);
+                        if (chatPacket.Message[0] == '/')
+                        {
+                            ProcessCommand(chatPacket.Message, player);
+                        }
+                        else
+                        {
+                            if (player.ClientState == null) return;
+                            var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, ChatMessageTypes.Chat);
+                            SendPacketToStage(serverChatPacket, IMessage.SendModes.Reliable, player.ClientState.Stage);
+                        }
                     }
                     break;
 
