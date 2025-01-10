@@ -2,6 +2,7 @@
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
+using BombRushMP.Plugin.OfflineInterface;
 using Reptile;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace BombRushMP.Plugin
         public static Action ServerConnect;
         public static Action<ushort> PlayerDisconnected;
         public static Action<Packets, Packet> PacketReceived;
+        public bool OfflineMode = false;
         private INetClient _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
@@ -368,8 +370,11 @@ namespace BombRushMP.Plugin
 
         public void SendAuth()
         {
+            var authKey = MPSettings.Instance.AuthKey;
+            if (OfflineMode)
+                authKey = LocalServerDatabase.OfflineAuthKey;
             var clientState = CreateClientState();
-            var authPacket = new ClientAuth(MPSettings.Instance.AuthKey, clientState);
+            var authPacket = new ClientAuth(authKey, clientState);
             SendPacket(authPacket, IMessage.SendModes.Reliable);
         }
 
@@ -403,7 +408,7 @@ namespace BombRushMP.Plugin
         private void OnConnected(object sender, EventArgs e)
         {
             ClientLogger.Log("Connected! Sending Auth request...");
-            SendClientState();
+            SendAuth();
         }
 
         private void OnDestroy()

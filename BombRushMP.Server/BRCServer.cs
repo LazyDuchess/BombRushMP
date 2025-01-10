@@ -32,7 +32,7 @@ namespace BombRushMP.Server
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public BRCServer(int port, ushort maxPlayers, float tickRate)
+        public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
             Instance = this;
             _tickRate = tickRate;

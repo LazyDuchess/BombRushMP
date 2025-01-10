@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common.Networking;
+using BombRushMP.Plugin.OfflineInterface;
 using BombRushMP.Server;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,11 @@ namespace BombRushMP.Plugin.LocalServer
         private int _port;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public ServerController(int port, float tickRate, ushort maxPlayers)
+        public ServerController(int port, float tickRate, ushort maxPlayers, bool offline)
         {
             Instance = this;
-            Server = new BRCServer(port, maxPlayers, tickRate);
+            var db = new LocalServerDatabase(offline);
+            Server = new BRCServer(port, maxPlayers, tickRate, db);
             var serverThread = new Thread(Update);
             serverThread.IsBackground = true;
             serverThread.Start();

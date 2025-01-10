@@ -46,7 +46,7 @@ namespace BombRushMP.Plugin
                 NetworkingEnvironment.NetworkingInterface = new OfflineInterface.OfflineInterface();
             }
             if (_selfHosting)
-                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers);
+                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers, _offline);
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
@@ -95,6 +95,7 @@ namespace BombRushMP.Plugin
             if (_selfHosting)
                 addr = "localhost";
             ClientController.Create(addr, MPSettings.Instance.ServerPort);
+            ClientController.Instance.OfflineMode = _offline;
             LobbyUI.Create();
             TimerUI.Create();
             MPMapController.Create();
