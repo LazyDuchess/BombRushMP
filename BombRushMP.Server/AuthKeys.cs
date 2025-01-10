@@ -8,6 +8,6 @@ namespace BombRushMP.Server
 {
     public class AuthKeys
     {
-        public Dictionary<string, string[]> AuthTags = new();
+        public Dictionary<string, AuthUser> Users = new();
     }
 }

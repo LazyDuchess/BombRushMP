@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthKeys.cs" />
+    <Compile Include="AuthUser.cs" />
     <Compile Include="BannedUser.cs" />
     <Compile Include="BannedUsers.cs" />
     <Compile Include="BRCServer.cs" />
