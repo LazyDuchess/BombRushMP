@@ -12,5 +12,6 @@ namespace BombRushMP.Server
         public AuthKeys AuthKeys { get; }
 
         public void Save();
+        public void LogChatMessage(string message, int stage);
     }
 }

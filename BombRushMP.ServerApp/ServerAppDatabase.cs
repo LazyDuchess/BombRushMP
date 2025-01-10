@@ -43,5 +43,19 @@ namespace BombRushMP.ServerApp
             File.WriteAllText(BannedUsersPath, JsonConvert.SerializeObject(BannedUsers, Formatting.Indented));
             File.WriteAllText(AuthKeysPath, JsonConvert.SerializeObject(AuthKeys, Formatting.Indented));
         }
+
+        public void LogChatMessage(string message, int stage)
+        {
+            var dir = "Chats";
+            if (!Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+            var fullPath = Path.Combine(dir, $"{stage}.txt");
+            if (!File.Exists(fullPath))
+                File.Create(fullPath);
+            using (var writer = File.AppendText(fullPath))
+            {
+                writer.WriteLine(message);
+            }
+        }
     }
 }

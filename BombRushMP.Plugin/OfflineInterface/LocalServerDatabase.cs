@@ -24,5 +24,10 @@ namespace BombRushMP.Plugin.OfflineInterface
         {
             // nun
         }
+
+        public void LogChatMessage(string message, int stage)
+        {
+            // nun
+        }
     }
 }

@@ -32,6 +32,7 @@ namespace BombRushMP.Server
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
         private IServerDatabase _database;
+        public bool LogMessages = false;
 
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
@@ -301,8 +302,13 @@ namespace BombRushMP.Server
                 case Packets.ClientChat:
                     {
                         var chatPacket = (ClientChat)packet;
-                        if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
                         var player = Players[client.Id];
+                        if (LogMessages)
+                        {
+                            var logText = $"[{DateTime.Now.ToShortTimeString()}] {player.ClientState.Name}({player.Client.Address}): {chatPacket.Message}";
+                            _database.LogChatMessage(logText, player.ClientState.Stage);
+                        }
+                        if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
                         if (chatPacket.Message[0] == '/')
                         {
                             ProcessCommand(chatPacket.Message, player);
