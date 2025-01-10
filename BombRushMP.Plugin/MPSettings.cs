@@ -362,7 +362,7 @@ namespace BombRushMP.Plugin
                 _offline.Value = value;
             }
         }
-#if DEVELOPER_DEBUG
+
         public string AuthKey
         {
             get
@@ -375,9 +375,6 @@ namespace BombRushMP.Plugin
                 _authKey.Value = value;
             }
         }
-#else
-        public string AuthKey = "";
-#endif
 
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
@@ -463,9 +460,7 @@ namespace BombRushMP.Plugin
             _ticksPerSecond = configFile.Bind(Server, "Ticks per second", 1f / Constants.DefaultNetworkingTickRate, "Networking updates per second for local server.");
             _maxPlayers = configFile.Bind(Server, "Max players", (ushort)64, "Max players for local server.");
             _offline = configFile.Bind(General, "Offline", false, "Run All City Network in singleplayer, offline mode.");
-#if DEVELOPER_DEBUG
             _authKey = configFile.Bind(General, "Authentication Key", "", "Key used to authenticate you as a special user.");
-#endif
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
