@@ -23,23 +23,25 @@ namespace BombRushMP.ServerApp
             if (!File.Exists(BannedUsersPath))
             {
                 BannedUsers = new BannedUsers();
+                BannedUsers.MakeExample();
             }
             else
-                BannedUsers = JsonConvert.DeserializeObject<BannedUsers>(BannedUsersPath);
+                BannedUsers = JsonConvert.DeserializeObject<BannedUsers>(File.ReadAllText(BannedUsersPath));
 
             if (!File.Exists(AuthKeysPath))
             {
                 AuthKeys = new AuthKeys();
+                AuthKeys.MakeExample();
             }
             else
-                AuthKeys = JsonConvert.DeserializeObject<AuthKeys>(AuthKeysPath);
+                AuthKeys = JsonConvert.DeserializeObject<AuthKeys>(File.ReadAllText(AuthKeysPath));
             Save();
         }
 
         public void Save()
         {
-            File.WriteAllText(BannedUsersPath, JsonConvert.SerializeObject(BannedUsers));
-            File.WriteAllText(AuthKeysPath, JsonConvert.SerializeObject(AuthKeys));
+            File.WriteAllText(BannedUsersPath, JsonConvert.SerializeObject(BannedUsers, Formatting.Indented));
+            File.WriteAllText(AuthKeysPath, JsonConvert.SerializeObject(AuthKeys, Formatting.Indented));
         }
     }
 }

@@ -9,5 +9,10 @@ namespace BombRushMP.Server
     public class AuthKeys
     {
         public Dictionary<string, AuthUser> Users = new();
+
+        public void MakeExample()
+        {
+            Users["Example"] = new AuthUser() { UserKind = Common.UserKinds.Player, Badges = ["testbadge"], Tags = ["testtag"] };
+        }
     }
 }
