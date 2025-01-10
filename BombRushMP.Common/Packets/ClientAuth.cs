@@ -11,15 +11,30 @@ namespace BombRushMP.Common.Packets
     {
         public override Packets PacketId => Packets.ClientAuth;
         public string AuthKey = "";
+        public ClientState State;
+
+        public ClientAuth()
+        {
+
+        }
+
+        public ClientAuth(string authKey, ClientState state)
+        {
+            AuthKey = authKey;
+            State = state;
+        }
 
         public override void Read(BinaryReader reader)
         {
             AuthKey = reader.ReadString();
+            State = new ClientState();
+            State.Read(reader);
         }
 
         public override void Write(BinaryWriter writer)
         {
             writer.Write(AuthKey);
+            State.Write(writer);
         }
     }
 }

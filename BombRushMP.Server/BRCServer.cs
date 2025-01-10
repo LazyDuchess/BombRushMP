@@ -161,9 +161,15 @@ namespace BombRushMP.Server
         {
             switch (packetId)
             {
+                case Packets.ClientAuth:
                 case Packets.ClientState:
                     {
-                        var clientState = (ClientState)packet;
+                        var clientAuth = packet as ClientAuth;
+                        var clientState = packet as ClientState;
+                        if (clientAuth != null)
+                        {
+                            clientState = clientAuth.State;
+                        }
                         if (clientState.ProtocolVersion != Constants.ProtocolVersion)
                         {
                             ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
@@ -180,7 +186,7 @@ namespace BombRushMP.Server
                             return;
                         }
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate }, IMessage.SendModes.Reliable, client);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, UserKind = UserKinds.Player }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 

@@ -234,7 +234,7 @@ namespace BombRushMP.Plugin
                         LocalID = connectionResponse.LocalClientId;
                         TickRate = connectionResponse.TickRate;
                         _handShook = true;
-                        ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}.");
+                        ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.UserKind}.");
                     }
                     break;
 
@@ -366,7 +366,14 @@ namespace BombRushMP.Plugin
             Connect();
         }
 
-        public void SendClientState()
+        public void SendAuth()
+        {
+            var clientState = CreateClientState();
+            var authPacket = new ClientAuth(MPSettings.Instance.AuthKey, clientState);
+            SendPacket(authPacket, IMessage.SendModes.Reliable);
+        }
+
+        public ClientState CreateClientState()
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
             var playerComp = PlayerComponent.Get(player);
@@ -385,12 +392,17 @@ namespace BombRushMP.Plugin
             {
                 statePacket.CrewBoomCharacter = CrewBoomSupport.GetGuidForCharacter(player.character);
             }
-            SendPacket(statePacket, IMessage.SendModes.Reliable);
+            return statePacket;
+        }
+
+        public void SendClientState()
+        {
+            SendPacket(CreateClientState(), IMessage.SendModes.Reliable);
         }
 
         private void OnConnected(object sender, EventArgs e)
         {
-            ClientLogger.Log("Connected!");
+            ClientLogger.Log("Connected! Sending Auth request...");
             SendClientState();
         }
 
