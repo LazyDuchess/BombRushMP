@@ -255,7 +255,6 @@ namespace BombRushMP.Plugin
                         if (connectionResponse.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
                         {
                             var player = WorldHandler.instance.GetCurrentPlayer();
-                            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
                             player.SetMoveStyle(MoveStyle.SKATEBOARD);
                             var saveManager = Core.Instance.SaveManager;
                             var skin = MPUnlockManager.Instance.UnlockByID[Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlock)] as MPSkateboardSkin;
@@ -263,6 +262,7 @@ namespace BombRushMP.Plugin
                             MPSaveData.Instance.GetCharacterData(player.character).MPMoveStyleSkin = skin.Identifier;
                             skin.ApplyToPlayer(player);
                             saveManager.SaveCurrentSaveSlot();
+                            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
                         }
                     }
                     break;

@@ -149,8 +149,26 @@ namespace BombRushMP.Plugin
                 player.ringParticles = player.characterVisual.VFX.ring.GetComponent<ParticleSystem>();
                 player.SetRingEmission(0);
             }
-            player.SetMoveStyle(MoveStyle.ON_FOOT, true, true, null);
+            var wasMovestyleEquipped = player.usingEquippedMovestyle;
+            player.SetCurrentMoveStyleEquipped(player.moveStyleEquipped, true, true);
             player.InitVisual();
+            PlayerComponent.Get(player).RefreshSkin();
+            if (!wasMovestyleEquipped)
+                player.SetMoveStyle(MoveStyle.ON_FOOT, true, true);
+            if (!player.isAI)
+            {
+                var saveData = MPSaveData.Instance.GetCharacterData(player.character);
+                if (saveData.MPMoveStyleSkin != -1)
+                {
+                    var mpUnlockManager = MPUnlockManager.Instance;
+                    if (mpUnlockManager.UnlockByID.ContainsKey(saveData.MPMoveStyleSkin))
+                    {
+                        var mskin = mpUnlockManager.UnlockByID[saveData.MPMoveStyleSkin] as MPMoveStyleSkin;
+                        if (mskin != null)
+                            mskin.ApplyToPlayer(player);
+                    }
+                }
+            }
             var playerComponent = PlayerComponent.Get(player);
             playerComponent.SpecialSkin = skin;
             player.usingEquippedMovestyle = false;

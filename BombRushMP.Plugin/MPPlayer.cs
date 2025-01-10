@@ -250,7 +250,6 @@ namespace BombRushMP.Plugin
 
             try
             {
-
                 if (Player.moveStyleEquipped != (MoveStyle)ClientVisualState.MoveStyle)
                 {
                     Player.SetCurrentMoveStyleEquipped((MoveStyle)ClientVisualState.MoveStyle);

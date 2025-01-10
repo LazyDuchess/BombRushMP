@@ -33,6 +33,13 @@ namespace BombRushMP.Plugin
         public Material InlineMaterial = null;
         public Material BMXMaterial = null;
         public Material BMXSpokesMaterial = null;
+        public MPMoveStyleSkin MovestyleSkin = null;
+
+        public void RefreshSkin()
+        {
+            if (MovestyleSkin != null)
+                MovestyleSkin.ApplyToPlayer(_player);
+        }
 
         private void OnDestroy()
         {
