@@ -31,10 +31,12 @@ namespace BombRushMP.Server
         private HashSet<int> _activeStages;
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
+        private IServerDatabase _database;
 
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
             Instance = this;
+            _database = database;
             _tickRate = tickRate;
             NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             ServerLobbyManager = new ServerLobbyManager();
@@ -185,8 +187,10 @@ namespace BombRushMP.Server
                             SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage);
                             return;
                         }
+                        var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
+                        Players[client.Id].User = user;
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, UserKind = UserKinds.Player }, IMessage.SendModes.Reliable, client);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, UserKind = user.UserKind }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
