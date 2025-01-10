@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common.Networking;
+using Riptide;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace BombRushMP.RiptideInterface
         }
         public ushort Id => _riptideConnection.Id;
         private Riptide.Connection _riptideConnection;
+        public string Address => _riptideConnection.ToString().Split(':')[0];
         public RiptideConnection(Riptide.Connection connection)
         {
             _riptideConnection = connection;

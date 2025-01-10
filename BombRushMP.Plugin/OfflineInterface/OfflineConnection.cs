@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin.OfflineInterface
 
         public ushort Id => _server ? OfflineInterface.ServerId : OfflineInterface.ClientId;
         private bool _server = false;
+        public string Address => "Local";
 
         public OfflineConnection(bool server)
         {

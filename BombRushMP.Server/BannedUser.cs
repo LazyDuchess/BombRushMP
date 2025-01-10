@@ -8,7 +8,6 @@ namespace BombRushMP.Server
 {
     public class BannedUser
     {
-        public string Address = "";
         public string NameAtTimeOfBan = "";
         public string Reason = "";
     }

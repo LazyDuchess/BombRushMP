@@ -8,11 +8,21 @@ namespace BombRushMP.Server
 {
     public class BannedUsers
     {
-        public List<BannedUser> Users = new();
+        public Dictionary<string, BannedUser> Users = new();
 
         public void MakeExample()
         {
-            Users.Add(new BannedUser() { Address = "example", NameAtTimeOfBan = "Goofiest Gooner", Reason = "Being annoying" });
+            Users["Example"] = new BannedUser() { NameAtTimeOfBan = "Goofiest Gooner", Reason = "Being annoying" };
+        }
+
+        public bool IsBanned(string address)
+        {
+            return Users.ContainsKey(address);
+        }
+
+        public void Ban(string address, string name = "None", string reason = "None")
+        {
+            Users[address] = new BannedUser() { NameAtTimeOfBan = name, Reason = reason };
         }
     }
 }

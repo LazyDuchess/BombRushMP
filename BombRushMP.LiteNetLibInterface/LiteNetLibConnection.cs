@@ -23,6 +23,8 @@ namespace BombRushMP.LiteNetLibInterface
 
         public ushort Id => LiteNetLibUtils.PeerIdToGameId(Peer.Id);
 
+        public string Address => Peer.ToString().Split(':')[0];
+
         public NetPeer Peer;
 
         public LiteNetLibConnection(NetPeer peer)

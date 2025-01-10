@@ -175,6 +175,11 @@ namespace BombRushMP.Server
 
         private void OnPacketReceived(INetConnection client, Packets packetId, Packet packet)
         {
+            if (_database.BannedUsers.IsBanned(client.Address))
+            {
+                Server.DisconnectClient(client.Id);
+                return;
+            }
             switch (packetId)
             {
                 case Packets.ClientAuth:
@@ -188,7 +193,7 @@ namespace BombRushMP.Server
                         }
                         if (clientState.ProtocolVersion != Constants.ProtocolVersion)
                         {
-                            ServerLogger.Log($"Rejecting player from {client} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
+                            ServerLogger.Log($"Rejecting player from {client.Address} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
                             Server.DisconnectClient(client);
                             return;
                         }
@@ -221,7 +226,7 @@ namespace BombRushMP.Server
                             SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage);
                             return;
                         }
-                        ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
+                        ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, User = clientState.User }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
@@ -314,12 +319,17 @@ namespace BombRushMP.Server
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
-            ServerLogger.Log($"Client connected from {e.Client}. ID: {e.Client.Id}.");
+            ServerLogger.Log($"Client connected from {e.Client.Address}. ID: {e.Client.Id}.");
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
             Players[e.Client.Id] = player;
             e.Client.CanQualityDisconnect = false;
+            if (_database.BannedUsers.IsBanned(e.Client.Address))
+            {
+                Server.DisconnectClient(e.Client.Id);
+                return;
+            }
         }
 
         private string GetAddressWithoutPort(string address)
@@ -329,7 +339,7 @@ namespace BombRushMP.Server
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
-            ServerLogger.Log($"Client disconnected from {e.Client}. ID: {e.Client.Id}. Reason: {e.Reason}");
+            ServerLogger.Log($"Client disconnected from {e.Client.Address}. ID: {e.Client.Id}. Reason: {e.Reason}");
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))
             {

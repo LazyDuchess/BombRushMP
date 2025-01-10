@@ -10,6 +10,7 @@ namespace BombRushMP.Common.Networking
     {
         public bool CanQualityDisconnect { get; set; }
         public ushort Id { get; }
+        public string Address { get; }
         public void Send(IMessage message);
     }
 }
