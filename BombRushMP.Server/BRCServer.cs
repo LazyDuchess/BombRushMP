@@ -59,7 +59,7 @@ namespace BombRushMP.Server
             var deltaTime = _tickStopWatch.Elapsed.TotalSeconds;
             if (deltaTime >= _tickRate)
             {
-                Tick((float)_tickStopWatch.Elapsed.TotalSeconds);
+                Tick((float)deltaTime);
                 _tickStopWatch.Restart();
             }
         }
