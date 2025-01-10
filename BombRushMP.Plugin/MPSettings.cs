@@ -444,7 +444,7 @@ namespace BombRushMP.Plugin
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
-            _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeB, "Balance UI theme.");
+            _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeC, "Balance UI theme.");
 #if DEBUG
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
@@ -460,7 +460,7 @@ namespace BombRushMP.Plugin
             _ticksPerSecond = configFile.Bind(Server, "Ticks per second", 1f / Constants.DefaultNetworkingTickRate, "Networking updates per second for local server.");
             _maxPlayers = configFile.Bind(Server, "Max players", (ushort)64, "Max players for local server.");
             _offline = configFile.Bind(General, "Offline", false, "Run All City Network in singleplayer, offline mode.");
-            _authKey = configFile.Bind(General, "Authentication Key", "", "Key used to authenticate you as a special user.");
+            _authKey = configFile.Bind(General, "Authentication Key", "", "Optional secret key used to authenticate you.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
