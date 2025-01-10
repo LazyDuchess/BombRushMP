@@ -30,6 +30,23 @@ namespace BombRushMP.Common
         private string _userKind = UserKinds.Player.ToString();
         public string[] Tags = [];
         public string Badge = "";
+        [JsonProperty("Description")]
+        private string _description = "";
+
+        public AuthUser(UserKinds userKind = UserKinds.Player, string[] tags = null, string badge = "", string description = "")
+        {
+            UserKind = userKind;
+            Tags = tags;
+            if (Tags == null)
+                Tags = [];
+            Badge = badge;
+            _description = description;
+        }
+
+        public AuthUser()
+        {
+
+        }
 
         public bool HasTag(string tag)
         {

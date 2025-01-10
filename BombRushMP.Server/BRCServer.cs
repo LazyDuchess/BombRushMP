@@ -178,9 +178,17 @@ namespace BombRushMP.Server
                             Server.DisconnectClient(client);
                             return;
                         }
-                        var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
-                        clientState.User = user;
-                        if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                        var oldClientState = Players[client.Id].ClientState;
+                        if (clientAuth != null)
+                        {
+                            var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
+                            clientState.User = user;
+                        }
+                        else if (oldClientState != null)
+                        {
+                            clientState.User = oldClientState.User;
+                        }
+                        if (clientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
                         {
                             clientState.Name = SpecialPlayerUtils.SpecialPlayerName;
                         }
@@ -191,7 +199,6 @@ namespace BombRushMP.Server
                                 clientState.SpecialSkin = SpecialSkins.None;
                             }
                         }
-                        var oldClientState = Players[client.Id].ClientState;
                         Players[client.Id].ClientState = clientState;
                         if (oldClientState != null)
                         {
@@ -201,7 +208,7 @@ namespace BombRushMP.Server
                             return;
                         }
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, User = user }, IMessage.SendModes.Reliable, client);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, User = clientState.User }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 

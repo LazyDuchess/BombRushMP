@@ -252,6 +252,11 @@ namespace BombRushMP.Plugin
                         TickRate = connectionResponse.TickRate;
                         _handShook = true;
                         ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.User.UserKind}.");
+                        if (connectionResponse.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                        {
+                            var player = WorldHandler.instance.GetCurrentPlayer();
+                            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
+                        }
                     }
                     break;
 
