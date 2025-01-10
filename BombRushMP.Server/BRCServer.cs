@@ -205,6 +205,29 @@ namespace BombRushMP.Server
                         SendPacketToClient(new ServerChat(idString), IMessage.SendModes.Reliable, player.Client);
                     }
                     break;
+
+                case "getaddresses":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        var idString = "";
+                        foreach (var playa in Players)
+                        {
+                            if (playa.Value.ClientState.Stage == player.ClientState.Stage)
+                            {
+                                idString += $"{playa.Value.Client.Address} - {TMPFilter.CloseAllTags(playa.Value.ClientState.Name)} ({playa.Key})\n";
+                            }
+                        }
+                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.Reliable, player.Client);
+                    }
+                    break;
+
+                case "help":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\ngetids\ngetaddresses\nhelp";
+                        SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.Reliable, player.Client);
+                    }
+                    break;
             }
         }
 
