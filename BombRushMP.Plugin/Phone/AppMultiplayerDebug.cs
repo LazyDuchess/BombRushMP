@@ -48,6 +48,14 @@ public class AppMultiplayerDebug : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Special Player Skin");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Remove Skin");
         button.OnConfirm += () =>
         {
