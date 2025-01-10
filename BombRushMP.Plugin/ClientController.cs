@@ -158,6 +158,7 @@ namespace BombRushMP.Plugin
                     packet.DustEmissionRate = (int)player.characterVisual.dustParticles.emission.rateOverTime.constant;
                 packet.CurrentAnimation = player.curAnim;
                 packet.CurrentAnimationTime = player.curAnimActiveTime;
+                packet.HitBoxMask = PvPUtils.HitboxesToBits(player);
             }
             else if (state == PlayerStates.Graffiti){
                 var grafRotation = Quaternion.LookRotation(-CurrentGraffitiGame.gSpot.transform.forward, Vector3.up);

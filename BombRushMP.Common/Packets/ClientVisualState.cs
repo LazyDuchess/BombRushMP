@@ -37,6 +37,7 @@ namespace BombRushMP.Common.Packets
         public bool AFK = false;
         public int MoveStyleSkin = 0;
         public int MPMoveStyleSkin = -1;
+        public int HitBoxMask = 0;
 
         public override void Write(BinaryWriter writer)
         {
@@ -91,6 +92,8 @@ namespace BombRushMP.Common.Packets
 
             writer.Write(MoveStyleSkin);
             writer.Write(MPMoveStyleSkin);
+
+            writer.Write(HitBoxMask);
         }
 
         public override void Read(BinaryReader reader)
@@ -152,6 +155,8 @@ namespace BombRushMP.Common.Packets
 
             MoveStyleSkin = reader.ReadInt32();
             MPMoveStyleSkin = reader.ReadInt32();
+
+            HitBoxMask = reader.ReadInt32();
         }
     }
 }

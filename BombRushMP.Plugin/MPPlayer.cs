@@ -304,6 +304,8 @@ namespace BombRushMP.Plugin
                     playerComp.ApplyMoveStyleSkin(ClientVisualState.MoveStyleSkin);
             }
 
+            PvPUtils.SetHitboxesFromBits(ClientVisualState.HitBoxMask, Player);
+
             _previousState = ClientVisualState.State;
         }
 
