@@ -17,10 +17,9 @@ namespace BombRushMP.Plugin.LocalServer
         private int _port;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
 
-        public ServerController(int port, float tickRate, ushort maxPlayers, bool offline)
+        public ServerController(int port, float tickRate, ushort maxPlayers, bool offline, LocalServerDatabase db)
         {
             Instance = this;
-            var db = new LocalServerDatabase(offline);
             Server = new BRCServer(port, maxPlayers, tickRate, db);
             var serverThread = new Thread(Update);
             serverThread.IsBackground = true;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.Video;
 using static UnityEngine.UIElements.UIR.BestFitAllocator;
 
@@ -69,9 +70,12 @@ namespace BombRushMP.Plugin.Phone
 
             var mpUnlockManager = MPUnlockManager.Instance;
 
-            foreach(var mpUnlockable in mpUnlockManager.UnlockByID)
+            var saveData = MPSaveData.Instance;
+
+            foreach (var mpUnlockable in mpUnlockManager.UnlockByID)
             {
                 var valid = false;
+                if (mpUnlockable.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlock) && !saveData.ShouldDisplayGoonieBoard()) valid = false;
                 if (mpUnlockable.Value is not MPMoveStyleSkin) valid = false;
                 if (mpUnlockable.Value is MPSkateboardSkin && moveStyle == MoveStyle.SKATEBOARD) valid = true;
                 if (!valid) continue;

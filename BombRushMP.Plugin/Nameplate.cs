@@ -21,6 +21,7 @@ namespace BombRushMP.Plugin
             namePlate.Label.sortingOrder = 1;
             namePlate.Label.horizontalAlignment = HorizontalAlignmentOptions.Center;
             namePlate.Label.verticalAlignment = VerticalAlignmentOptions.Middle;
+            namePlate.Label.spriteAsset = MPAssets.Instance.Sprites;
             return namePlate;
         }
 

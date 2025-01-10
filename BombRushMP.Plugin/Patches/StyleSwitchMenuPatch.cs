@@ -11,6 +11,8 @@ using UnityEngine.Events;
 using BombRushMP.CrewBoom;
 using MonoMod.Cil;
 using UnityEngine.Playables;
+using BombRushMP.Common;
+using UnityEngine.UIElements;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -92,12 +94,14 @@ namespace BombRushMP.Plugin.Patches
             ExtraButtons.Clear();
             ExtraTexts.Clear();
             ExtraButtonSkins.Clear();
+            var saveData = MPSaveData.Instance;
             var unlockableManager = MPUnlockManager.Instance;
-            foreach(var unlock in unlockableManager.UnlockByID.Values)
+            foreach(var unlock in unlockableManager.UnlockByID)
             {
-                var skin = unlock as MPMoveStyleSkin;
+                var skin = unlock.Value as MPMoveStyleSkin;
                 if (skin == null) continue;
                 if (skin.MoveStyle != __instance.moveStyleType) continue;
+                if (unlock.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlock) && !saveData.ShouldDisplayGoonieBoard()) continue;
                 ExtraButtonSkins.Add(skin);
             }
             var parent = __instance.firstButton.transform.parent;

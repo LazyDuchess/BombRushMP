@@ -29,11 +29,11 @@ namespace BombRushMP.Common
         [JsonProperty("UserKind")]
         private string _userKind = UserKinds.Player.ToString();
         public string[] Tags = [];
-        public string Badge = "";
+        public int Badge = -1;
         [JsonProperty("Description")]
         private string _description = "";
 
-        public AuthUser(UserKinds userKind = UserKinds.Player, string[] tags = null, string badge = "", string description = "")
+        public AuthUser(UserKinds userKind = UserKinds.Player, string[] tags = null, int badge = -1, string description = "")
         {
             UserKind = userKind;
             Tags = tags;
@@ -73,7 +73,7 @@ namespace BombRushMP.Common
             {
                 Tags[i] = reader.ReadString();
             }
-            Badge = reader.ReadString();
+            Badge = reader.ReadInt32();
         }
     }
 }

@@ -30,6 +30,7 @@ namespace BombRushMP.Plugin
             _notReadySprite = transform.Find("Not Ready").gameObject;
             _afkSprite = transform.Find("AFK").gameObject;
             _clientController = ClientController.Instance;
+            _playerName.spriteAsset = MPAssets.Instance.Sprites;
         }
 
         private void Update()
@@ -69,7 +70,7 @@ namespace BombRushMP.Plugin
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
             _lobby = lobby;
 
-            var playername = _clientController.Players[player.Id].ClientState.Name;
+            var playername = MPUtility.GetPlayerDisplayName(_clientController.Players[player.Id].ClientState);
 
             if (lobby.LobbyState.HostId == player.Id)
             {

@@ -1,4 +1,5 @@
-﻿using BombRushMP.CrewBoom;
+﻿using BombRushMP.Common;
+using BombRushMP.CrewBoom;
 using CommonAPI;
 using Reptile;
 using System;
@@ -12,9 +13,11 @@ namespace BombRushMP.Plugin
 {
     public class MPSaveData : CustomSaveData
     {
+        private const byte Version = 0;
         public static MPSaveData Instance { get; private set; }
         public Dictionary<Characters, MPCharacterData> CharacterData = new();
         public Dictionary<string, MPCharacterData> CrewBoomCharacterData = new();
+        public bool UnlockedGoonieBoard = false;
         public MPSaveData() : base("BRCMP", "saveSlot{0}.sav", SaveLocations.LocalAppData)
         {
             Instance = this;
@@ -24,10 +27,18 @@ namespace BombRushMP.Plugin
         {
             CharacterData = new();
             CrewBoomCharacterData = new();
+            UnlockedGoonieBoard = false;
         }
 
         public override void Read(BinaryReader reader)
         {
+            var version = reader.ReadByte();
+            if (version > Version)
+            {
+                FailedToLoad = true;
+                return;
+            }
+            UnlockedGoonieBoard = reader.ReadBoolean();
             var count = reader.ReadInt32();
             for(var i = 0; i < count; i++)
             {
@@ -52,6 +63,8 @@ namespace BombRushMP.Plugin
 
         public override void Write(BinaryWriter writer)
         {
+            writer.Write(Version);
+            writer.Write(UnlockedGoonieBoard);
             writer.Write(CharacterData.Count);
             foreach(var charData in CharacterData)
             {
@@ -86,6 +99,17 @@ namespace BombRushMP.Plugin
         public class MPCharacterData
         {
             public int MPMoveStyleSkin = -1;
+        }
+
+        public bool ShouldDisplayGoonieBoard()
+        {
+            if (UnlockedGoonieBoard) return true;
+            var clientController = ClientController.Instance;
+            if (clientController == null) return false;
+            var user = clientController.GetLocalUser();
+            if (user == null) return false;
+            if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag)) return true;
+            return false;
         }
     }
 }

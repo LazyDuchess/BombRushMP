@@ -17,7 +17,7 @@ namespace BombRushMP.Plugin
             RegisterUnlock(new MPSkateboardSkin("Glassboard", "Win 1 Score Battle against 5 players or more", Animator.StringToHash("glassboardskateboard"), true, GetTextureFromAssets("DreamcastSkateboardTex"), GetMeshFromAssets("GlassboardMesh")));
             RegisterUnlock(new MPSkateboardSkin("Iced Board", "Kiss me on the lips", Animator.StringToHash("icedboardskateboard"), true, GetMaterialFromAssets("IcedBoardMat"), GetMeshFromAssets("IcedBoard")));
             RegisterUnlock(new MPSkateboardSkin("Crystal Board", "Smoke 12 blunts in a row without bathroom breaks", Animator.StringToHash("crystalboardskateboard"), true, GetMaterialFromAssets("CrystalBoardMat"), GetMeshFromAssets("CrystalBoardMesh")));
-            RegisterUnlock(new MPSkateboardSkin("Goonie", "Ganggg", Animator.StringToHash("goonieskateboard"), true, [
+            RegisterUnlock(new MPSkateboardSkin("Goonie", "Beat a Freesoul Elite in any gamemode", Animator.StringToHash("goonieskateboard"), true, [
                 GetMaterialFromAssets("GoonieEmerald"),
                 GetMaterialFromAssets("GoonieMetal"),
                 GetMaterialFromAssets("GoonieGold"),

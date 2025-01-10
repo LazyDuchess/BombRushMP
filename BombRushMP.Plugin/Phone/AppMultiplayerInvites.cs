@@ -55,7 +55,8 @@ namespace BombRushMP.Plugin.Phone
             foreach(var invite in invites)
             {
                 var lobby = lobbyManager.Lobbies[invite];
-                button = PhoneUIUtility.CreateSimpleButton($"({lobby.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(invite)} - {clientController.Players[lobby.LobbyState.HostId].ClientState.Name}");
+                button = PhoneUIUtility.CreateSimpleButton($"({lobby.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(invite)} - {MPUtility.GetPlayerDisplayName(clientController.Players[lobby.LobbyState.HostId].ClientState)}");
+                button.Label.spriteAsset = MPAssets.Instance.Sprites;
                 ScrollView.AddButton(button);
                 button.OnConfirm += () =>
                 {

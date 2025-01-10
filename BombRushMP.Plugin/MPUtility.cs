@@ -1,4 +1,6 @@
-﻿using BombRushMP.Plugin.Patches;
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Packets;
+using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,31 @@ namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
+        public static string GetPlayerDisplayName(string name)
+        {
+            if (name.Length >= MPSettings.MaxNameLength)
+                name = name.Substring(0, MPSettings.MaxNameLength);
+            name = TMPFilter.CloseAllTags(name);
+            if (MPSettings.Instance.FilterProfanity)
+            {
+                if (ProfanityFilter.TMPContainsProfanity(name))
+                    name = ProfanityFilter.CensoredName;
+            }
+            return name;
+        }
+
+        public static string GetPlayerDisplayName(ClientState clientState)
+        {
+            var name = clientState.Name;
+            //name = GetPlayerDisplayName(name);
+            var user = clientState.User;
+            if (user.Badge != -1)
+            {
+                name = $"<sprite={user.Badge}> {name}";
+            }
+            return name;
+        }
+
         public static void PlaceCurrentPlayer(Vector3 position, Quaternion rotation)
         {
             PlacePlayer(WorldHandler.instance.GetCurrentPlayer(), position, rotation);

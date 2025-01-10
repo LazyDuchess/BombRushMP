@@ -52,6 +52,7 @@ namespace BombRushMP.Plugin
             _referenceText = _scrollRect.content.Find("Text").GetComponent<TextMeshProUGUI>();
             _referenceText.gameObject.SetActive(false);
             _sendButton.onClick.AddListener(TrySendChatMessage);
+            _referenceText.spriteAsset = MPAssets.Instance.Sprites;
             ClientController.PacketReceived += OnPacketReceived;
             SetState(States.Unfocused);
         }
@@ -97,14 +98,9 @@ namespace BombRushMP.Plugin
             var authorname = serverMessage.Author;
             if (string.IsNullOrEmpty(authorname))
                 authorname = "";
-            if (authorname.Length >= MPSettings.MaxNameLength)
-                authorname = authorname.Substring(0, MPSettings.MaxNameLength);
-            authorname = TMPFilter.CloseAllTags(TMPFilter.FilterTags(authorname, MPSettings.Instance.ChatCriteria));
-            if (MPSettings.Instance.FilterProfanity)
-            {
-                if (ProfanityFilter.TMPContainsProfanity(authorname))
-                    authorname = ProfanityFilter.CensoredName;
-            }
+            authorname = MPUtility.GetPlayerDisplayName(authorname);
+            if (serverMessage.Badge != -1)
+                authorname = $"<sprite={serverMessage.Badge}> {authorname}";
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
                 if (text.Length >= MPSettings.MaxMessageLength)

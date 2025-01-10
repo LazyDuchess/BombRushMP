@@ -32,7 +32,7 @@ namespace BombRushMP.Plugin
         public static Action ServerConnect;
         public static Action<ushort> PlayerDisconnected;
         public static Action<Packets, Packet> PacketReceived;
-        public bool OfflineMode = false;
+        public string AuthKey;
         private INetClient _client;
         private float _tickTimer = 0f;
         private bool _handShook = false;
@@ -256,6 +256,13 @@ namespace BombRushMP.Plugin
                         {
                             var player = WorldHandler.instance.GetCurrentPlayer();
                             SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
+                            player.SetMoveStyle(MoveStyle.SKATEBOARD);
+                            var saveManager = Core.Instance.SaveManager;
+                            var skin = MPUnlockManager.Instance.UnlockByID[Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlock)] as MPSkateboardSkin;
+                            saveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin = 0;
+                            MPSaveData.Instance.GetCharacterData(player.character).MPMoveStyleSkin = skin.Identifier;
+                            skin.ApplyToPlayer(player);
+                            saveManager.SaveCurrentSaveSlot();
                         }
                     }
                     break;
@@ -390,9 +397,7 @@ namespace BombRushMP.Plugin
 
         public void SendAuth()
         {
-            var authKey = MPSettings.Instance.AuthKey;
-            if (OfflineMode)
-                authKey = LocalServerDatabase.OfflineAuthKey;
+            var authKey = AuthKey;
             var clientState = CreateClientState();
             var authPacket = new ClientAuth(authKey, clientState);
             SendPacket(authPacket, IMessage.SendModes.Reliable);

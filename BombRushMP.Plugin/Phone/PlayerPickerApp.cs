@@ -76,7 +76,8 @@ namespace BombRushMP.Plugin.Phone
             {
                 if (player.Value.ClientId == clientController.LocalID) continue;
                 if (!PlayerFilter(player.Value.ClientId)) continue;
-                var button = PhoneUIUtility.CreateSimpleButton(player.Value.ClientState.Name);
+                var button = PhoneUIUtility.CreateSimpleButton(MPUtility.GetPlayerDisplayName(player.Value.ClientState));
+                button.Label.spriteAsset = MPAssets.Instance.Sprites;
                 button.OnConfirm += () =>
                 {
                     PlayerChosen([ player.Value.ClientId ]);

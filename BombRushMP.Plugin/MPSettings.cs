@@ -28,7 +28,7 @@ namespace BombRushMP.Plugin
                 "color",
                 "i",
                 "mark",
-                "sprite",
+                //"sprite",
                 "s",
                 "sub",
                 "sup",
@@ -416,7 +416,7 @@ namespace BombRushMP.Plugin
 #if DEVELOPER_DEBUG
         private const string MainServerAddress = "ggdev.lazyduchess.me";
 #else
-        private const string MainServerAddress = "acn.lazyduchess.me";
+        private const string MainServerAddress = "free.soulisall.city";
 #endif
         public MPSettings(ConfigFile configFile, string dir)
         {

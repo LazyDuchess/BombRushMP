@@ -15,12 +15,9 @@ namespace BombRushMP.Plugin.OfflineInterface
 
         public AuthKeys AuthKeys { get; } = new AuthKeys();
 
-        public LocalServerDatabase(bool offline)
+        public LocalServerDatabase(string adminKey)
         {
-            if (offline)
-            {
-                AuthKeys.Users[OfflineAuthKey] = new AuthUser() { UserKind = UserKinds.Admin };
-            }
+            AuthKeys.Users[adminKey] = new AuthUser() { UserKind = UserKinds.Admin };
         }
 
         public void Save()

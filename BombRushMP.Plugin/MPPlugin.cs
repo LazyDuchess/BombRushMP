@@ -14,6 +14,7 @@ using BombRushMP.Common.Networking;
 using BombRushMP.NetworkInterfaceProvider;
 using BombRushMP.Plugin.LocalServer;
 using BombRushMP.Plugin.OfflineInterface;
+using System;
 
 namespace BombRushMP.Plugin
 {
@@ -23,6 +24,7 @@ namespace BombRushMP.Plugin
     [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
     {
+        private string _localAdminKey = Guid.NewGuid().ToString();
         private bool _selfHosting = false;
         private bool _offline = false;
         private ServerController _localServerController;
@@ -46,7 +48,7 @@ namespace BombRushMP.Plugin
                 NetworkingEnvironment.NetworkingInterface = new OfflineInterface.OfflineInterface();
             }
             if (_selfHosting)
-                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers, _offline);
+                _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers, _offline, new LocalServerDatabase(_localAdminKey));
             new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
@@ -92,10 +94,14 @@ namespace BombRushMP.Plugin
         private void StageManager_OnStagePostInitialization()
         {
             var addr = MPSettings.Instance.ServerAddress;
+            var authKey = MPSettings.Instance.AuthKey;
             if (_selfHosting)
+            {
                 addr = "localhost";
+                authKey = _localAdminKey;
+            }
             ClientController.Create(addr, MPSettings.Instance.ServerPort);
-            ClientController.Instance.OfflineMode = _offline;
+            ClientController.Instance.AuthKey = authKey;
             LobbyUI.Create();
             TimerUI.Create();
             MPMapController.Create();

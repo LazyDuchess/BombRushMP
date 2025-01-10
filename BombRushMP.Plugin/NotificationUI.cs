@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.Common.Packets;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace BombRushMP.Plugin
         public void QueueInviteNotification(Lobby lobby)
         {
             var clientController = ClientController.Instance;
-            var hostPlayer = clientController.Players[lobby.LobbyState.HostId].ClientState.Name;
+            var hostPlayer = clientController.Players[lobby.LobbyState.HostId].ClientState;
             var notif = new Notification(hostPlayer, clientController.ClientLobbyManager.GetLobbyName(lobby.LobbyState.Id), lobby.LobbyState.Players.Count, lobby.LobbyState.Id);
             _notificationQueue.Enqueue(notif);
             Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.PhoneSfx, AudioClipID.FlipPhone_RingTone);
@@ -115,7 +116,10 @@ namespace BombRushMP.Plugin
         private void SetNotification(Notification notification)
         {
             _gamemodeLabel.text = notification.LobbyName;
-            _hostLabel.text = notification.PlayerName;
+            if (notification.HostPlayer != null)
+            {
+                _hostLabel.text = MPUtility.GetPlayerDisplayName(notification.HostPlayer);
+            }
             _playerCountLabel.text = notification.LobbyPlayers.ToString();
         }
 
@@ -183,14 +187,14 @@ namespace BombRushMP.Plugin
 
         private class Notification
         {
-            public string PlayerName = "";
+            public ClientState HostPlayer = null;
             public string LobbyName = "";
             public int LobbyPlayers = 0;
             public uint Lobby = 0;
 
-            public Notification(string playerName, string lobbyName, int lobbyPlayers, uint associatedLobby = 0)
+            public Notification(ClientState hostPlayer, string lobbyName, int lobbyPlayers, uint associatedLobby = 0)
             {
-                PlayerName = playerName;
+                HostPlayer = hostPlayer;
                 LobbyName = lobbyName;
                 LobbyPlayers = lobbyPlayers;
                 Lobby = associatedLobby;

@@ -340,8 +340,9 @@ namespace BombRushMP.Plugin
                 NamePlate = Nameplate.Create();
             }
 
-            if (NamePlate.Label.text != ClientState.Name)
-                NamePlate.Label.text = ClientState.Name;
+            var name = MPUtility.GetPlayerDisplayName(ClientState);
+            if (NamePlate.Label.text != name)
+                NamePlate.Label.text = name;
 
             NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
         }
