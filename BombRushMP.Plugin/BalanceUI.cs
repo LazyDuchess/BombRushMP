@@ -19,7 +19,7 @@ namespace BombRushMP.Plugin
         }
         private const float TypeARotation = 61.62f;
         private const float TypeBRotation = 90f;
-        private const float TypeCRotation = 23.7f;
+        private const float TypeCRotation = 52f;
         public static BalanceUI Instance { get; private set; }
         private Types Type = Types.TypeB;
         private GameObject _grindUI;
