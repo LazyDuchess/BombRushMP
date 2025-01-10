@@ -76,10 +76,28 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.OnTriggerStay))]
-        private static bool OnTriggerStay_Prefix(Player __instance)
+        private static bool OnTriggerStay_Prefix(Player __instance, Collider other)
         {
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
+            if (other.gameObject.layer == Layers.EnemyHitbox && __instance.ability != __instance.knockbackAbility)
+            {
+                if (!PvPUtils.CanIGetHit()) return true;
+                var otherPlayer = other.gameObject.GetComponentInParent<Player>();
+                if (otherPlayer == null) return true;
+                if (PvPUtils.CanReptilePlayerPvP(otherPlayer))
+                {
+                    __instance.GetHit(0, (__instance.transform.position - otherPlayer.transform.position).normalized, KnockbackAbility.KnockbackType.FAR);
+                }
+            }
             return true;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.InitHitboxes))]
+        private static void InitHitboxes_Postfix(Player __instance)
+        {
+            if (__instance.isAI)
+                MPUtility.PlayerHitboxesToEnemy(__instance);
         }
 
         [HarmonyPrefix]

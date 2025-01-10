@@ -50,6 +50,17 @@ namespace BombRushMP.Plugin
             player.CompletelyStop();
             player.SetPosAndRotHard(position, rotation);
         }
+
+        public static void PlayerHitboxesToEnemy(Player player)
+        {
+            var allTransforms = player.GetComponentsInChildren<Transform>(true);
+            foreach (var transform in allTransforms)
+            {
+                if (transform.gameObject.layer == Layers.PlayerHitbox)
+                    transform.gameObject.layer = Layers.EnemyHitbox;
+            }
+        }
+
         public static Player CreateMultiplayerPlayer(Characters character, int outfit, MPPlayer multiplayerPlayer)
         {
             var clientController = ClientController.Instance;
@@ -63,6 +74,7 @@ namespace BombRushMP.Plugin
             clientController.MultiplayerPlayerByPlayer[player] = multiplayerPlayer;
             Core.OnCoreUpdatePaused -= player.OnCoreUpdatePaused;
             Core.OnCoreUpdateUnPaused -= player.OnCoreUpdateUnPaused;
+            PlayerHitboxesToEnemy(player);
             return player;
         }
 
