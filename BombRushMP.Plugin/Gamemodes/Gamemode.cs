@@ -1,4 +1,6 @@
-﻿using BombRushMP.Common.Packets;
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Packets;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +41,52 @@ namespace BombRushMP.Plugin.Gamemodes
             if (spectatorController != null)
                 spectatorController.EndSpectating();
             LobbyUI.Instance.UpdateUI();
+            if (!cancelled)
+                ProcessSpecialPlayerUnlock();
+        }
+
+        private void ProcessSpecialPlayerUnlock()
+        {
+            if (Lobby == null) return;
+            if (Lobby.LobbyState == null) return;
+            if (Lobby.LobbyState.Players == null) return;
+            var mpSaveData = MPSaveData.Instance;
+            if (mpSaveData.ShouldDisplayGoonieBoard()) return;
+
+            var winner = Lobby.GetHighestScoringPlayer();
+            var user = ClientController.GetUser(winner.Id);
+            if (user == null) return;
+
+            if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag)) return;
+
+            var eliteInLobby = false;
+            var eliteScore = 0f;
+
+            foreach(var player in Lobby.LobbyState.Players)
+            {
+                user = ClientController.GetUser(player.Key);
+                if (user == null) continue;
+                if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                {
+                    eliteInLobby = true;
+                    if (player.Value.Score > eliteScore)
+                    {
+                        eliteScore = player.Value.Score;
+                    }
+                }
+            }
+
+            if (!eliteInLobby) return;
+
+            if (!Lobby.LobbyState.Players.TryGetValue(ClientController.LocalID, out var me))
+                return;
+
+            if (me.Score > eliteScore)
+            {
+                ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
+                mpSaveData.UnlockedGoonieBoard = true;
+                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+            }
         }
 
         public virtual void OnUpdate_InGame()

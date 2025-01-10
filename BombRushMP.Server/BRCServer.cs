@@ -153,10 +153,24 @@ namespace BombRushMP.Server
             client.Send(message);
         }
 
+        private void SendEliteNagChat(int stage)
+        {
+            SendPacketToStage(new ServerChat(SpecialPlayerUtils.SpecialPlayerNag), IMessage.SendModes.Reliable, stage);
+        }
+
         private void ProcessCommand(string message, Player player)
         {
             var args = message.Split(' ');
-            var cmd = args[0].Substring(1, args.Length - 1);
+            var cmd = args[0].Substring(1, args[0].Length - 1);
+            switch (cmd)
+            {
+                case "nag":
+                    if (player.ClientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                    {
+                        SendEliteNagChat(player.ClientState.Stage);
+                    }
+                    break;
+            }
         }
 
         private void OnPacketReceived(INetConnection client, Packets packetId, Packet packet)
