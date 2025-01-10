@@ -178,6 +178,19 @@ namespace BombRushMP.Server
                             Server.DisconnectClient(client);
                             return;
                         }
+                        var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
+                        clientState.User = user;
+                        if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                        {
+                            clientState.Name = SpecialPlayerUtils.SpecialPlayerName;
+                        }
+                        else
+                        {
+                            if (clientState.SpecialSkin == SpecialSkins.SpecialPlayer)
+                            {
+                                clientState.SpecialSkin = SpecialSkins.None;
+                            }
+                        }
                         var oldClientState = Players[client.Id].ClientState;
                         Players[client.Id].ClientState = clientState;
                         if (oldClientState != null)
@@ -187,10 +200,8 @@ namespace BombRushMP.Server
                             SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage);
                             return;
                         }
-                        var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
-                        Players[client.Id].User = user;
                         ServerLogger.Log($"Player from {client} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, UserKind = user.UserKind }, IMessage.SendModes.Reliable, client);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, User = user }, IMessage.SendModes.Reliable, client);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
@@ -267,7 +278,7 @@ namespace BombRushMP.Server
             try
             {
                 var packetId = (Packets)e.MessageId;
-                var packet = PacketFactory.PacketFromMessage(packetId, e.Message, false);
+                var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
                 if (packet == null) return;
                 if (!Players.TryGetValue(e.FromConnection.Id, out var result)) return;
                 PacketReceived?.Invoke(e.FromConnection, packetId, packet);

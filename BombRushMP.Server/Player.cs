@@ -18,7 +18,6 @@ namespace BombRushMP.Server
         public ClientVisualState ClientVisualState = null;
         public float SecondsWithoutSendingClientState = 0f;
         public INetConnection Client;
-        public AuthUser User;
 
         public void Tick(float deltaTime)
         {

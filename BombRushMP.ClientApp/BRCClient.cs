@@ -228,7 +228,7 @@ namespace BombRushMP.ClientApp
         private void OnMessage(object sender, MessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
-            var packet = PacketFactory.PacketFromMessage(packetId, e.Message, true);
+            var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             try
             {
                 

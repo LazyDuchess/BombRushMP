@@ -15,20 +15,21 @@ namespace BombRushMP.Common.Packets
         public override Packets PacketId => Packets.ServerConnectionResponse;
         public ushort LocalClientId = 0;
         public float TickRate = Constants.DefaultNetworkingTickRate;
-        public UserKinds UserKind = UserKinds.Player;
+        public AuthUser User;
 
         public override void Read(BinaryReader reader)
         {
             LocalClientId = reader.ReadUInt16();
             TickRate = reader.ReadSingle();
-            UserKind = (UserKinds)reader.ReadInt32();
+            User = new AuthUser();
+            User.Read(reader);
         }
 
         public override void Write(BinaryWriter writer)
         {
             writer.Write(LocalClientId);
             writer.Write(TickRate);
-            writer.Write((int)UserKind);
+            User.Write(writer);
         }
     }
 }

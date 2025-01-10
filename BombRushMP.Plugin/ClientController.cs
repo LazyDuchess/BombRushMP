@@ -53,6 +53,21 @@ namespace BombRushMP.Plugin
             return 0;
         }
 
+        public AuthUser GetUser(ushort playerId)
+        {
+            if (Players.TryGetValue(playerId, out var player))
+            {
+                if (player.ClientState != null)
+                    return player.ClientState.User;
+            }
+            return null;
+        }
+
+        public AuthUser GetLocalUser()
+        {
+            return GetUser(LocalID);
+        }
+
         public void Connect()
         {
             ClientLogger.Log($"Connecting to {Address}:{Port}");
@@ -220,7 +235,7 @@ namespace BombRushMP.Plugin
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;
-            var packet = PacketFactory.PacketFromMessage(packetId, e.Message, true);
+            var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
             PacketReceived?.Invoke(packetId, packet);
             if (packet is PlayerPacket)
@@ -236,7 +251,7 @@ namespace BombRushMP.Plugin
                         LocalID = connectionResponse.LocalClientId;
                         TickRate = connectionResponse.TickRate;
                         _handShook = true;
-                        ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.UserKind}.");
+                        ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.User.UserKind}.");
                     }
                     break;
 

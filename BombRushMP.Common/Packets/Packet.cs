@@ -10,7 +10,6 @@ namespace BombRushMP.Common.Packets
     public abstract class Packet
     {
         public abstract Packets PacketId { get; }
-        public bool FromServer = false;
         public virtual void Read(BinaryReader reader)
         {
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common;
 
 namespace BombRushMP.Server
 {
@@ -13,11 +14,12 @@ namespace BombRushMP.Server
 
         public void MakeExample()
         {
-            Users["Example"] = new AuthUser() { UserKind = Common.UserKinds.Player, Badges = ["testbadge"], Tags = ["testtag"] };
+            Users["Default"] = new AuthUser() { UserKind = UserKinds.Player, Badge = "", Tags = [] };
+            Users["Example"] = new AuthUser() { UserKind = UserKinds.Player, Badge = "testbadge", Tags = ["testtag"] };
         }
 
         /// <summary>
-        /// Returns an user with the specified Auth Key. If not found, will return a Player user.
+        /// Returns an user with the specified Auth Key. If not found, will return the Default user.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -25,6 +27,8 @@ namespace BombRushMP.Server
         {
             if (Users.TryGetValue(key, out var result))
                 return result;
+            else if (Users.TryGetValue("Default", out var result2))
+                return result2;
             return _defaultUser;
         }
     }

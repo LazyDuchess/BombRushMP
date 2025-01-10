@@ -21,6 +21,7 @@ namespace BombRushMP.Common.Packets
         public string Name = "Player";
         public int Stage = 0;
         public uint ProtocolVersion = Constants.ProtocolVersion;
+        public AuthUser User = new AuthUser();
 
         public override void Read(BinaryReader reader)
         {
@@ -33,6 +34,8 @@ namespace BombRushMP.Common.Packets
             Name = reader.ReadString();
             SpecialSkin = (SpecialSkins)reader.ReadInt32();
             SpecialSkinVariant = reader.ReadInt32();
+            var user = new AuthUser();
+            User.Read(reader);
         }
 
         public override void Write(BinaryWriter writer)
@@ -45,6 +48,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(Name);
             writer.Write((int)SpecialSkin);
             writer.Write(SpecialSkinVariant);
+            User.Write(writer);
         }
     }
 }
