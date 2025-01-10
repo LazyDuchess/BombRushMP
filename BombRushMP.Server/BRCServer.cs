@@ -170,6 +170,40 @@ namespace BombRushMP.Server
                         SendEliteNagChat(player.ClientState.Stage);
                     }
                     break;
+
+                case "banaddress":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        if (args.Length > 1)
+                            BanPlayerByAddress(args[1]);
+                    }
+                    break;
+
+                case "banid":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                                BanPlayerById(result);
+                        }
+                    }
+                    break;
+
+                case "getids":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        var idString = "";
+                        foreach(var playa in Players)
+                        {
+                            if (playa.Value.ClientState.Stage == player.ClientState.Stage)
+                            {
+                                idString += $"{playa.Key} - {TMPFilter.CloseAllTags(playa.Value.ClientState.Name)}\n";
+                            }
+                        }
+                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.Reliable, player.Client);
+                    }
+                    break;
             }
         }
 
@@ -315,6 +349,36 @@ namespace BombRushMP.Server
                 ServerLogger.Log($"Dropped client from {e.FromConnection} (ID: {e.FromConnection.Id}) because they sent a faulty packet. Exception:\n{exc}");
                 Server.DisconnectClient(e.FromConnection);
             }
+        }
+
+        public void BanPlayerById(ushort id, string reason = "None")
+        {
+            if (Players.TryGetValue(id, out var result))
+            {
+                if (_database.BannedUsers.IsBanned(result.Client.Address)) return;
+                BanPlayerByAddress(result.Client.Address);
+            }
+        }
+
+        public void BanPlayerByAddress(string address, string reason = "None")
+        {
+            if (_database.BannedUsers.IsBanned(address)) return;
+            var playerName = "None";
+            ushort playerId = 0;
+            foreach(var player in Players)
+            {
+                if (player.Value.Client.Address == address)
+                {
+                    playerName = player.Value.ClientState.Name;
+                    playerId = player.Key;
+                    break;
+                }
+            }
+            _database.BannedUsers.Ban(address, playerName, reason);
+            ServerLogger.Log($"Banned IP {address}, player name: {playerName}, reason: {reason}");
+            if (playerId != 0)
+                Server.DisconnectClient(playerId);
+            _database.Save();
         }
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
