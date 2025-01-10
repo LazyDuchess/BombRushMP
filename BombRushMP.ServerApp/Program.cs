@@ -28,10 +28,7 @@ namespace BombRushMP.ServerApp
             }
             File.WriteAllText(ServerSettingsPath, JsonConvert.SerializeObject(serverSettings, Formatting.Indented));
             NetworkingEnvironment.UseNativeSocketsIfAvailable = serverSettings.UseNativeSockets;
-            var netInterface = NetworkInterfaces.LiteNetLib;
-            if (Enum.TryParse<NetworkInterfaces>(serverSettings.NetworkInterface, out var result))
-                netInterface = result;
-            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(netInterface);
+            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(serverSettings.NetworkInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
             {
                 ServerLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");

@@ -19,7 +19,7 @@ namespace BombRushMP.Plugin.OfflineInterface
         {
             if (offline)
             {
-                AuthKeys.Users[OfflineAuthKey] = new AuthUser() { UserKind = UserKinds.Admin.ToString() };
+                AuthKeys.Users[OfflineAuthKey] = new AuthUser() { UserKind = UserKinds.Admin };
             }
         }
 
