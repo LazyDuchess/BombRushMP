@@ -108,7 +108,10 @@ namespace BombRushMP.Server
         private void TickStage(int stage)
         {
             var clientVisualStates = CreateClientVisualStatesPacket(stage);
-            SendPacketToStage(clientVisualStates, IMessage.SendModes.Unreliable, stage);
+            foreach (var visualState in clientVisualStates)
+            {
+                SendPacketToStage(visualState, IMessage.SendModes.Unreliable, stage);
+            }
         }
 
         private HashSet<int> GetActiveStages()
@@ -496,17 +499,28 @@ namespace BombRushMP.Server
             return packet;
         }
 
-        private ServerClientVisualStates CreateClientVisualStatesPacket(int stage)
+        private const int MaxVisualUpdates = 5;
+
+        private List<ServerClientVisualStates> CreateClientVisualStatesPacket(int stage)
         {
-            var packet = new ServerClientVisualStates();
-            foreach(var player in Players)
+            var packetList = new List<ServerClientVisualStates>();
+            var currentNumber = 0;
+            var currentPacket = new ServerClientVisualStates();
+            foreach (var player in Players)
             {
+                if (currentNumber >= MaxVisualUpdates)
+                {
+                    packetList.Add(currentPacket);
+                    currentPacket = new ServerClientVisualStates();
+                }
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
                 if (player.Value.ClientVisualState == null) continue;
-                packet.ClientVisualStates[player.Key] = player.Value.ClientVisualState;
+                currentPacket.ClientVisualStates[player.Key] = player.Value.ClientVisualState;
+                currentNumber++;
             }
-            return packet;
+            packetList.Add(currentPacket);
+            return packetList;
         }
     }
 }
