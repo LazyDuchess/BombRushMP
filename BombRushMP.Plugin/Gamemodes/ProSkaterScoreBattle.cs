@@ -42,7 +42,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override GamemodeSettings GetDefaultSettings()
         {
-            var settings = new GamemodeSettings();
+            var settings = base.GetDefaultSettings();
             settings.SettingByID[SettingRewardTiltingID] = new ToggleGamemodeSetting("Reward Grind Corners", true);
             return settings;
         }
