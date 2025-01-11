@@ -416,7 +416,7 @@ namespace BombRushMP.Plugin
 #if DEVELOPER_DEBUG
         private const string MainServerAddress = "ggdev.lazyduchess.me";
 #else
-        private const string MainServerAddress = "free.soulisall.city";
+        private const string MainServerAddress = "acn.lazyduchess.me";
 #endif
         public MPSettings(ConfigFile configFile, string dir)
         {
