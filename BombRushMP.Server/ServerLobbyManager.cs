@@ -48,7 +48,7 @@ namespace BombRushMP.Server
             }
             ClearAllInvitesForLobby(lobbyId);
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyStart(), IMessage.SendModes.ReliableUnordered, lobbyId);
+            SendPacketToLobby(new ServerLobbyStart(), IMessage.SendModes.Reliable, lobbyId);
             lobby.CurrentGamemode.OnStart();
         }
 
@@ -59,7 +59,7 @@ namespace BombRushMP.Server
             var gamemode = lobby.CurrentGamemode;
             lobby.CurrentGamemode = null;
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyEnd(cancelled), IMessage.SendModes.ReliableUnordered, lobbyId);
+            SendPacketToLobby(new ServerLobbyEnd(cancelled), IMessage.SendModes.Reliable, lobbyId);
             gamemode.OnEnd(cancelled);
         }
 
