@@ -5,6 +5,7 @@ using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.OfflineInterface;
 using Reptile;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -380,20 +381,27 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private IEnumerator AttemptReconnect()
+        {
+            yield return new WaitForSecondsRealtime(1f);
+            Disconnect();
+            Connect();
+        }
+
         private void OnConnectionFailed(object sender, ConnectionFailedEventArgs e)
         {
             ClientLogger.Log($"Failed to connect to server. Reason: {e.Reason}");
             ClientLogger.Log("Will attempt to re-connect");
-            Disconnect();
-            Connect();
+            StopAllCoroutines();
+            StartCoroutine(AttemptReconnect());
         }
 
         private void OnDisconnect(object sender, DisconnectedEventArgs e)
         {
             ClientLogger.Log($"Disconnected! Reason: {e.Reason}");
             ClientLogger.Log("Will attempt to re-connect");
-            Disconnect();
-            Connect();
+            StopAllCoroutines();
+            StartCoroutine(AttemptReconnect());
         }
 
         public void SendAuth()

@@ -328,7 +328,7 @@ namespace BombRushMP.Server
                         var player = Players[client.Id];
                         if (LogMessages)
                         {
-                            var logText = $"[{DateTime.Now.ToShortTimeString()}] {player.ClientState.Name}({player.Client.Address}): {chatPacket.Message}";
+                            var logText = $"[{DateTime.Now.ToShortTimeString()}] {player.ClientState.Name} ({player.Client.Address}): {chatPacket.Message}";
                             _database.LogChatMessage(logText, player.ClientState.Stage);
                         }
                         if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
@@ -412,7 +412,8 @@ namespace BombRushMP.Server
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
-            ServerLogger.Log($"Client connected from {e.Client.Address}. ID: {e.Client.Id}.");
+            if (!_database.BannedUsers.IsBanned(e.Client.Address))
+                ServerLogger.Log($"Client connected from {e.Client.Address}. ID: {e.Client.Id}.");
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
@@ -432,7 +433,10 @@ namespace BombRushMP.Server
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
-            ServerLogger.Log($"Client disconnected from {e.Client.Address}. ID: {e.Client.Id}. Reason: {e.Reason}");
+            if (!_database.BannedUsers.IsBanned(e.Client.Address))
+            {
+                ServerLogger.Log($"Client disconnected from {e.Client.Address}. ID: {e.Client.Id}. Reason: {e.Reason}");
+            }
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))
             {

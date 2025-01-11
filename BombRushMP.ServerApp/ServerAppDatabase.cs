@@ -50,8 +50,6 @@ namespace BombRushMP.ServerApp
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             var fullPath = Path.Combine(dir, $"{stage}.txt");
-            if (!File.Exists(fullPath))
-                File.Create(fullPath);
             using (var writer = File.AppendText(fullPath))
             {
                 writer.WriteLine(message);
