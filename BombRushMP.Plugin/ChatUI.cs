@@ -81,7 +81,13 @@ namespace BombRushMP.Plugin
                     if (invitee != clientController.LocalID) return;
                     var inviterName = MPUtility.GetPlayerDisplayName(clientController.Players[inviter].ClientState);
                     var gamemodeName = clientController.ClientLobbyManager.GetLobbyName(lobby);
-                    AddMessage(string.Format(ClientConstants.LobbyInviteMessage, inviterName, gamemodeName));
+
+                    var inviteMessage = ClientConstants.LobbyInviteMessage;
+                    var inviterUser = clientController.GetUser(inviter);
+                    if (inviterUser.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                        inviteMessage = SpecialPlayerUtils.SpecialPlayerInviteMessage;
+
+                    AddMessage(string.Format(inviteMessage, inviterName, gamemodeName));
                     break;
             }
             

@@ -11,9 +11,14 @@ namespace BombRushMP.Common
         public const string SpecialPlayerName = "Freesoul Elite";
         public const SpecialSkins SpecialPlayerSkin = SpecialSkins.SpecialPlayer;
         public const string SpecialPlayerTag = "elite";
-        public const string SpecialPlayerUnlock = "goonieskateboard";
+        public const string SpecialPlayerUnlockName = "Goonie";
+        public const string SpecialPlayerUnlockID = "goonieskateboard";
 
-        public const string SpecialPlayerUnlockNotification = "You've unlocked the Goonie skateboard skin for beating a Freesoul Elite!";
-        public const string SpecialPlayerNag = "Beat a Freesoul Elite in any gamemode to unlock a skateboard skin.";
+        public const string SpecialPlayerUnlockNotification = $"<color=yellow>You've unlocked the {SpecialPlayerUnlockName} skateboard skin for beating a {SpecialPlayerName}!</color>";
+        public const string SpecialPlayerNag = $"<color=yellow>Beat a {SpecialPlayerName} in any gamemode to unlock a skateboard skin.</color>";
+
+        public const string SpecialPlayerJoinMessage = "<color=yellow>A {0} has entered the stage!</color>";
+        public const string SpecialPlayerLeaveMessage = "<color=yellow>A {0} has left!</color>";
+        public const string SpecialPlayerInviteMessage = "<color=yellow>A {0} is challenging you to a {1}.</color>";
     }
 }

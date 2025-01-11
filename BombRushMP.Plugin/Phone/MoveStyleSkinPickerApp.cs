@@ -75,7 +75,7 @@ namespace BombRushMP.Plugin.Phone
             foreach (var mpUnlockable in mpUnlockManager.UnlockByID)
             {
                 var valid = false;
-                if (mpUnlockable.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlock) && !saveData.ShouldDisplayGoonieBoard()) continue;
+                if (mpUnlockable.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlockID) && !saveData.ShouldDisplayGoonieBoard()) continue;
                 if (mpUnlockable.Value is not MPMoveStyleSkin) continue;
                 if (mpUnlockable.Value is MPSkateboardSkin && moveStyle == MoveStyle.SKATEBOARD) valid = true;
                 if (!valid) continue;

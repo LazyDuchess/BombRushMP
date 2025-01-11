@@ -306,8 +306,13 @@ namespace BombRushMP.Server
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
+                        var joinMessage = ServerConstants.JoinMessage;
+
+                        if (clientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                            joinMessage = SpecialPlayerUtils.SpecialPlayerJoinMessage;
+
                         SendPacketToStage(new ServerChat(
-                            TMPFilter.CloseAllTags(clientState.Name), ServerConstants.JoinMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
+                            TMPFilter.CloseAllTags(clientState.Name), joinMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
                             IMessage.SendModes.Reliable, clientState.Stage);
 
                         ClientHandshook?.Invoke(client);
@@ -480,8 +485,14 @@ namespace BombRushMP.Server
                 var clientStates = CreateClientStatesPacket(clientState.Stage);
                 SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage);
 
+                var user = clientState.User;
+                var leaveMessage = ServerConstants.LeaveMessage;
+
+                if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                    leaveMessage = SpecialPlayerUtils.SpecialPlayerLeaveMessage;
+
                 SendPacketToStage(new ServerChat(
-                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
+                    TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
                     IMessage.SendModes.Reliable, clientState.Stage);
             }
         }

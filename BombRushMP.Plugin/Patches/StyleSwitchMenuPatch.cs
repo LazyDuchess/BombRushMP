@@ -101,7 +101,7 @@ namespace BombRushMP.Plugin.Patches
                 var skin = unlock.Value as MPMoveStyleSkin;
                 if (skin == null) continue;
                 if (skin.MoveStyle != __instance.moveStyleType) continue;
-                if (unlock.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlock) && !saveData.ShouldDisplayGoonieBoard()) continue;
+                if (unlock.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlockID) && !saveData.ShouldDisplayGoonieBoard()) continue;
                 ExtraButtonSkins.Add(skin);
             }
             var parent = __instance.firstButton.transform.parent;
