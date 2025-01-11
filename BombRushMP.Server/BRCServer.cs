@@ -33,6 +33,8 @@ namespace BombRushMP.Server
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
         private IServerDatabase _database;
         public bool LogMessages = false;
+        public bool AllowNameChanges = true;
+        public float ChatCooldown = 0.5f;
 
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
@@ -191,6 +193,14 @@ namespace BombRushMP.Server
                     }
                     break;
 
+                case "unban":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        if (args.Length > 1)
+                            Unban(args[1]);
+                    }
+                    break;
+
                 case "getids":
                     if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
                     {
@@ -224,7 +234,7 @@ namespace BombRushMP.Server
                 case "help":
                     if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
                     {
-                        var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\ngetids\ngetaddresses\nhelp";
+                        var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\nunban (ip)\ngetids\ngetaddresses\nhelp";
                         SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.Reliable, player.Client);
                     }
                     break;
@@ -256,6 +266,10 @@ namespace BombRushMP.Server
                             return;
                         }
                         var oldClientState = Players[client.Id].ClientState;
+                        if (oldClientState != null && !AllowNameChanges)
+                        {
+                            clientState.Name = oldClientState.Name;
+                        }
                         if (clientAuth != null)
                         {
                             var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
@@ -332,6 +346,12 @@ namespace BombRushMP.Server
                             _database.LogChatMessage(logText, player.ClientState.Stage);
                         }
                         if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
+                        var lastChatFromThisPlayer = player.LastChatTime;
+                        var now = DateTime.UtcNow;
+                        var elapsed = now - lastChatFromThisPlayer;
+                        if (elapsed.TotalSeconds <= ChatCooldown)
+                            break;
+                        player.LastChatTime = now;
                         if (chatPacket.Message[0] == '/')
                         {
                             ProcessCommand(chatPacket.Message, player);
@@ -387,6 +407,14 @@ namespace BombRushMP.Server
                 if (_database.BannedUsers.IsBanned(result.Client.Address)) return;
                 BanPlayerByAddress(result.Client.Address);
             }
+        }
+
+        public void Unban(string address)
+        {
+            if (!_database.BannedUsers.IsBanned(address)) return;
+            _database.BannedUsers.Unban(address);
+            ServerLogger.Log($"Unbanned IP {address}");
+            _database.Save();
         }
 
         public void BanPlayerByAddress(string address, string reason = "None")

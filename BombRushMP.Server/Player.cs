@@ -18,6 +18,7 @@ namespace BombRushMP.Server
         public ClientVisualState ClientVisualState = null;
         public float SecondsWithoutSendingClientState = 0f;
         public INetConnection Client;
+        public DateTime LastChatTime = DateTime.UtcNow;
 
         public void Tick(float deltaTime)
         {

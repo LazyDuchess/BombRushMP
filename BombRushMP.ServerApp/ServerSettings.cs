@@ -33,5 +33,7 @@ namespace BombRushMP.ServerApp
         public bool UseNativeSockets = true;
         public float TicksPerSecond = 1f/Constants.DefaultNetworkingTickRate;
         public bool LogChats = false;
+        public bool AllowNameChanges = false;
+        public float ChatCooldown = 0.5f;
     }
 }

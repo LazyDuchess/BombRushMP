@@ -38,6 +38,8 @@ namespace BombRushMP.ServerApp
             var db = new ServerAppDatabase();
             var server = new BRCServer(port, 65534, 1f/serverSettings.TicksPerSecond, db);
             server.LogMessages = serverSettings.LogChats;
+            server.AllowNameChanges = serverSettings.AllowNameChanges;
+            server.ChatCooldown = serverSettings.ChatCooldown;
             while(true)
             {
                 server.Update();
