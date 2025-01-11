@@ -161,7 +161,7 @@ namespace BombRushMP.Server
 
         private void SendEliteNagChat(int stage)
         {
-            SendPacketToStage(new ServerChat(SpecialPlayerUtils.SpecialPlayerNag), IMessage.SendModes.Reliable, stage);
+            SendPacketToStage(new ServerChat(SpecialPlayerUtils.SpecialPlayerNag), IMessage.SendModes.ReliableUnordered, stage);
         }
 
         private void ProcessCommand(string message, Player player)
@@ -215,7 +215,7 @@ namespace BombRushMP.Server
                                 idString += $"{playa.Key} - {TMPFilter.CloseAllTags(playa.Value.ClientState.Name)}\n";
                             }
                         }
-                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.Reliable, player.Client);
+                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.ReliableUnordered, player.Client);
                     }
                     break;
 
@@ -230,7 +230,7 @@ namespace BombRushMP.Server
                                 idString += $"{playa.Value.Client.Address} - {TMPFilter.CloseAllTags(playa.Value.ClientState.Name)} ({playa.Key})\n";
                             }
                         }
-                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.Reliable, player.Client);
+                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.ReliableUnordered, player.Client);
                     }
                     break;
 
@@ -238,7 +238,7 @@ namespace BombRushMP.Server
                     if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
                     {
                         var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\nunban (ip)\ngetids\ngetaddresses\nhelp";
-                        SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.Reliable, player.Client);
+                        SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.ReliableUnordered, player.Client);
                     }
                     break;
             }
@@ -313,7 +313,7 @@ namespace BombRushMP.Server
 
                         SendPacketToStage(new ServerChat(
                             TMPFilter.CloseAllTags(clientState.Name), joinMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
-                            IMessage.SendModes.Reliable, clientState.Stage);
+                            IMessage.SendModes.ReliableUnordered, clientState.Stage);
 
                         ClientHandshook?.Invoke(client);
                     }
@@ -332,13 +332,13 @@ namespace BombRushMP.Server
                             {
                                 SendPacketToStage(new ServerChat(
                                     TMPFilter.CloseAllTags(clientState.Name), ServerConstants.AFKMessage, clientState.User.Badge, ChatMessageTypes.PlayerAFK),
-                                    IMessage.SendModes.Reliable, clientState.Stage);
+                                    IMessage.SendModes.ReliableUnordered, clientState.Stage);
                             }
                             else
                             {
                                 SendPacketToStage(new ServerChat(
                                     TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveAFKMessage, clientState.User.Badge, ChatMessageTypes.PlayerAFK),
-                                    IMessage.SendModes.Reliable, clientState.Stage);
+                                    IMessage.SendModes.ReliableUnordered, clientState.Stage);
                             }
                         }
                     }
@@ -368,7 +368,7 @@ namespace BombRushMP.Server
                         {
                             if (player.ClientState == null) return;
                             var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, player.ClientState.User.Badge, ChatMessageTypes.Chat);
-                            SendPacketToStage(serverChatPacket, IMessage.SendModes.Reliable, player.ClientState.Stage);
+                            SendPacketToStage(serverChatPacket, IMessage.SendModes.ReliableUnordered, player.ClientState.Stage);
                         }
                     }
                     break;
@@ -383,7 +383,7 @@ namespace BombRushMP.Server
                             if (player.ClientState == null) return;
                             // Exclude sender - will break things if you're trying to display the networked local player clientside.
                             // SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage, [client.Id]);
-                            SendPacketToStage(playerPacket, IMessage.SendModes.Reliable, Players[client.Id].ClientState.Stage);
+                            SendPacketToStage(playerPacket, IMessage.SendModes.ReliableUnordered, Players[client.Id].ClientState.Stage);
                         }
                     }
                     break;
@@ -493,7 +493,7 @@ namespace BombRushMP.Server
 
                 SendPacketToStage(new ServerChat(
                     TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
-                    IMessage.SendModes.Reliable, clientState.Stage);
+                    IMessage.SendModes.ReliableUnordered, clientState.Stage);
             }
         }
 

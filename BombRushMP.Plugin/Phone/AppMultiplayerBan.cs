@@ -48,7 +48,7 @@ namespace BombRushMP.Plugin.Phone
             var clientController = ClientController.Instance;
             foreach (var player in playerIds)
             {
-                ClientController.Instance.SendPacket(new ClientChat($"/banid {player}"), Common.Networking.IMessage.SendModes.Reliable);
+                ClientController.Instance.SendPacket(new ClientChat($"/banid {player}"), Common.Networking.IMessage.SendModes.ReliableUnordered);
             }
         }
     }

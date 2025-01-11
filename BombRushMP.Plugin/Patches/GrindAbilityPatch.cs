@@ -25,7 +25,7 @@ namespace BombRushMP.Plugin.Patches
             var voicePacket = new PlayerVoice();
             voicePacket.AudioClipId = (int)AudioClipID.VoiceJump;
             voicePacket.VoicePriority = (int)VoicePriority.MOVEMENT;
-            clientController.SendPacket(voicePacket, IMessage.SendModes.Reliable);
+            clientController.SendPacket(voicePacket, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPostfix]

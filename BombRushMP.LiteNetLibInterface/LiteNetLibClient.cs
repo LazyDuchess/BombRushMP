@@ -46,7 +46,7 @@ namespace BombRushMP.LiteNetLibInterface
             var packetId = reader.GetUShort();
             var data = reader.GetRemainingBytes();
             var connection = new LiteNetLibConnection(peer);
-            var reliability = deliveryMethod == DeliveryMethod.Unreliable ? IMessage.SendModes.Unreliable : IMessage.SendModes.Reliable;
+            var reliability = LiteNetLibUtils.DeliveryMethodToSendMode(deliveryMethod);
             var msg = new LiteNetLibMessage(reliability, packetId);
             msg.Add(data);
             MessageReceived?.Invoke(this, new MessageReceivedEventArgs(packetId, msg, connection));

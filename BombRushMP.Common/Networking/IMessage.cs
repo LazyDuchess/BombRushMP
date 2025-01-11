@@ -11,7 +11,8 @@ namespace BombRushMP.Common.Networking
         public enum SendModes
         {
             Unreliable,
-            Reliable
+            Reliable,
+            ReliableUnordered
         }
 
         public byte[] GetBytes();

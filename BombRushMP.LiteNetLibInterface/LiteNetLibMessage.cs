@@ -18,7 +18,7 @@ namespace BombRushMP.LiteNetLibInterface
 
         public LiteNetLibMessage(IMessage.SendModes sendMode, ushort packetId)
         {
-            DeliveryMethod = sendMode == IMessage.SendModes.Unreliable ? DeliveryMethod.Unreliable : DeliveryMethod.ReliableOrdered;
+            DeliveryMethod = LiteNetLibUtils.SendModeToDeliveryMethod(sendMode);
             _writer = new NetDataWriter();
             _packetId = packetId;
         }

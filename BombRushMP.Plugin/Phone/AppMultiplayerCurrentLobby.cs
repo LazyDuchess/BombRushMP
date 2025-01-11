@@ -120,7 +120,7 @@ namespace BombRushMP.Plugin.Phone
                 button = PhoneUIUtility.CreateSimpleButton("Toggle Ready");
                 button.OnConfirm += () =>
                 {
-                    clientController.SendPacket(new ClientLobbySetReady(!currentLobby.LobbyState.Players[clientController.LocalID].Ready), IMessage.SendModes.Reliable);
+                    clientController.SendPacket(new ClientLobbySetReady(!currentLobby.LobbyState.Players[clientController.LocalID].Ready), IMessage.SendModes.ReliableUnordered);
                 };
                 ScrollView.AddButton(button);
             }

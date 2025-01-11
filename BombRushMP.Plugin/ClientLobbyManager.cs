@@ -87,29 +87,29 @@ namespace BombRushMP.Plugin
         public void CreateLobby()
         {
             if (!CanJoinLobby()) return;
-            _clientController.SendPacket(new ClientLobbyCreate(), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyCreate(), IMessage.SendModes.ReliableUnordered);
         }
 
         public void JoinLobby(uint lobbyId)
         {
             if (!CanJoinLobby()) return;
-            _clientController.SendPacket(new ClientLobbyJoin(lobbyId), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyJoin(lobbyId), IMessage.SendModes.ReliableUnordered);
             NotificationController.Instance.RemoveNotificationForLobby(lobbyId);
         }
 
         public void LeaveLobby()
         {
-            _clientController.SendPacket(new ClientLobbyLeave(), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyLeave(), IMessage.SendModes.ReliableUnordered);
         }
 
         public void StartGame()
         {
-            _clientController.SendPacket(new ClientLobbyStart(), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyStart(), IMessage.SendModes.ReliableUnordered);
         }
 
         public void EndGame()
         {
-            _clientController.SendPacket(new ClientLobbyEnd(), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyEnd(), IMessage.SendModes.ReliableUnordered);
         }
 
         public void SetGamemode(GamemodeIDs gamemode, GamemodeSettings settings)
@@ -123,29 +123,29 @@ namespace BombRushMP.Plugin
                     data = ms.ToArray();
                 }
             }
-            _clientController.SendPacket(new ClientLobbySetGamemode(gamemode, data), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbySetGamemode(gamemode, data), IMessage.SendModes.ReliableUnordered);
         }
 
         public void InvitePlayer(ushort playerId)
         {
-            _clientController.SendPacket(new ClientLobbyInvite(playerId), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyInvite(playerId), IMessage.SendModes.ReliableUnordered);
         }
 
         public void DeclineInvite(uint lobbyId)
         {
-            _clientController.SendPacket(new ClientLobbyDeclineInvite(lobbyId), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyDeclineInvite(lobbyId), IMessage.SendModes.ReliableUnordered);
             NotificationController.Instance.RemoveNotificationForLobby(lobbyId);
         }
 
         public void DeclineAllInvites()
         {
-            _clientController.SendPacket(new ClientLobbyDeclineAllInvites(), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyDeclineAllInvites(), IMessage.SendModes.ReliableUnordered);
             NotificationController.Instance.RemoveAllNotifications();
         }
 
         public void KickPlayer(ushort playerId)
         {
-            _clientController.SendPacket(new ClientLobbyKick(playerId), IMessage.SendModes.Reliable);
+            _clientController.SendPacket(new ClientLobbyKick(playerId), IMessage.SendModes.ReliableUnordered);
         }
 
         private void OnPacketReceived(Packets packetId, Packet packet)
