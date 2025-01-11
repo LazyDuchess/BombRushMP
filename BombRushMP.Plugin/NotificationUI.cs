@@ -30,6 +30,7 @@ namespace BombRushMP.Plugin
         {
             _gamemodeLabel = transform.Find("Gamemode").GetComponent<TextMeshProUGUI>();
             _hostLabel = transform.Find("Host").GetComponent<TextMeshProUGUI>();
+            _hostLabel.spriteAsset = MPAssets.Instance.Sprites;
             _playerCountLabel = transform.Find("People Count").GetComponent<TextMeshProUGUI>();
             _glyph = transform.Find("Glyph").GetComponent<TextMeshProUGUI>();
 

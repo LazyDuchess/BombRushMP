@@ -266,7 +266,7 @@ namespace BombRushMP.Server
                             return;
                         }
                         var oldClientState = Players[client.Id].ClientState;
-                        if (oldClientState != null && !AllowNameChanges)
+                        if (oldClientState != null && !AllowNameChanges && oldClientState.User.UserKind == UserKinds.Player)
                         {
                             clientState.Name = oldClientState.Name;
                         }
@@ -441,7 +441,7 @@ namespace BombRushMP.Server
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
         {
             if (!_database.BannedUsers.IsBanned(e.Client.Address))
-                ServerLogger.Log($"Client connected from {e.Client.Address}. ID: {e.Client.Id}.");
+                ServerLogger.Log($"Client connected from {e.Client.Address}. ID: {e.Client.Id}. Players: {Players.Count + 1}");
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
@@ -463,7 +463,7 @@ namespace BombRushMP.Server
         {
             if (!_database.BannedUsers.IsBanned(e.Client.Address))
             {
-                ServerLogger.Log($"Client disconnected from {e.Client.Address}. ID: {e.Client.Id}. Reason: {e.Reason}");
+                ServerLogger.Log($"Client disconnected from {e.Client.Address}. ID: {e.Client.Id}. Reason: {e.Reason}. Players: {Players.Count - 1}");
             }
             ClientState clientState = null;
             if (Players.TryGetValue(e.Client.Id, out var result))

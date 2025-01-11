@@ -79,7 +79,7 @@ namespace BombRushMP.Plugin
                     var invitee = invitePacket.InviteeId;
                     var lobby = invitePacket.LobbyId;
                     if (invitee != clientController.LocalID) return;
-                    var inviterName = TMPFilter.CloseAllTags(clientController.Players[inviter].ClientState.Name);
+                    var inviterName = MPUtility.GetPlayerDisplayName(clientController.Players[inviter].ClientState);
                     var gamemodeName = clientController.ClientLobbyManager.GetLobbyName(lobby);
                     AddMessage(string.Format(ClientConstants.LobbyInviteMessage, inviterName, gamemodeName));
                     break;
