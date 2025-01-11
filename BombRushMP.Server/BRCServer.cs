@@ -237,7 +237,7 @@ namespace BombRushMP.Server
                 case "help":
                     if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
                     {
-                        var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\nunban (ip)\ngetids\ngetaddresses\nhelp\nsay (announcement for stage)\nsayall (global announcement)";
+                        var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\nunban (ip)\ngetids\ngetaddresses\nhelp\nsay (announcement for stage)\nsayall (global announcement)\nstats";
                         SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
                     }
                     break;
@@ -253,6 +253,21 @@ namespace BombRushMP.Server
                     if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
                     {
                         SendPacket(new ServerChat(message.Substring(8)), IMessage.SendModes.ReliableUnordered, NetChannels.Chat);
+                    }
+                    break;
+
+                case "stats":
+                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    {
+                        var playerCount = Players.Count;
+                        var lobbyCount = ServerLobbyManager.Lobbies.Count;
+                        var lobbiesInGame = 0;
+                        foreach(var lobby in ServerLobbyManager.Lobbies)
+                        {
+                            if (lobby.Value.LobbyState.InGame)
+                                lobbiesInGame++;
+                        }
+                        SendPacketToClient(new ServerChat($"Players: {playerCount}\nLobbies: {lobbyCount}\nLobbies in game: {lobbiesInGame}"), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
                     }
                     break;
             }
