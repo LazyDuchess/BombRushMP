@@ -227,7 +227,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             if (!clientController.Connected) return;
             if (state != Player.SpraycanState.SPRAY) return;
-            clientController.SendGenericEvent(GenericEvents.Spray, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Spray, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPostfix]
@@ -238,7 +238,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPrefix]
@@ -327,7 +327,7 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             clientController.CurrentGraffitiGame = GameObject.FindFirstObjectByType<GraffitiGame>();
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPostfix]
@@ -338,8 +338,8 @@ namespace BombRushMP.Plugin.Patches
             if (clientController == null) return;
             clientController.CurrentGraffitiGame = null;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
-            clientController.SendGenericEvent(GenericEvents.GraffitiGameOver, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
+            clientController.SendGenericEvent(GenericEvents.GraffitiGameOver, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPrefix]

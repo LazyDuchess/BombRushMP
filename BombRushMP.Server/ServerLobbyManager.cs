@@ -48,7 +48,7 @@ namespace BombRushMP.Server
             }
             ClearAllInvitesForLobby(lobbyId);
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyStart(), IMessage.SendModes.Reliable, lobbyId);
+            SendPacketToLobby(new ServerLobbyStart(), IMessage.SendModes.ReliableUnordered, lobbyId);
             lobby.CurrentGamemode.OnStart();
         }
 
@@ -59,7 +59,7 @@ namespace BombRushMP.Server
             var gamemode = lobby.CurrentGamemode;
             lobby.CurrentGamemode = null;
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyEnd(cancelled), IMessage.SendModes.Reliable, lobbyId);
+            SendPacketToLobby(new ServerLobbyEnd(cancelled), IMessage.SendModes.ReliableUnordered, lobbyId);
             gamemode.OnEnd(cancelled);
         }
 
@@ -232,7 +232,7 @@ namespace BombRushMP.Server
                         Lobbies[lobby.LobbyState.Id] = lobby;
                         AddPlayer(lobby.LobbyState.Id, client.Id);
                         ServerLogger.Log($"Created Lobby with UID {lobby.LobbyState.Id} with host {player.ClientState.Name}");
-                        QueueAction(() => { _server.SendPacketToClient(new ServerLobbyCreateResponse(), IMessage.SendModes.Reliable, client); });
+                        QueueAction(() => { _server.SendPacketToClient(new ServerLobbyCreateResponse(), IMessage.SendModes.ReliableUnordered, client); });
                     }
                     break;
 
@@ -294,7 +294,7 @@ namespace BombRushMP.Server
                         {
                             var invitePacket = (ClientLobbyInvite)packet;
                             if (InvitePlayer(existingLobby.LobbyState.Id, invitePacket.InviteeId))
-                                _server.SendPacketToClient(new ServerLobbyInvite(invitePacket.InviteeId, playerId, existingLobby.LobbyState.Id), IMessage.SendModes.Reliable, _server.Players[invitePacket.InviteeId].Client);
+                                _server.SendPacketToClient(new ServerLobbyInvite(invitePacket.InviteeId, playerId, existingLobby.LobbyState.Id), IMessage.SendModes.ReliableUnordered, _server.Players[invitePacket.InviteeId].Client);
                         }
                     }
                     break;

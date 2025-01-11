@@ -37,7 +37,7 @@ namespace BombRushMP.Server.Gamemodes
                 case States.Countdown:
                     if (_stateTimer > 3f)
                     {
-                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
+                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.ReliableUnordered, Lobby.LobbyState.Id);
                         _state = States.Main;
                         _startTime = DateTime.UtcNow;
                     }
@@ -95,7 +95,7 @@ namespace BombRushMP.Server.Gamemodes
                         {
                             if (!_clientsFinishedCombo.Contains(playerId))
                             {
-                                ServerLobbyManager.SendPacketToLobby(new ServerChat(TMPFilter.CloseAllTags(BRCServer.Instance.Players[playerId].ClientState.Name), "{0} landed their combo!", BRCServer.Instance.Players[playerId].ClientState.User.Badge, ChatMessageTypes.System), IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
+                                ServerLobbyManager.SendPacketToLobby(new ServerChat(TMPFilter.CloseAllTags(BRCServer.Instance.Players[playerId].ClientState.Name), "{0} landed their combo!", BRCServer.Instance.Players[playerId].ClientState.User.Badge, ChatMessageTypes.System), IMessage.SendModes.ReliableUnordered, Lobby.LobbyState.Id);
                                 _clientsFinishedCombo.Add(playerId);
                                 ServerLobbyManager.SetPlayerScore(playerId, ((ClientComboOver)packet).Score);
                             }

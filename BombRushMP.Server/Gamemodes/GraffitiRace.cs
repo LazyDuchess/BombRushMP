@@ -43,7 +43,7 @@ namespace BombRushMP.Server.Gamemodes
                 case States.Countdown:
                     if (_countdownTimer > 3f)
                     {
-                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.Reliable, Lobby.LobbyState.Id);
+                        ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.ReliableUnordered, Lobby.LobbyState.Id);
                         _state = States.Main;
                     }
                     break;

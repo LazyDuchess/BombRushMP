@@ -36,7 +36,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPostfix]
@@ -56,7 +56,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.Reliable);
+            clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
         }
 
         [HarmonyPrefix]

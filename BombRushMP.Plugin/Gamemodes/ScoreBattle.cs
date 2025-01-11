@@ -74,7 +74,7 @@ namespace BombRushMP.Plugin.Gamemodes
                             if (!_comboOverRegistered)
                             {
                                 _comboOverRegistered = true;
-                                ClientController.SendPacket(new ClientComboOver(player.score), IMessage.SendModes.Reliable);
+                                ClientController.SendPacket(new ClientComboOver(player.score), IMessage.SendModes.ReliableUnordered);
                             }
                         }
                     }
