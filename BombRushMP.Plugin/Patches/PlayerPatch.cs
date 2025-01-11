@@ -31,7 +31,7 @@ namespace BombRushMP.Plugin.Patches
                 if (__instance.inGraffitiGame) return true;
                 var packet = new PlayerAnimation(newAnim, forceOverwrite, instant, atTime);
                 // Doesn't really need to be reliable no?
-                clientController.SendPacket(packet, IMessage.SendModes.Reliable);
+                clientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.VisualUpdates);
             }
             if (!PlayAnimPatchEnabled) return true;
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
@@ -57,7 +57,7 @@ namespace BombRushMP.Plugin.Patches
             var packet = new PlayerVoice();
             packet.AudioClipId = (int)audioClipID;
             packet.VoicePriority = (int)voicePriority;
-            clientController.SendPacket(packet, IMessage.SendModes.ReliableUnordered);
+            clientController.SendPacket(packet, IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
         }
 
         [HarmonyPrefix]
@@ -71,7 +71,7 @@ namespace BombRushMP.Plugin.Patches
             var packet = new PlayerVoice();
             packet.AudioClipId = (int)AudioClipID.VoiceJump;
             packet.VoicePriority = (int)VoicePriority.MOVEMENT;
-            clientController.SendPacket(packet, IMessage.SendModes.ReliableUnordered);
+            clientController.SendPacket(packet, IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
         }
 
         [HarmonyPrefix]
@@ -303,7 +303,7 @@ namespace BombRushMP.Plugin.Patches
             __instance.audioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, 0f);
             __instance.RemoveGraffitiSlash();
             __instance.CreateGraffitiFinishEffect(graffitiSpot.transform, graffitiSpot.size);
-            clientController.SendPacket(new PlayerGraffitiFinisher((int)graffitiSpot.size), IMessage.SendModes.ReliableUnordered);
+            clientController.SendPacket(new PlayerGraffitiFinisher((int)graffitiSpot.size), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
             return false;
         }
 

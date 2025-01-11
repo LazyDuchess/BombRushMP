@@ -48,7 +48,7 @@ namespace BombRushMP.Server
             }
             ClearAllInvitesForLobby(lobbyId);
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyStart(), IMessage.SendModes.Reliable, lobbyId);
+            SendPacketToLobby(new ServerLobbyStart(), IMessage.SendModes.Reliable, lobbyId, NetChannels.Gamemodes);
             lobby.CurrentGamemode.OnStart();
         }
 
@@ -59,7 +59,7 @@ namespace BombRushMP.Server
             var gamemode = lobby.CurrentGamemode;
             lobby.CurrentGamemode = null;
             SendLobbiesToStage(lobby.LobbyState.Stage);
-            SendPacketToLobby(new ServerLobbyEnd(cancelled), IMessage.SendModes.Reliable, lobbyId);
+            SendPacketToLobby(new ServerLobbyEnd(cancelled), IMessage.SendModes.Reliable, lobbyId, NetChannels.Gamemodes);
             gamemode.OnEnd(cancelled);
         }
 
@@ -89,7 +89,7 @@ namespace BombRushMP.Server
                 Lobbies.Remove(lobbyId);
                 _uidProvider.FreeUID(lobbyId);
                 ServerLogger.Log($"Deleted Lobby with UID {lobbyId}");
-                _server.SendPacketToStage(new ServerLobbyDeleted(lobby.LobbyState.Id), IMessage.SendModes.Reliable, lobby.LobbyState.Stage);
+                _server.SendPacketToStage(new ServerLobbyDeleted(lobby.LobbyState.Id), IMessage.SendModes.Reliable, lobby.LobbyState.Stage, NetChannels.ClientAndLobbyUpdates);
             }
         }
 
@@ -232,7 +232,7 @@ namespace BombRushMP.Server
                         Lobbies[lobby.LobbyState.Id] = lobby;
                         AddPlayer(lobby.LobbyState.Id, client.Id);
                         ServerLogger.Log($"Created Lobby with UID {lobby.LobbyState.Id} with host {player.ClientState.Name}");
-                        QueueAction(() => { _server.SendPacketToClient(new ServerLobbyCreateResponse(), IMessage.SendModes.ReliableUnordered, client); });
+                        QueueAction(() => { _server.SendPacketToClient(new ServerLobbyCreateResponse(), IMessage.SendModes.ReliableUnordered, client, NetChannels.ClientAndLobbyUpdates); });
                     }
                     break;
 
@@ -294,7 +294,7 @@ namespace BombRushMP.Server
                         {
                             var invitePacket = (ClientLobbyInvite)packet;
                             if (InvitePlayer(existingLobby.LobbyState.Id, invitePacket.InviteeId))
-                                _server.SendPacketToClient(new ServerLobbyInvite(invitePacket.InviteeId, playerId, existingLobby.LobbyState.Id), IMessage.SendModes.ReliableUnordered, _server.Players[invitePacket.InviteeId].Client);
+                                _server.SendPacketToClient(new ServerLobbyInvite(invitePacket.InviteeId, playerId, existingLobby.LobbyState.Id), IMessage.SendModes.ReliableUnordered, _server.Players[invitePacket.InviteeId].Client, NetChannels.ClientAndLobbyUpdates);
                         }
                     }
                     break;
@@ -328,13 +328,13 @@ namespace BombRushMP.Server
             }
         }
 
-        public void SendPacketToLobby(Packet packet, IMessage.SendModes sendMode, uint lobbyId)
+        public void SendPacketToLobby(Packet packet, IMessage.SendModes sendMode, uint lobbyId, NetChannels channel)
         {
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
                 foreach (var player in lobby.LobbyState.Players)
                 {
-                    _server.SendPacketToClient(packet, sendMode, _server.Players[player.Key].Client);
+                    _server.SendPacketToClient(packet, sendMode, _server.Players[player.Key].Client, channel);
                 }
             }
         }
@@ -346,7 +346,7 @@ namespace BombRushMP.Server
             if (_queuedStageUpdates.Contains(player.ClientState.Stage)) return;
 
             var lobbies = CreateServerLobbyStatesPacket(player.ClientState.Stage);
-            _server.SendPacketToClient(lobbies, IMessage.SendModes.Reliable, client);
+            _server.SendPacketToClient(lobbies, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);
         }
 
         private void QueueStageUpdate(int stage)
@@ -362,7 +362,7 @@ namespace BombRushMP.Server
         private void SendLobbiesToStage(int stage)
         {
             var lobbies = CreateServerLobbyStatesPacket(stage);
-            _server.SendPacketToStage(lobbies, IMessage.SendModes.Reliable, stage);
+            _server.SendPacketToStage(lobbies, IMessage.SendModes.Reliable, stage, NetChannels.ClientAndLobbyUpdates);
         }
 
         private List<LobbyState> GetLobbyStatesForStage(int stage)

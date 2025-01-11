@@ -20,9 +20,9 @@ namespace BombRushMP.Plugin.OfflineInterface
             return new OfflineClient();
         }
 
-        public IMessage CreateMessage(IMessage.SendModes sendMode, Enum packetId)
+        public IMessage CreateMessage(IMessage.SendModes sendMode, NetChannels channel, Enum packetId)
         {
-            return new OfflineMessage(Convert.ToUInt16(packetId));
+            return new OfflineMessage(Convert.ToUInt16(packetId), channel);
         }
 
         public INetServer CreateServer()

@@ -29,9 +29,9 @@ namespace BombRushMP.Common.Packets
             }
         }
 
-        public static IMessage MessageFromPacket(Packet packet, IMessage.SendModes sendMode)
+        public static IMessage MessageFromPacket(Packet packet, IMessage.SendModes sendMode, NetChannels channel)
         {
-            var message = NetworkingInterface.CreateMessage(sendMode, packet.PacketId);
+            var message = NetworkingInterface.CreateMessage(sendMode, channel, packet.PacketId);
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             packet.Write(writer);

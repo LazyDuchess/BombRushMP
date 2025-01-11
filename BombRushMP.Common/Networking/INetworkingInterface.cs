@@ -11,6 +11,6 @@ namespace BombRushMP.Common.Networking
         public int MaxPayloadSize { get; set; }
         public INetClient CreateClient();
         public INetServer CreateServer();
-        public IMessage CreateMessage(IMessage.SendModes sendMode, Enum packetId);
+        public IMessage CreateMessage(IMessage.SendModes sendMode, NetChannels channel, Enum packetId);
     }
 }

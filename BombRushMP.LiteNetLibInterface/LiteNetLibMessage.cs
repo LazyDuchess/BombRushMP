@@ -13,12 +13,14 @@ namespace BombRushMP.LiteNetLibInterface
     public class LiteNetLibMessage : IMessage
     {
         public DeliveryMethod DeliveryMethod;
+        public NetChannels Channel;
         private ushort _packetId;
         private NetDataWriter _writer;
 
-        public LiteNetLibMessage(IMessage.SendModes sendMode, ushort packetId)
+        public LiteNetLibMessage(IMessage.SendModes sendMode, NetChannels channel, ushort packetId)
         {
             DeliveryMethod = LiteNetLibUtils.SendModeToDeliveryMethod(sendMode);
+            Channel = channel;
             _writer = new NetDataWriter();
             _packetId = packetId;
         }

@@ -31,9 +31,9 @@ namespace BombRushMP.RiptideInterface
             return new RiptideServer();
         }
 
-        public IMessage CreateMessage(IMessage.SendModes sendMode, Enum packetId)
+        public IMessage CreateMessage(IMessage.SendModes sendMode, NetChannels channel, Enum packetId)
         {
-            return new RiptideMessage(Riptide.Message.Create(RiptideUtils.SendModeToRiptide(sendMode), packetId));
+            return new RiptideMessage(Message.Create(RiptideUtils.SendModeToRiptide(sendMode), packetId));
         }
 
         public override string ToString()

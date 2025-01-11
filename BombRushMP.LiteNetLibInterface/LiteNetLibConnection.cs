@@ -34,8 +34,9 @@ namespace BombRushMP.LiteNetLibInterface
 
         public void Send(IMessage message)
         {
-            var messageData = (message as LiteNetLibMessage).GetBytesForSend();
-            Peer.Send(messageData, (message as LiteNetLibMessage).DeliveryMethod);
+            var liteNetLibMessage = message as LiteNetLibMessage;
+            var messageData = liteNetLibMessage.GetBytesForSend();
+            Peer.Send(messageData, (byte)liteNetLibMessage.Channel,liteNetLibMessage.DeliveryMethod);
         }
 
         public override string ToString()

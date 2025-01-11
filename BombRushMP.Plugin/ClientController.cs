@@ -104,12 +104,12 @@ namespace BombRushMP.Plugin
         
         public void SendGenericEvent(GenericEvents ev, IMessage.SendModes sendMode)
         {
-            SendPacket(new PlayerGenericEvent(ev), sendMode);
+            SendPacket(new PlayerGenericEvent(ev), sendMode, NetChannels.Default);
         }
 
-        public void SendPacket(Packet packet, IMessage.SendModes sendMode)
+        public void SendPacket(Packet packet, IMessage.SendModes sendMode, NetChannels channel)
         {
-            var message = PacketFactory.MessageFromPacket(packet, sendMode);
+            var message = PacketFactory.MessageFromPacket(packet, sendMode, channel);
             _client.Send(message);
         }
 
@@ -176,7 +176,7 @@ namespace BombRushMP.Plugin
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (player == null) return;
             var packet = CreateVisualStatePacket(player);
-            SendPacket(packet, IMessage.SendModes.Unreliable);
+            SendPacket(packet, IMessage.SendModes.Unreliable, NetChannels.VisualUpdates);
         }
 
         private void Tick()
@@ -410,7 +410,7 @@ namespace BombRushMP.Plugin
             var authKey = AuthKey;
             var clientState = CreateClientState();
             var authPacket = new ClientAuth(authKey, clientState);
-            SendPacket(authPacket, IMessage.SendModes.Reliable);
+            SendPacket(authPacket, IMessage.SendModes.Reliable, NetChannels.Default);
         }
 
         public ClientState CreateClientState()
@@ -437,7 +437,7 @@ namespace BombRushMP.Plugin
 
         public void SendClientState()
         {
-            SendPacket(CreateClientState(), IMessage.SendModes.Reliable);
+            SendPacket(CreateClientState(), IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
         }
 
         private void OnConnected(object sender, EventArgs e)

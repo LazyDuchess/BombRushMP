@@ -47,7 +47,7 @@ namespace BombRushMP.LiteNetLibInterface
             var data = reader.GetRemainingBytes();
             var connection = new LiteNetLibConnection(peer);
             var reliability = LiteNetLibUtils.DeliveryMethodToSendMode(deliveryMethod);
-            var msg = new LiteNetLibMessage(reliability, packetId);
+            var msg = new LiteNetLibMessage(reliability, (NetChannels)channel, packetId);
             msg.Add(data);
             MessageReceived?.Invoke(this, new MessageReceivedEventArgs(packetId, msg, connection));
             reader.Recycle();
@@ -65,6 +65,7 @@ namespace BombRushMP.LiteNetLibInterface
                 _netManager.Stop();
             }
             _netManager = new NetManager(_netListener);
+            _netManager.ChannelsCount = (byte)NetChannels.MAX;
             if (NetworkingEnvironment.UseNativeSocketsIfAvailable)
             {
                 NetworkingEnvironment.Log("LiteNetLib: Using native sockets if supported.");

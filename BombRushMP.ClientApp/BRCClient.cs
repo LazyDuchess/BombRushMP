@@ -278,7 +278,7 @@ namespace BombRushMP.ClientApp
 
         public void SendPacket(Packet packet)
         {
-           var  message = PacketFactory.MessageFromPacket(packet, IMessage.SendModes.Reliable);
+           var  message = PacketFactory.MessageFromPacket(packet, IMessage.SendModes.Reliable, NetChannels.Default);
            _client.Send(message);
         }
     }

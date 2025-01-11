@@ -27,9 +27,9 @@ namespace BombRushMP.LiteNetLibInterface
             return new LiteNetLibClient();
         }
 
-        public IMessage CreateMessage(IMessage.SendModes sendMode, Enum packetId)
+        public IMessage CreateMessage(IMessage.SendModes sendMode, NetChannels channel, Enum packetId)
         {
-            return new LiteNetLibMessage(sendMode, Convert.ToUInt16(packetId));
+            return new LiteNetLibMessage(sendMode, channel, Convert.ToUInt16(packetId));
         }
 
         public INetServer CreateServer()

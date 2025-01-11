@@ -74,16 +74,16 @@ namespace BombRushMP.Plugin.Gamemodes
                             if (!_comboOverRegistered)
                             {
                                 _comboOverRegistered = true;
-                                ClientController.SendPacket(new ClientComboOver(player.score), IMessage.SendModes.ReliableUnordered);
+                                ClientController.SendPacket(new ClientComboOver(player.score), IMessage.SendModes.ReliableUnordered, NetChannels.Gamemodes);
                             }
                         }
                     }
                     timerUI.SetTime(timeLeft);
-                    if (timeLeft <= 0f && ComboBased && (player.IsComboing() || _comboOverRegistered))
+                    if (timeLeft <= 0f && ComboBased)
                     {
                         if (player.IsComboing() && !_comboOverRegistered)
                             timerUI.SetText("Overtime");
-                        else if (!player.IsComboing() && _comboOverRegistered)
+                        else
                             timerUI.SetText("Waiting for other players...");
                     }
                     break;
@@ -173,7 +173,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 var score = player.score;
                 if (player.IsComboing() && !ComboBased)
                     score += player.baseScore * player.scoreMultiplier;
-                ClientController.SendPacket(new ClientGamemodeScore(score), IMessage.SendModes.Reliable);
+                ClientController.SendPacket(new ClientGamemodeScore(score), IMessage.SendModes.Reliable, NetChannels.Gamemodes);
             }
         }
 

@@ -12,12 +12,12 @@ namespace BombRushMP.Plugin.OfflineInterface
         public ushort PacketId;
         private byte[] _data;
 
-        public OfflineMessage(ushort packetId)
+        public OfflineMessage(ushort packetId, NetChannels channel = NetChannels.Default)
         {
             PacketId = packetId;
         }
 
-        public OfflineMessage(ushort packetId, byte[] data)
+        public OfflineMessage(ushort packetId, byte[] data, NetChannels channel = NetChannels.Default)
         {
             PacketId = packetId;
             _data = data;

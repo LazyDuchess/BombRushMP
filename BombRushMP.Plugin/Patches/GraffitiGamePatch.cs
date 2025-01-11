@@ -23,9 +23,9 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), IMessage.SendModes.Reliable);
+            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), IMessage.SendModes.Reliable, NetChannels.VisualUpdates);
             if (anim == "grafSlashFinisher")
-                clientController.SendPacket(new PlayerGraffitiFinisher((int)__instance.gSpot.size), IMessage.SendModes.ReliableUnordered);
+                clientController.SendPacket(new PlayerGraffitiFinisher((int)__instance.gSpot.size), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
         }
 
         [HarmonyPostfix]
@@ -35,7 +35,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash("grafSlash" + side.ToString() + (outAnim ? "_Out" : ""))), IMessage.SendModes.Reliable);
+            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash("grafSlash" + side.ToString() + (outAnim ? "_Out" : ""))), IMessage.SendModes.Reliable, NetChannels.VisualUpdates);
         }
 
         [HarmonyPostfix]
@@ -45,7 +45,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerGraffitiSlash(__instance.slashCardinal.ToSystemVector3()), IMessage.SendModes.ReliableUnordered);
+            clientController.SendPacket(new PlayerGraffitiSlash(__instance.slashCardinal.ToSystemVector3()), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
         }
 
         [HarmonyPrefix]
