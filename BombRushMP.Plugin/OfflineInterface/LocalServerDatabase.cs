@@ -17,7 +17,7 @@ namespace BombRushMP.Plugin.OfflineInterface
 
         public LocalServerDatabase(string adminKey)
         {
-            AuthKeys.Users[adminKey] = new AuthUser() { UserKind = UserKinds.Admin };
+            AuthKeys.Users[adminKey] = new AuthUser() { UserKind = UserKinds.Admin, Badge = 0 };
         }
 
         public void Save()
