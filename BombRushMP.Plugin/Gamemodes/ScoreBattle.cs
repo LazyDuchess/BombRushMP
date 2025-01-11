@@ -9,13 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using BombRushMP.Common.Networking;
-using static BombRushMP.Plugin.Gamemodes.GraffitiRace;
+using TMPro;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
     public class ScoreBattle : Gamemode
     {
-        public enum SpawnModes
+        public enum SpawnMode
         {
             Current_Positions,
             At_Host
@@ -41,8 +41,8 @@ namespace BombRushMP.Plugin.Gamemodes
             var spawnMode = (SpawnMode)Settings.SettingByID[SettingSpawnModeID].Value;
             if (spawnMode == SpawnMode.At_Host)
             {
-                var host = ClientController.Instance.Players[Lobby.LobbyState.HostId].Player;
-                MPUtility.PlaceCurrentPlayer(host.transform.position, host.transform.rotation);
+                var host = ClientController.Instance.Players[Lobby.LobbyState.HostId].ClientVisualState;
+                MPUtility.PlaceCurrentPlayer(host.Position.ToUnityVector3(), host.Rotation.ToUnityQuaternion());
             }
             TimerUI.Instance.Activate();
         }
@@ -180,7 +180,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override GamemodeSettings GetDefaultSettings()
         {
             var settings = new GamemodeSettings();
-            settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
+            settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Current_Positions);
             return settings;
         }
     }
