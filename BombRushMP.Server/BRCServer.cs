@@ -547,6 +547,7 @@ namespace BombRushMP.Server
         private List<ServerClientVisualStates> CreateClientVisualStatesPacket(int stage)
         {
             var packetList = new List<ServerClientVisualStates>();
+            packetList.Shuffle();
             var currentNumber = 0;
             var currentPacket = new ServerClientVisualStates();
             foreach (var player in Players)
