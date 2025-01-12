@@ -131,9 +131,9 @@ namespace BombRushMP.Common.Packets
             var visualPosY = reader.ReadSingle();
             var visualPosZ = reader.ReadSingle();
 
-            Rotation = Compression.ReadCompressedQuaternion(reader);
+            Rotation = Quaternion.Normalize(Compression.ReadCompressedQuaternion(reader));
 
-            VisualRotation = Compression.ReadCompressedQuaternion(reader);
+            VisualRotation = Quaternion.Normalize(Compression.ReadCompressedQuaternion(reader));
 
             var velX = reader.ReadSingle();
             var velY = reader.ReadSingle();
