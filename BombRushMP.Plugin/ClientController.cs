@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin
 {
     public class ClientController : MonoBehaviour
     {
+        public static float DeltaTime { get; private set; }
         public static ClientController Instance { get; private set; }
         public Dictionary<int, int> PlayerCountByStage = new();
         public ClientLobbyManager ClientLobbyManager = null;
@@ -194,6 +195,7 @@ namespace BombRushMP.Plugin
             _tickTimer += Time.deltaTime;
             if (_tickTimer >= TickRate)
             {
+                DeltaTime = _tickTimer;
                 Tick();
                 _tickTimer = 0f;
             }

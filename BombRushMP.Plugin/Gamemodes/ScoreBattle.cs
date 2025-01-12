@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class ScoreBattle : Gamemode
     {
+        private const float ScoreUpdateRate = 0.2f;
         public enum SpawnMode
         {
             Current_Positions,
@@ -27,6 +28,7 @@ namespace BombRushMP.Plugin.Gamemodes
             Main,
             Finished
         }
+        private float _scoreTimer = 0f;
         private States _state = States.Countdown;
         private float _stateTimer = 0f;
         private DateTime _startTime = DateTime.UtcNow;
@@ -167,13 +169,18 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnTick_InGame()
         {
-            if (_state == States.Main)
+            _scoreTimer += ClientController.DeltaTime;
+            if (_scoreTimer >= ScoreUpdateRate)
             {
-                var player = WorldHandler.instance.GetCurrentPlayer();
-                var score = player.score;
-                if (player.IsComboing() && !ComboBased)
-                    score += player.baseScore * player.scoreMultiplier;
-                ClientController.SendPacket(new ClientGamemodeScore(score), IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+                if (_state == States.Main)
+                {
+                    var player = WorldHandler.instance.GetCurrentPlayer();
+                    var score = player.score;
+                    if (player.IsComboing() && !ComboBased)
+                        score += player.baseScore * player.scoreMultiplier;
+                    ClientController.SendPacket(new ClientGamemodeScore(score), IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+                }
+                _scoreTimer = 0f;
             }
         }
 
