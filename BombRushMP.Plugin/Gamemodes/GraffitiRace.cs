@@ -31,6 +31,30 @@ namespace BombRushMP.Plugin.Gamemodes
         private const int MaxGraffiti = 70;
         private const int GraffitiSteps = 5;
         private const float DistanceOffWall = 3f;
+        private List<StageChunk> _offStageChunks = new();
+
+        private void RestoreStageChunks()
+        {
+            foreach(var chunk in _offStageChunks)
+            {
+                chunk.gameObject.SetActive(false);
+            }
+            _offStageChunks.Clear();
+        }
+
+        private void TurnOnAllStageChunks()
+        {
+            _offStageChunks.Clear();
+            var stageChunks = WorldHandler.instance.SceneObjectsRegister.stageChunks;
+            foreach (var chunk in stageChunks)
+            {
+                if (!chunk.gameObject.activeSelf)
+                {
+                    _offStageChunks.Add(chunk);
+                    chunk.gameObject.SetActive(true);
+                }
+            }
+        }
 
         public enum States
         {
@@ -293,6 +317,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
             if (spawnMode == SpawnMode.Automatic)
             {
+                TurnOnAllStageChunks();
                 foreach (var raceSpot in raceSpots)
                 {
                     var grafSpot = GetGraffitiSpotByUID(raceSpot);
@@ -314,6 +339,7 @@ namespace BombRushMP.Plugin.Gamemodes
                         }
                     }
                 }
+                RestoreStageChunks();
             }
             else
             {
