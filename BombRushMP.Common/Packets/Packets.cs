@@ -42,6 +42,7 @@ namespace BombRushMP.Common.Packets
         ClientChat,
         ServerChat,
         ClientComboOver,
-        ClientAuth
+        ClientAuth,
+        ServerBanList
     }
 }

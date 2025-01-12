@@ -7,6 +7,7 @@ using Reptile;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -392,6 +393,29 @@ namespace BombRushMP.Plugin
                     {
                         var playerCountPacket = (ServerPlayerCount)packet;
                         PlayerCountByStage = playerCountPacket.PlayerCountByStage;
+                    }
+                    break;
+
+                case Packets.ServerBanList:
+                    {
+                        var user = GetLocalUser();
+                        if (!user.IsModerator) break;
+                        var banListPacket = (ServerBanList)packet;
+                        var fileDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ACN");
+                        var filePath = Path.Combine(fileDirectory, "banned_users.json");
+                        var chatUi = ChatUI.Instance;
+                        ClientLogger.Log($"Received ban list from server. Will write to {filePath}.");
+                        try
+                        {
+                            Directory.CreateDirectory(fileDirectory);
+                            File.WriteAllText(filePath, banListPacket.JsonData);
+                            chatUi.AddMessage($"Ban list written to {filePath}");
+                        }
+                        catch(Exception ex)
+                        {
+                            chatUi.AddMessage("Failed to write ban list.");
+                            Debug.LogError(ex);
+                        }
                     }
                     break;
             }

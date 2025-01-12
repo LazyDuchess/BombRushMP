@@ -13,6 +13,7 @@ using BombRushMP.Common.Networking;
 using System.Diagnostics;
 using System.Security.Policy;
 using System.Security.Cryptography;
+using Newtonsoft.Json;
 
 namespace BombRushMP.Server
 {
@@ -256,7 +257,7 @@ namespace BombRushMP.Server
                     helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}banaddress (ip) - Bans player by IP\n{cmdChar}banid (id) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}say (announcement for stage)\n{cmdChar}sayall (global announcement)\n{cmdChar}stats - Shows global player and lobby stats\n";
+                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) - Bans player by IP\n{cmdChar}banid (id) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}say (announcement for stage)\n{cmdChar}sayall (global announcement)\n{cmdChar}stats - Shows global player and lobby stats\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
@@ -307,6 +308,13 @@ namespace BombRushMP.Server
                     {
                         SendMessageToPlayer("Restarting server.", player);
                         RestartAction?.Invoke();
+                    }
+                    break;
+
+                case "banlist":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        SendPacketToClient(new ServerBanList(JsonConvert.SerializeObject(_database.BannedUsers, Formatting.Indented)), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Default);
                     }
                     break;
             }

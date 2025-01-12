@@ -415,6 +415,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool DontAutoScrollChatIfFocused
+        {
+            get
+            {
+                return _dontAutoScrollChatIfFocused.Value;
+            }
+
+            set
+            {
+                _dontAutoScrollChatIfFocused.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
@@ -444,6 +457,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<string> _authKey;
         private ConfigEntry<CharacterNames> _fallbackCharacter;
         private ConfigEntry<bool> _invisible;
+        private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -484,6 +498,7 @@ namespace BombRushMP.Plugin
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
             _playerListKey = configFile.Bind(Input, "Player List Key", KeyCode.J, "Press this key to toggle the player list.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
+            _dontAutoScrollChatIfFocused = configFile.Bind(ChatSettings, "No auto scroll chat if focused", false, "If true, will not scroll to the bottom when messages are received if the chat window is open for typing/scrolling.");
             _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeC, "Balance UI theme.");
 #if DEBUG
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");

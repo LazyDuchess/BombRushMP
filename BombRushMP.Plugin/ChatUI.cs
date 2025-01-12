@@ -134,7 +134,10 @@ namespace BombRushMP.Plugin
             var scrollToBottom = true;
             if (State == States.Focused && _scrollRect.normalizedPosition.y > 0.1f)
                 scrollToBottom = false;
-            ShowMessages();
+            if (State == States.Focused && MPSettings.Instance.DontAutoScrollChatIfFocused)
+                scrollToBottom = false;
+            if (MPSettings.Instance.ShowChat)
+                ShowMessages();
             if (_messages.Count >= MaxMessages)
             {
                 var oldestMessage = _messages[0];
