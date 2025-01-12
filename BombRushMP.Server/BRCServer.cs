@@ -251,14 +251,16 @@ namespace BombRushMP.Server
                     break;
 
                 case "help":
+                    var cmdChar = Constants.CommandChar;
                     var helpStr = "\nAvailable commands:\n";
+                    helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += "banaddress (ip) - Bans player by IP\nbanid (id) - Bans player by ID\nunban (ip) - Unbans player by IP\ngetids - Gets IDs of players in current stage\ngetaddresses - Gets IP addresses of players in current stage\nhelp\nsay (announcement for stage)\nsayall (global announcement)\nstats - Shows global player and lobby stats\n";
+                        helpStr += $"{cmdChar}banaddress (ip) - Bans player by IP\n{cmdChar}banid (id) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}say (announcement for stage)\n{cmdChar}sayall (global announcement)\n{cmdChar}stats - Shows global player and lobby stats\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
-                        helpStr += "reload - Reloads server auth keys and banned users\nrestart - Restarts the server\n";
+                        helpStr += $"{cmdChar}reload - Reloads server auth keys and banned users\n{cmdChar}restart - Restarts the server\n";
                     }
                     SendMessageToPlayer(helpStr, player);
                     break;
@@ -440,7 +442,7 @@ namespace BombRushMP.Server
                         if (elapsed.TotalSeconds <= ChatCooldown)
                             break;
                         player.LastChatTime = now;
-                        if (chatPacket.Message[0] == '/')
+                        if (chatPacket.Message[0] == Constants.CommandChar)
                         {
                             ProcessCommand(chatPacket.Message, player);
                         }

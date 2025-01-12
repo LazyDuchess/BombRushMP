@@ -6,5 +6,6 @@
         public const float DefaultNetworkingTickRate = 0.03125f;
         public const float ScoreBattleDuration = 180f;
         public const int MaxPayloadSize = 10000;
+        public const char CommandChar = '/';
     }
 }

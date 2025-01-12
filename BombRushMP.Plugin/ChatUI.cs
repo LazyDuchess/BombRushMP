@@ -167,6 +167,24 @@ namespace BombRushMP.Plugin
             if (!TMPFilter.IsValidChatMessage(message)) return;
             var clientController = ClientController.Instance;
             clientController.SendPacket(new ClientChat(message), IMessage.SendModes.ReliableUnordered, NetChannels.Chat);
+            if (message[0] == Constants.CommandChar)
+                ProcessLocalCommand(message);
+        }
+
+        private void ProcessLocalCommand(string message)
+        {
+            var cmd = message.Substring(1);
+            var args = cmd.Split(' ');
+            ClientLogger.Log($"Processing chat command {args[0]}");
+            switch (args[0]) {
+                case "hide":
+                    MPSettings.Instance.ShowChat = false;
+                    break;
+                case "show":
+                    MPSettings.Instance.ShowChat = true;
+                    break;
+            }
+                
         }
 
         private void LateUpdate()
@@ -209,7 +227,7 @@ namespace BombRushMP.Plugin
         {
             _scrollRect.normalizedPosition = new Vector2(0, 0);
             _messageHideTimer += Time.deltaTime;
-            if (_messageHideTimer >= TimeForMessagesToHide)
+            if (_messageHideTimer >= TimeForMessagesToHide || !MPSettings.Instance.ShowChat)
                 HideMessages();
 
             if (Input.GetKeyDown(MPSettings.Instance.ChatKey) && CanOpenChat())
@@ -292,7 +310,6 @@ namespace BombRushMP.Plugin
 
         private bool ShouldDisplay()
         {
-            if (!MPSettings.Instance.ShowChat) return false;
             var uiManager = Core.Instance.UIManager;
             if (uiManager == null || uiManager.gameplay == null || uiManager.gameplay.gameplayScreen == null) return false;
             if (!uiManager.gameplay.gameplayScreen.gameObject.activeInHierarchy)
