@@ -10,6 +10,16 @@ namespace BombRushMP.Common
 {
     public static class Compression
     {
+        public static sbyte CompressToByte(float value, float maxValue)
+        {
+            return CompressNormal(value / maxValue);
+        }
+
+        public static float DecompressFromByte(sbyte compressedValue, float maxValue)
+        {
+            return DecompressNormal(compressedValue) * maxValue;
+        }
+
         public static sbyte CompressNormal(float normalValue)
         {
             return (sbyte)(normalValue * sbyte.MaxValue);

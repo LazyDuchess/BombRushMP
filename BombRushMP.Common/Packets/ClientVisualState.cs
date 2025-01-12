@@ -11,6 +11,7 @@ namespace BombRushMP.Common.Packets
 {
     public class ClientVisualState : Packet
     {
+        private const float PhoneDirectionMaxValue = 2f;
         private enum BooleanMask
         {
             MoveStyleEquipped,
@@ -97,15 +98,15 @@ namespace BombRushMP.Common.Packets
 
             writer.Write(MoveStyle);
 
-            writer.Write(PhoneDirectionX);
-            writer.Write(PhoneDirectionY);
+            writer.Write(Compression.CompressToByte(PhoneDirectionX, PhoneDirectionMaxValue));
+            writer.Write(Compression.CompressToByte(PhoneDirectionY, PhoneDirectionMaxValue));
 
-            writer.Write(TurnDirection1);
-            writer.Write(TurnDirection2);
-            writer.Write(TurnDirection3);
-            writer.Write(TurnDirectionSkateboard);
+            writer.Write(Compression.CompressNormal(TurnDirection1));
+            writer.Write(Compression.CompressNormal(TurnDirection2));
+            writer.Write(Compression.CompressNormal(TurnDirection3));
+            writer.Write(Compression.CompressNormal(TurnDirectionSkateboard));
 
-            writer.Write(GrindDirection);
+            writer.Write(Compression.CompressNormal(GrindDirection));
 
             writer.Write(DustEmissionRate);
             writer.Write(BoostpackEffectMode);
@@ -153,15 +154,15 @@ namespace BombRushMP.Common.Packets
 
             MoveStyle = reader.ReadInt32();
 
-            PhoneDirectionX = reader.ReadSingle();
-            PhoneDirectionY = reader.ReadSingle();
+            PhoneDirectionX = Compression.DecompressFromByte(reader.ReadSByte(), PhoneDirectionMaxValue);
+            PhoneDirectionY = Compression.DecompressFromByte(reader.ReadSByte(), PhoneDirectionMaxValue);
 
-            TurnDirection1 = reader.ReadSingle();
-            TurnDirection2 = reader.ReadSingle();
-            TurnDirection3 = reader.ReadSingle();
-            TurnDirectionSkateboard = reader.ReadSingle();
+            TurnDirection1 = Compression.DecompressNormal(reader.ReadSByte());
+            TurnDirection2 = Compression.DecompressNormal(reader.ReadSByte());
+            TurnDirection3 = Compression.DecompressNormal(reader.ReadSByte());
+            TurnDirectionSkateboard = Compression.DecompressNormal(reader.ReadSByte());
 
-            GrindDirection = reader.ReadSingle();
+            GrindDirection = Compression.DecompressNormal(reader.ReadSByte());
 
             Position = new Vector3(posX, posY, posZ);
             VisualPosition = new Vector3(visualPosX, visualPosY, visualPosZ);
