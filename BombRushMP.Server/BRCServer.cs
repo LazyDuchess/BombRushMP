@@ -412,7 +412,10 @@ namespace BombRushMP.Server
                             if (player.ClientState == null) return;
                             // Exclude sender - will break things if you're trying to display the networked local player clientside.
                             // SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage, [client.Id]);
-                            SendPacketToStage(playerPacket, IMessage.SendModes.ReliableUnordered, Players[client.Id].ClientState.Stage, NetChannels.Default);
+                            var chan = NetChannels.Default;
+                            if (packet is PlayerAnimation)
+                                chan = NetChannels.Animation;
+                            SendPacketToStage(playerPacket, IMessage.SendModes.ReliableUnordered, Players[client.Id].ClientState.Stage, chan);
                         }
                     }
                     break;

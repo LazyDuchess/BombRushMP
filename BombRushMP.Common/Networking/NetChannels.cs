@@ -13,6 +13,7 @@ namespace BombRushMP.Common.Networking
         ClientAndLobbyUpdates,
         VisualUpdates,
         Chat,
+        Animation,
         MAX
     }
 }
