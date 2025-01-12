@@ -16,6 +16,7 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _label;
         private Button _spectateButton;
         private Button _banButton;
+        private Button _inviteButton;
         private MPPlayer _player;
         private GameObject _afkIndicator;
         private void Awake()
@@ -24,8 +25,10 @@ namespace BombRushMP.Plugin
             _label.spriteAsset = MPAssets.Instance.Sprites;
             _spectateButton = transform.Find("Spectate Button").GetComponent<Button>();
             _banButton = transform.Find("Ban Button").GetComponent<Button>();
+            _inviteButton = transform.Find("Invite Button").GetComponent<Button>();
             _spectateButton.onClick.AddListener(TrySpectate);
             _banButton.onClick.AddListener(TryBan);
+            _inviteButton.onClick.AddListener(TryInvite);
             _afkIndicator = transform.Find("AFK").gameObject;
         }
 
@@ -34,6 +37,12 @@ namespace BombRushMP.Plugin
             if (_player != null && _player.ClientVisualState != null)
             {
                 _afkIndicator.SetActive(_player.ClientVisualState.AFK);
+                var clientController = ClientController.Instance;
+                var currentLobby = clientController.ClientLobbyManager.CurrentLobby;
+                if (currentLobby != null && currentLobby.LobbyState.HostId == clientController.LocalID && !currentLobby.InGame && _player.ClientId != clientController.LocalID)
+                    _inviteButton.gameObject.SetActive(true);
+                else
+                    _inviteButton.gameObject.SetActive(false);
             }
         }
 
@@ -57,6 +66,12 @@ namespace BombRushMP.Plugin
                 if (user.IsModerator)
                     _banButton.gameObject.SetActive(true);
             }
+        }
+
+        private void TryInvite()
+        {
+            if (_player == null) return;
+            ClientController.Instance.ClientLobbyManager.InvitePlayer(_player.ClientId);
         }
 
         private void TrySpectate()
