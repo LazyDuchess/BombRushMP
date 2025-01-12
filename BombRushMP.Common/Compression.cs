@@ -36,5 +36,20 @@ namespace BombRushMP.Common
             var w = DecompressNormal(reader.ReadSByte());
             return new Quaternion(x, y, z, w);
         }
+
+        public static void WriteCompressedVector3Normal(Vector3 vec, BinaryWriter writer)
+        {
+            writer.Write(CompressNormal(vec.X));
+            writer.Write(CompressNormal(vec.Y));
+            writer.Write(CompressNormal(vec.Z));
+        }
+
+        public static Vector3 ReadCompressedVector3Normal(BinaryReader reader)
+        {
+            var x = DecompressNormal(reader.ReadSByte());
+            var y = DecompressNormal(reader.ReadSByte());
+            var z = DecompressNormal(reader.ReadSByte());
+            return new Vector3(x, y, z);
+        }
     }
 }

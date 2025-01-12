@@ -10,14 +10,14 @@ namespace BombRushMP.Common.Packets
     public class PlayerGraffitiFinisher : PlayerPacket
     {
         public override Packets PacketId => Packets.PlayerGraffitiFinisher;
-        public int GraffitiSize = 0;
+        public byte GraffitiSize = 0;
 
         public PlayerGraffitiFinisher()
         {
 
         }
 
-        public PlayerGraffitiFinisher(int graffitiSize)
+        public PlayerGraffitiFinisher(byte graffitiSize)
         {
             GraffitiSize = graffitiSize;
         }
@@ -25,7 +25,7 @@ namespace BombRushMP.Common.Packets
         public override void Read(BinaryReader reader)
         {
             base.Read(reader);
-            GraffitiSize = reader.ReadInt32();
+            GraffitiSize = reader.ReadByte();
         }
 
         public override void Write(BinaryWriter writer)

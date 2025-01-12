@@ -430,7 +430,7 @@ namespace BombRushMP.Plugin
             {
                 Name = _mpSettings.PlayerName,
                 Character = (int)player.character,
-                Outfit = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
+                Outfit = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 ProtocolVersion = Constants.ProtocolVersion,
                 SpecialSkin = playerComp.SpecialSkin,

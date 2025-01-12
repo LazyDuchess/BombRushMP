@@ -12,7 +12,7 @@ namespace BombRushMP.Server
 {
     public class Player
     {
-        private const float SecondsToKickPlayerWithoutClientState = 1f;
+        private const float SecondsToKickPlayerWithoutClientState = 5f;
         public BRCServer Server = null;
         public ClientState ClientState = null;
         public ClientVisualState ClientVisualState = null;

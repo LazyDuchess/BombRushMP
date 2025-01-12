@@ -10,6 +10,12 @@ namespace BombRushMP.Common.Packets
 {
     public class PlayerAnimation : PlayerPacket
     {
+        private enum BooleanMask
+        {
+            ForceOverwrite,
+            Instant,
+            MAX
+        }
         public override Packets PacketId => Packets.PlayerAnimation;
         public int NewAnim;
         public bool ForceOverwrite;
@@ -33,9 +39,11 @@ namespace BombRushMP.Common.Packets
             base.Write(writer);
             writer.Write(ClientId);
             writer.Write(NewAnim);
-            writer.Write(ForceOverwrite);
-            writer.Write(Instant);
-            writer.Write(AtTime);
+            var bits = new Bitfield(BooleanMask.MAX);
+            bits[BooleanMask.Instant] = Instant;
+            bits[BooleanMask.ForceOverwrite] = ForceOverwrite;
+            bits.WriteByte(writer);
+            writer.Write(Compression.CompressNormal(AtTime));
         }
 
         public override void Read(BinaryReader reader)
@@ -43,9 +51,10 @@ namespace BombRushMP.Common.Packets
             base.Read(reader);
             ClientId = reader.ReadUInt16();
             NewAnim = reader.ReadInt32();
-            ForceOverwrite = reader.ReadBoolean();
-            Instant = reader.ReadBoolean();
-            AtTime = reader.ReadSingle();
+            var bits = Bitfield.ReadByte(reader);
+            Instant = bits[BooleanMask.Instant];
+            ForceOverwrite = bits[BooleanMask.ForceOverwrite];
+            AtTime = Compression.DecompressNormal(reader.ReadSByte());
         }
     }
 }

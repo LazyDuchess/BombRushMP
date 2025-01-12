@@ -27,18 +27,13 @@ namespace BombRushMP.Common.Packets
         public override void Read(BinaryReader reader)
         {
             base.Read(reader);
-            var dx = reader.ReadSingle();
-            var dy = reader.ReadSingle();
-            var dz = reader.ReadSingle();
-            Direction = new Vector3(dx, dy, dz);
+            Direction = Compression.ReadCompressedVector3Normal(reader);
         }
 
         public override void Write(BinaryWriter writer)
         {
             base.Write(writer);
-            writer.Write(Direction.X);
-            writer.Write(Direction.Y);
-            writer.Write(Direction.Z);
+            Compression.WriteCompressedVector3Normal(Direction, writer);
         }
     }
 }

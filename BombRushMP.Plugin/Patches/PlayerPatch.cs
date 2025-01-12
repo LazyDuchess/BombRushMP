@@ -303,7 +303,7 @@ namespace BombRushMP.Plugin.Patches
             __instance.audioManager.PlaySfxGameplay(SfxCollectionID.GraffitiSfx, AudioClipID.graffitiComplete, 0f);
             __instance.RemoveGraffitiSlash();
             __instance.CreateGraffitiFinishEffect(graffitiSpot.transform, graffitiSpot.size);
-            clientController.SendPacket(new PlayerGraffitiFinisher((int)graffitiSpot.size), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
+            clientController.SendPacket(new PlayerGraffitiFinisher((byte)graffitiSpot.size), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
             return false;
         }
 

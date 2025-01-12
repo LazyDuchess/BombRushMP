@@ -26,6 +26,19 @@ namespace BombRushMP.Common
             _values = new bool[size];
         }
 
+        public static Bitfield ReadByte(BinaryReader reader)
+        {
+            var val = reader.ReadByte();
+            var bitcount = sizeof(byte) * 8;
+            var field = new Bitfield(bitcount);
+            for (var i = 0; i < bitcount; i++)
+            {
+                var mask = (byte)(1 << i);
+                field._values[i] = (val & mask) != 0;
+            }
+            return field;
+        }
+
         public static Bitfield ReadShort(BinaryReader reader)
         {
             var val = reader.ReadInt16();
@@ -50,6 +63,17 @@ namespace BombRushMP.Common
                 field._values[i] = (val & mask) != 0;
             }
             return field;
+        }
+
+        public void WriteByte(BinaryWriter writer)
+        {
+            byte byteVal = 0;
+            for (var i = 0; i < _values.Length; i++)
+            {
+                if (_values[i])
+                    byteVal |= (byte)(1 << i);
+            }
+            writer.Write(byteVal);
         }
 
         public void WriteShort(BinaryWriter writer)
