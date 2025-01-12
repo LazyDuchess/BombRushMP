@@ -408,13 +408,13 @@ namespace BombRushMP.Server
                             if (clientVisualState.AFK)
                             {
                                 SendPacketToStage(new ServerChat(
-                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.AFKMessage, clientState.User.Badges, ChatMessageTypes.PlayerAFK),
+                                    clientState.Name, ServerConstants.AFKMessage, clientState.User.Badges, ChatMessageTypes.PlayerAFK),
                                     IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                             }
                             else
                             {
                                 SendPacketToStage(new ServerChat(
-                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveAFKMessage, clientState.User.Badges, ChatMessageTypes.PlayerAFK),
+                                    clientState.Name, ServerConstants.LeaveAFKMessage, clientState.User.Badges, ChatMessageTypes.PlayerAFK),
                                     IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                             }
                         }
@@ -581,7 +581,7 @@ namespace BombRushMP.Server
                 if (!player.Invisible)
                 {
                     SendPacketToStage(new ServerChat(
-                        TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
+                        clientState.Name, leaveMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
                         IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                 }
             }
