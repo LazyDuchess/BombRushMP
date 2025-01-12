@@ -17,6 +17,7 @@ namespace BombRushMP.Plugin
         private Button _spectateButton;
         private Button _banButton;
         private Button _inviteButton;
+        private Button _kickButton;
         private MPPlayer _player;
         private GameObject _afkIndicator;
         private void Awake()
@@ -26,9 +27,11 @@ namespace BombRushMP.Plugin
             _spectateButton = transform.Find("Spectate Button").GetComponent<Button>();
             _banButton = transform.Find("Ban Button").GetComponent<Button>();
             _inviteButton = transform.Find("Invite Button").GetComponent<Button>();
+            _kickButton = transform.Find("Kick Button").GetComponent<Button>();
             _spectateButton.onClick.AddListener(TrySpectate);
             _banButton.onClick.AddListener(TryBan);
             _inviteButton.onClick.AddListener(TryInvite);
+            _kickButton.onClick.AddListener(TryKick);
             _afkIndicator = transform.Find("AFK").gameObject;
         }
 
@@ -51,6 +54,11 @@ namespace BombRushMP.Plugin
                 {
                     _inviteButton.gameObject.SetActive(false);
                 }
+
+                if (currentLobby != null && currentLobby.LobbyState.HostId == clientController.LocalID && _player.ClientId != clientController.LocalID && currentLobby.LobbyState.Players.ContainsKey(_player.ClientId))
+                    _kickButton.gameObject.SetActive(true);
+                else
+                    _kickButton.gameObject.SetActive(false);
             }
         }
 
@@ -60,7 +68,7 @@ namespace BombRushMP.Plugin
             _player = player;
             var nameText = MPUtility.GetPlayerDisplayName(player.ClientState);
             var user = clientController.GetLocalUser();
-            if (user.IsModerator)
+            if (user?.IsModerator == true)
                 nameText = $"[{player.ClientId}] {nameText}";
             _label.text = nameText;
             var localId = clientController.LocalID;
@@ -74,6 +82,12 @@ namespace BombRushMP.Plugin
                 if (user.IsModerator)
                     _banButton.gameObject.SetActive(true);
             }
+        }
+
+        private void TryKick()
+        {
+            if (_player == null) return;
+            ClientController.Instance.ClientLobbyManager.KickPlayer(_player.ClientId);
         }
 
         private void TryInvite()
