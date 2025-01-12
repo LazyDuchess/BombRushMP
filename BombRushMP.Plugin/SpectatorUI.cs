@@ -15,6 +15,32 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _nextLabel;
         private TextMeshProUGUI _previousLabel;
         private TextMeshProUGUI _backLabel;
+        private TextMeshProUGUI _idLabel;
+
+        private void Update()
+        {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            var user = clientController.GetLocalUser();
+            if (user == null)
+            {
+                _idLabel.gameObject.SetActive(false);
+                return;
+            }
+            if (user.UserKind == Common.UserKinds.Mod || user.UserKind == Common.UserKinds.Admin)
+            {
+                _idLabel.gameObject.SetActive(true);
+                var plid = 0;
+                var spec = SpectatorController.Instance;
+                if (spec != null)
+                {
+                    plid = spec.CurrentSpectatingClient;
+                }
+                _idLabel.text = $"Player ID: {plid}";
+            }
+            else
+                _idLabel.gameObject.SetActive(false);
+        }
 
         static TextMeshProUGUI MakeLabel(TextMeshProUGUI reference, string name)
         {
@@ -118,6 +144,14 @@ namespace BombRushMP.Plugin
             _backLabel.rectTransform.pivot = new Vector2(0f, 1f);
             _backLabel.rectTransform.anchoredPosition = new Vector2(labelLeft + glyphOffset, labelBegin + (labelSeparation * 3));
             _backLabel.rectTransform.SetParent(rectParent, false);
+
+            _idLabel = MakeLabel(referenceText, "IdLabel");
+            _idLabel.text = "Back";
+            _idLabel.rectTransform.anchorMin = new Vector2(0.0f, 0f);
+            _idLabel.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            _idLabel.rectTransform.pivot = new Vector2(0f, 1f);
+            _idLabel.rectTransform.anchoredPosition = new Vector2(labelLeft + glyphOffset, labelBegin + (labelSeparation * 4));
+            _idLabel.rectTransform.SetParent(rectParent, false);
 
             glyph = MakeGlyph(referenceText, 3);
             glyph.rectTransform.anchorMin = new Vector2(0.0f, 0f);

@@ -18,6 +18,7 @@ namespace BombRushMP.Plugin
             if (name.Length >= MPSettings.MaxNameLength)
                 name = name.Substring(0, MPSettings.MaxNameLength);
             name = TMPFilter.CloseAllTags(name);
+            name = TMPFilter.FilterTags(name, MPSettings.Instance.ChatCriteria);
             if (MPSettings.Instance.FilterProfanity)
             {
                 if (ProfanityFilter.TMPContainsProfanity(name))

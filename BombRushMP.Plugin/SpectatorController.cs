@@ -11,10 +11,10 @@ namespace BombRushMP.Plugin
 {
     public class SpectatorController : MonoBehaviour
     {
+        public ushort CurrentSpectatingClient = 0;
         public static SpectatorController Instance { get; private set; }
         private ClientController _clientController = null;
         private List<MPPlayer> _players = null;
-        private ushort _currentSpectatingClient = 0;
         private Player _currentSpectatingPlayer = null;
         private GameplayCamera _gameplayCamera = null;
         private WorldHandler _worldHandler = null;
@@ -53,7 +53,7 @@ namespace BombRushMP.Plugin
                 EndSpectating();
                 return;
             }
-            _currentSpectatingClient = _players[0].ClientId;
+            CurrentSpectatingClient = _players[0].ClientId;
             SpectatorUI.Instance.Activate();
         }
 
@@ -95,7 +95,7 @@ namespace BombRushMP.Plugin
             currentIndex++;
             if (currentIndex >= _players.Count)
                 currentIndex = 0;
-            _currentSpectatingClient = _players[currentIndex].ClientId;
+            CurrentSpectatingClient = _players[currentIndex].ClientId;
         }
 
         private void Previous()
@@ -104,7 +104,7 @@ namespace BombRushMP.Plugin
             currentIndex--;
             if (currentIndex < 0)
                 currentIndex = _players.Count - 1;
-            _currentSpectatingClient = _players[currentIndex].ClientId;
+            CurrentSpectatingClient = _players[currentIndex].ClientId;
         }
 
         private void CachePlayers()
@@ -117,7 +117,7 @@ namespace BombRushMP.Plugin
             for(var i = 0; i < _players.Count; i++)
             {
                 var player = _players[i];
-                if (player.ClientId == _currentSpectatingClient)
+                if (player.ClientId == CurrentSpectatingClient)
                     return i;
             }
             return 0;
