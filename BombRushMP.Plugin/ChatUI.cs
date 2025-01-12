@@ -105,8 +105,10 @@ namespace BombRushMP.Plugin
             if (string.IsNullOrEmpty(authorname))
                 authorname = "";
             authorname = MPUtility.GetPlayerDisplayName(authorname);
-            if (serverMessage.Badge != -1)
-                authorname = $"<sprite={serverMessage.Badge}> {authorname}";
+            foreach(var badge in serverMessage.Badges)
+            {
+                authorname = $"<sprite={badge}> {authorname}";
+            }
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
                 if (text.Length >= MPSettings.MaxMessageLength)

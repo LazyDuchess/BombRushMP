@@ -14,8 +14,7 @@ namespace BombRushMP.Server
 
         public void MakeExample()
         {
-            Users["Default"] = new AuthUser(UserKinds.Player, [], -1, "Default user");
-            Users["Example"] = new AuthUser(UserKinds.Player, ["testtag"], -1, "Example user");
+            Users["Default"] = new AuthUser(UserKinds.Player, [], [], "Default user");
         }
 
         /// <summary>

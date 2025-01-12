@@ -312,14 +312,7 @@ namespace BombRushMP.Plugin
         public void SetClientState(ClientState newClientState)
         {
             ClientState = newClientState;
-            ClientState.Name = TMPFilter.CloseAllTags(TMPFilter.FilterTags(ClientState.Name, MPSettings.Instance.ChatCriteria));
-            if (ClientState.Name.Length >= MPSettings.MaxNameLength)
-                ClientState.Name = ClientState.Name.Substring(0, MPSettings.MaxNameLength);
-            if (MPSettings.Instance.FilterProfanity)
-            {
-                if (ProfanityFilter.TMPContainsProfanity(ClientState.Name))
-                    ClientState.Name = ProfanityFilter.CensoredName;
-            }
+            ClientState.Name = MPUtility.GetPlayerDisplayName(ClientState.Name);
         }
 
         private void UpdateNameplate()

@@ -341,7 +341,7 @@ namespace BombRushMP.Server
                             joinMessage = SpecialPlayerUtils.SpecialPlayerJoinMessage;
 
                         SendPacketToStage(new ServerChat(
-                            TMPFilter.CloseAllTags(clientState.Name), joinMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
+                            clientState.Name, joinMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
                             IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
 
                         ClientHandshook?.Invoke(client);
@@ -360,13 +360,13 @@ namespace BombRushMP.Server
                             if (clientVisualState.AFK)
                             {
                                 SendPacketToStage(new ServerChat(
-                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.AFKMessage, clientState.User.Badge, ChatMessageTypes.PlayerAFK),
+                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.AFKMessage, clientState.User.Badges, ChatMessageTypes.PlayerAFK),
                                     IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                             }
                             else
                             {
                                 SendPacketToStage(new ServerChat(
-                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveAFKMessage, clientState.User.Badge, ChatMessageTypes.PlayerAFK),
+                                    TMPFilter.CloseAllTags(clientState.Name), ServerConstants.LeaveAFKMessage, clientState.User.Badges, ChatMessageTypes.PlayerAFK),
                                     IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                             }
                         }
@@ -396,7 +396,7 @@ namespace BombRushMP.Server
                         else
                         {
                             if (player.ClientState == null) return;
-                            var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, player.ClientState.User.Badge, ChatMessageTypes.Chat);
+                            var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, player.ClientState.User.Badges, ChatMessageTypes.Chat);
                             SendPacketToStage(serverChatPacket, IMessage.SendModes.ReliableUnordered, player.ClientState.Stage, NetChannels.Chat);
                         }
                     }
@@ -524,7 +524,7 @@ namespace BombRushMP.Server
                     leaveMessage = SpecialPlayerUtils.SpecialPlayerLeaveMessage;
 
                 SendPacketToStage(new ServerChat(
-                    TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badge, ChatMessageTypes.PlayerJoinedOrLeft),
+                    TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
                     IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
             }
         }

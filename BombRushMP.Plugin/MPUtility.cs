@@ -24,7 +24,7 @@ namespace BombRushMP.Plugin
                 if (ProfanityFilter.TMPContainsProfanity(name))
                     name = ProfanityFilter.CensoredName;
             }
-            return name;
+            return name.Trim();
         }
 
         public static string GetPlayerDisplayName(ClientState clientState)
@@ -32,9 +32,9 @@ namespace BombRushMP.Plugin
             var name = clientState.Name;
             //name = GetPlayerDisplayName(name);
             var user = clientState.User;
-            if (user.Badge != -1)
+            foreach(var badge in user.Badges)
             {
-                name = $"<sprite={user.Badge}> {name}";
+                name = $"<sprite={badge}> {name}";
             }
             return name;
         }

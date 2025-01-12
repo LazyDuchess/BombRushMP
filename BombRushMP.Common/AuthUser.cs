@@ -29,17 +29,19 @@ namespace BombRushMP.Common
         [JsonProperty("UserKind")]
         private string _userKind = UserKinds.Player.ToString();
         public string[] Tags = [];
-        public int Badge = -1;
+        public int[] Badges = [];
         [JsonProperty("Description")]
         private string _description = "";
 
-        public AuthUser(UserKinds userKind = UserKinds.Player, string[] tags = null, int badge = -1, string description = "")
+        public AuthUser(UserKinds userKind = UserKinds.Player, string[] tags = null, int[] badges = null, string description = "")
         {
             UserKind = userKind;
             Tags = tags;
             if (Tags == null)
                 Tags = [];
-            Badge = badge;
+            Badges = badges;
+            if (Badges == null)
+                Badges = [];
             _description = description;
         }
 
@@ -61,7 +63,11 @@ namespace BombRushMP.Common
             {
                 writer.Write(tag);
             }
-            writer.Write(Badge);
+            writer.Write(Badges.Length);
+            foreach (var badge in Badges)
+            {
+                writer.Write(badge);
+            }
         }
 
         public void Read(BinaryReader reader)
@@ -73,7 +79,12 @@ namespace BombRushMP.Common
             {
                 Tags[i] = reader.ReadString();
             }
-            Badge = reader.ReadInt32();
+            var badges = reader.ReadInt32();
+            Badges = new int[badges];
+            for (var i = 0; i < badges; i++)
+            {
+                Badges[i] = reader.ReadInt32();
+            }
         }
     }
 }

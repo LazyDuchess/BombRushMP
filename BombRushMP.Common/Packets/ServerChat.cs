@@ -12,7 +12,7 @@ namespace BombRushMP.Common.Packets
         public override Packets PacketId => Packets.ServerChat;
         public string Author = "";
         public string Message = "";
-        public int Badge = -1;
+        public int[] Badges = [];
         public ChatMessageTypes MessageType = ChatMessageTypes.Chat;
 
         public ServerChat()
@@ -20,12 +20,14 @@ namespace BombRushMP.Common.Packets
 
         }
 
-        public ServerChat(string author, string message, int badge = -1, ChatMessageTypes messageType = ChatMessageTypes.Chat)
+        public ServerChat(string author, string message, int[] badges = null, ChatMessageTypes messageType = ChatMessageTypes.Chat)
         {
             Author = author;
             Message = message;
             MessageType = messageType;
-            Badge = badge;
+            Badges = badges;
+            if (Badges == null)
+                Badges = [];
         }
 
         public ServerChat(string message, ChatMessageTypes messageType = ChatMessageTypes.System)
@@ -39,7 +41,12 @@ namespace BombRushMP.Common.Packets
             Author = reader.ReadString();
             Message = reader.ReadString();
             MessageType = (ChatMessageTypes)reader.ReadInt32();
-            Badge = reader.ReadInt32();
+            var badges = reader.ReadInt32();
+            Badges = new int[badges];
+            for(var i = 0; i < badges; i++)
+            {
+                Badges[i] = reader.ReadInt32();
+            }
         }
 
         public override void Write(BinaryWriter writer)
@@ -47,7 +54,11 @@ namespace BombRushMP.Common.Packets
             writer.Write(Author);
             writer.Write(Message);
             writer.Write((int)MessageType);
-            writer.Write(Badge);
+            writer.Write(Badges.Length);
+            foreach(var badge in Badges)
+            {
+                writer.Write(badge);
+            }
         }
     }
 }
