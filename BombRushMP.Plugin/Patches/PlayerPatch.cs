@@ -31,7 +31,7 @@ namespace BombRushMP.Plugin.Patches
                 if (__instance.inGraffitiGame) return true;
                 var packet = new PlayerAnimation(newAnim, forceOverwrite, instant, atTime);
                 // Doesn't really need to be reliable no?
-                clientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.VisualUpdates);
+                clientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.Animation);
             }
             if (!PlayAnimPatchEnabled) return true;
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
