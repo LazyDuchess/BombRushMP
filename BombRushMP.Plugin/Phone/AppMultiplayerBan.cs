@@ -22,7 +22,7 @@ namespace BombRushMP.Plugin.Phone
                 if (!clientController.Connected) return false;
                 var user = clientController.GetLocalUser();
                 if (user == null) return false;
-                return user.UserKind == Common.UserKinds.Mod || user.UserKind == Common.UserKinds.Admin;
+                return user.IsModerator;
             }
         }
         public static void Initialize()

@@ -12,6 +12,10 @@ namespace BombRushMP.Common
     public class AuthUser
     {
         [JsonIgnore]
+        public bool IsAdmin => UserKind == UserKinds.Admin;
+        [JsonIgnore]
+        public bool IsModerator => UserKind == UserKinds.Mod || UserKind == UserKinds.Admin;
+        [JsonIgnore]
         public UserKinds UserKind
         {
             get

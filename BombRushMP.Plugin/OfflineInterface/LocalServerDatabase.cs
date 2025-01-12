@@ -20,6 +20,11 @@ namespace BombRushMP.Plugin.OfflineInterface
             AuthKeys.Users[adminKey] = new AuthUser() { UserKind = UserKinds.Admin, Badges = [0] };
         }
 
+        public void Load()
+        {
+            // nun
+        }
+
         public void Save()
         {
             // nun

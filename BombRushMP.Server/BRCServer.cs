@@ -24,6 +24,7 @@ namespace BombRushMP.Server
         public static Action<INetConnection> ClientDisconnected;
         public static Action<INetConnection, Packets, Packet> PacketReceived;
         public static Action<float> OnTick;
+        public Action RestartAction;
         public Dictionary<ushort, Player> Players = new();
         public INetServer Server;
         private float _tickRate = Constants.DefaultNetworkingTickRate;
@@ -179,7 +180,7 @@ namespace BombRushMP.Server
                     break;
 
                 case "banaddress":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         if (args.Length > 1)
                             BanPlayerByAddress(args[1]);
@@ -187,7 +188,7 @@ namespace BombRushMP.Server
                     break;
 
                 case "banid":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         if (args.Length > 1)
                         {
@@ -198,7 +199,7 @@ namespace BombRushMP.Server
                     break;
 
                 case "unban":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         if (args.Length > 1)
                             Unban(args[1]);
@@ -206,7 +207,7 @@ namespace BombRushMP.Server
                     break;
 
                 case "getids":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         var idString = "";
                         foreach(var playa in Players)
@@ -221,7 +222,7 @@ namespace BombRushMP.Server
                     break;
 
                 case "getaddresses":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         var idString = "";
                         foreach (var playa in Players)
@@ -236,29 +237,34 @@ namespace BombRushMP.Server
                     break;
 
                 case "help":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    var helpStr = "\nAvailable commands:\n";
+                    if (player.ClientState.User.IsModerator)
                     {
-                        var helpStr = $"Available commands:\nbanaddress (ip)\nbanid (id)\nunban (ip)\ngetids\ngetaddresses\nhelp\nsay (announcement for stage)\nsayall (global announcement)\nstats";
-                        SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                        helpStr += "banaddress (ip) - Bans player by IP\nbanid (id) - Bans player by ID\nunban (ip) - Unbans player by IP\ngetids - Gets IDs of players in current stage\ngetaddresses - Gets IP addresses of players in current stage\nhelp\nsay (announcement for stage)\nsayall (global announcement)\nstats - Shows global player and lobby stats\n";
                     }
+                    if (player.ClientState.User.IsAdmin)
+                    {
+                        helpStr += "reload - Reloads server auth keys and banned users\nrestart - Restarts the server\n";
+                    }
+                    SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
                     break;
 
                 case "say":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         SendPacketToStage(new ServerChat(message.Substring(5)), IMessage.SendModes.ReliableUnordered, player.ClientState.Stage, NetChannels.Chat);
                     }
                     break;
 
                 case "sayall":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         SendPacket(new ServerChat(message.Substring(8)), IMessage.SendModes.ReliableUnordered, NetChannels.Chat);
                     }
                     break;
 
                 case "stats":
-                    if (player.ClientState.User.UserKind == UserKinds.Mod || player.ClientState.User.UserKind == UserKinds.Admin)
+                    if (player.ClientState.User.IsModerator)
                     {
                         var playerCount = Players.Count;
                         var lobbyCount = ServerLobbyManager.Lobbies.Count;
@@ -269,6 +275,20 @@ namespace BombRushMP.Server
                                 lobbiesInGame++;
                         }
                         SendPacketToClient(new ServerChat($"Players: {playerCount}\nLobbies: {lobbyCount}\nLobbies in game: {lobbiesInGame}"), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                    }
+                    break;
+
+                case "reload":
+                    if (player.ClientState.User.IsAdmin)
+                    {
+                        _database.Load();
+                    }
+                    break;
+
+                case "restart":
+                    if (player.ClientState.User.IsAdmin)
+                    {
+                        RestartAction?.Invoke();
                     }
                     break;
             }
@@ -462,6 +482,7 @@ namespace BombRushMP.Server
 
         public void Unban(string address)
         {
+            _database.Load();
             if (!_database.BannedUsers.IsBanned(address)) return;
             _database.BannedUsers.Unban(address);
             ServerLogger.Log($"Unbanned IP {address}");
@@ -470,6 +491,7 @@ namespace BombRushMP.Server
 
         public void BanPlayerByAddress(string address, string reason = "None")
         {
+            _database.Load();
             if (_database.BannedUsers.IsBanned(address)) return;
             var playerName = "None";
             ushort playerId = 0;
@@ -483,7 +505,8 @@ namespace BombRushMP.Server
                 }
             }
             _database.BannedUsers.Ban(address, playerName, reason);
-            ServerLogger.Log($"Banned IP {address}, player name: {playerName}, reason: {reason}");
+            var log = $"Banned IP {address}, player name: {playerName}, reason: {reason}";
+            ServerLogger.Log(log);
             if (playerId != 0)
                 Server.DisconnectClient(playerId);
             _database.Save();

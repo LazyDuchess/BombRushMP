@@ -11,9 +11,9 @@ namespace BombRushMP.ServerApp
 {
     public class ServerAppDatabase : IServerDatabase
     {
-        public BannedUsers BannedUsers { get; }
+        public BannedUsers BannedUsers { get; private set; }
 
-        public AuthKeys AuthKeys { get; }
+        public AuthKeys AuthKeys { get; private set; }
 
         private const string BannedUsersPath = "banned_users.json";
         private const string AuthKeysPath = "auth_keys.json";
@@ -42,6 +42,15 @@ namespace BombRushMP.ServerApp
         {
             File.WriteAllText(BannedUsersPath, JsonConvert.SerializeObject(BannedUsers, Formatting.Indented));
             File.WriteAllText(AuthKeysPath, JsonConvert.SerializeObject(AuthKeys, Formatting.Indented));
+        }
+
+        public void Load()
+        {
+            if (File.Exists(BannedUsersPath))
+                BannedUsers = JsonConvert.DeserializeObject<BannedUsers>(File.ReadAllText(BannedUsersPath));
+
+            if (!File.Exists(AuthKeysPath))
+                AuthKeys = JsonConvert.DeserializeObject<AuthKeys>(File.ReadAllText(AuthKeysPath));
         }
 
         public void LogChatMessage(string message, int stage)

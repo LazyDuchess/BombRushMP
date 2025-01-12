@@ -27,7 +27,7 @@ namespace BombRushMP.Plugin
                 _idLabel.gameObject.SetActive(false);
                 return;
             }
-            if (user.UserKind == Common.UserKinds.Mod || user.UserKind == Common.UserKinds.Admin)
+            if (user.IsModerator)
             {
                 _idLabel.gameObject.SetActive(true);
                 var plid = 0;

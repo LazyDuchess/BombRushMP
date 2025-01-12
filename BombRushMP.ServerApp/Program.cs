@@ -9,12 +9,20 @@ using Newtonsoft.Json;
 using System.IO;
 using BombRushMP.Common.Networking;
 using BombRushMP.Server;
+using System.Diagnostics;
 
 namespace BombRushMP.ServerApp
 {
     internal class Program
     {
         private const string ServerSettingsPath = "server.json";
+
+        static void Restart()
+        {
+            ServerLogger.Log("Shutting down server!");
+            Environment.Exit(0);
+        }
+
         static void Main(string[] args)
         {
             ServerSettings serverSettings = null;
@@ -40,6 +48,7 @@ namespace BombRushMP.ServerApp
             server.LogMessagesToFile = serverSettings.LogChats;
             server.AllowNameChanges = serverSettings.AllowNameChanges;
             server.ChatCooldown = serverSettings.ChatCooldown;
+            server.RestartAction = Restart;
             while(true)
             {
                 server.Update();
