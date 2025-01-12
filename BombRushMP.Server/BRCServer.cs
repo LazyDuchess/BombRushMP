@@ -299,9 +299,11 @@ namespace BombRushMP.Server
                             return;
                         }
                         var oldClientState = Players[client.Id].ClientState;
-                        if (oldClientState != null && !AllowNameChanges && oldClientState.User.UserKind == UserKinds.Player)
+                        if (oldClientState != null)
                         {
-                            clientState.Name = oldClientState.Name;
+                            if (!AllowNameChanges && oldClientState.User.UserKind == UserKinds.Player)
+                                clientState.Name = oldClientState.Name;
+                            clientState.Stage = oldClientState.Stage;
                         }
                         if (clientAuth != null)
                         {
@@ -381,7 +383,7 @@ namespace BombRushMP.Server
                         var logText = $"{player.ClientState.Name}/{TMPFilter.CloseAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatPacket.Message}";
                         if (LogMessages)
                         {
-                            ServerLogger.Log(logText);
+                            ServerLogger.Log($"[Stage: {player.ClientState.Stage}] {logText}");
                         }
                         if (LogMessagesToFile)
                         {
