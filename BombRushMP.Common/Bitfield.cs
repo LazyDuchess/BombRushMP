@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common
 {
-    public class Bitfield
+    public struct Bitfield
     {
         public bool this[Enum key]
         {
