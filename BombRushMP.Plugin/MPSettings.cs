@@ -403,6 +403,17 @@ namespace BombRushMP.Plugin
 #else
         public bool Invisible => false;
 #endif
+        public KeyCode PlayerListKey
+        {
+            get
+            {
+                return _playerListKey.Value;
+            }
+            set
+            {
+                _playerListKey.Value = value;
+            }
+        }
 
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
@@ -420,6 +431,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _debugInfo;
         private ConfigEntry<KeyCode> _talkKey;
         private ConfigEntry<KeyCode> _chatKey;
+        private ConfigEntry<KeyCode> _playerListKey;
         private ConfigEntry<bool> _filterProfanity;
         private ConfigEntry<bool> _showChat;
         private ConfigEntry<BalanceUI.Types> _balanceUIType;
@@ -470,6 +482,7 @@ namespace BombRushMP.Plugin
             _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
+            _playerListKey = configFile.Bind(Input, "Player List Key", KeyCode.J, "Press this key to toggle the player list.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
             _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeC, "Balance UI theme.");
 #if DEBUG

@@ -143,7 +143,7 @@ namespace BombRushMP.Common.Packets
             MoveStyleEquipped = bitField[BooleanMask.MoveStyleEquipped];
             SprayCanHeld = bitField[BooleanMask.SprayCanHeld];
             PhoneHeld = bitField[BooleanMask.PhoneHeld];
-            AFK = bitField[BooleanMask.AFK] = AFK;
+            AFK = bitField[BooleanMask.AFK];
             Hitbox = bitField[BooleanMask.Hitbox] = Hitbox;
             HitboxLeftLeg = bitField[BooleanMask.HitboxLeftLeg];
             HitboxRightLeg = bitField[BooleanMask.HitboxRightLeg];

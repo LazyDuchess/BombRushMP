@@ -34,6 +34,7 @@ namespace BombRushMP.Plugin
         public static Action ServerConnect;
         public static Action<ushort> PlayerDisconnected;
         public static Action<Packets, Packet> PacketReceived;
+        public static Action ClientStatesUpdate;
         public string AuthKey;
         private INetClient _client;
         private float _tickTimer = 0f;
@@ -307,6 +308,7 @@ namespace BombRushMP.Plugin
                                 }
                             }
                         }
+                        ClientStatesUpdate?.Invoke();
                     }
                     break;
 

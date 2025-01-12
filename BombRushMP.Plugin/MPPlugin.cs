@@ -104,6 +104,7 @@ namespace BombRushMP.Plugin
             ClientController.Create(addr, MPSettings.Instance.ServerPort);
             ClientController.Instance.AuthKey = authKey;
             LobbyUI.Create();
+            PlayerListUI.Create();
             TimerUI.Create();
             MPMapController.Create();
             NotificationController.Create();

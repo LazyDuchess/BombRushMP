@@ -15,8 +15,10 @@ namespace BombRushMP.Plugin
             {
                 if (Override) return false;
                 var chat = ChatUI.Instance;
+                var playerList = PlayerListUI.Instance;
+                if (playerList == null) return false;
                 if (chat == null) return false;
-                return chat.State == ChatUI.States.Focused;
+                return chat.State == ChatUI.States.Focused || playerList.Displaying;
             }
         }
     }

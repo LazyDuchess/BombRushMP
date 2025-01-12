@@ -152,8 +152,10 @@ namespace BombRushMP.Plugin
                 _scrollRect.normalizedPosition = new Vector2(0, 0);
         }
 
-        private bool CanOpenChat()
+        private bool CanOpen()
         {
+            var playerList = PlayerListUI.Instance;
+            if (playerList.Displaying) return false;
             var gameInput = Core.Instance.gameInput;
             var enabledMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs(0);
             return enabledMaps.controllerMapCategoryIDs.Contains(0) && enabledMaps.controllerMapCategoryIDs.Contains(6) && !Core.Instance.IsCorePaused;
@@ -230,7 +232,7 @@ namespace BombRushMP.Plugin
             if (_messageHideTimer >= TimeForMessagesToHide || !MPSettings.Instance.ShowChat)
                 HideMessages();
 
-            if (Input.GetKeyDown(MPSettings.Instance.ChatKey) && CanOpenChat())
+            if (Input.GetKeyDown(MPSettings.Instance.ChatKey) && CanOpen())
                 SetState(States.Focused);
         }
 

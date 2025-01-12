@@ -159,7 +159,7 @@ namespace BombRushMP.Plugin
             }
 
             Player.motor._rigidbody.velocity = clientVisualStateVelocity;
-
+            UpdateLookAt();
             UpdatePhone();
             NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
         }
@@ -283,7 +283,6 @@ namespace BombRushMP.Plugin
                 PlayerPatch.PlayAnimPatchEnabled = true;
             }
 
-            UpdateLookAt();
             UpdateSprayCan();
             UpdateNameplate();
             if (_mapPin == null)
