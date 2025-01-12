@@ -24,15 +24,12 @@ public class AppMultiplayerDebug : CustomApp
     {
         ScrollView.RemoveAllButtons();
         SimplePhoneButton button;
-#if DEVELOPER_DEBUG
         button = PhoneUIUtility.CreateSimpleButton("Join Lobby");
         button.OnConfirm += () =>
         {
             MyPhone.OpenApp(typeof(AppJoinLobbyDebug));
         };
         ScrollView.AddButton(button);
-#endif
-
         button = PhoneUIUtility.CreateSimpleButton("Cop Skin Test");
         button.OnConfirm += () =>
         {
@@ -47,15 +44,6 @@ public class AppMultiplayerDebug : CustomApp
             SpecialSkinManager.Instance.ApplyRandomVariantToPlayer(player);
         };
         ScrollView.AddButton(button);
-        /*
-        button = PhoneUIUtility.CreateSimpleButton("Special Player Skin");
-        button.OnConfirm += () =>
-        {
-            var player = WorldHandler.instance.GetCurrentPlayer();
-            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
-        };
-        ScrollView.AddButton(button);
-        */
         button = PhoneUIUtility.CreateSimpleButton("Remove Skin");
         button.OnConfirm += () =>
         {
@@ -63,8 +51,6 @@ public class AppMultiplayerDebug : CustomApp
             SpecialSkinManager.Instance.RemoveSpecialSkinFromPlayer(player);
         };
         ScrollView.AddButton(button);
-
-#if DEVELOPER_DEBUG
         button = PhoneUIUtility.CreateSimpleButton("Enable ProSkater Mode");
         button.OnConfirm += () =>
         {
@@ -80,6 +66,5 @@ public class AppMultiplayerDebug : CustomApp
             ProSkaterPlayer.Set(player, false);
         };
         ScrollView.AddButton(button);
-#endif
     }
 }

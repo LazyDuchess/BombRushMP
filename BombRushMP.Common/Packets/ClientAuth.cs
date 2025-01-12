@@ -11,6 +11,7 @@ namespace BombRushMP.Common.Packets
     {
         public override Packets PacketId => Packets.ClientAuth;
         public string AuthKey = "";
+        public bool Invisible = false;
         public ClientState State;
 
         public ClientAuth()
@@ -27,6 +28,7 @@ namespace BombRushMP.Common.Packets
         public override void Read(BinaryReader reader)
         {
             AuthKey = reader.ReadString();
+            Invisible = reader.ReadBoolean();
             State = new ClientState();
             State.Read(reader);
         }
@@ -34,6 +36,7 @@ namespace BombRushMP.Common.Packets
         public override void Write(BinaryWriter writer)
         {
             writer.Write(AuthKey);
+            writer.Write(Invisible);
             State.Write(writer);
         }
     }

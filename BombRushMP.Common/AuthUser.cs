@@ -12,6 +12,8 @@ namespace BombRushMP.Common
     public class AuthUser
     {
         [JsonIgnore]
+        public bool CanLurk => HasTag("canlurk");
+        [JsonIgnore]
         public bool IsAdmin => UserKind == UserKinds.Admin;
         [JsonIgnore]
         public bool IsModerator => UserKind == UserKinds.Mod || UserKind == UserKinds.Admin;

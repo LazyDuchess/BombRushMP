@@ -312,6 +312,7 @@ namespace BombRushMP.Server
 
         private void OnPacketReceived(INetConnection client, Packets packetId, Packet packet)
         {
+            var player = Players[client.Id];
             if (_database.BannedUsers.IsBanned(client.Address))
             {
                 Server.DisconnectClient(client.Id);
@@ -334,7 +335,7 @@ namespace BombRushMP.Server
                             Server.DisconnectClient(client);
                             return;
                         }
-                        var oldClientState = Players[client.Id].ClientState;
+                        var oldClientState = player.ClientState;
                         if (oldClientState != null)
                         {
                             if (!AllowNameChanges && oldClientState.User.UserKind == UserKinds.Player)
@@ -345,6 +346,10 @@ namespace BombRushMP.Server
                         {
                             var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
                             clientState.User = user;
+                            if (user.CanLurk)
+                            {
+                                player.Invisible = clientAuth.Invisible;
+                            }
                         }
                         else if (oldClientState != null)
                         {
@@ -361,12 +366,13 @@ namespace BombRushMP.Server
                                 clientState.SpecialSkin = SpecialSkins.None;
                             }
                         }
-                        Players[client.Id].ClientState = clientState;
+                        player.ClientState = clientState;
                         if (oldClientState != null)
                         {
                             var clientStateUpdatePacket = new ServerClientStates();
                             clientStateUpdatePacket.ClientStates[client.Id] = clientState;
-                            SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                            if (!player.Invisible)
+                                SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage, NetChannels.ClientAndLobbyUpdates);
                             return;
                         }
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
@@ -379,9 +385,12 @@ namespace BombRushMP.Server
                         if (clientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
                             joinMessage = SpecialPlayerUtils.SpecialPlayerJoinMessage;
 
-                        SendPacketToStage(new ServerChat(
-                            clientState.Name, joinMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
-                            IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
+                        if (!player.Invisible)
+                        {
+                            SendPacketToStage(new ServerChat(
+                                clientState.Name, joinMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
+                                IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
+                        }
 
                         ClientHandshook?.Invoke(client);
                     }
@@ -389,10 +398,10 @@ namespace BombRushMP.Server
 
                 case Packets.ClientVisualState:
                     {
-                        var clientState = Players[client.Id].ClientState;
+                        var clientState = player.ClientState;
                         var clientVisualState = (ClientVisualState)packet;
-                        var oldVisualState = Players[client.Id].ClientVisualState;
-                        Players[client.Id].ClientVisualState = clientVisualState;
+                        var oldVisualState = player.ClientVisualState;
+                        player.ClientVisualState = clientVisualState;
 
                         if (oldVisualState != null && oldVisualState.AFK != clientVisualState.AFK)
                         {
@@ -415,7 +424,6 @@ namespace BombRushMP.Server
                 case Packets.ClientChat:
                     {
                         var chatPacket = (ClientChat)packet;
-                        var player = Players[client.Id];
                         var logText = $"{player.ClientState.Name}/{TMPFilter.RemoveAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatPacket.Message}";
                         if (LogMessages)
                         {
@@ -451,7 +459,6 @@ namespace BombRushMP.Server
                         {
                             var playerPacket = packet as PlayerPacket;
                             playerPacket.ClientId = client.Id;
-                            var player = Players[client.Id];
                             if (player.ClientState == null) return;
                             // Exclude sender - will break things if you're trying to display the networked local player clientside.
                             // SendPacketToStage(playerPacket, MessageSendMode.Reliable, _players[client.Id].ClientState.Stage, [client.Id]);
@@ -547,11 +554,6 @@ namespace BombRushMP.Server
             }
         }
 
-        private string GetAddressWithoutPort(string address)
-        {
-            return address.Split(':')[0];
-        }
-
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)
         {
             if (!_database.BannedUsers.IsBanned(e.Client.Address))
@@ -559,11 +561,11 @@ namespace BombRushMP.Server
                 ServerLogger.Log($"Client disconnected from {e.Client.Address}. ID: {e.Client.Id}. Reason: {e.Reason}. Players: {Players.Count - 1}");
             }
             ClientState clientState = null;
-            if (Players.TryGetValue(e.Client.Id, out var result))
+            if (Players.TryGetValue(e.Client.Id, out var player))
             {
                 ClientDisconnected?.Invoke(e.Client);
                 Players.Remove(e.Client.Id);
-                clientState = result.ClientState;
+                clientState = player.ClientState;
             }
             if (clientState != null)
             {
@@ -576,9 +578,12 @@ namespace BombRushMP.Server
                 if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
                     leaveMessage = SpecialPlayerUtils.SpecialPlayerLeaveMessage;
 
-                SendPacketToStage(new ServerChat(
-                    TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
-                    IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
+                if (!player.Invisible)
+                {
+                    SendPacketToStage(new ServerChat(
+                        TMPFilter.CloseAllTags(clientState.Name), leaveMessage, clientState.User.Badges, ChatMessageTypes.PlayerJoinedOrLeft),
+                        IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
+                }
             }
         }
 
@@ -588,6 +593,7 @@ namespace BombRushMP.Server
             packet.Full = true;
             foreach(var player in Players)
             {
+                if (player.Value.Invisible) continue;
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
                 packet.ClientStates[player.Key] = player.Value.ClientState;
@@ -610,6 +616,7 @@ namespace BombRushMP.Server
                     packetList.Add(currentPacket);
                     currentPacket = new ServerClientVisualStates();
                 }
+                if (player.Value.Invisible) continue;
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
                 if (player.Value.ClientVisualState == null) continue;
