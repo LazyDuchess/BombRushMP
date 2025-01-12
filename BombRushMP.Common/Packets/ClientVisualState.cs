@@ -51,15 +51,9 @@ namespace BombRushMP.Common.Packets
             writer.Write(VisualPosition.Y);
             writer.Write(VisualPosition.Z);
 
-            writer.Write(Rotation.X);
-            writer.Write(Rotation.Y);
-            writer.Write(Rotation.Z);
-            writer.Write(Rotation.W);
+            Compression.WriteCompressedQuaternion(Rotation, writer);
 
-            writer.Write(VisualRotation.X);
-            writer.Write(VisualRotation.Y);
-            writer.Write(VisualRotation.Z);
-            writer.Write(VisualRotation.W);
+            Compression.WriteCompressedQuaternion(VisualRotation, writer);
 
             writer.Write(Velocity.X);
             writer.Write(Velocity.Y);
@@ -108,15 +102,9 @@ namespace BombRushMP.Common.Packets
             var visualPosY = reader.ReadSingle();
             var visualPosZ = reader.ReadSingle();
 
-            var rotX = reader.ReadSingle();
-            var rotY = reader.ReadSingle();
-            var rotZ = reader.ReadSingle();
-            var rotW = reader.ReadSingle();
+            Rotation = Compression.ReadCompressedQuaternion(reader);
 
-            var visualRotX = reader.ReadSingle();
-            var visualRotY = reader.ReadSingle();
-            var visualRotZ = reader.ReadSingle();
-            var visualRotW = reader.ReadSingle();
+            VisualRotation = Compression.ReadCompressedQuaternion(reader);
 
             var velX = reader.ReadSingle();
             var velY = reader.ReadSingle();
@@ -140,9 +128,7 @@ namespace BombRushMP.Common.Packets
 
             Position = new Vector3(posX, posY, posZ);
             VisualPosition = new Vector3(visualPosX, visualPosY, visualPosZ);
-            Rotation = new Quaternion(rotX, rotY, rotZ, rotW);
             Velocity = new Vector3(velX, velY, velZ);
-            VisualRotation = new Quaternion(visualRotX, visualRotY, visualRotZ, visualRotW);
 
             DustEmissionRate = reader.ReadInt32();
             BoostpackEffectMode = reader.ReadInt32();
