@@ -16,12 +16,21 @@ namespace BombRushMP.Common
         }
         private bool[] _values = [];
 
+        public Bitfield(Enum size)
+        {
+            _values = new bool[Convert.ToInt32(size)];
+        }
+
+        public Bitfield(int size)
+        {
+            _values = new bool[size];
+        }
+
         public static Bitfield ReadShort(BinaryReader reader)
         {
-            var field = new Bitfield();
             var val = reader.ReadInt16();
             var bitcount = sizeof(short) * 8;
-            field._values = new bool[bitcount];
+            var field = new Bitfield(bitcount);
             for (var i = 0; i < bitcount; i++)
             {
                 var mask = (short)(1 << i);
@@ -32,11 +41,10 @@ namespace BombRushMP.Common
 
         public static Bitfield ReadInteger(BinaryReader reader)
         {
-            var field = new Bitfield();
             var val = reader.ReadInt32();
             var bitcount = sizeof(int) * 8;
-            field._values = new bool[bitcount];
-            for(var i = 0; i < bitcount; i++)
+            var field = new Bitfield(bitcount);
+            for (var i = 0; i < bitcount; i++)
             {
                 var mask = (1 << i);
                 field._values[i] = (val & mask) != 0;

@@ -380,7 +380,7 @@ namespace BombRushMP.Server
                     {
                         var chatPacket = (ClientChat)packet;
                         var player = Players[client.Id];
-                        var logText = $"{player.ClientState.Name}/{TMPFilter.CloseAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatPacket.Message}";
+                        var logText = $"{player.ClientState.Name}/{TMPFilter.RemoveAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatPacket.Message}";
                         if (LogMessages)
                         {
                             ServerLogger.Log($"[Stage: {player.ClientState.Stage}] {logText}");

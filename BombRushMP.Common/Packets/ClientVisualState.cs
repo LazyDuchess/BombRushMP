@@ -23,7 +23,8 @@ namespace BombRushMP.Common.Packets
             HitboxUpperBody,
             HitboxAerial,
             HitboxRadial,
-            HitboxSpray
+            HitboxSpray,
+            MAX
         }
         public override Packets PacketId => Packets.ClientVisualState;
         public Vector3 Position = Vector3.Zero;
@@ -79,7 +80,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(Velocity.Y);
             writer.Write(Velocity.Z);
 
-            var bitField = new Bitfield();
+            var bitField = new Bitfield(BooleanMask.MAX);
             bitField[BooleanMask.MoveStyleEquipped] = MoveStyleEquipped;
             bitField[BooleanMask.SprayCanHeld] = SprayCanHeld;
             bitField[BooleanMask.PhoneHeld] = PhoneHeld;
