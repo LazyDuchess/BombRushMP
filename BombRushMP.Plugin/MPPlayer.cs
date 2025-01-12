@@ -114,21 +114,66 @@ namespace BombRushMP.Plugin
 
         public void FrameUpdate()
         {
+            if (ClientState == null || ClientVisualState == null) return;
+
+            if (Player == null) return;
+
+            var clientVisualStatePosition = ClientVisualState.Position.ToUnityVector3();
+            var clientVisualStateVisualPosition = ClientVisualState.VisualPosition.ToUnityVector3();
+            var clientVisualStateRotation = ClientVisualState.Rotation.ToUnityQuaternion();
+            var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
+            var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
+
+            if (Teleporting)
+            {
+                Teleporting = false;
+                Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
+                Player.visualTf.localPosition = clientVisualStateVisualPosition;
+                Player.visualTf.localRotation = clientVisualStateVisualRotation;
+                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, ClientVisualState.GrindDirection);
+                Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, ClientVisualState.PhoneDirectionX);
+                Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, ClientVisualState.PhoneDirectionY);
+                Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, ClientVisualState.TurnDirection1);
+                Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, ClientVisualState.TurnDirection2);
+                Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, ClientVisualState.TurnDirection3);
+                Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, ClientVisualState.TurnDirectionSkateboard);
+            }
+            else
+            {
+                Player.transform.position = Vector3.Lerp(Player.transform.position, clientVisualStatePosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, clientVisualStateRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, clientVisualStateVisualRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, clientVisualStateVisualPosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.GrindDirectionHash), ClientVisualState.GrindDirection, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionXHash), ClientVisualState.PhoneDirectionX, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionYHash), ClientVisualState.PhoneDirectionY, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection1Hash), ClientVisualState.TurnDirection1, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection2Hash), ClientVisualState.TurnDirection2, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection3Hash), ClientVisualState.TurnDirection3, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash), ClientVisualState.TurnDirectionSkateboard, Time.deltaTime * ClientConstants.PlayerInterpolation));
+            }
+
+            Player.motor._rigidbody.velocity = clientVisualStateVelocity;
+
+            UpdatePhone();
+            NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
+        }
+
+        public void TickUpdate()
+        {
             var mpSettings = MPSettings.Instance;
 
             var clientController = ClientController.Instance;
 
-            if (!clientController.Connected) return;
-
             if (!mpSettings.DebugLocalPlayer)
             {
-                if (NamePlate != null)
-                {
-                    GameObject.Destroy(NamePlate.gameObject);
-                    NamePlate = null;
-                }
                 if (ClientId == clientController.LocalID)
                 {
+                    if (NamePlate != null)
+                    {
+                        GameObject.Destroy(NamePlate.gameObject);
+                        NamePlate = null;
+                    }
                     if (Player != null)
                         DeletePlayer();
                     return;
@@ -209,43 +254,6 @@ namespace BombRushMP.Plugin
             if (!Player.anim.GetComponent<InverseKinematicsRelay>())
                 Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
 
-            var clientVisualStatePosition = ClientVisualState.Position.ToUnityVector3();
-            var clientVisualStateVisualPosition = ClientVisualState.VisualPosition.ToUnityVector3();
-            var clientVisualStateRotation = ClientVisualState.Rotation.ToUnityQuaternion();
-            var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
-            var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
-
-            Player.motor._rigidbody.velocity = clientVisualStateVelocity;
-
-            if (Teleporting)
-            {
-                Teleporting = false;
-                Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
-                Player.visualTf.localPosition = clientVisualStateVisualPosition;
-                Player.visualTf.localRotation = clientVisualStateVisualRotation;
-                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, ClientVisualState.GrindDirection);
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, ClientVisualState.PhoneDirectionX);
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, ClientVisualState.PhoneDirectionY);
-                Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, ClientVisualState.TurnDirection1);
-                Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, ClientVisualState.TurnDirection2);
-                Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, ClientVisualState.TurnDirection3);
-                Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, ClientVisualState.TurnDirectionSkateboard);
-            }
-            else
-            {
-                Player.transform.position = Vector3.Lerp(Player.transform.position, clientVisualStatePosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, clientVisualStateRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, clientVisualStateVisualRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, clientVisualStateVisualPosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.GrindDirectionHash), ClientVisualState.GrindDirection, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionXHash), ClientVisualState.PhoneDirectionX, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionYHash), ClientVisualState.PhoneDirectionY, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection1Hash), ClientVisualState.TurnDirection1, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection2Hash), ClientVisualState.TurnDirection2, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection3Hash), ClientVisualState.TurnDirection3, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash), ClientVisualState.TurnDirectionSkateboard, Time.deltaTime * ClientConstants.PlayerInterpolation));
-            }
-
             PlayerPatch.PlayAnimPatchEnabled = false;
 
             try
@@ -266,7 +274,6 @@ namespace BombRushMP.Plugin
             }
 
             UpdateLookAt();
-            UpdatePhone();
             UpdateSprayCan();
             UpdateNameplate();
             if (_mapPin == null)
@@ -370,8 +377,6 @@ namespace BombRushMP.Plugin
             var name = MPUtility.GetPlayerDisplayName(ClientState);
             if (NamePlate.Label.text != name)
                 NamePlate.Label.text = name;
-
-            NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
         }
 
         private void UpdateSprayCan()
