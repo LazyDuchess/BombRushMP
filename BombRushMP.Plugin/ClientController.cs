@@ -222,6 +222,7 @@ namespace BombRushMP.Plugin
             {
                 case GenericEvents.Spray:
                     if (player.Player == null) break;
+                    player.Player.characterVisual.SetSpraycan(true, player.Player.character);
                     player.Player.SetSpraycanState(Player.SpraycanState.SPRAY);
                     break;
 
