@@ -27,17 +27,17 @@ namespace BombRushMP.CrewBoom
             _characterIds = characterDatabase.GetField("_characterIds", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as Dictionary<Characters, List<Guid>>;
         }
 
-        public static Characters GetCharacterForGuid(Guid guid)
+        public static Characters GetCharacterForGuid(Guid guid, Characters fallback = Characters.metalHead)
         {
             if (guid.Equals(Guid.Empty))
-                return Characters.metalHead;
+                return fallback;
             foreach(var keyValue in _characterIds)
             {
                if (keyValue.Value == null) continue;
                if (keyValue.Value.Contains(guid))
                     return keyValue.Key;
             }
-            return Characters.metalHead;
+            return fallback;
         }
 
         public static Guid GetGuidForCharacter(Characters character)

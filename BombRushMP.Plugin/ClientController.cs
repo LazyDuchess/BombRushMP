@@ -433,9 +433,10 @@ namespace BombRushMP.Plugin
             var statePacket = new ClientState()
             {
                 Name = _mpSettings.PlayerName,
-                Character = (int)player.character,
+                Character = (sbyte)player.character,
+                FallbackCharacter = (sbyte)MPSettings.Instance.FallbackCharacter,
                 Outfit = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
-                Stage = (int)Reptile.Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
+                Stage = (int)Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 ProtocolVersion = Constants.ProtocolVersion,
                 SpecialSkin = playerComp.SpecialSkin,
                 SpecialSkinVariant = playerComp.SpecialSkinVariant,

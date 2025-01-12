@@ -9,6 +9,7 @@ using UnityEngine;
 using BombRushMP.Common;
 using BombRushMP.NetworkInterfaceProvider;
 using BombRushMP.Common.Networking;
+using Reptile;
 
 namespace BombRushMP.Plugin
 {
@@ -376,6 +377,18 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public CharacterNames FallbackCharacter
+        {
+            get
+            {
+                return _fallbackCharacter.Value;
+            }
+            set
+            {
+                _fallbackCharacter.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
@@ -402,6 +415,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<ushort> _maxPlayers;
         private ConfigEntry<bool> _offline;
         private ConfigEntry<string> _authKey;
+        private ConfigEntry<CharacterNames> _fallbackCharacter;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -461,6 +475,7 @@ namespace BombRushMP.Plugin
             _maxPlayers = configFile.Bind(Server, "Max players", (ushort)64, "Max players for local server.");
             _offline = configFile.Bind(General, "Offline", false, "Run All City Network in singleplayer, offline mode.");
             _authKey = configFile.Bind(General, "Authentication Key", "", "Optional secret key used to authenticate you.");
+            _fallbackCharacter = configFile.Bind(General, "Fallback Character", CharacterNames.Red, "Character to display to other players when you're using a CrewBoom character they don't have.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

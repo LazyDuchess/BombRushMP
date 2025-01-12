@@ -1,0 +1,32 @@
+﻿namespace BombRushMP.Common
+{
+    public enum CharacterNames
+    {
+        Vinyl,
+        Frank,
+        Coil,
+        Red,
+        Tryce,
+        Bel,
+        Rave,
+        DotExeMember,
+        Solace,
+        DjCyber,
+        EclipseMember,
+        DevilTheoryMember,
+        FauxWithBoostPack,
+        FleshPrince,
+        Irene,
+        Felix,
+        OldHeadMember,
+        Base,
+        Jet,
+        Mesh,
+        FuturismMember,
+        Rise,
+        Shine,
+        FauxWithoutBoostPack,
+        DotExeBoss,
+        FelixWithCyberHead
+    }
+}

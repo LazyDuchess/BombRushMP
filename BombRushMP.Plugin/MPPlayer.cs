@@ -190,15 +190,20 @@ namespace BombRushMP.Plugin
                 return;
             }
             var chara = (Characters)ClientState.Character;
+            var fallbackChara = (Characters)ClientState.FallbackCharacter;
 
             if (chara >= Characters.MAX || chara <= Characters.NONE)
                 chara = Characters.metalHead;
 
+            if (fallbackChara >= Characters.MAX || fallbackChara <= Characters.NONE)
+                fallbackChara = Characters.metalHead;
+
             if (ClientState.CrewBoomCharacter != Guid.Empty)
             {
+                chara = fallbackChara;
                 if (CrewBoomSupport.Installed)
                 {
-                    chara = CrewBoomSupport.GetCharacterForGuid(ClientState.CrewBoomCharacter);
+                    chara = CrewBoomSupport.GetCharacterForGuid(ClientState.CrewBoomCharacter, fallbackChara);
                 }
             }
 

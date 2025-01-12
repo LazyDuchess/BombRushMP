@@ -14,7 +14,8 @@ namespace BombRushMP.Common.Packets
     {
         public override Packets PacketId => Packets.ClientState;
         public Guid CrewBoomCharacter = Guid.Empty;
-        public int Character = 0;
+        public sbyte Character = 0;
+        public sbyte FallbackCharacter = 0;
         public byte Outfit = 0;
         public SpecialSkins SpecialSkin = SpecialSkins.None;
         public int SpecialSkinVariant = -1;
@@ -27,7 +28,8 @@ namespace BombRushMP.Common.Packets
         {
             if (Guid.TryParse(reader.ReadString(), out var result))
                 CrewBoomCharacter = result;
-            Character = reader.ReadInt32();
+            Character = reader.ReadSByte();
+            FallbackCharacter = reader.ReadSByte();
             Outfit = reader.ReadByte();
             ProtocolVersion = reader.ReadUInt32();
             Stage = reader.ReadInt32();
@@ -42,6 +44,7 @@ namespace BombRushMP.Common.Packets
         {
             writer.Write(CrewBoomCharacter.ToString());
             writer.Write(Character);
+            writer.Write(FallbackCharacter);
             writer.Write(Outfit);
             writer.Write(ProtocolVersion);
             writer.Write(Stage);
