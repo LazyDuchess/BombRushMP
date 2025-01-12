@@ -193,6 +193,10 @@ namespace BombRushMP.Plugin
             {
                 SendVisualState();
             }
+            foreach (var player in Players)
+            {
+                player.Value.TickUpdate();
+            }
             ClientLobbyManager.OnTick();
         }
 
@@ -205,7 +209,7 @@ namespace BombRushMP.Plugin
                 Tick();
                 _tickTimer = 0f;
             }
-            foreach(var player in Players)
+            foreach (var player in Players)
             {
                 player.Value.FrameUpdate();
             }
