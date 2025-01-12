@@ -39,10 +39,18 @@ namespace BombRushMP.Plugin
                 _afkIndicator.SetActive(_player.ClientVisualState.AFK);
                 var clientController = ClientController.Instance;
                 var currentLobby = clientController.ClientLobbyManager.CurrentLobby;
-                if (currentLobby != null && currentLobby.LobbyState.HostId == clientController.LocalID && !currentLobby.InGame && _player.ClientId != clientController.LocalID)
+                if (currentLobby != null && currentLobby.LobbyState.HostId == clientController.LocalID && !currentLobby.InGame && _player.ClientId != clientController.LocalID && !currentLobby.LobbyState.Players.ContainsKey(_player.ClientId))
+                {
                     _inviteButton.gameObject.SetActive(true);
+                    if (currentLobby.LobbyState.InvitedPlayers.ContainsKey(_player.ClientId))
+                        _inviteButton.interactable = false;
+                    else
+                        _inviteButton.interactable = true;
+                }
                 else
+                {
                     _inviteButton.gameObject.SetActive(false);
+                }
             }
         }
 
