@@ -69,6 +69,11 @@ namespace BombRushMP.Plugin
             pinInMeshR.sharedMaterial = _mapPinMaterial;
         }
 
+        private bool IsSpecialPlayer()
+        {
+            return ClientState.User != null && ClientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag);
+        }
+
         private bool InSameLobbyAsLocalPlayer()
         {
             var clientController = ClientController.Instance;
@@ -289,6 +294,9 @@ namespace BombRushMP.Plugin
                 _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
             else
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
+
+            if (IsSpecialPlayer())
+                _mapPinMaterial.color = new Color(0.9f, 0.9f, 0f);
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
                 Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);
