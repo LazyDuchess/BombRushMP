@@ -518,6 +518,12 @@ namespace BombRushMP.Plugin
             _offline = configFile.Bind(General, "Offline", false, "Run All City Network in singleplayer, offline mode.");
             _authKey = configFile.Bind(General, "Authentication Key", "", "Optional secret key used to authenticate you.");
             _fallbackCharacter = configFile.Bind(General, "Fallback Character", CharacterNames.Red, "Character to display to other players when you're using a CrewBoom character they don't have.");
+            _fallbackCharacter.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                if (clientController.Connected)
+                    clientController.SendClientState();
+            };
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
