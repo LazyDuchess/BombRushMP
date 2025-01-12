@@ -255,10 +255,9 @@ namespace BombRushMP.Plugin
                             Debug.Log($"BRCMP: Applying animation {ClientVisualState.CurrentAnimation} at time {ClientVisualState.CurrentAnimationTime} to player {ClientState.Name} (justCreated == true)");
                     Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                 }
+                if (!Player.anim.GetComponent<InverseKinematicsRelay>())
+                    Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
             }
-
-            if (!Player.anim.GetComponent<InverseKinematicsRelay>())
-                Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
 
             PlayerPatch.PlayAnimPatchEnabled = false;
 
