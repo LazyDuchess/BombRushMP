@@ -248,6 +248,7 @@ namespace BombRushMP.Plugin
 
             if (justCreated)
             {
+                Teleporting = true;
                 if (ClientVisualState.CurrentAnimation != 0)
                 {
                     if (mpSettings.DebugInfo)
