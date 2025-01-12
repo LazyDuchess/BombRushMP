@@ -132,7 +132,7 @@ namespace BombRushMP.Plugin
             var packet = new ClientVisualState();
             packet.State = state;
             packet.AFK = PlayerComponent.Get(player).AFK;
-            packet.MoveStyleSkin = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin;
+            packet.MoveStyleSkin = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin;
             var charData = MPSaveData.Instance.GetCharacterData(player.character);
             if (charData != null)
                 packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
@@ -154,20 +154,26 @@ namespace BombRushMP.Plugin
                 packet.TurnDirection2 = player.anim.GetFloat(ClientConstants.TurnDirection2Hash);
                 packet.TurnDirection3 = player.anim.GetFloat(ClientConstants.TurnDirection3Hash);
                 packet.TurnDirectionSkateboard = player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash);
-                packet.BoostpackEffectMode = (int)player.characterVisual.boostpackEffectMode;
-                packet.FrictionEffectMode = (int)player.characterVisual.frictionEffectMode;
+                packet.BoostpackEffectMode = (byte)player.characterVisual.boostpackEffectMode;
+                packet.FrictionEffectMode = (byte)player.characterVisual.frictionEffectMode;
                 if (player.characterVisual.dustParticles != null)
-                    packet.DustEmissionRate = (int)player.characterVisual.dustParticles.emission.rateOverTime.constant;
+                    packet.DustEmissionRate = (byte)player.characterVisual.dustParticles.emission.rateOverTime.constant;
                 packet.CurrentAnimation = player.curAnim;
                 packet.CurrentAnimationTime = player.curAnimActiveTime;
-                packet.HitBoxMask = PvPUtils.HitboxesToBits(player);
+                packet.Hitbox = player.hitbox.activeSelf;
+                packet.HitboxLeftLeg = player.hitboxLeftLeg.activeSelf;
+                packet.HitboxRightLeg = player.hitboxRightLeg.activeSelf;
+                packet.HitboxUpperBody = player.hitboxUpperBody.activeSelf;
+                packet.HitboxAerial = player.airialHitbox.activeSelf;
+                packet.HitboxRadial = player.radialHitbox.activeSelf;
+                packet.HitboxSpray = player.sprayHitbox.activeSelf;
             }
             else if (state == PlayerStates.Graffiti){
                 var grafRotation = Quaternion.LookRotation(-CurrentGraffitiGame.gSpot.transform.forward, Vector3.up);
                 packet.MoveStyle = (int)player.moveStyleEquipped;
                 packet.Position = (CurrentGraffitiGame.gSpot.transform.position + (CurrentGraffitiGame.gSpot.transform.forward * ClientConstants.PlayerGraffitiDistance) + (-CurrentGraffitiGame.gSpot.transform.up * ClientConstants.PlayerGraffitiDownDistance)).ToSystemVector3();
                 packet.Rotation = grafRotation.ToSystemQuaternion();
-                packet.BoostpackEffectMode = (int)CurrentGraffitiGame.characterPuppet.boostpackEffectMode;
+                packet.BoostpackEffectMode = (byte)CurrentGraffitiGame.characterPuppet.boostpackEffectMode;
             }
             return packet;
         }

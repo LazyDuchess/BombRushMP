@@ -11,6 +11,20 @@ namespace BombRushMP.Common.Packets
 {
     public class ClientVisualState : Packet
     {
+        private enum BooleanMask
+        {
+            MoveStyleEquipped,
+            SprayCanHeld,
+            PhoneHeld,
+            AFK,
+            Hitbox,
+            HitboxLeftLeg,
+            HitboxRightLeg,
+            HitboxUpperBody,
+            HitboxAerial,
+            HitboxRadial,
+            HitboxSpray
+        }
         public override Packets PacketId => Packets.ClientVisualState;
         public Vector3 Position = Vector3.Zero;
         public Vector3 VisualPosition = Vector3.Zero;
@@ -29,19 +43,25 @@ namespace BombRushMP.Common.Packets
         public float TurnDirection3 = 0f;
         public float TurnDirectionSkateboard = 0f;
         public PlayerStates State = PlayerStates.None;
-        public int DustEmissionRate = 0;
-        public int BoostpackEffectMode = 0;
-        public int FrictionEffectMode = 0;
+        public byte DustEmissionRate = 0;
+        public byte BoostpackEffectMode = 0;
+        public byte FrictionEffectMode = 0;
         public int CurrentAnimation = 0;
         public float CurrentAnimationTime = 0f;
         public bool AFK = false;
-        public int MoveStyleSkin = 0;
+        public byte MoveStyleSkin = 0;
         public int MPMoveStyleSkin = -1;
-        public int HitBoxMask = 0;
+        public bool Hitbox = false;
+        public bool HitboxLeftLeg = false;
+        public bool HitboxRightLeg = false;
+        public bool HitboxUpperBody = false;
+        public bool HitboxAerial = false;
+        public bool HitboxRadial = false;
+        public bool HitboxSpray = false;
 
         public override void Write(BinaryWriter writer)
         {
-            writer.Write((int)State);
+            writer.Write((byte)State);
 
             writer.Write(Position.X);
             writer.Write(Position.Y);
@@ -59,11 +79,22 @@ namespace BombRushMP.Common.Packets
             writer.Write(Velocity.Y);
             writer.Write(Velocity.Z);
 
-            writer.Write(MoveStyleEquipped);
-            writer.Write(MoveStyle);
+            var bitField = new Bitfield();
+            bitField[BooleanMask.MoveStyleEquipped] = MoveStyleEquipped;
+            bitField[BooleanMask.SprayCanHeld] = SprayCanHeld;
+            bitField[BooleanMask.PhoneHeld] = PhoneHeld;
+            bitField[BooleanMask.AFK] = AFK;
+            bitField[BooleanMask.Hitbox] = Hitbox;
+            bitField[BooleanMask.HitboxLeftLeg] = HitboxLeftLeg;
+            bitField[BooleanMask.HitboxRightLeg] = HitboxRightLeg;
+            bitField[BooleanMask.HitboxUpperBody] = HitboxUpperBody;
+            bitField[BooleanMask.HitboxAerial] = HitboxAerial;
+            bitField[BooleanMask.HitboxRadial] = HitboxRadial;
+            bitField[BooleanMask.HitboxSpray] = HitboxSpray;
 
-            writer.Write(SprayCanHeld);
-            writer.Write(PhoneHeld);
+            bitField.WriteShort(writer);
+
+            writer.Write(MoveStyle);
 
             writer.Write(PhoneDirectionX);
             writer.Write(PhoneDirectionY);
@@ -82,17 +113,13 @@ namespace BombRushMP.Common.Packets
             writer.Write(CurrentAnimation);
             writer.Write(CurrentAnimationTime);
 
-            writer.Write(AFK);
-
             writer.Write(MoveStyleSkin);
             writer.Write(MPMoveStyleSkin);
-
-            writer.Write(HitBoxMask);
         }
 
         public override void Read(BinaryReader reader)
         {
-            State = (PlayerStates)reader.ReadInt32();
+            State = (PlayerStates)reader.ReadByte();
 
             var posX = reader.ReadSingle();
             var posY = reader.ReadSingle();
@@ -110,11 +137,20 @@ namespace BombRushMP.Common.Packets
             var velY = reader.ReadSingle();
             var velZ = reader.ReadSingle();
 
-            MoveStyleEquipped = reader.ReadBoolean();
-            MoveStyle = reader.ReadInt32();
+            var bitField = Bitfield.ReadShort(reader);
+            MoveStyleEquipped = bitField[BooleanMask.MoveStyleEquipped];
+            SprayCanHeld = bitField[BooleanMask.SprayCanHeld];
+            PhoneHeld = bitField[BooleanMask.PhoneHeld];
+            AFK = bitField[BooleanMask.AFK] = AFK;
+            Hitbox = bitField[BooleanMask.Hitbox] = Hitbox;
+            HitboxLeftLeg = bitField[BooleanMask.HitboxLeftLeg];
+            HitboxRightLeg = bitField[BooleanMask.HitboxRightLeg];
+            HitboxUpperBody = bitField[BooleanMask.HitboxUpperBody];
+            HitboxAerial = bitField[BooleanMask.HitboxAerial];
+            HitboxRadial = bitField[BooleanMask.HitboxRadial];
+            HitboxSpray = bitField[BooleanMask.HitboxSpray];
 
-            SprayCanHeld = reader.ReadBoolean();
-            PhoneHeld = reader.ReadBoolean();
+            MoveStyle = reader.ReadInt32();
 
             PhoneDirectionX = reader.ReadSingle();
             PhoneDirectionY = reader.ReadSingle();
@@ -130,19 +166,15 @@ namespace BombRushMP.Common.Packets
             VisualPosition = new Vector3(visualPosX, visualPosY, visualPosZ);
             Velocity = new Vector3(velX, velY, velZ);
 
-            DustEmissionRate = reader.ReadInt32();
-            BoostpackEffectMode = reader.ReadInt32();
-            FrictionEffectMode = reader.ReadInt32();
+            DustEmissionRate = reader.ReadByte();
+            BoostpackEffectMode = reader.ReadByte();
+            FrictionEffectMode = reader.ReadByte();
 
             CurrentAnimation = reader.ReadInt32();
             CurrentAnimationTime = reader.ReadSingle();
 
-            AFK = reader.ReadBoolean();
-
-            MoveStyleSkin = reader.ReadInt32();
+            MoveStyleSkin = reader.ReadByte();
             MPMoveStyleSkin = reader.ReadInt32();
-
-            HitBoxMask = reader.ReadInt32();
         }
     }
 }

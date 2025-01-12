@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Common
 {
-    public enum PlayerStates
+    public enum PlayerStates : byte
     {
         None,
         Graffiti

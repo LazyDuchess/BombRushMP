@@ -304,7 +304,40 @@ namespace BombRushMP.Plugin
                     playerComp.ApplyMoveStyleSkin(ClientVisualState.MoveStyleSkin);
             }
 
-            PvPUtils.SetHitboxesFromBits(ClientVisualState.HitBoxMask, Player);
+            if (ClientVisualState.Hitbox)
+                Player.hitbox.SetActive(true);
+            else
+                Player.hitbox.SetActive(false);
+
+            if (ClientVisualState.HitboxLeftLeg)
+                Player.hitboxLeftLeg.SetActive(true);
+            else
+                Player.hitboxLeftLeg.SetActive(false);
+
+            if (ClientVisualState.HitboxRightLeg)
+                Player.hitboxRightLeg.SetActive(true);
+            else
+                Player.hitboxRightLeg.SetActive(false);
+
+            if (ClientVisualState.HitboxUpperBody)
+                Player.hitboxUpperBody.SetActive(true);
+            else
+                Player.hitboxUpperBody.SetActive(false);
+
+            if (ClientVisualState.HitboxAerial)
+                Player.airialHitbox.SetActive(true);
+            else
+                Player.airialHitbox.SetActive(false);
+
+            if (ClientVisualState.HitboxRadial)
+                Player.radialHitbox.SetActive(true);
+            else
+                Player.radialHitbox.SetActive(false);
+
+            if (ClientVisualState.HitboxSpray)
+                Player.sprayHitbox.SetActive(true);
+            else
+                Player.sprayHitbox.SetActive(false);
 
             _previousState = ClientVisualState.State;
         }

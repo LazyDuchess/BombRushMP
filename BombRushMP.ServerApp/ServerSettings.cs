@@ -32,7 +32,8 @@ namespace BombRushMP.ServerApp
         public ushort MaxPlayers = 65534;
         public bool UseNativeSockets = true;
         public float TicksPerSecond = 1f/Constants.DefaultNetworkingTickRate;
-        public bool LogChats = false;
+        public bool LogChats = true;
+        public bool LogChatsToFiles = false;
         public bool AllowNameChanges = false;
         public float ChatCooldown = 0.5f;
     }

@@ -32,7 +32,8 @@ namespace BombRushMP.Server
         private float _playerCountTickTimer = 0f;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
         private IServerDatabase _database;
-        public bool LogMessages = false;
+        public bool LogMessagesToFile = false;
+        public bool LogMessages = true;
         public bool AllowNameChanges = true;
         public float ChatCooldown = 0.5f;
 
@@ -377,10 +378,14 @@ namespace BombRushMP.Server
                     {
                         var chatPacket = (ClientChat)packet;
                         var player = Players[client.Id];
+                        var logText = $"{player.ClientState.Name}/{TMPFilter.CloseAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatPacket.Message}";
                         if (LogMessages)
                         {
-                            var logText = $"[{DateTime.Now.ToShortTimeString()}] {player.ClientState.Name} ({player.Client.Address}): {chatPacket.Message}";
-                            _database.LogChatMessage(logText, player.ClientState.Stage);
+                            ServerLogger.Log(logText);
+                        }
+                        if (LogMessagesToFile)
+                        {
+                            _database.LogChatMessage($"[{DateTime.Now.ToShortTimeString()}] {logText}", player.ClientState.Stage);
                         }
                         if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
                         var lastChatFromThisPlayer = player.LastChatTime;
