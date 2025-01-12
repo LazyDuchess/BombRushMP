@@ -166,6 +166,11 @@ namespace BombRushMP.Server
             SendPacketToStage(new ServerChat(SpecialPlayerUtils.SpecialPlayerNag), IMessage.SendModes.ReliableUnordered, stage, NetChannels.Chat);
         }
 
+        public void SendMessageToPlayer(string message, Player player)
+        {
+            SendPacketToClient(new ServerChat(message), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+        }
+
         private void ProcessCommand(string message, Player player)
         {
             var args = message.Split(' ');
@@ -183,7 +188,10 @@ namespace BombRushMP.Server
                     if (player.ClientState.User.IsModerator)
                     {
                         if (args.Length > 1)
-                            BanPlayerByAddress(args[1]);
+                        {
+                            if (BanPlayerByAddress(args[1]))
+                                SendMessageToPlayer("Player has been banned.", player);
+                        }
                     }
                     break;
 
@@ -193,7 +201,10 @@ namespace BombRushMP.Server
                         if (args.Length > 1)
                         {
                             if (ushort.TryParse(args[1], out var result))
-                                BanPlayerById(result);
+                            {
+                                if (BanPlayerById(result))
+                                    SendMessageToPlayer("Player has been banned.", player);
+                            }
                         }
                     }
                     break;
@@ -202,7 +213,10 @@ namespace BombRushMP.Server
                     if (player.ClientState.User.IsModerator)
                     {
                         if (args.Length > 1)
-                            Unban(args[1]);
+                        {
+                            if (Unban(args[1]))
+                                SendMessageToPlayer("Player has been unbanned.", player);
+                        }
                     }
                     break;
 
@@ -217,7 +231,7 @@ namespace BombRushMP.Server
                                 idString += $"{playa.Key} - {TMPFilter.CloseAllTags(playa.Value.ClientState.Name)}\n";
                             }
                         }
-                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                        SendMessageToPlayer(idString, player);
                     }
                     break;
 
@@ -232,7 +246,7 @@ namespace BombRushMP.Server
                                 idString += $"{playa.Value.Client.Address} - {TMPFilter.CloseAllTags(playa.Value.ClientState.Name)} ({playa.Key})\n";
                             }
                         }
-                        SendPacketToClient(new ServerChat(idString), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                        SendMessageToPlayer(idString, player);
                     }
                     break;
 
@@ -246,7 +260,7 @@ namespace BombRushMP.Server
                     {
                         helpStr += "reload - Reloads server auth keys and banned users\nrestart - Restarts the server\n";
                     }
-                    SendPacketToClient(new ServerChat(helpStr), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                    SendMessageToPlayer(helpStr, player);
                     break;
 
                 case "say":
@@ -274,13 +288,14 @@ namespace BombRushMP.Server
                             if (lobby.Value.LobbyState.InGame)
                                 lobbiesInGame++;
                         }
-                        SendPacketToClient(new ServerChat($"Players: {playerCount}\nLobbies: {lobbyCount}\nLobbies in game: {lobbiesInGame}"), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                        SendMessageToPlayer($"Players: {playerCount}\nLobbies: {lobbyCount}\nLobbies in game: {lobbiesInGame}", player);
                     }
                     break;
 
                 case "reload":
                     if (player.ClientState.User.IsAdmin)
                     {
+                        SendMessageToPlayer("Reloading server database.", player);
                         _database.Load();
                     }
                     break;
@@ -288,6 +303,7 @@ namespace BombRushMP.Server
                 case "restart":
                     if (player.ClientState.User.IsAdmin)
                     {
+                        SendMessageToPlayer("Restarting server.", player);
                         RestartAction?.Invoke();
                     }
                     break;
@@ -471,28 +487,30 @@ namespace BombRushMP.Server
             }
         }
 
-        public void BanPlayerById(ushort id, string reason = "None")
+        public bool BanPlayerById(ushort id, string reason = "None")
         {
             if (Players.TryGetValue(id, out var result))
             {
-                if (_database.BannedUsers.IsBanned(result.Client.Address)) return;
-                BanPlayerByAddress(result.Client.Address);
+                if (_database.BannedUsers.IsBanned(result.Client.Address)) return false;
+                return BanPlayerByAddress(result.Client.Address);
             }
+            return false;
         }
 
-        public void Unban(string address)
+        public bool Unban(string address)
         {
             _database.Load();
-            if (!_database.BannedUsers.IsBanned(address)) return;
+            if (!_database.BannedUsers.IsBanned(address)) return false;
             _database.BannedUsers.Unban(address);
             ServerLogger.Log($"Unbanned IP {address}");
             _database.Save();
+            return true;
         }
 
-        public void BanPlayerByAddress(string address, string reason = "None")
+        public bool BanPlayerByAddress(string address, string reason = "None")
         {
             _database.Load();
-            if (_database.BannedUsers.IsBanned(address)) return;
+            if (_database.BannedUsers.IsBanned(address)) return false;
             var playerName = "None";
             ushort playerId = 0;
             foreach(var player in Players)
@@ -510,6 +528,7 @@ namespace BombRushMP.Server
             if (playerId != 0)
                 Server.DisconnectClient(playerId);
             _database.Save();
+            return true;
         }
 
         private void OnClientConnected(object sender, ServerConnectedEventArgs e)
