@@ -56,6 +56,14 @@ namespace BombRushMP.Plugin
             CurrentSpectatingClient = _players[0].ClientId;
             SpectatorUI.Instance.Activate();
         }
+        
+        public void SpectatePlayer(MPPlayer player)
+        {
+            var index = _players.IndexOf(player);
+            if (index < 0)
+                return;
+            CurrentSpectatingClient = _players[index].ClientId;
+        }
 
         private void Update()
         {
