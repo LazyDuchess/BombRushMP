@@ -11,6 +11,8 @@ namespace BombRushMP.Common
 {
     public class AuthUser
     {
+        [JsonProperty("Description")]
+        private string _description = "";
         [JsonIgnore]
         public bool CanLurk => HasTag("canlurk");
         [JsonIgnore]
@@ -36,8 +38,6 @@ namespace BombRushMP.Common
         private string _userKind = UserKinds.Player.ToString();
         public string[] Tags = [];
         public int[] Badges = [];
-        [JsonProperty("Description")]
-        private string _description = "";
 
         public AuthUser(UserKinds userKind = UserKinds.Player, string[] tags = null, int[] badges = null, string description = "")
         {
