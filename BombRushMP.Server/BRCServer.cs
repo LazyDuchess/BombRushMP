@@ -477,7 +477,7 @@ namespace BombRushMP.Server
                             if (packet is PlayerAnimation)
                             {
                                 chan = NetChannels.Animation;
-                                reliable = IMessage.SendModes.Reliable;
+                                reliable = PlayerAnimation.SendMode;
                             }
                             SendPacketToStage(playerPacket, reliable, Players[client.Id].ClientState.Stage, chan);
                         }

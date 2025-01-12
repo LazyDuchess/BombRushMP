@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombRushMP.Common.Networking;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,7 @@ namespace BombRushMP.Common.Packets
 {
     public class PlayerAnimation : PlayerPacket
     {
+        public static IMessage.SendModes SendMode = IMessage.SendModes.Unreliable;
         private enum BooleanMask
         {
             ForceOverwrite,

@@ -23,7 +23,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), IMessage.SendModes.Reliable, NetChannels.Animation);
+            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash(anim)), PlayerAnimation.SendMode, NetChannels.Animation);
             if (anim == "grafSlashFinisher")
                 clientController.SendPacket(new PlayerGraffitiFinisher((byte)__instance.gSpot.size), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
         }
@@ -35,7 +35,7 @@ namespace BombRushMP.Plugin.Patches
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
-            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash("grafSlash" + side.ToString() + (outAnim ? "_Out" : ""))), IMessage.SendModes.Reliable, NetChannels.Animation);
+            clientController.SendPacket(new PlayerAnimation(Animator.StringToHash("grafSlash" + side.ToString() + (outAnim ? "_Out" : ""))), PlayerAnimation.SendMode, NetChannels.Animation);
         }
 
         [HarmonyPostfix]

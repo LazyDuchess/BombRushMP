@@ -29,6 +29,10 @@ namespace BombRushMP.Plugin
         private int _lastMoveStyleSkin = -1;
         private int _lastMPMoveStyleSkin = -1;
 
+        private int _lastAnimation = 0;
+        private float _timeSpentInWrongAnimation = 0f;
+        private const float MaxTimeSpentInWrongAnimation = 0.5f;
+
         public void UpdateVisualState(ClientVisualState newVisualState)
         {
             ClientVisualState = newVisualState;
@@ -161,7 +165,8 @@ namespace BombRushMP.Plugin
             Player.motor._rigidbody.velocity = clientVisualStateVelocity;
             UpdateLookAt();
             UpdatePhone();
-            NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
+            if (NamePlate != null)
+                NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
         }
 
         public void TickUpdate()
@@ -217,6 +222,7 @@ namespace BombRushMP.Plugin
                 fit = 0;
 
             var justCreated = false;
+            var snapAnim = false;
 
             if (Player == null)
             {
@@ -254,14 +260,33 @@ namespace BombRushMP.Plugin
             if (justCreated)
             {
                 Teleporting = true;
-                if (ClientVisualState.CurrentAnimation != 0)
-                {
-                    if (mpSettings.DebugInfo)
-                            Debug.Log($"BRCMP: Applying animation {ClientVisualState.CurrentAnimation} at time {ClientVisualState.CurrentAnimationTime} to player {ClientState.Name} (justCreated == true)");
-                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
-                }
+                snapAnim = true;
                 if (!Player.anim.GetComponent<InverseKinematicsRelay>())
                     Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
+            }
+
+            if (Player.curAnim != ClientVisualState.CurrentAnimation)
+            {
+                if (Player.curAnim != _lastAnimation)
+                    _timeSpentInWrongAnimation = 0f;
+                _timeSpentInWrongAnimation += ClientController.DeltaTime;
+            }
+            else
+                _timeSpentInWrongAnimation = 0f;
+            _lastAnimation = Player.curAnim;
+
+            if (_timeSpentInWrongAnimation >= MaxTimeSpentInWrongAnimation)
+                snapAnim = true;
+
+            if (snapAnim)
+            {
+                if (ClientVisualState.CurrentAnimation != 0)
+                {
+                    _timeSpentInWrongAnimation = 0f;
+                    if (mpSettings.DebugInfo)
+                        Debug.Log($"BRCMP: Applying animation {ClientVisualState.CurrentAnimation} at time {ClientVisualState.CurrentAnimationTime} to player {ClientState.Name} (justCreated == true)");
+                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                }
             }
 
             PlayerPatch.PlayAnimPatchEnabled = false;
