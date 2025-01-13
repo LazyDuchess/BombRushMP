@@ -49,7 +49,7 @@ namespace BombRushMP.ServerApp
             if (File.Exists(BannedUsersPath))
                 BannedUsers = JsonConvert.DeserializeObject<BannedUsers>(File.ReadAllText(BannedUsersPath));
 
-            if (!File.Exists(AuthKeysPath))
+            if (File.Exists(AuthKeysPath))
                 AuthKeys = JsonConvert.DeserializeObject<AuthKeys>(File.ReadAllText(AuthKeysPath));
         }
 
