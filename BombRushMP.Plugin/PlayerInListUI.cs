@@ -79,7 +79,7 @@ namespace BombRushMP.Plugin
             if (localId != player.ClientId)
             {
                 _spectateButton.gameObject.SetActive(true);
-                if (user.IsModerator)
+                if (user?.IsModerator == true)
                     _banButton.gameObject.SetActive(true);
             }
         }

@@ -432,7 +432,7 @@ namespace BombRushMP.Server
                         var oldVisualState = player.ClientVisualState;
                         player.ClientVisualState = clientVisualState;
 
-                        if (oldVisualState != null && oldVisualState.AFK != clientVisualState.AFK)
+                        if (oldVisualState != null && oldVisualState.AFK != clientVisualState.AFK && !player.Invisible)
                         {
                             if (clientVisualState.AFK)
                             {
