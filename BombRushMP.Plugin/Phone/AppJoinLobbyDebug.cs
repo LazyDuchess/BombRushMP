@@ -31,7 +31,7 @@ public class AppJoinLobbyDebug : CustomApp
         foreach(var lobby in lobbies)
         {
             var host = clientController.Players[lobby.Value.LobbyState.HostId];
-            var button = PhoneUIUtility.CreateSimpleButton($"[{lobby.Value.LobbyState.Players.Count}] {GamemodeFactory.GetGamemodeName(lobby.Value.LobbyState.Gamemode)} - {host.ClientState.Name}");
+            var button = PhoneUIUtility.CreateSimpleButton($"[{lobby.Value.LobbyState.Players.Count}] {GamemodeFactory.GetGamemodeName(lobby.Value.LobbyState.Gamemode)} - {MPUtility.GetPlayerDisplayName(host.ClientState)}");
             button.OnConfirm += () =>
             {
                 clientController.ClientLobbyManager.JoinLobby(lobby.Key);

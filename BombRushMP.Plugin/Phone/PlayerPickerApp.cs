@@ -70,7 +70,7 @@ namespace BombRushMP.Plugin.Phone
                 ScrollView.AddButton(everyoneButton);
             }
 
-            var players = clientController.Players.OrderBy(x => x.Value.ClientState.Name).ToDictionary(x => x.Key, x => x.Value);
+            var players = clientController.Players.OrderBy(x => MPUtility.GetPlayerDisplayName(x.Value.ClientState)).ToDictionary(x => x.Key, x => x.Value);
 
             foreach (var player in players)
             {

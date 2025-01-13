@@ -70,6 +70,7 @@ namespace BombRushMP.Common
 
         public static bool IsValidChatMessage(string message)
         {
+            message = Sanitize(message);
             message = RemoveAllTags(message);
             if (string.IsNullOrWhiteSpace(message))
                 return false;
@@ -146,7 +147,7 @@ namespace BombRushMP.Common
             return strBuilder.ToString();
         }
 
-        public static string SanitizeInput(string text)
+        public static string Sanitize(string text)
         {
             text = text.Replace("\n", "");
             text = text.Replace("\t", "");

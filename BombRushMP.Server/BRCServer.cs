@@ -364,6 +364,10 @@ namespace BombRushMP.Server
                                 player.Auth = clientAuth;
                             }
                         }
+
+                        if (clientState.Name.Length > Constants.MaxNameLength)
+                            clientState.Name = clientState.Name.Substring(0, Constants.MaxNameLength);
+
                         var oldClientState = player.ClientState;
                         if (oldClientState != null)
                         {
@@ -453,7 +457,11 @@ namespace BombRushMP.Server
                 case Packets.ClientChat:
                     {
                         var chatPacket = (ClientChat)packet;
-                        var logText = $"{player.ClientState.Name}/{TMPFilter.RemoveAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatPacket.Message}";
+                        var chatMessage = chatPacket.Message;
+                        chatMessage = TMPFilter.Sanitize(chatMessage);
+                        if (chatMessage.Length > Constants.MaxMessageLength)
+                            chatMessage = chatMessage.Substring(0, Constants.MaxMessageLength);
+                        var logText = $"{player.ClientState.Name}/{TMPFilter.RemoveAllTags(player.ClientState.Name)} ({player.Client.Address}): {chatMessage}";
                         if (LogMessages)
                         {
                             ServerLogger.Log($"[Stage: {player.ClientState.Stage}] {logText}");
@@ -462,7 +470,7 @@ namespace BombRushMP.Server
                         {
                             _database.LogChatMessage($"[{DateTime.Now.ToShortTimeString()}] {logText}", player.ClientState.Stage);
                         }
-                        if (!TMPFilter.IsValidChatMessage(chatPacket.Message)) return;
+                        if (!TMPFilter.IsValidChatMessage(chatMessage)) return;
                         var lastChatFromThisPlayer = player.LastChatTime;
                         var now = DateTime.UtcNow;
                         var elapsed = now - lastChatFromThisPlayer;
@@ -471,12 +479,12 @@ namespace BombRushMP.Server
                         player.LastChatTime = now;
                         if (chatPacket.Message[0] == Constants.CommandChar)
                         {
-                            ProcessCommand(chatPacket.Message, player);
+                            ProcessCommand(chatMessage, player);
                         }
                         else
                         {
                             if (player.ClientState == null) return;
-                            var serverChatPacket = new ServerChat(player.ClientState.Name, chatPacket.Message, player.ClientState.User.Badges, ChatMessageTypes.Chat);
+                            var serverChatPacket = new ServerChat(player.ClientState.Name, chatMessage, player.ClientState.User.Badges, ChatMessageTypes.Chat);
                             SendPacketToStage(serverChatPacket, IMessage.SendModes.ReliableUnordered, player.ClientState.Stage, NetChannels.Chat);
                         }
                     }

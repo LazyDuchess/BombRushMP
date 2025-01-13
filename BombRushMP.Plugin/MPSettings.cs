@@ -20,16 +20,12 @@ namespace BombRushMP.Plugin
 
         public string Directory { get; private set; }
 
-        public const int MaxMessageLength = 256;
-        public const int MaxNameLength = 64;
-
         public TMPFilter.Criteria ChatCriteria = new TMPFilter.Criteria(
             [
                 "b",
                 "color",
                 "i",
                 "mark",
-                //"sprite",
                 "s",
                 "sub",
                 "sup",
@@ -91,7 +87,10 @@ namespace BombRushMP.Plugin
         {
             get
             {
-                return _playerName.Value;
+                var nam = _playerName.Value;
+                if (nam.Length > Constants.MaxNameLength)
+                    nam = nam.Substring(0, Constants.MaxNameLength);
+                return nam;
             }
             set
             {
@@ -470,6 +469,7 @@ namespace BombRushMP.Plugin
         private const string Advanced = "7. Advanced";
         private const string Server = "8. Server";
         private const string MainServerAddress = "acn.lazyduchess.me";
+        public const string DefaultName = "Goofiest Gooner";
 
         public MPSettings(ConfigFile configFile, string dir)
         {
@@ -477,7 +477,7 @@ namespace BombRushMP.Plugin
             Instance = this;
             _configFile = configFile;
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
-            _playerName = configFile.Bind(General, "Player Name", "Goofiest Gooner", "Your player name.");
+            _playerName = configFile.Bind(General, "Player Name", DefaultName, "Your player name.");
             _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
             _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");

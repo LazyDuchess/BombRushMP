@@ -7,5 +7,7 @@
         public const float ScoreBattleDuration = 180f;
         public const int MaxPayloadSize = 10000;
         public const char CommandChar = '/';
+        public const int MaxMessageLength = 256;
+        public const int MaxNameLength = 64;
     }
 }

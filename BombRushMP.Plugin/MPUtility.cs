@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common;
+﻿using BepInEx;
+using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.Plugin.Patches;
 using Reptile;
@@ -15,22 +16,24 @@ namespace BombRushMP.Plugin
     {
         public static string GetPlayerDisplayName(string name)
         {
-            if (name.Length >= MPSettings.MaxNameLength)
-                name = name.Substring(0, MPSettings.MaxNameLength);
-            name = TMPFilter.CloseAllTags(name);
+            name = TMPFilter.Sanitize(name);
             name = TMPFilter.FilterTags(name, MPSettings.Instance.ChatCriteria);
+            name = TMPFilter.CloseAllTags(name);
             if (MPSettings.Instance.FilterProfanity)
             {
                 if (ProfanityFilter.TMPContainsProfanity(name))
                     name = ProfanityFilter.CensoredName;
             }
-            return name.Trim();
+            name = name.Trim();
+            if (TMPFilter.RemoveAllTags(name).IsNullOrWhiteSpace())
+                name = MPSettings.DefaultName;
+            return name;
         }
 
         public static string GetPlayerDisplayName(ClientState clientState)
         {
             var name = clientState.Name;
-            //name = GetPlayerDisplayName(name);
+            name = GetPlayerDisplayName(name);
             var user = clientState.User;
             foreach(var badge in user.Badges)
             {

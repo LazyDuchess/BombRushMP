@@ -389,7 +389,6 @@ namespace BombRushMP.Plugin
         public void SetClientState(ClientState newClientState)
         {
             ClientState = newClientState;
-            ClientState.Name = MPUtility.GetPlayerDisplayName(ClientState.Name);
         }
 
         private void UpdateNameplate()

@@ -13,7 +13,7 @@ namespace BombRushMP.ClientApp
 {
     public class BRCClient : IDisposable
     {
-        private const string BotName = "BRCMP BOT";
+        private const string BotName = "<sprite=0> <size=9000> BRCMP BOT";
         private INetClient _client;
         private ServerClientStates _clientStates;
         private ServerLobbies _lobbies;
@@ -128,7 +128,7 @@ namespace BombRushMP.ClientApp
                         return;
                     if (player == 0)
                         return;
-                    SendPacket(new ClientLobbySetGamemode(GamemodeIDs.ProSkaterScoreBattle, new byte[] { }));
+                    SendPacket(new ClientLobbySetGamemode(GamemodeIDs.ScoreBattle, new byte[] { }));
                     SendPacket(new ClientLobbyInvite(player));
                     Log("Inviting player to lobby and waiting for them to join.");
                     _taskStep++;

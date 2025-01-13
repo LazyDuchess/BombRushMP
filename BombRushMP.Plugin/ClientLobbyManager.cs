@@ -214,6 +214,7 @@ namespace BombRushMP.Plugin
 
         private void OnEndGame(bool cancelled)
         {
+            if (CurrentLobby == null) return;
             if (CurrentLobby.InGame)
             {
                 CurrentLobby.CurrentGamemode.OnEnd(cancelled);
