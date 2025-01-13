@@ -157,8 +157,7 @@ namespace BombRushMP.Plugin
 
         private bool CanOpen()
         {
-            var playerList = PlayerListUI.Instance;
-            if (playerList.Displaying) return false;
+            if (MPUtility.AnyMenusOpen()) return false;
             var gameInput = Core.Instance.gameInput;
             var enabledMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs(0);
             return enabledMaps.controllerMapCategoryIDs.Contains(0) && enabledMaps.controllerMapCategoryIDs.Contains(6) && !Core.Instance.IsCorePaused;

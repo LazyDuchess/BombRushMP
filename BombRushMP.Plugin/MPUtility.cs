@@ -108,13 +108,29 @@ namespace BombRushMP.Plugin
 
         public static void CloseMenusForGameStateUpdate()
         {
+            CloseMenus();
+            Core.Instance.UIManager.HidePauseMenuInstant();
+        }
+
+        public static void CloseMenus()
+        {
             var spectatorController = SpectatorController.Instance;
             if (spectatorController != null)
                 spectatorController.EndSpectating();
             var playerList = PlayerListUI.Instance;
             if (playerList != null)
                 playerList.Displaying = false;
-            Core.Instance.UIManager.HidePauseMenuInstant();
+        }
+
+        public static bool AnyMenusOpen()
+        {
+            var spectatorController = SpectatorController.Instance;
+            if (spectatorController != null)
+                return true;
+            var playerList = PlayerListUI.Instance;
+            if (playerList.Displaying)
+                return true;
+            return false;
         }
     }
 }
