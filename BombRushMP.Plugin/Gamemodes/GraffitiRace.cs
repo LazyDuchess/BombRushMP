@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,10 +90,17 @@ namespace BombRushMP.Plugin.Gamemodes
             var player = _worldHandler.GetCurrentPlayer();
             switch (packetId)
             {
-                case Packets.ClientGraffitiRaceData:
+                case Packets.ClientGraffitiRaceGSpots:
                     {
-                        var raceData = (ClientGraffitiRaceData)packet;
+                        var raceData = (ClientGraffitiRaceGSpots)packet;
                         OnReceive_GraffitiRaceData(raceData);
+                    }
+                    break;
+
+                case Packets.ClientGraffitiRaceStart:
+                    {
+                        var startData = (ClientGraffitiRaceStart)packet;
+                        OnReceive_GraffitiStart(startData);
                     }
                     break;
 
@@ -222,12 +230,16 @@ namespace BombRushMP.Plugin.Gamemodes
             return null;
         }
 
-        private void OnReceive_GraffitiRaceData(ClientGraffitiRaceData packet)
+        private void OnReceive_GraffitiStart(ClientGraffitiRaceStart packet)
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            MPUtility.PlaceCurrentPlayer(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion());
+        }
+
+        private void OnReceive_GraffitiRaceData(ClientGraffitiRaceGSpots packet)
         {
             if (_fetchingState != FetchingStates.Started)
             {
-                var player = WorldHandler.instance.GetCurrentPlayer();
-                MPUtility.PlaceCurrentPlayer(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion());
                 _otherSpots.Clear();
                 _originalProgress.Clear();
                 foreach (var spot in _worldHandler.SceneObjectsRegister.grafSpots)
@@ -349,12 +361,15 @@ namespace BombRushMP.Plugin.Gamemodes
                 spawnRotation = player.transform.rotation;
             }
 
+            var startPacket = new ClientGraffitiRaceStart(spawnPosition.ToSystemVector3(), spawnRotation.ToSystemQuaternion());
+            ClientController.SendPacket(startPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+
             var spotLists = new List<List<int>>();
             var curSpotAmount = 0;
             var currentList = new List<int>();
             foreach(var raceSpot in raceSpots)
             {
-                if (curSpotAmount >= ClientGraffitiRaceData.MaxGraffitiSpotsPerPacket)
+                if (curSpotAmount >= ClientGraffitiRaceGSpots.MaxGraffitiSpotsPerPacket)
                 {
                     spotLists.Add(currentList);
                     currentList = new List<int>();
@@ -369,7 +384,7 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 var spotList = spotLists[i];
                 var final = i >= spotLists.Count - 1;
-                var packet = new ClientGraffitiRaceData(spawnPosition.ToSystemVector3(), spawnRotation.ToSystemQuaternion(), spotList, final);
+                var packet = new ClientGraffitiRaceGSpots(spotList, final);
                 ClientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
             }
         }

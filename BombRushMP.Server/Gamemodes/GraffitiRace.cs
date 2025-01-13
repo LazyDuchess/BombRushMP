@@ -55,11 +55,11 @@ namespace BombRushMP.Server.Gamemodes
         {
             switch (packetId)
             {
-                case Packets.ClientGraffitiRaceData:
+                case Packets.ClientGraffitiRaceGSpots:
                     {
                         if (playerId == Lobby.LobbyState.HostId)
                         {
-                            var racePacket = (ClientGraffitiRaceData)packet;
+                            var racePacket = (ClientGraffitiRaceGSpots)packet;
                             ServerLobbyManager.SendPacketToLobby(racePacket, IMessage.SendModes.Reliable, Lobby.LobbyState.Id, NetChannels.Gamemodes);
                             _maxScore += racePacket.GraffitiSpots.Count;
                         }
