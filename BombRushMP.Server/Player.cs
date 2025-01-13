@@ -14,6 +14,7 @@ namespace BombRushMP.Server
     {
         private const float SecondsToKickPlayerWithoutClientState = 5f;
         public BRCServer Server = null;
+        public ClientAuth Auth = null;
         public ClientState ClientState = null;
         public ClientVisualState ClientVisualState = null;
         public float SecondsWithoutSendingClientState = 0f;

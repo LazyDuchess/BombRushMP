@@ -173,6 +173,20 @@ namespace BombRushMP.Server
             SendPacketToClient(new ServerChat(message), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
         }
 
+        private void ReloadAllUsers()
+        {
+            foreach(var player in Players)
+            {
+                player.Value.ClientState.User = _database.AuthKeys.GetUser(player.Value.Auth.AuthKey);
+            }
+            var activeStages = GetActiveStages();
+            foreach(var activeStage in activeStages)
+            {
+                var clientStates = CreateClientStatesPacket(activeStage);
+                SendPacketToStage(clientStates, IMessage.SendModes.Reliable, activeStage, NetChannels.ClientAndLobbyUpdates);
+            }
+        }
+
         private void ProcessCommand(string message, Player player)
         {
             var args = message.Split(' ');
@@ -301,6 +315,7 @@ namespace BombRushMP.Server
                     {
                         SendMessageToPlayer("Reloading server database.", player);
                         _database.Load();
+                        ReloadAllUsers();
                     }
                     break;
 
@@ -339,12 +354,15 @@ namespace BombRushMP.Server
                         if (clientAuth != null)
                         {
                             clientState = clientAuth.State;
-                        }
-                        if (clientState.ProtocolVersion != Constants.ProtocolVersion)
-                        {
-                            ServerLogger.Log($"Rejecting player from {client.Address} (ID: {client.Id}) because of protocol version mismatch (Server: {Constants.ProtocolVersion}, Client: {clientState.ProtocolVersion}).");
-                            Server.DisconnectClient(client);
-                            return;
+                            // don't re-auth mid connection.
+                            if (player.Auth != null)
+                            {
+                                clientAuth = null;
+                            }
+                            else
+                            {
+                                player.Auth = clientAuth;
+                            }
                         }
                         var oldClientState = player.ClientState;
                         if (oldClientState != null)
@@ -386,7 +404,7 @@ namespace BombRushMP.Server
                                 SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage, NetChannels.ClientAndLobbyUpdates);
                             return;
                         }
-                        ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}. Protocol Version: {clientState.ProtocolVersion}");
+                        ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, User = clientState.User }, IMessage.SendModes.Reliable, client, NetChannels.Default);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);

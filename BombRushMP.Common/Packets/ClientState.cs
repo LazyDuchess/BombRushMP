@@ -21,7 +21,6 @@ namespace BombRushMP.Common.Packets
         public int SpecialSkinVariant = -1;
         public string Name = "Player";
         public int Stage = 0;
-        public uint ProtocolVersion = Constants.ProtocolVersion;
         public AuthUser User = new AuthUser();
 
         public override void Read(BinaryReader reader)
@@ -31,7 +30,6 @@ namespace BombRushMP.Common.Packets
             Character = reader.ReadSByte();
             FallbackCharacter = reader.ReadSByte();
             Outfit = reader.ReadByte();
-            ProtocolVersion = reader.ReadUInt32();
             Stage = reader.ReadInt32();
             Name = reader.ReadString();
             SpecialSkin = (SpecialSkins)reader.ReadInt32();
@@ -46,12 +44,15 @@ namespace BombRushMP.Common.Packets
             writer.Write(Character);
             writer.Write(FallbackCharacter);
             writer.Write(Outfit);
-            writer.Write(ProtocolVersion);
             writer.Write(Stage);
             writer.Write(Name);
             writer.Write((int)SpecialSkin);
             writer.Write(SpecialSkinVariant);
             User.Write(writer);
         }
+    }
+
+    public class IncompatibleProtocolException : Exception
+    {
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using LiteNetLib;
 
@@ -10,6 +11,7 @@ namespace BombRushMP.LiteNetLibInterface
 {
     public class LiteNetLibInterface : INetworkingInterface
     {
+        public static string Key = $"ACN-{Constants.ProtocolVersion}";
         public int MaxPayloadSize
         {
             get

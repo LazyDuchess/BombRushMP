@@ -73,7 +73,7 @@ namespace BombRushMP.LiteNetLibInterface
         {
             if (_netManager.ConnectedPeersCount < _maxPlayers)
             {
-                request.AcceptIfKey("BRCMP");
+                request.AcceptIfKey(LiteNetLibInterface.Key);
             }
             else
                 request.Reject();

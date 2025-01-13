@@ -27,6 +27,9 @@ namespace BombRushMP.Common.Packets
 
         public override void Read(BinaryReader reader)
         {
+            var protocol = reader.ReadUInt32();
+            if (protocol != Constants.ProtocolVersion)
+                throw new IncompatibleProtocolException();
             AuthKey = reader.ReadString();
             Invisible = reader.ReadBoolean();
             State = new ClientState();
@@ -35,6 +38,7 @@ namespace BombRushMP.Common.Packets
 
         public override void Write(BinaryWriter writer)
         {
+            writer.Write(Constants.ProtocolVersion);
             writer.Write(AuthKey);
             writer.Write(Invisible);
             State.Write(writer);

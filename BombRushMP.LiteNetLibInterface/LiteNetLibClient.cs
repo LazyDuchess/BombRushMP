@@ -77,7 +77,7 @@ namespace BombRushMP.LiteNetLibInterface
                 if (addresses.Length > 0)
                     address = addresses[0].ToString();
                 var endPoint = new IPEndPoint(IPAddress.Parse(address), port);
-                _netManager.Connect(endPoint, "BRCMP");
+                _netManager.Connect(endPoint, LiteNetLibInterface.Key);
                 return true;
             }
             return false;
