@@ -202,7 +202,7 @@ namespace BombRushMP.Plugin
             ClientLobbyManager.OnTick();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             _tickTimer += Time.deltaTime;
             if (_tickTimer >= TickRate)
@@ -464,7 +464,6 @@ namespace BombRushMP.Plugin
                 FallbackCharacter = (sbyte)MPSettings.Instance.FallbackCharacter,
                 Outfit = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
-                ProtocolVersion = Constants.ProtocolVersion,
                 SpecialSkin = playerComp.SpecialSkin,
                 SpecialSkinVariant = playerComp.SpecialSkinVariant,
             };
