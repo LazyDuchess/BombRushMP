@@ -98,6 +98,7 @@ namespace BombRushMP.Server
                 foreach(var player in Players)
                 {
                     if (player.Value.ClientState == null) continue;
+                    if (player.Value.Invisible) continue;
 
                     if (playerCountDictionary.TryGetValue(player.Value.ClientState.Stage, out var playerCount))
                         playerCountDictionary[player.Value.ClientState.Stage] = playerCount + 1;
