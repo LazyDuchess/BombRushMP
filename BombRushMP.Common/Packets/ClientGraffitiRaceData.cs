@@ -6,7 +6,7 @@ namespace BombRushMP.Common.Packets
 {
     public class ClientGraffitiRaceData : Packet
     {
-        public const int MaxGraffitiSpotsPerPacket = 10;
+        public const int MaxGraffitiSpotsPerPacket = 5;
         public override Packets PacketId => Packets.ClientGraffitiRaceData;
         public Vector3 SpawnPosition = Vector3.Zero;
         public Quaternion SpawnRotation = Quaternion.Identity;
