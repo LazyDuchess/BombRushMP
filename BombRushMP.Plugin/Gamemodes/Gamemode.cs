@@ -30,6 +30,9 @@ namespace BombRushMP.Plugin.Gamemodes
             var spectatorController = SpectatorController.Instance;
             if (spectatorController != null)
                 spectatorController.EndSpectating();
+            var playerList = PlayerListUI.Instance;
+            if (playerList != null)
+                playerList.Displaying = false;
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
         }
@@ -40,6 +43,9 @@ namespace BombRushMP.Plugin.Gamemodes
             var spectatorController = SpectatorController.Instance;
             if (spectatorController != null)
                 spectatorController.EndSpectating();
+            var playerList = PlayerListUI.Instance;
+            if (playerList != null)
+                playerList.Displaying = false;
             LobbyUI.Instance.UpdateUI();
             if (!cancelled)
                 ProcessSpecialPlayerUnlock();
