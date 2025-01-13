@@ -27,12 +27,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public virtual void OnStart()
         {
             InGame = true;
-            var spectatorController = SpectatorController.Instance;
-            if (spectatorController != null)
-                spectatorController.EndSpectating();
-            var playerList = PlayerListUI.Instance;
-            if (playerList != null)
-                playerList.Displaying = false;
+            MPUtility.CloseMenusForGameStateUpdate();
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
         }
@@ -40,12 +35,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public virtual void OnEnd(bool cancelled)
         {
             InGame = false;
-            var spectatorController = SpectatorController.Instance;
-            if (spectatorController != null)
-                spectatorController.EndSpectating();
-            var playerList = PlayerListUI.Instance;
-            if (playerList != null)
-                playerList.Displaying = false;
+            MPUtility.CloseMenusForGameStateUpdate();
             LobbyUI.Instance.UpdateUI();
             if (!cancelled)
                 ProcessSpecialPlayerUnlock();

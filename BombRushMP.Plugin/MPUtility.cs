@@ -105,5 +105,16 @@ namespace BombRushMP.Plugin
                 PlayerPatch.PlayAnimPatchEnabled = true;
             }
         }
+
+        public static void CloseMenusForGameStateUpdate()
+        {
+            var spectatorController = SpectatorController.Instance;
+            if (spectatorController != null)
+                spectatorController.EndSpectating();
+            var playerList = PlayerListUI.Instance;
+            if (playerList != null)
+                playerList.Displaying = false;
+            Core.Instance.UIManager.HidePauseMenuInstant();
+        }
     }
 }
