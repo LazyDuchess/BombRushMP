@@ -10,7 +10,7 @@ namespace BombRushMP.Common.Packets
         public override Packets PacketId => Packets.ClientGraffitiRaceData;
         public Vector3 SpawnPosition = Vector3.Zero;
         public Quaternion SpawnRotation = Quaternion.Identity;
-        public List<string> GraffitiSpots = new();
+        public List<int> GraffitiSpots = new();
         public bool FinalPacket = true;
 
         public ClientGraffitiRaceData()
@@ -18,7 +18,7 @@ namespace BombRushMP.Common.Packets
 
         }
 
-        public ClientGraffitiRaceData(Vector3 spawnPosition, Quaternion spawnRotation, List<string> graffitiSpots, bool final)
+        public ClientGraffitiRaceData(Vector3 spawnPosition, Quaternion spawnRotation, List<int> graffitiSpots, bool final)
         {
             SpawnPosition = spawnPosition;
             SpawnRotation = spawnRotation;
@@ -35,16 +35,12 @@ namespace BombRushMP.Common.Packets
             var spz = reader.ReadSingle();
             SpawnPosition = new Vector3(spx, spy, spz);
 
-            var srx = reader.ReadSingle();
-            var sry = reader.ReadSingle();
-            var srz = reader.ReadSingle();
-            var srw = reader.ReadSingle();
-            SpawnRotation = new Quaternion(srx, sry, srz, srw);
+            SpawnRotation = Quaternion.Normalize(Compression.ReadCompressedQuaternion(reader));
 
-            var gSpotCount = reader.ReadInt32();
+            var gSpotCount = reader.ReadUInt16();
             for(var i = 0; i < gSpotCount; i++)
             {
-                var gSpotUID = reader.ReadString();
+                var gSpotUID = reader.ReadInt32();
                 GraffitiSpots.Add(gSpotUID);
             }
         }
@@ -57,12 +53,9 @@ namespace BombRushMP.Common.Packets
             writer.Write(SpawnPosition.Y);
             writer.Write(SpawnPosition.Z);
 
-            writer.Write(SpawnRotation.X);
-            writer.Write(SpawnRotation.Y);
-            writer.Write(SpawnRotation.Z);
-            writer.Write(SpawnRotation.W);
+            Compression.WriteCompressedQuaternion(SpawnRotation, writer);
 
-            writer.Write(GraffitiSpots.Count);
+            writer.Write((short)GraffitiSpots.Count);
 
             foreach(var grafSpot in GraffitiSpots)
             {

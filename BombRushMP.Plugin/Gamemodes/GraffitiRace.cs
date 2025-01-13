@@ -211,12 +211,12 @@ namespace BombRushMP.Plugin.Gamemodes
             }
         }
 
-        private GraffitiSpot GetGraffitiSpotByUID(string uid)
+        private GraffitiSpot GetGraffitiSpotByHash(int hash)
         {
             var spots = _worldHandler.SceneObjectsRegister.grafSpots;
             foreach(var spot in spots)
             {
-                if (spot.Uid == uid)
+                if (Compression.HashString(spot.Uid) == hash)
                     return spot;
             }
             return null;
@@ -243,15 +243,15 @@ namespace BombRushMP.Plugin.Gamemodes
             
             foreach(var spot in _worldHandler.SceneObjectsRegister.grafSpots)
             {
-                if (packet.GraffitiSpots.Contains(spot.Uid))
+                if (packet.GraffitiSpots.Contains(Compression.HashString(spot.Uid)))
                 {
                     spot.gameObject.SetActive(true);
                     _otherSpots.Remove(spot);
                 }
             }
-            foreach(var uid in packet.GraffitiSpots)
+            foreach(var hash in packet.GraffitiSpots)
             {
-                var grafSpot = GetGraffitiSpotByUID(uid);
+                var grafSpot = GetGraffitiSpotByHash(hash);
                 _originalProgress[grafSpot] = (GraffitiSpotProgress)grafSpot.progressableData;
                 grafSpot.ClearPaint();
                 grafSpot.bottomCrew = Crew.PLAYERS;
@@ -284,7 +284,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             var validSpots = GetValidSpots();
 
-            var raceSpots = new List<string>();
+            var raceSpots = new List<int>();
 
             var spotAmount = Settings.SettingByID[SettingGraffitiAmountID].Value;
             var spawnMode = (SpawnMode)Settings.SettingByID[SettingSpawnModeID].Value;
@@ -303,10 +303,10 @@ namespace BombRushMP.Plugin.Gamemodes
                 var index = UnityEngine.Random.Range(0, validSpots.Count);
                 var spot = validSpots[index];
                 validSpots.RemoveAt(index);
-                raceSpots.Add(spot.Uid);
+                raceSpots.Add(Compression.HashString(spot.Uid));
             }
 
-            var spawnSpot = GetGraffitiSpotByUID(raceSpots[0]);
+            var spawnSpot = GetGraffitiSpotByHash(raceSpots[0]);
 
 
             var spawnForward = -spawnSpot.transform.forward;
@@ -320,7 +320,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 TurnOnAllStageChunks();
                 foreach (var raceSpot in raceSpots)
                 {
-                    var grafSpot = GetGraffitiSpotByUID(raceSpot);
+                    var grafSpot = GetGraffitiSpotByHash(raceSpot);
                     var spotFw = -grafSpot.transform.forward;
                     var spotPos = grafSpot.transform.position - (spotFw * DistanceOffWall);
 
@@ -349,15 +349,15 @@ namespace BombRushMP.Plugin.Gamemodes
                 spawnRotation = player.transform.rotation;
             }
 
-            var spotLists = new List<List<string>>();
+            var spotLists = new List<List<int>>();
             var curSpotAmount = 0;
-            var currentList = new List<string>();
+            var currentList = new List<int>();
             foreach(var raceSpot in raceSpots)
             {
                 if (curSpotAmount >= ClientGraffitiRaceData.MaxGraffitiSpotsPerPacket)
                 {
                     spotLists.Add(currentList);
-                    currentList = new List<string>();
+                    currentList = new List<int>();
                     curSpotAmount = 0;
                 }
                 currentList.Add(raceSpot);

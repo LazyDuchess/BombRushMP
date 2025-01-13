@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,13 @@ namespace BombRushMP.Common
 {
     public static class Compression
     {
+        private static MD5 Hasher = MD5.Create();
+        public static int HashString(string s)
+        {
+            var result = Hasher.ComputeHash(Encoding.UTF8.GetBytes(s));
+            return BitConverter.ToInt32(result, 0);
+        }
+
         public static sbyte CompressToByte(float value, float maxValue)
         {
             return CompressNormal(value / maxValue);
