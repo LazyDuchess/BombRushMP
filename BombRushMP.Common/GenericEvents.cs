@@ -10,6 +10,7 @@ namespace BombRushMP.Common
     {
         Spray,
         Teleport,
-        GraffitiGameOver
+        GraffitiGameOver,
+        Death
     }
 }

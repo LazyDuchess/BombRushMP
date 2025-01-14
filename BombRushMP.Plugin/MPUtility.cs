@@ -4,6 +4,7 @@ using BombRushMP.Common.Packets;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -119,7 +120,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public static void CloseMenusForGameStateUpdate()
+        public static void SetUpPlayerForGameStateUpdate()
         {
             CloseMenus();
             var uiManager = Core.Instance.UIManager;
@@ -131,6 +132,9 @@ namespace BombRushMP.Plugin
             var grafGame = GameObject.FindObjectOfType<GraffitiGame>();
             if (grafGame != null)
                 grafGame.CancelGame();
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            if (player.IsDead())
+                Revive();
         }
 
         public static void CloseMenus()
@@ -152,6 +156,20 @@ namespace BombRushMP.Plugin
             if (playerList.Displaying)
                 return true;
             return false;
+        }
+
+        public static void Revive()
+        {
+            var dieMenu = Core.instance.UIManager.dieMenu;
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            player.Revive();
+            player.cam.cam.clearFlags = CameraClearFlags.Skybox;
+            player.cam.cam.cullingMask = WorldHandler.GetGameplayCameraCullingMask();
+            player.CompletelyStop();
+            dieMenu.baseModule.UnPauseGame(PauseType.GameOver);
+            dieMenu.StopAllCoroutines();
+            dieMenu.uIManager.PopAllMenusInstant();
+            player.ui.TurnOn(true);
         }
     }
 }

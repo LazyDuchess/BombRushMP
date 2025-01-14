@@ -246,6 +246,12 @@ namespace BombRushMP.Plugin
                     if (player.Player == null) break;
                     player.Player.RemoveGraffitiSlash();
                     break;
+
+                case GenericEvents.Death:
+                    if (player.ClientState == null) break;
+                    if (!MPSettings.Instance.DeathMessages) break;
+                    ChatUI.Instance.AddMessage(string.Format(ClientConstants.DeathMessage, MPUtility.GetPlayerDisplayName(player.ClientState)));
+                    break;
             }
         }
 
@@ -255,11 +261,6 @@ namespace BombRushMP.Plugin
             var packet = PacketFactory.PacketFromMessage(packetId, e.Message);
             if (packet == null) return;
             PacketReceived?.Invoke(packetId, packet);
-            if (packet is PlayerPacket)
-            {
-                var playerPacket = packet as PlayerPacket;
-                if (playerPacket.ClientId == LocalID && !_mpSettings.DebugLocalPlayer) return;
-            }
             switch (packetId)
             {
                 case Packets.ServerConnectionResponse:

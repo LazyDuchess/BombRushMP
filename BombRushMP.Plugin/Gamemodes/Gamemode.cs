@@ -27,7 +27,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public virtual void OnStart()
         {
             InGame = true;
-            MPUtility.CloseMenusForGameStateUpdate();
+            MPUtility.SetUpPlayerForGameStateUpdate();
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
         }
@@ -35,7 +35,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public virtual void OnEnd(bool cancelled)
         {
             InGame = false;
-            MPUtility.CloseMenusForGameStateUpdate();
+            MPUtility.SetUpPlayerForGameStateUpdate();
             LobbyUI.Instance.UpdateUI();
             if (!cancelled)
                 ProcessSpecialPlayerUnlock();

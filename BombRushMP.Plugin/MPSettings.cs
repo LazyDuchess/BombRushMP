@@ -427,6 +427,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool DeathMessages
+        {
+            get
+            {
+                return _deathMessages.Value;
+            }
+
+            set
+            {
+                _deathMessages.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<string> _serverAddress;
@@ -457,6 +470,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<CharacterNames> _fallbackCharacter;
         private ConfigEntry<bool> _invisible;
         private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
+        private ConfigEntry<bool> _deathMessages;
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -524,6 +538,7 @@ namespace BombRushMP.Plugin
                 if (clientController.Connected)
                     clientController.SendClientState();
             };
+            _deathMessages = configFile.Bind(ChatSettings, "Show Player Death Messages", true, "Whether to send messages in chat when players die.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)
