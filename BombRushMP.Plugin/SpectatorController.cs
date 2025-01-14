@@ -45,7 +45,8 @@ namespace BombRushMP.Plugin
             currentPlayer.userInputEnabled = false;
             currentPlayer.SetIgnoreCamInput(true);
             currentPlayer.cam = null;
-            currentPlayer.CompletelyStop();
+            currentPlayer.DropCombo();
+            currentPlayer.SetVelocity(Vector3.zero);
             currentPlayer.motor._rigidbody.isKinematic = true;
             _gameplayCamera = GameplayCamera.instance;
             _clientController = ClientController.Instance;
