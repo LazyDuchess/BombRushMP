@@ -14,7 +14,7 @@ namespace BombRushMP.Common
         [JsonProperty("Description")]
         private string _description = "";
         [JsonIgnore]
-        public bool CanLurk => HasTag("canlurk");
+        public bool CanLurk => IsModerator || HasTag(SpecialPlayerUtils.SpecialPlayerTag);
         [JsonIgnore]
         public bool IsAdmin => UserKind == UserKinds.Admin;
         [JsonIgnore]
