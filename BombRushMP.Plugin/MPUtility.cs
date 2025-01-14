@@ -170,6 +170,8 @@ namespace BombRushMP.Plugin
             dieMenu.StopAllCoroutines();
             dieMenu.uIManager.PopAllMenusInstant();
             player.ui.TurnOn(true);
+            var currentStageProgress = Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress();
+            PlaceCurrentPlayer(currentStageProgress.respawnPos, Quaternion.Euler(currentStageProgress.respawnRot));
         }
     }
 }

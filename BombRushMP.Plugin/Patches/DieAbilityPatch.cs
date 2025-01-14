@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin.Patches
         private static void OnStartAbility_Postfix(DieAbility __instance)
         {
             if (__instance.p.isAI) return;
+            MPUtility.CloseMenus();
             ClientController.Instance.SendGenericEvent(GenericEvents.Death, IMessage.SendModes.ReliableUnordered);
         }
     }
