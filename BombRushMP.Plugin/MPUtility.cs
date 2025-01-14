@@ -122,7 +122,15 @@ namespace BombRushMP.Plugin
         public static void CloseMenusForGameStateUpdate()
         {
             CloseMenus();
-            Core.Instance.UIManager.HidePauseMenuInstant();
+            var uiManager = Core.Instance.UIManager;
+            if (uiManager.menuNavigationController.IsMenuPartOfMenuStack(uiManager.pauseMenu))
+            {
+                uiManager.pauseMenu.ResumeCurrentGame();
+            }
+            Core.Instance.UIManager.PopAllMenusInstant();
+            var grafGame = GameObject.FindObjectOfType<GraffitiGame>();
+            if (grafGame != null)
+                grafGame.CancelGame();
         }
 
         public static void CloseMenus()
