@@ -70,6 +70,7 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            var user = ClientController.Instance.GetLocalUser();
             CachePlayers();
             if (_players.Count == 0)
             {
@@ -87,6 +88,13 @@ namespace BombRushMP.Plugin
                 _currentSpectatingPlayer = targetPlayer;
                 _gameplayCamera.SetPlayerToFollow(targetPlayer);
             }
+            if (_gameInput.GetButtonNew(2, 0) && user?.IsModerator == true)
+            {
+                EndSpectating();
+                MPUtility.PlaceCurrentPlayer(targetPlayer.transform.position, targetPlayer.transform.rotation);
+                return;
+            }
+
             if (_gameInput.GetButtonNew(3, 0))
             {
                 EndSpectating();
