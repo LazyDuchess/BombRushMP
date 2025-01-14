@@ -171,7 +171,7 @@ namespace BombRushMP.Plugin
             glyph.rectTransform.SetParent(rectParent, false);
 
             _idLabel = MakeLabel(referenceText, "IdLabel");
-            _idLabel.text = "Back";
+            _idLabel.text = "Player ID";
             _idLabel.rectTransform.anchorMin = new Vector2(0.0f, 0f);
             _idLabel.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
             _idLabel.rectTransform.pivot = new Vector2(0f, 1f);
