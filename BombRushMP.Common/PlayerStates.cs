@@ -9,6 +9,7 @@ namespace BombRushMP.Common
     public enum PlayerStates : byte
     {
         None,
-        Graffiti
+        Graffiti,
+        Toilet
     }
 }

@@ -333,6 +333,11 @@ namespace BombRushMP.Plugin
             if (ClientVisualState.State != PlayerStates.Graffiti)
                 Player.RemoveGraffitiSlash();
 
+            if (ClientVisualState.State == PlayerStates.Toilet)
+                Player.gameObject.SetActive(false);
+            else
+                Player.gameObject.SetActive(true);
+
             if (ClientVisualState.MoveStyleSkin != _lastMoveStyleSkin || ClientVisualState.MPMoveStyleSkin != _lastMPMoveStyleSkin || justCreated)
             {
                 _lastMoveStyleSkin = ClientVisualState.MoveStyleSkin;

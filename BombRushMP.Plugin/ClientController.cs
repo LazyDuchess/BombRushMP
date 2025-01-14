@@ -131,51 +131,77 @@ namespace BombRushMP.Plugin
             var state = PlayerStates.None;
             if (CurrentGraffitiGame != null)
                 state = PlayerStates.Graffiti;
+
+            var sequenceHandler = SequenceHandler.instance;
+            GameObject sequenceObject = null;
+
+            if (sequenceHandler.IsInSequence())
+            {
+                var sequence = sequenceHandler.sequence;
+                var toilet = sequence.GetComponentInParent<PublicToilet>(true);
+                if (toilet != null)
+                {
+                    sequenceObject = toilet.gameObject;
+                    state = PlayerStates.Toilet;
+                }
+            }
+
             var packet = new ClientVisualState();
             packet.State = state;
             packet.AFK = PlayerComponent.Get(player).AFK;
             packet.MoveStyleSkin = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin;
+            packet.MoveStyle = (int)player.moveStyleEquipped;
             var charData = MPSaveData.Instance.GetCharacterData(player.character);
             if (charData != null)
                 packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
-            if (state == PlayerStates.None)
-            {
-                packet.MoveStyleEquipped = player.usingEquippedMovestyle;
-                packet.MoveStyle = (int)player.moveStyleEquipped;
-                packet.Position = player.gameObject.transform.position.ToSystemVector3();
-                packet.VisualPosition = player.visualTf.localPosition.ToSystemVector3();
-                packet.Rotation = player.gameObject.transform.rotation.ToSystemQuaternion();
-                packet.VisualRotation = player.visualTf.localRotation.ToSystemQuaternion();
-                packet.Velocity = player.motor._rigidbody.velocity.ToSystemVector3();
-                packet.GrindDirection = player.anim.GetFloat(ClientConstants.GrindDirectionHash);
-                packet.SprayCanHeld = player.spraycanState == Player.SpraycanState.START || player.spraycanState == Player.SpraycanState.SHAKE;
-                packet.PhoneHeld = player.characterVisual.phoneActive;
-                packet.PhoneDirectionX = player.anim.GetFloat(ClientConstants.PhoneDirectionXHash);
-                packet.PhoneDirectionY = player.anim.GetFloat(ClientConstants.PhoneDirectionYHash);
-                packet.TurnDirection1 = player.anim.GetFloat(ClientConstants.TurnDirection1Hash);
-                packet.TurnDirection2 = player.anim.GetFloat(ClientConstants.TurnDirection2Hash);
-                packet.TurnDirection3 = player.anim.GetFloat(ClientConstants.TurnDirection3Hash);
-                packet.TurnDirectionSkateboard = player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash);
-                packet.BoostpackEffectMode = (byte)player.characterVisual.boostpackEffectMode;
-                packet.FrictionEffectMode = (byte)player.characterVisual.frictionEffectMode;
-                if (player.characterVisual.dustParticles != null)
-                    packet.DustEmissionRate = (byte)player.characterVisual.dustParticles.emission.rateOverTime.constant;
-                packet.CurrentAnimation = player.curAnim;
-                packet.CurrentAnimationTime = player.curAnimActiveTime;
-                packet.Hitbox = player.hitbox.activeSelf;
-                packet.HitboxLeftLeg = player.hitboxLeftLeg.activeSelf;
-                packet.HitboxRightLeg = player.hitboxRightLeg.activeSelf;
-                packet.HitboxUpperBody = player.hitboxUpperBody.activeSelf;
-                packet.HitboxAerial = player.airialHitbox.activeSelf;
-                packet.HitboxRadial = player.radialHitbox.activeSelf;
-                packet.HitboxSpray = player.sprayHitbox.activeSelf;
-            }
-            else if (state == PlayerStates.Graffiti){
-                var grafRotation = Quaternion.LookRotation(-CurrentGraffitiGame.gSpot.transform.forward, Vector3.up);
-                packet.MoveStyle = (int)player.moveStyleEquipped;
-                packet.Position = (CurrentGraffitiGame.gSpot.transform.position + (CurrentGraffitiGame.gSpot.transform.forward * ClientConstants.PlayerGraffitiDistance) + (-CurrentGraffitiGame.gSpot.transform.up * ClientConstants.PlayerGraffitiDownDistance)).ToSystemVector3();
-                packet.Rotation = grafRotation.ToSystemQuaternion();
-                packet.BoostpackEffectMode = (byte)CurrentGraffitiGame.characterPuppet.boostpackEffectMode;
+            switch (state) {
+                case PlayerStates.None:
+                    {
+                        packet.MoveStyleEquipped = player.usingEquippedMovestyle;
+                        packet.Position = player.gameObject.transform.position.ToSystemVector3();
+                        packet.VisualPosition = player.visualTf.localPosition.ToSystemVector3();
+                        packet.Rotation = player.gameObject.transform.rotation.ToSystemQuaternion();
+                        packet.VisualRotation = player.visualTf.localRotation.ToSystemQuaternion();
+                        packet.Velocity = player.motor._rigidbody.velocity.ToSystemVector3();
+                        packet.GrindDirection = player.anim.GetFloat(ClientConstants.GrindDirectionHash);
+                        packet.SprayCanHeld = player.spraycanState == Player.SpraycanState.START || player.spraycanState == Player.SpraycanState.SHAKE;
+                        packet.PhoneHeld = player.characterVisual.phoneActive;
+                        packet.PhoneDirectionX = player.anim.GetFloat(ClientConstants.PhoneDirectionXHash);
+                        packet.PhoneDirectionY = player.anim.GetFloat(ClientConstants.PhoneDirectionYHash);
+                        packet.TurnDirection1 = player.anim.GetFloat(ClientConstants.TurnDirection1Hash);
+                        packet.TurnDirection2 = player.anim.GetFloat(ClientConstants.TurnDirection2Hash);
+                        packet.TurnDirection3 = player.anim.GetFloat(ClientConstants.TurnDirection3Hash);
+                        packet.TurnDirectionSkateboard = player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash);
+                        packet.BoostpackEffectMode = (byte)player.characterVisual.boostpackEffectMode;
+                        packet.FrictionEffectMode = (byte)player.characterVisual.frictionEffectMode;
+                        if (player.characterVisual.dustParticles != null)
+                            packet.DustEmissionRate = (byte)player.characterVisual.dustParticles.emission.rateOverTime.constant;
+                        packet.CurrentAnimation = player.curAnim;
+                        packet.CurrentAnimationTime = player.curAnimActiveTime;
+                        packet.Hitbox = player.hitbox.activeSelf;
+                        packet.HitboxLeftLeg = player.hitboxLeftLeg.activeSelf;
+                        packet.HitboxRightLeg = player.hitboxRightLeg.activeSelf;
+                        packet.HitboxUpperBody = player.hitboxUpperBody.activeSelf;
+                        packet.HitboxAerial = player.airialHitbox.activeSelf;
+                        packet.HitboxRadial = player.radialHitbox.activeSelf;
+                        packet.HitboxSpray = player.sprayHitbox.activeSelf;
+                    }
+                    break;
+
+                case PlayerStates.Graffiti:
+                    {
+                        var grafRotation = Quaternion.LookRotation(-CurrentGraffitiGame.gSpot.transform.forward, Vector3.up);
+                        packet.Position = (CurrentGraffitiGame.gSpot.transform.position + (CurrentGraffitiGame.gSpot.transform.forward * ClientConstants.PlayerGraffitiDistance) + (-CurrentGraffitiGame.gSpot.transform.up * ClientConstants.PlayerGraffitiDownDistance)).ToSystemVector3();
+                        packet.Rotation = grafRotation.ToSystemQuaternion();
+                        packet.BoostpackEffectMode = (byte)CurrentGraffitiGame.characterPuppet.boostpackEffectMode;
+                    }
+                    break;
+
+                case PlayerStates.Toilet:
+                    {
+                        packet.Position = (sequenceObject.transform.position + Vector3.up * 2f).ToSystemVector3();
+                    }
+                    break;
             }
             return packet;
         }
