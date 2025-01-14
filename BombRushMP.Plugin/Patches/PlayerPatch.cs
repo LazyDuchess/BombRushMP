@@ -86,7 +86,8 @@ namespace BombRushMP.Plugin.Patches
                 if (otherPlayer == null) return true;
                 if (PvPUtils.CanReptilePlayerPvP(otherPlayer))
                 {
-                    __instance.GetHit(1, (otherPlayer.transform.position - __instance.transform.position).normalized, KnockbackAbility.KnockbackType.FAR);
+                    var canDamage = PvPUtils.CanIGetDamaged();
+                    __instance.GetHit(canDamage ? 1 : 0, (otherPlayer.transform.position - __instance.transform.position).normalized, KnockbackAbility.KnockbackType.FAR);
                 }
             }
             return true;
