@@ -163,12 +163,12 @@ namespace BombRushMP.Plugin
             _tpLabel.rectTransform.anchoredPosition = new Vector2(labelLeft + glyphOffset, labelBegin + (labelSeparation * 4));
             _tpLabel.rectTransform.SetParent(rectParent, false);
 
-            glyph = MakeGlyph(referenceText, 2);
-            glyph.rectTransform.anchorMin = new Vector2(0.0f, 0f);
-            glyph.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
-            glyph.rectTransform.pivot = new Vector2(0f, 1f);
-            glyph.rectTransform.anchoredPosition = new Vector2(labelLeft, labelBegin + (labelSeparation * 4));
-            glyph.rectTransform.SetParent(rectParent, false);
+            _tpGlyph = MakeGlyph(referenceText, 2);
+            _tpGlyph.rectTransform.anchorMin = new Vector2(0.0f, 0f);
+            _tpGlyph.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            _tpGlyph.rectTransform.pivot = new Vector2(0f, 1f);
+            _tpGlyph.rectTransform.anchoredPosition = new Vector2(labelLeft, labelBegin + (labelSeparation * 4));
+            _tpGlyph.rectTransform.SetParent(rectParent, false);
 
             _idLabel = MakeLabel(referenceText, "IdLabel");
             _idLabel.text = "Player ID";
