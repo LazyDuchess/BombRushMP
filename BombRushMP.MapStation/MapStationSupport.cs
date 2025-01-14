@@ -54,6 +54,8 @@ namespace BombRushMP.MapStation
             var comps = go.GetComponentsInParent<MonoBehaviour>(true);
             foreach(var comp in comps)
             {
+                // ???? fixes nullref
+                if (comp == null) continue;
                 if (comp.GetType().Name == "ActiveOnMapOption")
                     return true;
             }
