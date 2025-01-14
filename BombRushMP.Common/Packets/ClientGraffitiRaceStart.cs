@@ -30,7 +30,8 @@ namespace BombRushMP.Common.Packets
             var px = reader.ReadSingle();
             var py = reader.ReadSingle();
             var pz = reader.ReadSingle();
-            var spawnRotation = Quaternion.Normalize(Compression.ReadCompressedQuaternion(reader));
+            SpawnPosition = new Vector3(px, py, pz);
+            SpawnRotation = Quaternion.Normalize(Compression.ReadCompressedQuaternion(reader));
         }
 
         public override void Write(BinaryWriter writer)

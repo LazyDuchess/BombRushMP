@@ -55,6 +55,15 @@ namespace BombRushMP.Server.Gamemodes
         {
             switch (packetId)
             {
+                case Packets.ClientGraffitiRaceStart:
+                    {
+                        if (playerId == Lobby.LobbyState.HostId)
+                        {
+                            ServerLobbyManager.SendPacketToLobby(packet, IMessage.SendModes.Reliable, Lobby.LobbyState.Id, NetChannels.Gamemodes);
+                        }
+                    }
+                    break;
+
                 case Packets.ClientGraffitiRaceGSpots:
                     {
                         if (playerId == Lobby.LobbyState.HostId)

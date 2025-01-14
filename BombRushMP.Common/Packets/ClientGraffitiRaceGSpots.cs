@@ -7,7 +7,7 @@ namespace BombRushMP.Common.Packets
     public class ClientGraffitiRaceGSpots : Packet
     {
         public override Packets PacketId => Packets.ClientGraffitiRaceGSpots;
-        public const int MaxGraffitiSpotsPerPacket = 5;
+        public const int MaxGraffitiSpotsPerPacket = 10;
         public List<int> GraffitiSpots = new();
         public bool FinalPacket = true;
 
