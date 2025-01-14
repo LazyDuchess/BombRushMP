@@ -264,6 +264,12 @@ namespace BombRushMP.Plugin.Gamemodes
             foreach(var hash in packet.GraffitiSpots)
             {
                 var grafSpot = GetGraffitiSpotByHash(hash);
+                if (grafSpot == null)
+                {
+                    ClientLobbyManager.LeaveLobby();
+                    ChatUI.Instance.AddMessage("Kicked from lobby because your map doesn't match with the lobby host's.");
+                    return;
+                }
                 _originalProgress[grafSpot] = (GraffitiSpotProgress)grafSpot.progressableData;
                 grafSpot.ClearPaint();
                 grafSpot.bottomCrew = Crew.PLAYERS;
