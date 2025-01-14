@@ -13,12 +13,14 @@ namespace BombRushMP.Plugin
         public static MPAssets Instance { get; private set; }
         public AssetBundle Bundle;
         public TMP_SpriteAsset Sprites;
+        public Emojis Emojis;
 
         public MPAssets(string path)
         {
             Instance = this;
             Bundle = AssetBundle.LoadFromFile(path);
             Sprites = Bundle.LoadAsset<TMP_SpriteAsset>("badges");
+            Emojis = new Emojis();
         }
     }
 }

@@ -14,6 +14,16 @@ namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
+        public static string ParseMessageEmojis(string message)
+        {
+            var emojis = MPAssets.Instance.Emojis;
+            foreach(var emoji in emojis.Sprites)
+            {
+                message = message.Replace(emoji.Key, $"<sprite={emoji.Value}>");
+            }
+            return message;
+        }
+
         public static string GetPlayerDisplayName(string name)
         {
             name = TMPFilter.Sanitize(name);

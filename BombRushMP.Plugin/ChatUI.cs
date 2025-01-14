@@ -146,6 +146,7 @@ namespace BombRushMP.Plugin
             newText.SetActive(true);
             newText.transform.SetParent(_scrollRect.content, false);
             var label = newText.GetComponent<TextMeshProUGUI>();
+            text = MPUtility.ParseMessageEmojis(text);
             label.text = text;
             _messages.Add(label);
             LayoutRebuilder.ForceRebuildLayoutImmediate(_scrollRect.RectTransform());
