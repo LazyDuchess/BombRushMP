@@ -63,6 +63,8 @@ namespace BombRushMP.Plugin.Gamemodes
 
                     if (_stateTimer < 1f)
                         timerUI.SetText("3");
+
+                    player.boostCharge = player.maxBoostCharge;
                     break;
 
                 case States.Main:
