@@ -1118,18 +1118,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7897996184526600345, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7897996184526600345, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7897996184526600345, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7897996184528747842, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
       propertyPath: m_Name
       value: Chat UI
@@ -1176,10 +1164,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7897996184528747853, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7897996184927024817, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
-      propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7897996185232694118, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
