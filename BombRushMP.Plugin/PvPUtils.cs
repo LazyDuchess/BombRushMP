@@ -11,6 +11,7 @@ namespace BombRushMP.Plugin
     {
         public const string PvPTag = "pvp";
         public const string CantGetHitTag = "canthit";
+        public const string NoDamageTag = "nodamage";
         public static bool CanReptilePlayerPvP(Player player)
         {
             if (player == null) return false;
@@ -26,6 +27,15 @@ namespace BombRushMP.Plugin
             var user = clientController.GetLocalUser();
             if (user == null) return true;
             return !user.HasTag(CantGetHitTag);
+        }
+
+        public static bool CanIGetDamaged()
+        {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return true;
+            var user = clientController.GetLocalUser();
+            if (user == null) return true;
+            return !user.HasTag(NoDamageTag);
         }
 
         public static void SetHitboxesFromBits(int bits, Player player)
