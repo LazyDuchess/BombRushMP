@@ -34,6 +34,7 @@ namespace BombRushMP.Plugin
         public Material BMXMaterial = null;
         public Material BMXSpokesMaterial = null;
         public MPMoveStyleSkin MovestyleSkin = null;
+        public bool Chibi = false;
 
         public void RefreshSkin()
         {
@@ -204,8 +205,28 @@ namespace BombRushMP.Plugin
             _afkForced = true;
         }
 
+        private void UpdateChibi()
+        {
+            if (Chibi)
+            {
+                var vis = _player.characterVisual;
+                vis.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                vis.head.localScale = new Vector3(2f, 2f, 2f);
+                vis.handR.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                vis.handL.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                vis.footR.localScale = new Vector3(1.25f, 1.25f, 1.25f);
+                vis.footL.localScale = new Vector3(1.25f, 1.25f, 1.25f);
+                _player.playerGameplayVoicesAudioSource.pitch = 1.5f;
+            }
+            else
+            {
+                _player.playerGameplayVoicesAudioSource.pitch = 1f;
+            }
+        }
+
         private void LateUpdate()
         {
+            UpdateChibi();
             var mpSettings = MPSettings.Instance;
             if (Local)
             {
