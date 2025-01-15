@@ -54,6 +54,7 @@
     <Compile Include="Gamemodes\GraffitiRace.cs" />
     <Compile Include="Gamemodes\ProSkaterScoreBattle.cs" />
     <Compile Include="Gamemodes\ScoreBattle.cs" />
+    <Compile Include="Gamemodes\TeamGraffitiRace.cs" />
     <Compile Include="IServerDatabase.cs" />
     <Compile Include="Lobby.cs" />
     <Compile Include="Player.cs" />
