@@ -402,7 +402,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override GamemodeSettings GetDefaultSettings()
         {
             var settings = base.GetDefaultSettings();
-            settings.SettingByID[SettingMoveStyleID] = new GamemodeSetting("MoveStyle", MoveStyleMode.Force_On_Foot);
+            settings.SettingByID[SettingMoveStyleID] = new GamemodeSetting("Spawn MoveStyle", MoveStyleMode.Force_On_Foot);
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
             settings.SettingByID[SettingQuickGraffitiID] = new ToggleGamemodeSetting("Quick Graffiti", true);
             var maxSpots = GetValidSpots().Count;
