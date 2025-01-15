@@ -130,7 +130,7 @@ namespace BombRushMP.Plugin
 
         public static void SetUpPlayerForGameStateUpdate()
         {
-            CloseMenus();
+            CloseMenusAndSpectator();
             var uiManager = Core.Instance.UIManager;
             if (uiManager.menuNavigationController.IsMenuPartOfMenuStack(uiManager.pauseMenu))
             {
@@ -145,7 +145,7 @@ namespace BombRushMP.Plugin
                 Revive();
         }
 
-        public static void CloseMenus()
+        public static void CloseMenusAndSpectator()
         {
             var spectatorController = SpectatorController.Instance;
             if (spectatorController != null)
@@ -157,9 +157,6 @@ namespace BombRushMP.Plugin
 
         public static bool AnyMenusOpen()
         {
-            var spectatorController = SpectatorController.Instance;
-            if (spectatorController != null)
-                return true;
             var playerList = PlayerListUI.Instance;
             if (playerList.Displaying)
                 return true;

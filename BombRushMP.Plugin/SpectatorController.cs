@@ -27,7 +27,7 @@ namespace BombRushMP.Plugin
             if (chatUi != null)
                 chatUi.SetState(ChatUI.States.Unfocused);
             var playerList = PlayerListUI.Instance;
-            MPUtility.CloseMenus();
+            MPUtility.CloseMenusAndSpectator();
             _uiManager = Core.instance.UIManager;
             _gameInput = Core.Instance.GameInput;
             _worldHandler = WorldHandler.instance;

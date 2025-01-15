@@ -14,7 +14,7 @@ namespace BombRushMP.Plugin.Patches
         {
             if (__instance.p.isAI) return;
             MPSaveData.Instance.Stats.Deaths++;
-            MPUtility.CloseMenus();
+            MPUtility.CloseMenusAndSpectator();
             ClientController.Instance.SendGenericEvent(GenericEvents.Death, IMessage.SendModes.ReliableUnordered);
         }
     }
