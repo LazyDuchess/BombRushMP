@@ -87,6 +87,10 @@ namespace BombRushMP.Plugin.Patches
                 {
                     var canDamage = PvPUtils.CanIGetDamaged();
                     __instance.GetHit(canDamage ? 1 : 0, (otherPlayer.transform.position - __instance.transform.position).normalized, KnockbackAbility.KnockbackType.FAR);
+                    MPSaveData.Instance.Stats.TimesHit++;
+                    Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                    var mpPlayer = MPUtility.GetMuliplayerPlayer(otherPlayer);
+                    ClientController.Instance.SendPacket(new ClientHitByPlayer(mpPlayer.ClientId), IMessage.SendModes.ReliableUnordered, NetChannels.Default);
                 }
             }
             return true;

@@ -171,6 +171,9 @@ namespace BombRushMP.Plugin
 
         public void DoSayHello()
         {
+            var saveData = MPSaveData.Instance;
+            saveData.Stats.TimesSaidHello++;
+            Core.Instance.SaveManager.SaveCurrentSaveSlot();
             _player.PlayVoice(AudioClipID.VoiceTalk, VoicePriority.COMBAT);
         }
 
@@ -191,6 +194,11 @@ namespace BombRushMP.Plugin
 
         public void ForceAFK()
         {
+            if (!AFK)
+            {
+                MPSaveData.Instance.Stats.TimesFallenAsleep++;
+                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+            }
             _afkTimer = ClientConstants.AFKTime;
             AFK = true;
             _afkForced = true;
@@ -236,6 +244,11 @@ namespace BombRushMP.Plugin
 
                 if (_afkTimer >= ClientConstants.AFKTime)
                 {
+                    if (!AFK)
+                    {
+                        MPSaveData.Instance.Stats.TimesFallenAsleep++;
+                        Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                    }
                     AFK = true;
                     _afkTimer = ClientConstants.AFKTime;
                 }
@@ -244,6 +257,9 @@ namespace BombRushMP.Plugin
                     AFK = false;
                     _afkForced = false;
                 }
+
+                if (AFK)
+                    MPSaveData.Instance.Stats.TimeSpentAsleep += Core.dt;
             }
             if (mpSettings.ShowAFKEffects)
             {

@@ -287,6 +287,16 @@ namespace BombRushMP.Plugin
             PacketReceived?.Invoke(packetId, packet);
             switch (packetId)
             {
+                case Packets.ClientHitByPlayer:
+                    {
+                        var hitPacket = packet as ClientHitByPlayer;
+                        if (hitPacket.ClientId == LocalID) break;
+                        if (hitPacket.Attacker != LocalID) break;
+                        MPSaveData.Instance.Stats.PlayersHit++;
+                        Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                    }
+                    break;
+
                 case Packets.ServerConnectionResponse:
                     {
                         var connectionResponse = (ServerConnectionResponse)packet;

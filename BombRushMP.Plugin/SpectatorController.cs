@@ -70,6 +70,7 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            MPSaveData.Instance.Stats.TimeSpentSpectating += Core.dt;
             var user = ClientController.Instance.GetLocalUser();
             CachePlayers();
             if (_players.Count == 0)

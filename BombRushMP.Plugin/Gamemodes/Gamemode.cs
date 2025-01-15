@@ -44,13 +44,35 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public virtual void OnEnd(bool cancelled)
         {
+            var saveData = MPSaveData.Instance;
+            var gamemode = Lobby.LobbyState.Gamemode;
             InGame = false;
             MPUtility.SetUpPlayerForGameStateUpdate();
             LobbyUI.Instance.UpdateUI();
             if (!cancelled)
             {
-                ProcessSpecialPlayerUnlock();
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
+
+                saveData.Stats.IncreaseGamemodesPlayed(gamemode);
+                var bestPlayer = Lobby.GetHighestScoringPlayer();
+                if (bestPlayer.Id == ClientController.Instance.LocalID)
+                    saveData.Stats.IncreaseGamemodesWon(gamemode);
+
+                if (AnyEliteInLobby())
+                {
+                    saveData.Stats.ElitesPlayedAgainst++;
+                    if (WonAgainstElite())
+                    {
+                        saveData.Stats.ElitesBeaten++;
+                        if (!saveData.ShouldDisplayGoonieBoard())
+                        {
+                            ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
+                            saveData.UnlockedGoonieBoard = true;
+                        }
+                    }
+                }
+
+                Core.Instance.SaveManager.SaveCurrentSaveSlot();
             }
             else
             {
@@ -58,24 +80,33 @@ namespace BombRushMP.Plugin.Gamemodes
             }
         }
 
-        private void ProcessSpecialPlayerUnlock()
+        private bool AnyEliteInLobby()
         {
-            if (Lobby == null) return;
-            if (Lobby.LobbyState == null) return;
-            if (Lobby.LobbyState.Players == null) return;
-            var mpSaveData = MPSaveData.Instance;
-            if (mpSaveData.ShouldDisplayGoonieBoard()) return;
+            foreach(var player in Lobby.LobbyState.Players)
+            {
+                var user = ClientController.GetUser(player.Key);
+                if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
+                    return true;
+            }
+            return false;
+        }
+
+        private bool WonAgainstElite()
+        {
+            if (Lobby == null) return false;
+            if (Lobby.LobbyState == null) return false;
+            if (Lobby.LobbyState.Players == null) return false;
 
             var winner = Lobby.GetHighestScoringPlayer();
             var user = ClientController.GetUser(winner.Id);
-            if (user == null) return;
+            if (user == null) return false;
 
-            if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag)) return;
+            if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag)) return false;
 
             var eliteInLobby = false;
             var eliteScore = 0f;
 
-            foreach(var player in Lobby.LobbyState.Players)
+            foreach (var player in Lobby.LobbyState.Players)
             {
                 user = ClientController.GetUser(player.Key);
                 if (user == null) continue;
@@ -89,17 +120,17 @@ namespace BombRushMP.Plugin.Gamemodes
                 }
             }
 
-            if (!eliteInLobby) return;
+            if (!eliteInLobby) return false;
 
             if (!Lobby.LobbyState.Players.TryGetValue(ClientController.LocalID, out var me))
-                return;
+                return false;
 
             if (me.Score > eliteScore)
             {
-                ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
-                mpSaveData.UnlockedGoonieBoard = true;
-                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                return true;
             }
+
+            return false;
         }
 
         public virtual void OnUpdate_InGame()
