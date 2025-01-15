@@ -175,6 +175,7 @@ namespace BombRushMP.Plugin.Patches
                 }
             }
             var playerComponent = PlayerComponent.Get(__instance);
+            playerComponent.Chibi = false;
             playerComponent.SpecialSkin = SpecialSkins.None;
             var clientController = ClientController.Instance;
             if (clientController == null) return;

@@ -290,6 +290,12 @@ namespace BombRushMP.Plugin
             PacketReceived?.Invoke(packetId, packet);
             switch (packetId)
             {
+                case Packets.ServerSetChibi:
+                    {
+                        PlayerComponent.GetLocal().Chibi = (packet as ServerSetChibi).Set;
+                    }
+                    break;
+
                 case Packets.ClientHitByPlayer:
                     {
                         var hitPacket = packet as ClientHitByPlayer;

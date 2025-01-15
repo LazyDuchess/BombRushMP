@@ -199,6 +199,14 @@ namespace BombRushMP.Plugin
 
         public void TickUpdate()
         {
+            if (Player != null)
+            {
+                if (PlayerComponent.Get(Player).Chibi != ClientVisualState.Chibi)
+                {
+                    DeletePlayer();
+                }
+            }
+
             var mpSettings = MPSettings.Instance;
 
             var clientController = ClientController.Instance;
@@ -272,7 +280,6 @@ namespace BombRushMP.Plugin
                 Player.SetOutfit(fit);
                 Outfit = fit;
             }
-
             var playerComp = PlayerComponent.Get(Player);
             playerComp.AFK = ClientVisualState.AFK;
             playerComp.Chibi = ClientVisualState.Chibi;
