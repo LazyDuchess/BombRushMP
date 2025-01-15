@@ -1,6 +1,8 @@
+using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.MapStation;
 using BombRushMP.Plugin;
+using BombRushMP.Plugin.Gamemodes;
 using BombRushMP.Plugin.Phone;
 using CommonAPI;
 using CommonAPI.Phone;
@@ -70,7 +72,11 @@ public class AppMultiplayer : CustomApp
         {
             if (!_waitingForLobbyCreateResponse)
             {
-                lobbyManager.CreateLobby();
+                var scoreBattleSettings = GamemodeFactory.GetGamemodeSettings(GamemodeIDs.ScoreBattle);
+                var savedScoreBattleSettings = MPSaveData.Instance.GetSavedSettings(GamemodeIDs.ScoreBattle);
+                if (savedScoreBattleSettings != null)
+                    scoreBattleSettings.ApplySaved(savedScoreBattleSettings);
+                lobbyManager.CreateLobby(GamemodeIDs.ScoreBattle, scoreBattleSettings);
                 _waitingForLobbyCreateResponse = true;
                 ClientController.PacketReceived += OnPacketReceived_LobbyCreation;
             }

@@ -84,10 +84,19 @@ namespace BombRushMP.Plugin
             return GamemodeFactory.GetGamemodeName(lobby.LobbyState.Gamemode);
         }
 
-        public void CreateLobby()
+        public void CreateLobby(GamemodeIDs gamemode, GamemodeSettings settings)
         {
             if (!CanJoinLobby()) return;
-            _clientController.SendPacket(new ClientLobbyCreate(), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+            byte[] settingsData;
+            using (var ms = new MemoryStream())
+            {
+                using (var writer = new BinaryWriter(ms))
+                {
+                    settings.Write(writer);
+                    settingsData = ms.ToArray();
+                }
+            }
+            _clientController.SendPacket(new ClientLobbyCreate(gamemode, settingsData), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
         }
 
         public void JoinLobby(uint lobbyId)

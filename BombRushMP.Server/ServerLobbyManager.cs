@@ -224,11 +224,15 @@ namespace BombRushMP.Server
 
                 case Packets.ClientLobbyCreate:
                     {
+                        var lobbyPacket = (ClientLobbyCreate)packet;
+
                         if (existingLobby != null)
                             RemovePlayer(existingLobby.LobbyState.Id, client.Id);
 
                         var lobbyState = new LobbyState(player.ClientState.Stage, _uidProvider.RequestUID(), client.Id);
                         var lobby = new Lobby(lobbyState);
+                        lobby.LobbyState.Gamemode = lobbyPacket.GamemodeID;
+                        lobby.LobbyState.GamemodeSettings = lobbyPacket.Settings;                        
                         Lobbies[lobby.LobbyState.Id] = lobby;
                         AddPlayer(lobby.LobbyState.Id, client.Id);
                         ServerLogger.Log($"Created Lobby with UID {lobby.LobbyState.Id} with host {player.ClientState.Name}");

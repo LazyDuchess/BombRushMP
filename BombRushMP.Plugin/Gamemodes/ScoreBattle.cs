@@ -56,14 +56,9 @@ namespace BombRushMP.Plugin.Gamemodes
             switch (_state)
             {
                 case States.Countdown:
-                    timerUI.SetText("1");
-
-                    if (_stateTimer < 2f)
-                        timerUI.SetText("2");
-
-                    if (_stateTimer < 1f)
-                        timerUI.SetText("3");
-
+                    var timerRounded = Mathf.FloorToInt(_stateTimer);
+                    var timerText = Mathf.Max(1, Countdown - timerRounded);
+                    timerUI.SetText(timerText.ToString());
                     player.boostCharge = player.maxBoostCharge;
                     break;
 
