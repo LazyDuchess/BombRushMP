@@ -90,6 +90,14 @@ namespace BombRushMP.Plugin
             Core.OnCoreUpdatePaused -= player.OnCoreUpdatePaused;
             Core.OnCoreUpdateUnPaused -= player.OnCoreUpdateUnPaused;
             PlayerHitboxesToEnemy(player);
+            if (!MPSettings.Instance.PlayerDopplerEnabled)
+            {
+                var audios = player.GetComponentsInChildren<AudioSource>(true);
+                foreach(var audio in audios)
+                {
+                    audio.dopplerLevel = 0f;
+                }
+            }
             return player;
         }
 

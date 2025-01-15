@@ -58,6 +58,18 @@ namespace BombRushMP.Plugin
                 _playerAudioEnabled.Value = value;
             }
         }
+        public bool PlayerDopplerEnabled
+        {
+            get
+            {
+                return _playerDopplerEnabled.Value;
+            }
+
+            set
+            {
+                _playerDopplerEnabled.Value = value;
+            }
+        }
         public string ServerAddress
         {
             get
@@ -442,6 +454,7 @@ namespace BombRushMP.Plugin
 
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
+        private ConfigEntry<bool> _playerDopplerEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
         private ConfigEntry<int> _serverPort;
@@ -495,6 +508,7 @@ namespace BombRushMP.Plugin
             _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
             _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
+            _playerDopplerEnabled = configFile.Bind(Settings, "Player Audio Doppler", false, "Whether to enable the doppler effect on other players' sound effects.");
             _showNamePlates = configFile.Bind(Settings, "Show Nameplates", true, "Whether to show nameplates above players.");
             _showMinimap = configFile.Bind(Settings, "Show Minimap", true, "Whether to always show the minimap in-game.");
             _showNotifications = configFile.Bind(Settings, "Show Notifications", true, "Whether to show notifications when you're invited to a lobby.");
