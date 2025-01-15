@@ -10,6 +10,7 @@ namespace BombRushMP.Server.Gamemodes
     public abstract class Gamemode
     {
         public Lobby Lobby;
+        protected int CountdownTime = 10;
         protected BRCServer Server;
         protected ServerLobbyManager ServerLobbyManager;
 
@@ -36,7 +37,10 @@ namespace BombRushMP.Server.Gamemodes
 
         public virtual void OnPacketFromLobbyReceived(Packets packetId, Packet packet, ushort playerId)
         {
-
+            if (packetId == Packets.ClientGamemodeCountdown && playerId == Lobby.LobbyState.HostId)
+            {
+                CountdownTime = (packet as ClientGamemodeCountdown).CountdownSeconds;
+            }
         }
     }
 }

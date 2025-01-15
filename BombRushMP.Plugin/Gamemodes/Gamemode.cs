@@ -6,15 +6,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
     public class Gamemode
     {
+        private static int SettingCountdownID = Animator.StringToHash("Countdown");
+        private const int MinCountdown = 3;
+        private const int MaxCountdown = 10;
+        public int DefaultCountdown = 3;
+        public bool CanChangeCountdown = true;
         public MinimapOverrideModes MinimapOverrideMode = MinimapOverrideModes.None;
         public Lobby Lobby;
         public bool InGame { get; private set; }
         public GamemodeSettings Settings;
+        protected int Countdown => CanChangeCountdown ? Settings.SettingByID[SettingCountdownID].Value : DefaultCountdown;
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;
 
@@ -31,6 +38,7 @@ namespace BombRushMP.Plugin.Gamemodes
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
             Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);
+            ClientController.SendPacket(new ClientGamemodeCountdown((ushort)Countdown), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.Gamemodes);
         }
 
         public virtual void OnEnd(bool cancelled)
@@ -110,7 +118,10 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public virtual GamemodeSettings GetDefaultSettings()
         {
-            return new GamemodeSettings();
+            var settings = new GamemodeSettings();
+            if (CanChangeCountdown)
+                settings.SettingByID[SettingCountdownID] = new GamemodeSetting("Countdown (Seconds)", DefaultCountdown, MinCountdown, MaxCountdown);
+            return settings;
         }
     }
 }

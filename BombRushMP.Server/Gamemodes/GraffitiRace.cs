@@ -41,7 +41,7 @@ namespace BombRushMP.Server.Gamemodes
             switch (_state)
             {
                 case States.Countdown:
-                    if (_countdownTimer > 3f)
+                    if (_countdownTimer > CountdownTime)
                     {
                         ServerLobbyManager.SendPacketToLobby(new ServerGamemodeBegin(), IMessage.SendModes.Reliable, Lobby.LobbyState.Id, NetChannels.Gamemodes);
                         _state = States.Main;
@@ -53,6 +53,7 @@ namespace BombRushMP.Server.Gamemodes
 
         public override void OnPacketFromLobbyReceived(Packets packetId, Packet packet, ushort playerId)
         {
+            base.OnPacketFromLobbyReceived(packetId, packet, playerId);
             switch (packetId)
             {
                 case Packets.ClientGraffitiRaceStart:

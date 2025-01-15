@@ -133,13 +133,9 @@ namespace BombRushMP.Plugin.Gamemodes
             switch (_state)
             {
                 case States.Countdown:
-                    timerUI.SetText("1");
-
-                    if (_countdownTimer < 2f)
-                        timerUI.SetText("2");
-
-                    if (_countdownTimer < 1f)
-                        timerUI.SetText("3");
+                    var timerRounded = Mathf.FloorToInt(_countdownTimer);
+                    var timerText = Mathf.Max(1, Countdown - timerRounded);
+                    timerUI.SetText(timerText.ToString());
                     break;
 
                 case States.Main:
@@ -393,7 +389,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override GamemodeSettings GetDefaultSettings()
         {
-            var settings = new GamemodeSettings();
+            var settings = base.GetDefaultSettings();
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
             settings.SettingByID[SettingQuickGraffitiID] = new ToggleGamemodeSetting("Quick Graffiti", true);
             var maxSpots = GetValidSpots().Count;

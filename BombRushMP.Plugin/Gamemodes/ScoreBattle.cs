@@ -190,7 +190,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override GamemodeSettings GetDefaultSettings()
         {
-            var settings = new GamemodeSettings();
+            var settings = base.GetDefaultSettings();
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Current_Positions);
             return settings;
         }
