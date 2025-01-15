@@ -112,8 +112,11 @@ namespace BombRushMP.Plugin
                 PlayerPatch.PlayAnimPatchEnabled = false;
                 //hax
                 var clipInfo = player.anim.GetCurrentAnimatorClipInfo(0);
-                time = time / clipInfo[0].clip.length;
-                player.PlayAnim(animation, true, true, time);
+                if (clipInfo.Length > 0)
+                {
+                    time = time / clipInfo[0].clip.length;
+                    player.PlayAnim(animation, true, true, time);
+                }
             }
             finally
             {
@@ -121,11 +124,25 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public void FrameUpdate()
+        public void FrameUpdate(bool hidden)
         {
+            if (hidden)
+            {
+                if (Player != null)
+                    Player.gameObject.SetActive(false);
+            }
+            else
+            {
+                if (Player != null)
+                    Player.gameObject.SetActive(true);
+            }
+
             if (ClientState == null || ClientVisualState == null) return;
 
             if (Player == null) return;
+
+            if (ClientVisualState.State == PlayerStates.Toilet)
+                Teleporting = true;
 
             var clientVisualStatePosition = ClientVisualState.Position.ToUnityVector3();
             var clientVisualStateVisualPosition = ClientVisualState.VisualPosition.ToUnityVector3();
@@ -162,11 +179,18 @@ namespace BombRushMP.Plugin
                 Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash), ClientVisualState.TurnDirectionSkateboard, Time.deltaTime * ClientConstants.PlayerInterpolation));
             }
 
+            if (ClientVisualState.State == PlayerStates.Toilet)
+                Teleporting = true;
+
             Player.motor._rigidbody.velocity = clientVisualStateVelocity;
             UpdateLookAt();
             UpdatePhone();
             if (NamePlate != null)
+            {
                 NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
+                if (ClientVisualState.State == PlayerStates.Toilet)
+                    NamePlate.transform.position += Vector3.up * 2f;
+            }
         }
 
         public void TickUpdate()
@@ -222,7 +246,7 @@ namespace BombRushMP.Plugin
                 fit = 0;
 
             var justCreated = false;
-            var snapAnim = false;
+            var snapAnim = Teleporting;
 
             if (Player == null)
             {
@@ -263,6 +287,11 @@ namespace BombRushMP.Plugin
                 snapAnim = true;
                 if (!Player.anim.GetComponent<InverseKinematicsRelay>())
                     Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
+            }
+
+            if (ClientVisualState.State == PlayerStates.Toilet)
+            {
+                Player.characterVisual.feetIK = false;
             }
 
             if (Player.curAnim != ClientVisualState.CurrentAnimation)
@@ -332,11 +361,6 @@ namespace BombRushMP.Plugin
 
             if (ClientVisualState.State != PlayerStates.Graffiti)
                 Player.RemoveGraffitiSlash();
-
-            if (ClientVisualState.State == PlayerStates.Toilet)
-                Player.gameObject.SetActive(false);
-            else
-                Player.gameObject.SetActive(true);
 
             if (ClientVisualState.MoveStyleSkin != _lastMoveStyleSkin || ClientVisualState.MPMoveStyleSkin != _lastMPMoveStyleSkin || justCreated)
             {

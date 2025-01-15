@@ -173,5 +173,22 @@ namespace BombRushMP.Plugin
             var currentStageProgress = Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress();
             PlaceCurrentPlayer(currentStageProgress.respawnPos, Quaternion.Euler(currentStageProgress.respawnRot));
         }
+
+        public static PublicToilet GetCurrentToilet()
+        {
+            var sequenceHandler = SequenceHandler.instance;
+
+            if (sequenceHandler.IsInSequence())
+            {
+                var sequence = sequenceHandler.sequence;
+                var toilet = sequence.GetComponentInParent<PublicToilet>(true);
+                if (toilet != null)
+                {
+                    return toilet;
+                }
+            }
+
+            return null;
+        }
     }
 }

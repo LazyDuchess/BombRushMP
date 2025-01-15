@@ -132,19 +132,10 @@ namespace BombRushMP.Plugin
             if (CurrentGraffitiGame != null)
                 state = PlayerStates.Graffiti;
 
-            var sequenceHandler = SequenceHandler.instance;
-            GameObject sequenceObject = null;
+            var sequenceObject = MPUtility.GetCurrentToilet();
 
-            if (sequenceHandler.IsInSequence())
-            {
-                var sequence = sequenceHandler.sequence;
-                var toilet = sequence.GetComponentInParent<PublicToilet>(true);
-                if (toilet != null)
-                {
-                    sequenceObject = toilet.gameObject;
-                    state = PlayerStates.Toilet;
-                }
-            }
+            if (sequenceObject != null)
+                state = PlayerStates.Toilet;
 
             var packet = new ClientVisualState();
             packet.State = state;
@@ -199,7 +190,9 @@ namespace BombRushMP.Plugin
 
                 case PlayerStates.Toilet:
                     {
-                        packet.Position = (sequenceObject.transform.position + Vector3.up * 2f).ToSystemVector3();
+                        packet.Position = (sequenceObject.transform.position + (Vector3.up * 0.2f) - (sequenceObject.transform.forward * 0.2f)).ToSystemVector3();
+                        packet.Rotation = (sequenceObject.transform.rotation * Quaternion.Euler(0f, 180f, 0f)).ToSystemQuaternion();
+                        packet.CurrentAnimation = Animator.StringToHash("idle");
                     }
                     break;
             }
@@ -230,6 +223,7 @@ namespace BombRushMP.Plugin
 
         private void LateUpdate()
         {
+            var playersHidden = MPUtility.GetCurrentToilet() != null;
             _tickTimer += Time.deltaTime;
             if (_tickTimer >= TickRate)
             {
@@ -239,7 +233,7 @@ namespace BombRushMP.Plugin
             }
             foreach (var player in Players)
             {
-                player.Value.FrameUpdate();
+                player.Value.FrameUpdate(playersHidden);
             }
             ClientLobbyManager.OnUpdate();
         }
