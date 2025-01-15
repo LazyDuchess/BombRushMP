@@ -76,7 +76,7 @@ namespace BombRushMP.Plugin
                 writer.Write(gamemodeWon.Value);
             }
             writer.Write(GamemodesPlayedAlone.Count);
-            foreach (var gamemodePlayed in GamemodesWon)
+            foreach (var gamemodePlayed in GamemodesPlayedAlone)
             {
                 writer.Write((int)gamemodePlayed.Key);
                 writer.Write(gamemodePlayed.Value);
