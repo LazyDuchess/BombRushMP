@@ -53,21 +53,31 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
 
-                saveData.Stats.IncreaseGamemodesPlayed(gamemode);
-                var bestPlayer = Lobby.GetHighestScoringPlayer();
-                if (bestPlayer.Id == ClientController.Instance.LocalID)
-                    saveData.Stats.IncreaseGamemodesWon(gamemode);
-
-                if (AnyEliteInLobby())
+                if (Lobby.LobbyState.Players.Count > 1)
                 {
-                    saveData.Stats.ElitesPlayedAgainst++;
-                    if (WonAgainstElite())
+                    saveData.Stats.IncreaseGamemodesPlayed(gamemode);
+                    var bestPlayer = Lobby.GetHighestScoringPlayer();
+                    if (bestPlayer.Id == ClientController.Instance.LocalID)
+                        saveData.Stats.IncreaseGamemodesWon(gamemode);
+                }
+                else
+                {
+                    saveData.Stats.IncreaseGamemodesPlayedAlone(gamemode);
+                }
+
+                if (!AmIElite())
+                {
+                    if (AnyEliteInLobby())
                     {
-                        saveData.Stats.ElitesBeaten++;
-                        if (!saveData.ShouldDisplayGoonieBoard())
+                        saveData.Stats.ElitesPlayedAgainst++;
+                        if (WonAgainstElite())
                         {
-                            ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
-                            saveData.UnlockedGoonieBoard = true;
+                            saveData.Stats.ElitesBeaten++;
+                            if (!saveData.ShouldDisplayGoonieBoard())
+                            {
+                                ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
+                                saveData.UnlockedGoonieBoard = true;
+                            }
                         }
                     }
                 }
@@ -78,6 +88,11 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
             }
+        }
+
+        private bool AmIElite()
+        {
+            return ClientController.Instance.GetLocalUser()?.HasTag(SpecialPlayerUtils.SpecialPlayerTag) == true;
         }
 
         private bool AnyEliteInLobby()

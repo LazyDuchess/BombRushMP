@@ -10,7 +10,7 @@ namespace BombRushMP.Plugin
 {
     public class MPStats
     {
-        private const byte Version = 0;
+        private const byte Version = 1;
         public uint ElitesPlayedAgainst = 0;
         public uint ElitesBeaten = 0;
         public uint TimesFallenAsleep = 0;
@@ -22,6 +22,7 @@ namespace BombRushMP.Plugin
         public uint TimesSaidHello = 0;
         public Dictionary<GamemodeIDs, uint> GamemodesPlayed = new();
         public Dictionary<GamemodeIDs, uint> GamemodesWon = new();
+        public Dictionary<GamemodeIDs, uint> GamemodesPlayedAlone = new();
 
         public void IncreaseGamemodesPlayed(GamemodeIDs gamemode)
         {
@@ -39,6 +40,15 @@ namespace BombRushMP.Plugin
                 val = result;
             val++;
             GamemodesWon[gamemode] = val;
+        }
+
+        public void IncreaseGamemodesPlayedAlone(GamemodeIDs gamemode)
+        {
+            uint val = 0;
+            if (GamemodesPlayedAlone.TryGetValue(gamemode, out var result))
+                val = result;
+            val++;
+            GamemodesPlayedAlone[gamemode] = val;
         }
 
         public void Write(BinaryWriter writer)
@@ -64,6 +74,12 @@ namespace BombRushMP.Plugin
             {
                 writer.Write((int)gamemodeWon.Key);
                 writer.Write(gamemodeWon.Value);
+            }
+            writer.Write(GamemodesPlayedAlone.Count);
+            foreach (var gamemodePlayed in GamemodesWon)
+            {
+                writer.Write((int)gamemodePlayed.Key);
+                writer.Write(gamemodePlayed.Value);
             }
         }
 
@@ -92,6 +108,16 @@ namespace BombRushMP.Plugin
                 var key = reader.ReadInt32();
                 var value = reader.ReadUInt32();
                 GamemodesWon[(GamemodeIDs)key] = value;
+            }
+            if (version > 0)
+            {
+                var gamemodesPlayedAlone = reader.ReadInt32();
+                for (var i = 0; i < gamemodesPlayedAlone; i++)
+                {
+                    var key = reader.ReadInt32();
+                    var value = reader.ReadUInt32();
+                    GamemodesPlayedAlone[(GamemodeIDs)key] = value;
+                }
             }
         }
     }
