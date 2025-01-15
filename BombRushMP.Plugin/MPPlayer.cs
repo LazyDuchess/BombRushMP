@@ -412,6 +412,8 @@ namespace BombRushMP.Plugin
             else
                 Player.sprayHitbox.SetActive(false);
 
+            Player.characterVisual.VFX.boostpackTrail.SetActive(ClientVisualState.BoostpackTrail);
+
             _previousState = ClientVisualState.State;
         }
 

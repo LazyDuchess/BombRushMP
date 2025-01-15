@@ -25,6 +25,7 @@ namespace BombRushMP.Common.Packets
             HitboxAerial,
             HitboxRadial,
             HitboxSpray,
+            BoostpackTrail,
             MAX
         }
         public override Packets PacketId => Packets.ClientVisualState;
@@ -60,6 +61,7 @@ namespace BombRushMP.Common.Packets
         public bool HitboxAerial = false;
         public bool HitboxRadial = false;
         public bool HitboxSpray = false;
+        public bool BoostpackTrail = false;
 
         public override void Write(BinaryWriter writer)
         {
@@ -93,6 +95,7 @@ namespace BombRushMP.Common.Packets
             bitField[BooleanMask.HitboxAerial] = HitboxAerial;
             bitField[BooleanMask.HitboxRadial] = HitboxRadial;
             bitField[BooleanMask.HitboxSpray] = HitboxSpray;
+            bitField[BooleanMask.BoostpackTrail] = BoostpackTrail;
 
             bitField.WriteShort(writer);
 
@@ -151,6 +154,7 @@ namespace BombRushMP.Common.Packets
             HitboxAerial = bitField[BooleanMask.HitboxAerial];
             HitboxRadial = bitField[BooleanMask.HitboxRadial];
             HitboxSpray = bitField[BooleanMask.HitboxSpray];
+            BoostpackTrail = bitField[BooleanMask.BoostpackTrail];
 
             MoveStyle = reader.ReadInt32();
 
