@@ -22,7 +22,7 @@ namespace BombRushMP.Plugin
         public Player Player;
         public bool Teleporting = true;
         public int Outfit = 0;
-        private PlayerStates _previousState = PlayerStates.None;
+        private PlayerStates _previousState = PlayerStates.Normal;
         public Nameplate NamePlate;
         private MapPin _mapPin = null;
         private Material _mapPinMaterial = null;

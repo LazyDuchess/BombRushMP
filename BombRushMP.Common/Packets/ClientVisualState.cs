@@ -45,7 +45,7 @@ namespace BombRushMP.Common.Packets
         public float TurnDirection2 = 0f;
         public float TurnDirection3 = 0f;
         public float TurnDirectionSkateboard = 0f;
-        public PlayerStates State = PlayerStates.None;
+        public PlayerStates State = PlayerStates.Normal;
         public byte DustEmissionRate = 0;
         public byte BoostpackEffectMode = 0;
         public byte FrictionEffectMode = 0;

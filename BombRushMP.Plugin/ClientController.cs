@@ -128,7 +128,7 @@ namespace BombRushMP.Plugin
 
         private ClientVisualState CreateVisualStatePacket(Player player)
         {
-            var state = PlayerStates.None;
+            var state = PlayerStates.Normal;
             if (CurrentGraffitiGame != null)
                 state = PlayerStates.Graffiti;
 
@@ -146,7 +146,7 @@ namespace BombRushMP.Plugin
             if (charData != null)
                 packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
             switch (state) {
-                case PlayerStates.None:
+                case PlayerStates.Normal:
                     {
                         packet.MoveStyleEquipped = player.usingEquippedMovestyle;
                         packet.Position = player.gameObject.transform.position.ToSystemVector3();
