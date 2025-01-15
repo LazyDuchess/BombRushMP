@@ -14,6 +14,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             {GamemodeIDs.ScoreBattle, typeof(ScoreBattle) },
             {GamemodeIDs.GraffitiRace, typeof(GraffitiRace) },
+            {GamemodeIDs.TeamGraffitiRace, typeof(TeamGraffitiRace) },
             {GamemodeIDs.ProSkaterScoreBattle, typeof(ProSkaterScoreBattle) }
         };
 
@@ -21,6 +22,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             {GamemodeIDs.ScoreBattle, "Score Battle" },
             {GamemodeIDs.GraffitiRace, "Graffiti Race" },
+            {GamemodeIDs.TeamGraffitiRace, "Team Graffiti Race" },
             {GamemodeIDs.ProSkaterScoreBattle, "Pro Skater Score Battle" }
         };
 

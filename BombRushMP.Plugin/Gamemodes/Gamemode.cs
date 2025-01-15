@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin.Gamemodes
         private static int SettingCountdownID = Animator.StringToHash("Countdown");
         private const int MinCountdown = 3;
         private const int MaxCountdown = 10;
+        public bool TeamBased = false;
         public int DefaultCountdown = 3;
         public bool CanChangeCountdown = true;
         public MinimapOverrideModes MinimapOverrideMode = MinimapOverrideModes.None;
