@@ -137,6 +137,9 @@ namespace BombRushMP.Plugin
             if (sequenceObject != null)
                 state = PlayerStates.Toilet;
 
+            if (player.IsDead())
+                state = PlayerStates.Dead;
+
             var packet = new ClientVisualState();
             packet.State = state;
             packet.AFK = PlayerComponent.Get(player).AFK;
@@ -146,6 +149,7 @@ namespace BombRushMP.Plugin
             if (charData != null)
                 packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
             switch (state) {
+                case PlayerStates.Dead:
                 case PlayerStates.Normal:
                     {
                         packet.MoveStyleEquipped = player.usingEquippedMovestyle;

@@ -10,6 +10,7 @@ namespace BombRushMP.Common
     {
         Normal,
         Graffiti,
-        Toilet
+        Toilet,
+        Dead
     }
 }
