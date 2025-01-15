@@ -399,6 +399,20 @@ namespace BombRushMP.Plugin
                 _fallbackCharacter.Value = value;
             }
         }
+
+        public int FallbackOutfit
+        {
+            get
+            {
+                return _fallbackOutfit.Value;
+            }
+
+            set
+            {
+                _fallbackOutfit.Value = value;
+            }
+        }
+
 #if DEBUG
         public bool Invisible
         {
@@ -481,6 +495,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _offline;
         private ConfigEntry<string> _authKey;
         private ConfigEntry<CharacterNames> _fallbackCharacter;
+        private ConfigEntry<int> _fallbackOutfit;
         private ConfigEntry<bool> _invisible;
         private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
         private ConfigEntry<bool> _deathMessages;
@@ -547,6 +562,13 @@ namespace BombRushMP.Plugin
             _authKey = configFile.Bind(General, "Authentication Key", "", "Optional secret key used to authenticate you.");
             _fallbackCharacter = configFile.Bind(General, "Fallback Character", CharacterNames.Red, "Character to display to other players when you're using a CrewBoom character they don't have.");
             _fallbackCharacter.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                if (clientController.Connected)
+                    clientController.SendClientState();
+            };
+            _fallbackOutfit = configFile.Bind(General, "Fallback Character Outfit", 0, "Outfit number to use for your fallback character.");
+            _fallbackOutfit.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
                 if (clientController.Connected)

@@ -16,6 +16,7 @@ namespace BombRushMP.Common.Packets
         public Guid CrewBoomCharacter = Guid.Empty;
         public sbyte Character = 0;
         public sbyte FallbackCharacter = 0;
+        public byte FallbackOutfit = 0;
         public byte Outfit = 0;
         public SpecialSkins SpecialSkin = SpecialSkins.None;
         public int SpecialSkinVariant = -1;
@@ -29,6 +30,7 @@ namespace BombRushMP.Common.Packets
                 CrewBoomCharacter = result;
             Character = reader.ReadSByte();
             FallbackCharacter = reader.ReadSByte();
+            FallbackOutfit = reader.ReadByte();
             Outfit = reader.ReadByte();
             Stage = reader.ReadInt32();
             Name = reader.ReadString();
@@ -43,6 +45,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(CrewBoomCharacter.ToString());
             writer.Write(Character);
             writer.Write(FallbackCharacter);
+            writer.Write(FallbackOutfit);
             writer.Write(Outfit);
             writer.Write(Stage);
             writer.Write(Name);

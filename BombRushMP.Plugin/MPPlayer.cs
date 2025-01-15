@@ -244,16 +244,26 @@ namespace BombRushMP.Plugin
             if (fallbackChara >= Characters.MAX || fallbackChara <= Characters.NONE)
                 fallbackChara = Characters.metalHead;
 
+            var fit = ClientState.Outfit;
+
             if (ClientState.CrewBoomCharacter != Guid.Empty)
             {
                 chara = fallbackChara;
                 if (CrewBoomSupport.Installed)
                 {
-                    chara = CrewBoomSupport.GetCharacterForGuid(ClientState.CrewBoomCharacter, fallbackChara);
+                    chara = CrewBoomSupport.GetCharacterForGuid(ClientState.CrewBoomCharacter, Characters.NONE);
+                    if (chara == Characters.NONE)
+                    {
+                        chara = fallbackChara;
+                        fit = ClientState.FallbackOutfit;
+                    }
+                }
+                else
+                {
+                    fit = ClientState.FallbackOutfit;
                 }
             }
 
-            var fit = ClientState.Outfit;
             if (fit < 0 || fit > 3)
                 fit = 0;
 

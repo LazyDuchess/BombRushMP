@@ -506,6 +506,7 @@ namespace BombRushMP.Plugin
                 Name = _mpSettings.PlayerName,
                 Character = (sbyte)player.character,
                 FallbackCharacter = (sbyte)MPSettings.Instance.FallbackCharacter,
+                FallbackOutfit = (byte)MPSettings.Instance.FallbackOutfit,
                 Outfit = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).outfit,
                 Stage = (int)Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 SpecialSkin = playerComp.SpecialSkin,
