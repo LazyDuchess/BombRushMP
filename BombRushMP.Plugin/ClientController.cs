@@ -140,11 +140,14 @@ namespace BombRushMP.Plugin
             if (player.IsDead())
                 state = PlayerStates.Dead;
 
+            var playerComp = PlayerComponent.Get(player);
+
             var packet = new ClientVisualState();
             packet.State = state;
-            packet.AFK = PlayerComponent.Get(player).AFK;
+            packet.AFK = playerComp.AFK;
             packet.MoveStyleSkin = (byte)Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(player.character).moveStyleSkin;
             packet.MoveStyle = (int)player.moveStyleEquipped;
+            packet.Chibi = playerComp.Chibi;
             var charData = MPSaveData.Instance.GetCharacterData(player.character);
             if (charData != null)
                 packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;
