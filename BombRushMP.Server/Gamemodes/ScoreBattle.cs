@@ -24,6 +24,7 @@ namespace BombRushMP.Server.Gamemodes
         private HashSet<ushort> _clientsFinishedCombo = new HashSet<ushort>();
         private float _timeElapsed = 0f;
         private float _timeLeft = 1f;
+        private int _durationMinutes = 3;
 
         public ScoreBattle() : base()
         {
@@ -45,7 +46,8 @@ namespace BombRushMP.Server.Gamemodes
 
                 case States.Main:
                     _timeElapsed = (float)(DateTime.UtcNow - _startTime).TotalSeconds;
-                    _timeLeft = Constants.ScoreBattleDuration - _timeElapsed;
+                    var durationInSecs = _durationMinutes * 60f;
+                    _timeLeft = durationInSecs - _timeElapsed;
                     if (!ComboBased)
                     {
                         if (_timeLeft <= 0f)
@@ -80,6 +82,15 @@ namespace BombRushMP.Server.Gamemodes
         public override void OnPacketFromLobbyReceived(Packets packetId, Packet packet, ushort playerId)
         {
             base.OnPacketFromLobbyReceived(packetId, packet, playerId);
+            switch (packetId)
+            {
+                case Packets.ClientScoreBattleLength:
+                    if (playerId == Lobby.LobbyState.HostId)
+                    {
+                        _durationMinutes = (packet as ClientScoreBattleLength).Minutes;
+                    }
+                    break;
+            }
             if (_state == States.Main)
             {
                 switch (packetId)

@@ -21,6 +21,10 @@ namespace BombRushMP.Plugin.Gamemodes
             Current_Positions,
             At_Host
         }
+        private static int SettingDurationID = Animator.StringToHash("Duration");
+        private const int DefaultDuration = 3;
+        private const int MinDuration = 1;
+        private const int MaxDuration = 10;
         private static int SettingSpawnModeID = Animator.StringToHash("SpawnMode");
         public enum States
         {
@@ -46,6 +50,10 @@ namespace BombRushMP.Plugin.Gamemodes
                 var host = ClientController.Instance.Players[Lobby.LobbyState.HostId].ClientVisualState;
                 MPUtility.PlaceCurrentPlayer(host.Position.ToUnityVector3(), host.Rotation.ToUnityQuaternion());
             }
+            if (ClientController.Instance.LocalID == Lobby.LobbyState.HostId)
+            {
+                ClientController.SendPacket(new ClientScoreBattleLength((byte)Settings.SettingByID[SettingDurationID].Value), IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+            }
             TimerUI.Instance.Activate();
         }
 
@@ -64,7 +72,8 @@ namespace BombRushMP.Plugin.Gamemodes
 
                 case States.Main:
                     var timeElapsed = (float)(DateTime.UtcNow - _startTime).TotalSeconds;
-                    var timeLeft = Constants.ScoreBattleDuration - timeElapsed;
+                    var durationSecs = Settings.SettingByID[SettingDurationID].Value * 60f;
+                    var timeLeft = durationSecs - timeElapsed;
                     if (timeLeft <= 0f)
                     {
                         timeLeft = 0f;
@@ -187,6 +196,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             var settings = base.GetDefaultSettings();
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Current_Positions);
+            settings.SettingByID[SettingDurationID] = new GamemodeSetting("Duration (Minutes)", DefaultDuration, MinDuration, MaxDuration);
             return settings;
         }
     }

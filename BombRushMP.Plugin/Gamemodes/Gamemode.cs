@@ -38,7 +38,8 @@ namespace BombRushMP.Plugin.Gamemodes
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
             Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);
-            ClientController.SendPacket(new ClientGamemodeCountdown((ushort)Countdown), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.Gamemodes);
+            if (Lobby.LobbyState.HostId == ClientController.Instance.LocalID)
+                ClientController.SendPacket(new ClientGamemodeCountdown((ushort)Countdown), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.Gamemodes);
         }
 
         public virtual void OnEnd(bool cancelled)

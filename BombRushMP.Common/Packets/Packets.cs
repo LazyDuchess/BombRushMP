@@ -45,6 +45,7 @@ namespace BombRushMP.Common.Packets
         ClientAuth,
         ServerBanList,
         ClientGraffitiRaceStart,
-        ClientGamemodeCountdown
+        ClientGamemodeCountdown,
+        ClientScoreBattleLength
     }
 }
