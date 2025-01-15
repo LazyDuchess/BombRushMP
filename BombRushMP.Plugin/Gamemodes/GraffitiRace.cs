@@ -24,6 +24,14 @@ namespace BombRushMP.Plugin.Gamemodes
             At_Host
         }
 
+        public enum MoveStyleMode
+        {
+            Force_MoveStyle,
+            Force_On_Foot,
+            Current
+        }
+
+        private static int SettingMoveStyleID = Animator.StringToHash("MoveStyle");
         private static int SettingSpawnModeID = Animator.StringToHash("SpawnMode");
         private static int SettingQuickGraffitiID = Animator.StringToHash("QuickGraffiti");
         private static int SettingGraffitiAmountID = Animator.StringToHash("GraffitiAmount");
@@ -125,6 +133,10 @@ namespace BombRushMP.Plugin.Gamemodes
             var player = _worldHandler.GetCurrentPlayer();
             player.boostCharge = player.maxBoostCharge;
             player.userInputEnabled = false;
+            if (Settings.SettingByID[SettingMoveStyleID].Value == (int)MoveStyleMode.Force_MoveStyle)
+                player.SwitchToEquippedMovestyle(true);
+            else if (Settings.SettingByID[SettingMoveStyleID].Value == (int)MoveStyleMode.Force_On_Foot)
+                player.SwitchToEquippedMovestyle(false);
         }
 
         public override void OnUpdate_InGame()
@@ -390,6 +402,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override GamemodeSettings GetDefaultSettings()
         {
             var settings = base.GetDefaultSettings();
+            settings.SettingByID[SettingMoveStyleID] = new GamemodeSetting("MoveStyle", MoveStyleMode.Force_On_Foot);
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
             settings.SettingByID[SettingQuickGraffitiID] = new ToggleGamemodeSetting("Quick Graffiti", true);
             var maxSpots = GetValidSpots().Count;
