@@ -11,7 +11,8 @@ namespace BombRushMP.Common.Packets
 {
     public class PlayerAnimation : PlayerPacket
     {
-        public static IMessage.SendModes SendMode = IMessage.SendModes.Unreliable;
+        public static IMessage.SendModes ClientSendMode = IMessage.SendModes.ReliableUnordered;
+        public static IMessage.SendModes ServerSendMode = IMessage.SendModes.Unreliable;
         private enum BooleanMask
         {
             ForceOverwrite,
