@@ -4,12 +4,38 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
     public class GamemodeSettings
     {
         public Dictionary<int, GamemodeSetting> SettingByID = new();
+
+        public SavedGamemodeSettings ToSaved()
+        {
+            var settings = new SavedGamemodeSettings();
+            foreach(var setting in SettingByID)
+            {
+                settings.ValueByID[setting.Key] = setting.Value.Value;
+            }
+            return settings;
+        }
+
+        public void ApplySaved(SavedGamemodeSettings savedSettings)
+        {
+            foreach(var setting in SettingByID)
+            {
+                if (savedSettings.ValueByID.TryGetValue(setting.Key, out var result))
+                {
+                    var val = result;
+                    if (val > setting.Value.MaxValue || val < setting.Value.MinValue)
+                        val = setting.Value.Value;
+                    setting.Value.Value = val;
+                }
+            }
+        }
+
         public string GetDisplayString(bool host, bool inGame)
         {
             var str = "";

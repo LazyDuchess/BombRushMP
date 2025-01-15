@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.CrewBoom;
+using BombRushMP.Plugin.Gamemodes;
 using CommonAPI;
 using Reptile;
 using System;
@@ -13,10 +14,11 @@ namespace BombRushMP.Plugin
 {
     public class MPSaveData : CustomSaveData
     {
-        private const byte Version = 0;
+        private const byte Version = 1;
         public static MPSaveData Instance { get; private set; }
         public Dictionary<Characters, MPCharacterData> CharacterData = new();
         public Dictionary<string, MPCharacterData> CrewBoomCharacterData = new();
+        public Dictionary<GamemodeIDs, SavedGamemodeSettings> GamemodeSettings = new();
         public bool UnlockedGoonieBoard = false;
         public MPSaveData() : base("BRCMP", "saveSlot{0}.sav", SaveLocations.LocalAppData)
         {
@@ -27,7 +29,14 @@ namespace BombRushMP.Plugin
         {
             CharacterData = new();
             CrewBoomCharacterData = new();
+            GamemodeSettings = new();
             UnlockedGoonieBoard = false;
+        }
+
+        public SavedGamemodeSettings GetSavedSettings(GamemodeIDs gamemode)
+        {
+            if (GamemodeSettings.TryGetValue(gamemode, out var result)) return result;
+            return null;
         }
 
         public override void Read(BinaryReader reader)
@@ -59,6 +68,17 @@ namespace BombRushMP.Plugin
                     MPMoveStyleSkin = moveStyleSkin
                 };
             }
+            if (version > 0)
+            {
+                var gamemodeCount = reader.ReadInt32();
+                for(var i = 0; i < gamemodeCount; i++)
+                {
+                    var gamemode = (GamemodeIDs)reader.ReadInt32();
+                    var settings = new SavedGamemodeSettings();
+                    settings.Read(reader);
+                    GamemodeSettings[gamemode] = settings;
+                }
+            }
         }
 
         public override void Write(BinaryWriter writer)
@@ -76,6 +96,12 @@ namespace BombRushMP.Plugin
             {
                 writer.Write(charData.Key);
                 writer.Write(charData.Value.MPMoveStyleSkin);
+            }
+            writer.Write(GamemodeSettings.Count);
+            foreach(var savedSettings in GamemodeSettings)
+            {
+                writer.Write((int)savedSettings.Key);
+                savedSettings.Value.Write(writer);
             }
         }
 

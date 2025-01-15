@@ -1,6 +1,7 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Plugin.Gamemodes;
 using CommonAPI.Phone;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,16 +45,21 @@ namespace BombRushMP.Plugin.Phone
 
         private void UpdateGamemode()
         {
+            _currentGamemode = GetCurrentGamemode();
             _buttonBySettingID.Clear();
             ScrollView.RemoveAllButtons();
             var currentSettings = GetCurrentSettings();
             if (currentSettings == null) {
                 _currentGamemode = (GamemodeIDs)(-1);
             }
+            
             var resetButton = PhoneUIUtility.CreateSimpleButton("Reset");
             resetButton.OnConfirm += () =>
             {
-                SendSettings(GetDefaultSettings());
+                var defaults = GetDefaultSettings();
+                MPSaveData.Instance.GamemodeSettings[_currentGamemode] = defaults.ToSaved();
+                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                SendSettings(defaults);
             };
             ScrollView.AddButton(resetButton);
             foreach(var setting in currentSettings.SettingByID)
@@ -63,12 +69,13 @@ namespace BombRushMP.Plugin.Phone
                 button.OnConfirm += () =>
                 {
                     currentSettings.SettingByID[setting.Key].Next();
+                    MPSaveData.Instance.GamemodeSettings[_currentGamemode] = currentSettings.ToSaved();
+                    Core.Instance.SaveManager.SaveCurrentSaveSlot();
                     SendSettings(currentSettings);
                     UpdateLabels();
                 };
                 ScrollView.AddButton(button);
             }
-            _currentGamemode = GetCurrentGamemode();
         }
 
         private void UpdateLabels()

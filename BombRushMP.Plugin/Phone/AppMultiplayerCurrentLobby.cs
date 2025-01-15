@@ -74,6 +74,9 @@ namespace BombRushMP.Plugin.Phone
                         if (gamemode >= gamemodeValues.Length)
                             gamemode = 0;
                         var settings = GamemodeFactory.GetGamemodeSettings((GamemodeIDs)gamemode);
+                        var savedSettings = MPSaveData.Instance.GetSavedSettings((GamemodeIDs)gamemode);
+                        if (savedSettings != null)
+                            settings.ApplySaved(savedSettings);
                         lobbyManager.SetGamemode((GamemodeIDs)gamemode, settings);
 
                     };
