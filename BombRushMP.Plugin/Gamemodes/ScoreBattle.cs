@@ -127,7 +127,10 @@ namespace BombRushMP.Plugin.Gamemodes
             base.OnEnd(cancelled);
             if (TimerUI.Instance != null)
             {
-                TimerUI.Instance.SetText("Finish!");
+                if (!cancelled)
+                    TimerUI.Instance.SetText("Finish!");
+                else
+                    TimerUI.Instance.SetText("Cancelled!");
                 TimerUI.Instance.DeactivateDelayed();
             }
             if (WorldHandler.instance != null)
@@ -135,7 +138,6 @@ namespace BombRushMP.Plugin.Gamemodes
                 var player = WorldHandler.instance.GetCurrentPlayer();
                 if (!cancelled)
                 {
-                    Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
                     if (Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer)
                     {
                         var winner = Lobby.GetHighestScoringPlayer();

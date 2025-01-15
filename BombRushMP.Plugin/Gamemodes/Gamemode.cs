@@ -30,6 +30,7 @@ namespace BombRushMP.Plugin.Gamemodes
             MPUtility.SetUpPlayerForGameStateUpdate();
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
+            Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);
         }
 
         public virtual void OnEnd(bool cancelled)
@@ -38,7 +39,14 @@ namespace BombRushMP.Plugin.Gamemodes
             MPUtility.SetUpPlayerForGameStateUpdate();
             LobbyUI.Instance.UpdateUI();
             if (!cancelled)
+            {
                 ProcessSpecialPlayerUnlock();
+                Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
+            }
+            else
+            {
+                Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
+            }
         }
 
         private void ProcessSpecialPlayerUnlock()

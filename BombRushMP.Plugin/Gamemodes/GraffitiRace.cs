@@ -213,10 +213,6 @@ namespace BombRushMP.Plugin.Gamemodes
             var timerUI = TimerUI.Instance;
             if (timerUI != null)
                 timerUI.DeactivateDelayed();
-            if (!cancelled)
-            {
-                Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
-            }
         }
 
         private GraffitiSpot GetGraffitiSpotByHash(int hash)
