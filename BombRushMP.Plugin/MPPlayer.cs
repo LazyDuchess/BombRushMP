@@ -130,11 +130,15 @@ namespace BombRushMP.Plugin
             {
                 if (Player != null && Player.characterVisual != null)
                     Player.characterVisual.gameObject.SetActive(false);
+                if (NamePlate != null)
+                    NamePlate.gameObject.SetActive(false);
             }
             else
             {
                 if (Player != null && Player.characterVisual != null)
                     Player.characterVisual.gameObject.SetActive(true);
+                if (NamePlate != null)
+                    NamePlate.gameObject.SetActive(true);
             }
 
             if (ClientState == null || ClientVisualState == null) return;
