@@ -24,10 +24,10 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             {GamemodeIDs.ScoreBattle, "Score Battle" },
             {GamemodeIDs.GraffitiRace, "Graffiti Race" },
-            {GamemodeIDs.TeamGraffitiRace, "Team Graffiti Race" },
+            {GamemodeIDs.TeamGraffitiRace, "Crew Graffiti Race" },
             {GamemodeIDs.ProSkaterScoreBattle, "Pro Skater Score Battle" },
-            {GamemodeIDs.TeamScoreBattle, "Team Score Battle" },
-            {GamemodeIDs.TeamProSkaterScoreBattle, "Team Pro Skater Score Battle" }
+            {GamemodeIDs.TeamScoreBattle, "Crew Score Battle" },
+            {GamemodeIDs.TeamProSkaterScoreBattle, "Crew Pro Skater Score Battle" }
         };
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)
