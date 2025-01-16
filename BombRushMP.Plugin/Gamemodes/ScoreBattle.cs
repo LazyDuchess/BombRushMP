@@ -144,8 +144,8 @@ namespace BombRushMP.Plugin.Gamemodes
                 {
                     if (Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer)
                     {
-                        var winner = Lobby.GetHighestScoringPlayer();
-                        if (winner.Id == ClientController.Instance.LocalID && winner.Score >= ClientConstants.MinimumScoreToCheer)
+                        var winners = GetWinningPlayers();
+                        if (winners.Contains(ClientController.Instance.LocalID))
                         {
                             if (player != null)
                                 player.StartCoroutine(Cheer(player));

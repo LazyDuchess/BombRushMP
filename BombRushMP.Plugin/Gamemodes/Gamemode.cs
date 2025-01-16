@@ -119,7 +119,7 @@ namespace BombRushMP.Plugin.Gamemodes
             return false;
         }
 
-        private List<ushort> GetWinningPlayers()
+        protected List<ushort> GetWinningPlayers()
         {
             if (!TeamBased)
                 return new List<ushort>() { Lobby.GetHighestScoringPlayer().Id };

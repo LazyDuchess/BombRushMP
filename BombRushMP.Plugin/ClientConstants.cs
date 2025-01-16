@@ -14,7 +14,6 @@ namespace BombRushMP.Plugin
         public const string LobbyInviteMessage = "{0} Has invited you to their {1} lobby.";
         public const string DeathMessage = "{0} died!";
         public const int MinimumPlayersToCheer = 2;
-        public const float MinimumScoreToCheer = 500000f;
         public const float PlayerInterpolation = 12f;
         public const float PlayerGraffitiDistance = 1f;
         public const float PlayerGraffitiDownDistance = 1f;
