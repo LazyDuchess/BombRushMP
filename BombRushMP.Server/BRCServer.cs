@@ -393,7 +393,6 @@ namespace BombRushMP.Server
                             if (!AllowNameChanges && oldClientState.User.UserKind == UserKinds.Player)
                             {
                                 clientState.Name = oldClientState.Name;
-                                clientState.CrewName = oldClientState.CrewName;
                             }
                             clientState.Stage = oldClientState.Stage;
                         }
