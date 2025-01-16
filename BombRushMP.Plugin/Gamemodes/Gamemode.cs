@@ -57,8 +57,8 @@ namespace BombRushMP.Plugin.Gamemodes
                 if (Lobby.LobbyState.Players.Count > 1)
                 {
                     saveData.Stats.IncreaseGamemodesPlayed(gamemode);
-                    var bestPlayer = Lobby.GetHighestScoringPlayer();
-                    if (bestPlayer.Id == ClientController.Instance.LocalID)
+                    var winners = GetWinningPlayers();
+                    if (winners.Contains(ClientController.LocalID))
                         saveData.Stats.IncreaseGamemodesWon(gamemode);
                 }
                 else
@@ -96,6 +96,18 @@ namespace BombRushMP.Plugin.Gamemodes
             return ClientController.Instance.GetLocalUser()?.HasTag(SpecialPlayerUtils.SpecialPlayerTag) == true;
         }
 
+        private bool AnyEliteInOppositeTeam()
+        {
+            var myTeam = Lobby.LobbyState.Players[ClientController.LocalID].Team;
+            foreach(var player in Lobby.LobbyState.Players)
+            {
+                var user = ClientController.GetUser(player.Key);
+                if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag) && player.Value.Team != myTeam)
+                    return true;
+            }
+            return false;
+        }
+
         private bool AnyEliteInLobby()
         {
             foreach(var player in Lobby.LobbyState.Players)
@@ -105,6 +117,38 @@ namespace BombRushMP.Plugin.Gamemodes
                     return true;
             }
             return false;
+        }
+
+        private List<ushort> GetWinningPlayers()
+        {
+            if (!TeamBased)
+                return new List<ushort>() { Lobby.GetHighestScoringPlayer().Id };
+            var ls = new List<ushort>();
+            var highestScoringTeam = -1;
+            var highestTeamScore = 0f;
+            for(var i = 0; i < TeamManager.Teams.Length; i++)
+            {
+                var teamScore = Lobby.LobbyState.GetScoreForTeam((byte)i);
+                if (highestScoringTeam == -1)
+                {
+                    highestScoringTeam = i;
+                    highestTeamScore = teamScore;
+                }
+                else
+                {
+                    if (teamScore > highestTeamScore)
+                    {
+                        highestScoringTeam = i;
+                        highestTeamScore = teamScore;
+                    }
+                }
+            }
+            foreach(var playa in Lobby.LobbyState.Players)
+            {
+                if (playa.Value.Team == highestScoringTeam)
+                    ls.Add(playa.Key);
+            }
+            return ls;
         }
 
         private bool WonAgainstElite()
@@ -118,6 +162,17 @@ namespace BombRushMP.Plugin.Gamemodes
             if (user == null) return false;
 
             if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag)) return false;
+
+            if (TeamBased)
+            {
+                if (AnyEliteInOppositeTeam())
+                {
+                    var winners = GetWinningPlayers();
+                    if (winners.Contains(ClientController.LocalID))
+                        return true;
+                }
+                return false;
+            }
 
             var eliteInLobby = false;
             var eliteScore = 0f;
