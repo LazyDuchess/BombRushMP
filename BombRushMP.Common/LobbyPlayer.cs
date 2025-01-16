@@ -13,16 +13,18 @@ namespace BombRushMP.Common
         public ushort Id = 0;
         public float Score = 0;
         public bool Ready = false;
+        public byte Team = 0;
 
         public LobbyPlayer()
         {
 
         }
 
-        public LobbyPlayer(uint lobbyId, ushort playerId)
+        public LobbyPlayer(uint lobbyId, ushort playerId, byte team)
         {
             LobbyId = lobbyId;
             Id = playerId;
+            Team = team;
         }
 
         public void Write(BinaryWriter writer)
@@ -30,6 +32,7 @@ namespace BombRushMP.Common
             writer.Write(Id);
             writer.Write(Score);
             writer.Write(Ready);
+            writer.Write(Team);
         }
 
         public void Read(BinaryReader reader)
@@ -37,6 +40,7 @@ namespace BombRushMP.Common
             Id = reader.ReadUInt16();
             Score = reader.ReadSingle();
             Ready = reader.ReadBoolean();
+            Team = reader.ReadByte();
         }
     }
 }

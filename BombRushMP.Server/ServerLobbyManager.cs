@@ -97,7 +97,7 @@ namespace BombRushMP.Server
         {
             if (Lobbies.TryGetValue(lobbyId, out var lobby))
             {
-                lobby.LobbyState.Players[clientId] = new LobbyPlayer(lobbyId, clientId);
+                lobby.LobbyState.Players[clientId] = new LobbyPlayer(lobbyId, clientId, 0);
                 UninvitePlayer(lobbyId, clientId);
                 QueueStageUpdate(lobby.LobbyState.Stage);
             }
