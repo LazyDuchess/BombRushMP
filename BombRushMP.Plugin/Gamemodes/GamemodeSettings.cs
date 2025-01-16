@@ -48,11 +48,11 @@ namespace BombRushMP.Plugin.Gamemodes
                     str += "\n";
                 if (host)
                 {
-                    str += @"Use the Lobby menu in the Multiplayer phone app to start the game or change the mode.";
+                    str += @"Use the Lobby menu in the Multiplayer phone app to start the game, change the mode or switch teams.";
                 }
                 else
                 {
-                    str += @"Use the Lobby menu in the Multiplayer phone app to toggle Ready.";
+                    str += @"Use the Lobby menu in the Multiplayer phone app to toggle Ready or switch teams.";
                 }
             }
             return str;
