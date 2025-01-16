@@ -1,6 +1,7 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
+using BombRushMP.Plugin.Gamemodes;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
@@ -84,6 +85,19 @@ namespace BombRushMP.Plugin
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
             if (localLobby.LobbyState.Players.ContainsKey(ClientId) && localLobby.LobbyState.Players.ContainsKey(clientController.LocalID)) return true;
+            return false;
+        }
+
+        private bool IsRival()
+        {
+            var clientController = ClientController.Instance;
+            var localLobby = clientController.ClientLobbyManager.CurrentLobby;
+            if (localLobby == null) return false;
+            if (localLobby.LobbyState.Players.TryGetValue(ClientId, out var otherPlayer) && localLobby.LobbyState.Players.TryGetValue(clientController.LocalID, out var myPlayer))
+            {
+                var gm = GamemodeFactory.GetGamemode(localLobby.LobbyState.Gamemode);
+                return (gm.TeamBased && otherPlayer.Team != myPlayer.Team);
+            }
             return false;
         }
 
@@ -358,20 +372,20 @@ namespace BombRushMP.Plugin
             {
                 PlayerPatch.PlayAnimPatchEnabled = true;
             }
+            var rival = IsRival();
 
             UpdateSprayCan();
-            UpdateNameplate();
+            UpdateNameplate(rival);
             if (_mapPin == null)
                 MakeMapPin();
             _mapPin.SetLocation();
 
-            if (InSameLobbyAsLocalPlayer())
-                _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
-            else
-                _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
-
-            if (IsSpecialPlayer())
+            if (rival)
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0f);
+            else if (InSameLobbyAsLocalPlayer())
+                _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
+            else 
+                _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
                 Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);
@@ -444,7 +458,7 @@ namespace BombRushMP.Plugin
             ClientState = newClientState;
         }
 
-        private void UpdateNameplate()
+        private void UpdateNameplate(bool rival)
         {
             var settings = MPSettings.Instance;
 
@@ -466,6 +480,11 @@ namespace BombRushMP.Plugin
             var name = MPUtility.GetPlayerDisplayName(ClientState);
             if (NamePlate.Label.text != name)
                 NamePlate.Label.text = name;
+
+            if (rival)
+                NamePlate.Label.color = Color.red;
+            else
+                NamePlate.Label.color = Color.white;
         }
 
         private void UpdateSprayCan()

@@ -14,6 +14,7 @@ namespace BombRushMP.Plugin.Phone
     {
         public override bool Available => false;
         protected bool AllowEveryone = true;
+        protected bool AllowMyself = false;
         private Dictionary<ushort, PhoneButton> _phoneButtonByPlayerId = new();
         private bool _wasConnected = true;
 
@@ -74,7 +75,8 @@ namespace BombRushMP.Plugin.Phone
 
             foreach (var player in players)
             {
-                if (player.Value.ClientId == clientController.LocalID) continue;
+                if (!AllowMyself)
+                    if (player.Value.ClientId == clientController.LocalID) continue;
                 if (!PlayerFilter(player.Value.ClientId)) continue;
                 var button = PhoneUIUtility.CreateSimpleButton(MPUtility.GetPlayerDisplayName(player.Value.ClientState));
                 button.Label.spriteAsset = MPAssets.Instance.Sprites;

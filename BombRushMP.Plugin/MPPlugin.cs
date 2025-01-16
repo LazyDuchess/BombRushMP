@@ -90,6 +90,7 @@ namespace BombRushMP.Plugin
             AppMultiplayerLobbyKick.Initialize();
             MoveStylePickerApp.Initialize();
             MoveStyleSkinPickerApp.Initialize();
+            AppMultiplayerSwitchPlayerTeams.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

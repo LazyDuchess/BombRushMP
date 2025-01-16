@@ -14,6 +14,7 @@ namespace BombRushMP.Plugin.Phone
     public class AppMultiplayerCurrentLobby : CustomApp
     {
         public override bool Available => false;
+        private SimplePhoneButton _allowTeamSwitchingButton;
 
         public static void Initialize()
         {
@@ -40,6 +41,18 @@ namespace BombRushMP.Plugin.Phone
             if (lobbyManager.CurrentLobby == null)
             {
                 MyPhone.CloseCurrentApp();
+            }
+            RefreshLabels();
+        }
+
+        private void RefreshLabels()
+        {
+            var clientController = ClientController.Instance;
+            var lobbyManager = clientController.ClientLobbyManager;
+            var currentLobby = lobbyManager.CurrentLobby;
+            if (_allowTeamSwitchingButton != null)
+            {
+                _allowTeamSwitchingButton.Label.text = "Allow Team Switching = " + (currentLobby.LobbyState.AllowTeamSwitching ? "ON" : "OFF");
             }
         }
 
@@ -97,6 +110,20 @@ namespace BombRushMP.Plugin.Phone
                         MyPhone.OpenApp(typeof(AppMultiplayerLobbyInvite));
                     };
                     ScrollView.AddButton(button);
+
+                    _allowTeamSwitchingButton = PhoneUIUtility.CreateSimpleButton("Allow Team Switching");
+                    _allowTeamSwitchingButton.OnConfirm += () =>
+                    {
+                        clientController.ClientLobbyManager.SetAllowTeamSwitching(!currentLobby.LobbyState.AllowTeamSwitching);
+                    };
+                    ScrollView.AddButton(_allowTeamSwitchingButton);
+
+                    button = PhoneUIUtility.CreateSimpleButton("Switch Teams");
+                    button.OnConfirm += () =>
+                    {
+                        MyPhone.OpenApp(typeof(AppMultiplayerSwitchPlayerTeams));
+                    };
+                    ScrollView.AddButton(button);
                 }
                 else
                 {
@@ -121,26 +148,26 @@ namespace BombRushMP.Plugin.Phone
             }
             else
             {
-                button = PhoneUIUtility.CreateSimpleButton("Toggle Ready");
-                button.OnConfirm += () =>
+                if (!currentLobby.InGame)
                 {
-                    clientController.SendPacket(new ClientLobbySetReady(!currentLobby.LobbyState.Players[clientController.LocalID].Ready), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
-                };
-                ScrollView.AddButton(button);
-            }
+                    button = PhoneUIUtility.CreateSimpleButton("Switch Team");
+                    button.OnConfirm += () =>
+                    {
+                        var team = lobbyManager.CurrentLobby.LobbyState.Players[clientController.LocalID].Team;
+                        team++;
+                        if (team >= TeamManager.Teams.Length)
+                            team = 0;
+                        clientController.SendPacket(new ClientSetTeam(team), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+                    };
+                    ScrollView.AddButton(button);
 
-            if (!currentLobby.InGame)
-            {
-                button = PhoneUIUtility.CreateSimpleButton("Switch Team");
-                button.OnConfirm += () =>
-                {
-                    var team = lobbyManager.CurrentLobby.LobbyState.Players[clientController.LocalID].Team;
-                    team++;
-                    if (team >= TeamManager.Teams.Length)
-                        team = 0;
-                    clientController.SendPacket(new ClientSetTeam(team), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
-                };
-                ScrollView.AddButton(button);
+                    button = PhoneUIUtility.CreateSimpleButton("Toggle Ready");
+                    button.OnConfirm += () =>
+                    {
+                        clientController.SendPacket(new ClientLobbySetReady(!currentLobby.LobbyState.Players[clientController.LocalID].Ready), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+                    };
+                    ScrollView.AddButton(button);
+                }
             }
             button = PhoneUIUtility.CreateSimpleButton("Leave Lobby");
             button.OnConfirm += () =>
@@ -149,6 +176,7 @@ namespace BombRushMP.Plugin.Phone
                 MyPhone.CloseCurrentApp();
             };
             ScrollView.AddButton(button);
+            RefreshLabels();
         }
     }
 }

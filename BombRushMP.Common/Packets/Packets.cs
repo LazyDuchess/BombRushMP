@@ -51,6 +51,8 @@ namespace BombRushMP.Common.Packets
         ServerSetChibi,
         ClientSetTeam,
         ClientTeamGraffRaceScore,
-        ServerTeamGraffRaceScore
+        ServerTeamGraffRaceScore,
+        ClientLobbySetAllowTeamSwitching,
+        ClientLobbySetPlayerTeam
     }
 }

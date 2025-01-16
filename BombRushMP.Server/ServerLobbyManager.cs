@@ -334,8 +334,32 @@ namespace BombRushMP.Server
                     {
                         if (existingLobby != null && !existingLobby.LobbyState.InGame)
                         {
+                            if (!existingLobby.LobbyState.AllowTeamSwitching && existingLobby.LobbyState.HostId != playerId) break;
                             var teamPacket = (ClientSetTeam)packet;
                             existingLobby.LobbyState.Players[playerId].Team = teamPacket.Team;
+                            QueueStageUpdate(existingLobby.LobbyState.Stage);
+                        }
+                    }
+                    break;
+
+                case Packets.ClientLobbySetAllowTeamSwitching:
+                    {
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                        {
+                            var allowPacket = (ClientLobbySetAllowTeamSwitching)packet;
+                            existingLobby.LobbyState.AllowTeamSwitching = allowPacket.Set;
+                            QueueStageUpdate(existingLobby.LobbyState.Stage);
+                        }
+                    }
+                    break;
+
+                case Packets.ClientLobbySetPlayerTeam:
+                    {
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                        {
+                            var teamPacket = (ClientLobbySetPlayerTeam)packet;
+                            if (!existingLobby.LobbyState.Players.ContainsKey(teamPacket.PlayerId)) break;
+                            existingLobby.LobbyState.Players[teamPacket.PlayerId].Team = teamPacket.TeamId;
                             QueueStageUpdate(existingLobby.LobbyState.Stage);
                         }
                     }

@@ -121,6 +121,11 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyEnd(), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
         }
 
+        public void SetAllowTeamSwitching(bool set)
+        {
+            _clientController.SendPacket(new ClientLobbySetAllowTeamSwitching(set), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+        }
+
         public void SetGamemode(GamemodeIDs gamemode, GamemodeSettings settings)
         {
             byte[] data;

@@ -9,7 +9,14 @@ namespace BombRushMP.Common
 {
     public class LobbyState
     {
+        private enum BooleanMask
+        {
+            InGame,
+            AllowTeamSwitching,
+            MAX
+        }
         public bool InGame = false;
+        public bool AllowTeamSwitching = true;
         public GamemodeIDs Gamemode = GamemodeIDs.ScoreBattle;
         public byte[] GamemodeSettings = [];
         public int Stage = 0;
@@ -43,7 +50,9 @@ namespace BombRushMP.Common
 
         public void Read(BinaryReader reader)
         {
-            InGame = reader.ReadBoolean();
+            var fields = Bitfield.ReadByte(reader);
+            InGame = fields[BooleanMask.InGame];
+            AllowTeamSwitching = fields[BooleanMask.AllowTeamSwitching];
             Gamemode = (GamemodeIDs)reader.ReadInt32();
             var gameModeSettingsLength = reader.ReadInt32();
             GamemodeSettings = reader.ReadBytes(gameModeSettingsLength);
@@ -71,7 +80,10 @@ namespace BombRushMP.Common
 
         public void Write(BinaryWriter writer)
         {
-            writer.Write(InGame);
+            var fields = new Bitfield(BooleanMask.MAX);
+            fields[BooleanMask.InGame] = InGame;
+            fields[BooleanMask.AllowTeamSwitching] = AllowTeamSwitching;
+            fields.WriteByte(writer);
             writer.Write((int)Gamemode);
             writer.Write(GamemodeSettings.Length);
             writer.Write(GamemodeSettings);

@@ -1,4 +1,5 @@
-﻿using CommonAPI.Phone;
+﻿using BombRushMP.Common.Packets;
+using CommonAPI.Phone;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +8,19 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Plugin.Phone
 {
-    public class AppMultiplayerLobbyKick : PlayerPickerApp
+    public class AppMultiplayerSwitchPlayerTeams : PlayerPickerApp
     {
         public static void Initialize()
         {
-            PhoneAPI.RegisterApp<AppMultiplayerLobbyKick>("kick players");
+            PhoneAPI.RegisterApp<AppMultiplayerSwitchPlayerTeams>("set teams");
         }
 
         public override void OnAppInit()
         {
             base.OnAppInit();
-            CreateIconlessTitleBar("Kick Players", 70f);
+            CreateIconlessTitleBar("Set Teams", 70f);
+            AllowEveryone = false;
+            AllowMyself = true;
         }
 
         public override bool PlayerFilter(ushort playerId)
@@ -30,11 +33,16 @@ namespace BombRushMP.Plugin.Phone
 
         public override void PlayerChosen(ushort[] playerIds)
         {
-            base.PlayerChosen(playerIds);
+            var lobbyManager = ClientController.Instance.ClientLobbyManager;
+            var currentLobby = lobbyManager.CurrentLobby;
             var clientController = ClientController.Instance;
             foreach (var player in playerIds)
             {
-                clientController.ClientLobbyManager.KickPlayer(player);
+                var team = lobbyManager.CurrentLobby.LobbyState.Players[player].Team;
+                team++;
+                if (team >= TeamManager.Teams.Length)
+                    team = 0;
+                clientController.SendPacket(new ClientLobbySetPlayerTeam(player, team), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.ClientAndLobbyUpdates);
             }
         }
     }
