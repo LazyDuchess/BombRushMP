@@ -142,7 +142,13 @@ namespace BombRushMP.Plugin.Gamemodes
                 var player = WorldHandler.instance.GetCurrentPlayer();
                 if (!cancelled)
                 {
-                    if (Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer)
+                    var canCheer = Lobby.LobbyState.Players.Count >= ClientConstants.MinimumPlayersToCheer;
+                    if (TeamBased && canCheer)
+                    {
+                        if (GetTeamAmount() <= 1)
+                            canCheer = false;
+                    }
+                    if (canCheer)
                     {
                         var winners = GetWinningPlayers();
                         if (winners.Contains(ClientController.Instance.LocalID))

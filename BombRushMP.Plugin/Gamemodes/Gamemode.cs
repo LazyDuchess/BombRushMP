@@ -42,6 +42,16 @@ namespace BombRushMP.Plugin.Gamemodes
             if (Lobby.LobbyState.HostId == ClientController.Instance.LocalID)
                 ClientController.SendPacket(new ClientGamemodeCountdown((ushort)Countdown), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.Gamemodes);
         }
+        
+        protected int GetTeamAmount()
+        {
+            var teams = new HashSet<byte>();
+            foreach(var player in Lobby.LobbyState.Players)
+            {
+                teams.Add(player.Value.Team);
+            }
+            return teams.Count;
+        }
 
         public virtual void OnEnd(bool cancelled)
         {
@@ -54,16 +64,33 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.EnvironmentSfx, AudioClipID.MascotUnlock);
 
-                if (Lobby.LobbyState.Players.Count > 1)
+                if (!TeamBased)
                 {
-                    saveData.Stats.IncreaseGamemodesPlayed(gamemode);
-                    var winners = GetWinningPlayers();
-                    if (winners.Contains(ClientController.LocalID))
-                        saveData.Stats.IncreaseGamemodesWon(gamemode);
+                    if (Lobby.LobbyState.Players.Count > 1)
+                    {
+                        saveData.Stats.IncreaseGamemodesPlayed(gamemode);
+                        var winners = GetWinningPlayers();
+                        if (winners.Contains(ClientController.LocalID))
+                            saveData.Stats.IncreaseGamemodesWon(gamemode);
+                    }
+                    else
+                    {
+                        saveData.Stats.IncreaseGamemodesPlayedAlone(gamemode);
+                    }
                 }
                 else
                 {
-                    saveData.Stats.IncreaseGamemodesPlayedAlone(gamemode);
+                    if (GetTeamAmount() > 1)
+                    {
+                        saveData.Stats.IncreaseGamemodesPlayed(gamemode);
+                        var winners = GetWinningPlayers();
+                        if (winners.Contains(ClientController.LocalID))
+                            saveData.Stats.IncreaseGamemodesWon(gamemode);
+                    }
+                    else
+                    {
+                        saveData.Stats.IncreaseGamemodesPlayedAlone(gamemode);
+                    }
                 }
 
                 if (!AmIElite())
