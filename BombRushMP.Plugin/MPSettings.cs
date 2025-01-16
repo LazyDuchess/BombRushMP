@@ -110,6 +110,21 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public string CrewName
+        {
+            get
+            {
+                var nam = _crewName.Value;
+                if (nam.Length > Constants.MaxCrewNameLength)
+                    nam = nam.Substring(0, Constants.MaxCrewNameLength);
+                return nam;
+            }
+            set
+            {
+                _crewName.Value = value;
+            }
+        }
+
         public bool ShowNamePlates
         {
             get
@@ -471,6 +486,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _playerDopplerEnabled;
         private ConfigEntry<string> _serverAddress;
         private ConfigEntry<string> _playerName;
+        private ConfigEntry<string> _crewName;
         private ConfigEntry<int> _serverPort;
         private ConfigEntry<bool> _debugLocalPlayer;
         private ConfigEntry<bool> _showNamePlates;
@@ -520,6 +536,19 @@ namespace BombRushMP.Plugin
             _configFile = configFile;
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
             _playerName = configFile.Bind(General, "Player Name", DefaultName, "Your player name.");
+            _playerName.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                if (clientController.Connected)
+                    clientController.SendClientState();
+            };
+            _crewName = configFile.Bind(General, "Crew Name", "", "Name of your crew.");
+            _crewName.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                if (clientController.Connected)
+                    clientController.SendClientState();
+            };
             _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
             _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
@@ -527,12 +556,6 @@ namespace BombRushMP.Plugin
             _showNamePlates = configFile.Bind(Settings, "Show Nameplates", true, "Whether to show nameplates above players.");
             _showMinimap = configFile.Bind(Settings, "Show Minimap", true, "Whether to always show the minimap in-game.");
             _showNotifications = configFile.Bind(Settings, "Show Notifications", true, "Whether to show notifications when you're invited to a lobby.");
-            _playerName.SettingChanged += (sender, args) =>
-            {
-                var clientController = ClientController.Instance;
-                if (clientController.Connected)
-                    clientController.SendClientState();
-            };
             _showAFKEffects = configFile.Bind(Settings, "Show AFK Effects on Players", true, "Whether to render sleeping Z's on AFK players.");
             _leaveJoinMessages = configFile.Bind(ChatSettings, "Show Player Join/Leave Messages", true, "Whether to show player join/leave messages in chat.");
             _afkMessages = configFile.Bind(ChatSettings, "Show Player AFK Messages", true, "Whether to show a message in chat when a player goes AFK.");

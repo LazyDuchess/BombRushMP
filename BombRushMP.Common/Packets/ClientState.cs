@@ -21,6 +21,7 @@ namespace BombRushMP.Common.Packets
         public SpecialSkins SpecialSkin = SpecialSkins.None;
         public int SpecialSkinVariant = -1;
         public string Name = "Player";
+        public string CrewName = "";
         public int Stage = 0;
         public AuthUser User = new AuthUser();
 
@@ -34,6 +35,7 @@ namespace BombRushMP.Common.Packets
             Outfit = reader.ReadByte();
             Stage = reader.ReadInt32();
             Name = reader.ReadString();
+            CrewName = reader.ReadString();
             SpecialSkin = (SpecialSkins)reader.ReadInt32();
             SpecialSkinVariant = reader.ReadInt32();
             var user = new AuthUser();
@@ -49,6 +51,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(Outfit);
             writer.Write(Stage);
             writer.Write(Name);
+            writer.Write(CrewName);
             writer.Write((int)SpecialSkin);
             writer.Write(SpecialSkinVariant);
             User.Write(writer);

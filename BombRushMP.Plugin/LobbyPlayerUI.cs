@@ -70,10 +70,13 @@ namespace BombRushMP.Plugin
             return FormattingUtility.FormatPlayerScore(CultureInfo.CurrentCulture, score);
         }
 
-        public void SetTeam(Team team, byte teamId, int standing)
+        public void SetTeam(Lobby lobby, Team team, byte teamId, int standing)
         {
+            var teamName = MPUtility.GetCrewDisplayName(MPUtility.GetTeamName(lobby.LobbyState, team, teamId));
+            if (string.IsNullOrWhiteSpace(teamName))
+                teamName = team.Name;
             _lobbyPlayer = null;
-            _playerName.text = $"{standing}. {team.Name}";
+            _playerName.text = $"{standing}. {teamName}";
             _bg.gameObject.SetActive(false);
             _readySprite.SetActive(false);
             _notReadySprite.SetActive(false);

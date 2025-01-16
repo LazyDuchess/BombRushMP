@@ -104,7 +104,7 @@ namespace BombRushMP.Plugin
                     lastTeam = player.Team;
                     if (!playerui.gameObject.activeSelf)
                         playerui.gameObject.SetActive(true);
-                    playerui.SetTeam(team, player.Team, teamStanding);
+                    playerui.SetTeam(lobby, team, player.Team, teamStanding);
                     teamStanding++;
                     continue;
                 }

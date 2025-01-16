@@ -504,6 +504,7 @@ namespace BombRushMP.Plugin
             var statePacket = new ClientState()
             {
                 Name = _mpSettings.PlayerName,
+                CrewName = _mpSettings.CrewName,
                 Character = (sbyte)player.character,
                 FallbackCharacter = (sbyte)MPSettings.Instance.FallbackCharacter,
                 FallbackOutfit = (byte)MPSettings.Instance.FallbackOutfit,

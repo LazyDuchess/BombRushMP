@@ -384,11 +384,17 @@ namespace BombRushMP.Server
                         if (clientState.Name.Length > Constants.MaxNameLength)
                             clientState.Name = clientState.Name.Substring(0, Constants.MaxNameLength);
 
+                        if (clientState.CrewName.Length > Constants.MaxCrewNameLength)
+                            clientState.CrewName = clientState.CrewName.Substring(0, Constants.MaxCrewNameLength);
+
                         var oldClientState = player.ClientState;
                         if (oldClientState != null)
                         {
                             if (!AllowNameChanges && oldClientState.User.UserKind == UserKinds.Player)
+                            {
                                 clientState.Name = oldClientState.Name;
+                                clientState.CrewName = oldClientState.CrewName;
+                            }
                             clientState.Stage = oldClientState.Stage;
                         }
                         if (clientAuth != null)

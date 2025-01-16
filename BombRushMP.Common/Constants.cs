@@ -9,5 +9,6 @@
         public const char CommandChar = '/';
         public const int MaxMessageLength = 256;
         public const int MaxNameLength = 64;
+        public const int MaxCrewNameLength = 32;
     }
 }

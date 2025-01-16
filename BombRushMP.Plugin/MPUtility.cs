@@ -25,6 +25,44 @@ namespace BombRushMP.Plugin
             return message;
         }
 
+        public static string GetTeamName(LobbyState lobbyState, Team team, byte teamId)
+        {
+            var teamPlayers = lobbyState.Players.Where((x) => x.Value.Team == teamId);
+            var setCrewName = false;
+            var lastCrewName = "";
+            foreach(var teamPlayer in teamPlayers)
+            {
+                var crewName = ClientController.Instance.Players[teamPlayer.Key].ClientState.CrewName;
+                if (!setCrewName)
+                {
+                    setCrewName = true;
+                    lastCrewName = crewName;
+                }
+                else
+                {
+                    if (crewName != lastCrewName)
+                        return "";
+                }
+            }
+            return lastCrewName;
+        }
+
+        public static string GetCrewDisplayName(string name)
+        {
+            name = TMPFilter.Sanitize(name);
+            name = TMPFilter.FilterTags(name, MPSettings.Instance.ChatCriteria);
+            name = TMPFilter.CloseAllTags(name);
+            if (MPSettings.Instance.FilterProfanity)
+            {
+                if (ProfanityFilter.TMPContainsProfanity(name))
+                    name = "";
+            }
+            name = name.Trim();
+            if (TMPFilter.RemoveAllTags(name).IsNullOrWhiteSpace())
+                name = "";
+            return name;
+        }
+
         public static string GetPlayerDisplayName(string name)
         {
             name = TMPFilter.Sanitize(name);
