@@ -67,13 +67,13 @@ namespace BombRushMP.Plugin
         {
             if (score <= 0f)
                 return "0";
-            return FormattingUtility.FormatPlayerScore(CultureInfo.CurrentCulture, _lobbyPlayer.Score);
+            return FormattingUtility.FormatPlayerScore(CultureInfo.CurrentCulture, score);
         }
 
-        public void SetTeam(Team team, byte teamId)
+        public void SetTeam(Team team, byte teamId, int standing)
         {
             _lobbyPlayer = null;
-            _playerName.text = team.Name;
+            _playerName.text = $"{standing}. {team.Name}";
             _bg.gameObject.SetActive(false);
             _readySprite.SetActive(false);
             _notReadySprite.SetActive(false);
@@ -112,7 +112,7 @@ namespace BombRushMP.Plugin
             _lobbyPlayer = player;
             _playerName.text = playername;
             _score.text = FormatScore(_lobbyPlayer.Score);
-            if (Position != -1)
+            if (Position != -1 && team == null)
             {
                 _playerName.text = $"{Position + 1}. {playername}";
             }

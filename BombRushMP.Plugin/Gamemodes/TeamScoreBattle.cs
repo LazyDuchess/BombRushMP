@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
-    public class TeamGraffitiRace : GraffitiRace
+    public class TeamScoreBattle : ScoreBattle
     {
-        public TeamGraffitiRace() : base()
+        public TeamScoreBattle() : base()
         {
             TeamBased = true;
         }

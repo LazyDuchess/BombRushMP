@@ -81,6 +81,7 @@ namespace BombRushMP.Plugin
             {
                 players = players.OrderByDescending(p => lobby.LobbyState.GetScoreForTeam(p.Team)).ToList();
             }
+            var teamStanding = 1;
             var lastTeam = -1;
             var playerIndex = 0;
             for(var i = 0; i < PlayerUIPoolSize; i++)
@@ -103,7 +104,8 @@ namespace BombRushMP.Plugin
                     lastTeam = player.Team;
                     if (!playerui.gameObject.activeSelf)
                         playerui.gameObject.SetActive(true);
-                    playerui.SetTeam(team, player.Team);
+                    playerui.SetTeam(team, player.Team, teamStanding);
+                    teamStanding++;
                     continue;
                 }
                 else

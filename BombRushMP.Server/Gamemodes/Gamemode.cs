@@ -9,6 +9,7 @@ namespace BombRushMP.Server.Gamemodes
 {
     public abstract class Gamemode
     {
+        public bool TeamBased = false;
         public Lobby Lobby;
         protected int CountdownTime = 10;
         protected BRCServer Server;

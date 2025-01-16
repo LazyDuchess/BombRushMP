@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BombRushMP.Plugin.Gamemodes
+namespace BombRushMP.Server.Gamemodes
 {
-    public class TeamGraffitiRace : GraffitiRace
+    public class TeamScoreBattle : ScoreBattle
     {
-        public TeamGraffitiRace() : base()
+        public TeamScoreBattle() : base()
         {
             TeamBased = true;
         }

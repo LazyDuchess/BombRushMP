@@ -11,6 +11,8 @@ namespace BombRushMP.Common
         ScoreBattle,
         GraffitiRace,
         TeamGraffitiRace,
-        ProSkaterScoreBattle
+        ProSkaterScoreBattle,
+        TeamScoreBattle,
+        TeamProSkaterScoreBattle
     }
 }
