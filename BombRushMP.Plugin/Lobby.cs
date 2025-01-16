@@ -24,5 +24,11 @@ namespace BombRushMP.Plugin
             }
             return lastPlayer;
         }
+
+        public Gamemode GetOrCreateGamemode()
+        {
+            if (CurrentGamemode != null) return CurrentGamemode;
+            return GamemodeFactory.GetGamemode(LobbyState.Gamemode);
+        }
     }
 }

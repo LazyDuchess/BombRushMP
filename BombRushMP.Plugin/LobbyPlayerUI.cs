@@ -8,6 +8,7 @@ using UnityEngine;
 using BombRushMP.Common;
 using Reptile;
 using System.Globalization;
+using UnityEngine.UI;
 
 namespace BombRushMP.Plugin
 {
@@ -21,6 +22,8 @@ namespace BombRushMP.Plugin
         private GameObject _readySprite;
         private GameObject _notReadySprite;
         private GameObject _afkSprite;
+        private Image _bg;
+        private Image _teamBg;
         public int Position = -1;
         private void Awake()
         {
@@ -29,6 +32,8 @@ namespace BombRushMP.Plugin
             _readySprite = transform.Find("Ready").gameObject;
             _notReadySprite = transform.Find("Not Ready").gameObject;
             _afkSprite = transform.Find("AFK").gameObject;
+            _bg = transform.Find("BG").GetComponent<Image>();
+            _teamBg = transform.Find("Team BG").GetComponent<Image>();
             _clientController = ClientController.Instance;
             _playerName.spriteAsset = MPAssets.Instance.Sprites;
         }
@@ -65,8 +70,21 @@ namespace BombRushMP.Plugin
             return FormattingUtility.FormatPlayerScore(CultureInfo.CurrentCulture, _lobbyPlayer.Score);
         }
 
-        public void SetPlayer(LobbyPlayer player)
+        public void SetPlayer(LobbyPlayer player, Team team)
         {
+            _bg.gameObject.SetActive(false);
+            _teamBg.gameObject.SetActive(false);
+
+            if (team == null)
+            {
+                _bg.gameObject.SetActive(true);
+            }
+            else
+            {
+                _teamBg.gameObject.SetActive(true);
+                _teamBg.color = new Color(team.Color.r, team.Color.g, team.Color.b, _teamBg.color.a);
+            }
+
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
             _lobby = lobby;
 

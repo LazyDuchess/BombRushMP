@@ -17,6 +17,7 @@ namespace BombRushMP.Common
         public ushort HostId = 0;
         public Dictionary<ushort, LobbyPlayer> Players = new();
         public Dictionary<ushort, DateTime> InvitedPlayers = new();
+        public Dictionary<byte, float> TeamScores = new();
 
         public LobbyState()
         {
@@ -28,6 +29,13 @@ namespace BombRushMP.Common
             Stage = stage;
             Id = id;
             HostId = hostId;
+        }
+
+        public float GetScoreForTeam(byte team)
+        {
+            if (TeamScores.TryGetValue(team, out var score))
+                return score;
+            return 0f;
         }
 
         public void Read(BinaryReader reader)
@@ -56,6 +64,13 @@ namespace BombRushMP.Common
                 var playerId = reader.ReadUInt16();
                 InvitedPlayers[playerId] = inviteTime;
             }
+            var teamCount = reader.ReadByte();
+            for(var i=0;i < teamCount; i++)
+            {
+                var teamId = reader.ReadByte();
+                var teamScore = reader.ReadSingle();
+                TeamScores[teamId] = teamScore;
+            }
         }
 
         public void Write(BinaryWriter writer)
@@ -77,6 +92,12 @@ namespace BombRushMP.Common
             {
                 writer.Write(invite.Value.ToBinary());
                 writer.Write(invite.Key);
+            }
+            writer.Write(TeamScores.Count);
+            foreach(var team in TeamScores)
+            {
+                writer.Write(team.Key);
+                writer.Write(team.Value);
             }
         }
     }
