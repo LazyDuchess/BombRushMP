@@ -70,6 +70,20 @@ namespace BombRushMP.Plugin
             return FormattingUtility.FormatPlayerScore(CultureInfo.CurrentCulture, _lobbyPlayer.Score);
         }
 
+        public void SetTeam(Team team, byte teamId)
+        {
+            _lobbyPlayer = null;
+            _playerName.text = team.Name;
+            _bg.gameObject.SetActive(false);
+            _readySprite.SetActive(false);
+            _notReadySprite.SetActive(false);
+            _teamBg.gameObject.SetActive(true);
+            _teamBg.color = new Color(team.Color.r, team.Color.g, team.Color.b, _teamBg.color.a);
+            _score.text = FormatScore(_lobby.LobbyState.GetScoreForTeam(teamId));
+        }
+
+        private const float TeamPlayerDarkening = 0.25f;
+
         public void SetPlayer(LobbyPlayer player, Team team)
         {
             _bg.gameObject.SetActive(false);
@@ -82,7 +96,7 @@ namespace BombRushMP.Plugin
             else
             {
                 _teamBg.gameObject.SetActive(true);
-                _teamBg.color = new Color(team.Color.r, team.Color.g, team.Color.b, _teamBg.color.a);
+                _teamBg.color = new Color(team.Color.r * TeamPlayerDarkening, team.Color.g * TeamPlayerDarkening, team.Color.b * TeamPlayerDarkening, _teamBg.color.a);
             }
 
             var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];

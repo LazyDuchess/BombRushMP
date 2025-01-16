@@ -81,23 +81,37 @@ namespace BombRushMP.Plugin
             {
                 players = players.OrderByDescending(p => lobby.LobbyState.GetScoreForTeam(p.Team)).ToList();
             }
+            var lastTeam = -1;
+            var playerIndex = 0;
             for(var i = 0; i < PlayerUIPoolSize; i++)
             {
                 var playerui = _playerUIs[i];
-                if (i >= players.Count)
+                if (playerIndex >= players.Count)
                 {
                     if (playerui.gameObject.activeSelf)
                         playerui.gameObject.SetActive(false);
                     continue;
                 }
-                if (!playerui.gameObject.activeSelf)
-                    playerui.gameObject.SetActive(true);
-                var player = players[i];
+                var player = players[playerIndex];
                 Team team = null;
                 if (gamemode.TeamBased)
                 {
                     team = TeamManager.Teams[player.Team];
                 }
+                if (player.Team != lastTeam && gamemode.TeamBased)
+                {
+                    lastTeam = player.Team;
+                    if (!playerui.gameObject.activeSelf)
+                        playerui.gameObject.SetActive(true);
+                    playerui.SetTeam(team, player.Team);
+                    continue;
+                }
+                else
+                {
+                    playerIndex++;
+                }
+                if (!playerui.gameObject.activeSelf)
+                    playerui.gameObject.SetActive(true);
                 playerui.SetPlayer(player, team);
             }
         }
