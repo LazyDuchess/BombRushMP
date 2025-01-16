@@ -81,10 +81,22 @@ namespace BombRushMP.Server.Gamemodes
                     {
                         var scorePacket = (ClientGamemodeScore)packet;
                         ServerLobbyManager.SetPlayerScore(playerId, scorePacket.Score);
-                        if (scorePacket.Score >= _maxScore)
+                        if (TeamBased)
                         {
-                            ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
-                            _state = States.Finished;
+                            var teamScore = Lobby.LobbyState.GetScoreForTeam(Lobby.LobbyState.Players[playerId].Team);
+                            if (teamScore >= _maxScore)
+                            {
+                                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                                _state = States.Finished;
+                            }
+                        }
+                        else
+                        {
+                            if (scorePacket.Score >= _maxScore)
+                            {
+                                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                                _state = States.Finished;
+                            }
                         }
                     }
                     break;
