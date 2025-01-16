@@ -332,7 +332,7 @@ namespace BombRushMP.Server
 
                 case Packets.ClientSetTeam:
                     {
-                        if (existingLobby != null)
+                        if (existingLobby != null && !existingLobby.LobbyState.InGame)
                         {
                             var teamPacket = (ClientSetTeam)packet;
                             existingLobby.LobbyState.Players[playerId].Team = teamPacket.Team;

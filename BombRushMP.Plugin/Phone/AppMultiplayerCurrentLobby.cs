@@ -129,7 +129,7 @@ namespace BombRushMP.Plugin.Phone
                 ScrollView.AddButton(button);
             }
 
-            if (!currentLobby.InGame && gamemode.TeamBased)
+            if (!currentLobby.InGame)
             {
                 button = PhoneUIUtility.CreateSimpleButton("Switch Team");
                 button.OnConfirm += () =>
