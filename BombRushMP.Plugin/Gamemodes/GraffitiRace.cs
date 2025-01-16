@@ -118,6 +118,12 @@ namespace BombRushMP.Plugin.Gamemodes
                         player.userInputEnabled = true;
                     }
                     break;
+
+                case Packets.ServerTeamGraffRaceScore:
+                    {
+                        OnReceive_TeamGraffitiRaceScore((ServerTeamGraffRaceScore)packet);
+                    }
+                    break;
             }
         }
 
@@ -176,11 +182,19 @@ namespace BombRushMP.Plugin.Gamemodes
             }
         }
 
-        public void AddScore()
+        public void AddScore(GraffitiSpot gSpot)
         {
-            Score++;
-            var packet = new ClientGamemodeScore(Score);
-            ClientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+            if (!TeamBased)
+            {
+                Score++;
+                var packet = new ClientGamemodeScore(Score);
+                ClientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+            }
+            else
+            {
+                var packet = new ClientTeamGraffRaceScore(Compression.HashString(gSpot.Uid));
+                ClientController.SendPacket(packet, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+            }
         }
 
         public override void OnEnd(bool cancelled)
@@ -238,6 +252,15 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
             MPUtility.PlaceCurrentPlayer(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion());
+        }
+
+        private void OnReceive_TeamGraffitiRaceScore(ServerTeamGraffRaceScore packet)
+        {
+            var spot = GetGraffitiSpotByHash(packet.TagHash);
+            MarkGraffitiSpotDone(spot);
+            var playa = ClientController.Players[packet.PlayerId].Player;
+            var art = TagUtils.GetRandomGraffitiArt(spot, playa);
+            spot.Paint(Crew.PLAYERS, art, null);
         }
 
         private void OnReceive_GraffitiRaceData(ClientGraffitiRaceGSpots packet)

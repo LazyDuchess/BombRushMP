@@ -49,6 +49,8 @@ namespace BombRushMP.Common.Packets
         ClientScoreBattleLength,
         ClientHitByPlayer,
         ServerSetChibi,
-        ClientSetTeam
+        ClientSetTeam,
+        ClientTeamGraffRaceScore,
+        ServerTeamGraffRaceScore
     }
 }

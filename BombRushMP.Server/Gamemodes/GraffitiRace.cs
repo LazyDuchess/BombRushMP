@@ -19,6 +19,7 @@ namespace BombRushMP.Server.Gamemodes
         private States _state = States.Countdown;
         private float _countdownTimer = 0f;
         private float _maxScore = 0;
+        private Dictionary<byte, HashSet<int>> _graffitisCompletedByTeam = new();
         public GraffitiRace() : base()
         {
 
@@ -34,6 +35,24 @@ namespace BombRushMP.Server.Gamemodes
         {
             base.OnStart();
             _maxScore = 0;
+            _graffitisCompletedByTeam = new();
+        }
+
+        private bool SetTagCompleted(byte team, int tag)
+        {
+            HashSet<int> teamSet;
+            if (_graffitisCompletedByTeam.TryGetValue(team, out var result))
+            {
+                teamSet = result;
+            }
+            else
+            {
+                teamSet = new HashSet<int>();
+                _graffitisCompletedByTeam[team] = teamSet;
+            }
+            if (teamSet.Contains(tag)) return false;
+            teamSet.Add(tag);
+            return true;
         }
 
         public override void Tick(float deltaTime)
@@ -77,25 +96,41 @@ namespace BombRushMP.Server.Gamemodes
                     break;
 
                 case Packets.ClientGameModeScore:
+                    if (TeamBased) break;
                     if (_state == States.Main)
                     {
                         var scorePacket = (ClientGamemodeScore)packet;
                         ServerLobbyManager.SetPlayerScore(playerId, scorePacket.Score);
-                        if (TeamBased)
+                        if (scorePacket.Score >= _maxScore)
                         {
-                            var teamScore = Lobby.LobbyState.GetScoreForTeam(Lobby.LobbyState.Players[playerId].Team);
-                            if (teamScore >= _maxScore)
-                            {
-                                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
-                                _state = States.Finished;
-                            }
+                            ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                            _state = States.Finished;
                         }
-                        else
+                    }
+                    break;
+
+                case Packets.ClientTeamGraffRaceScore:
+                    if (!TeamBased) break;
+                    {
+                        var lobbyPlayer = Lobby.LobbyState.Players[playerId];
+                        if (_state == States.Main)
                         {
-                            if (scorePacket.Score >= _maxScore)
+                            var tagPacket = (ClientTeamGraffRaceScore)packet;
+                            if (SetTagCompleted(lobbyPlayer.Team, tagPacket.TagHash))
                             {
-                                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
-                                _state = States.Finished;
+                                ServerLobbyManager.SetPlayerScore(playerId, lobbyPlayer.Score + 1);
+                                var teamScore = Lobby.LobbyState.GetScoreForTeam(Lobby.LobbyState.Players[playerId].Team);
+                                if (teamScore >= _maxScore)
+                                {
+                                    ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                                    _state = States.Finished;
+                                }
+                                var otherTeamPlayers = Lobby.LobbyState.Players.Where((x) => x.Value.Team == lobbyPlayer.Team && x.Value.Id != lobbyPlayer.Id);
+                                var serverPacket = new ServerTeamGraffRaceScore(playerId, tagPacket.TagHash);
+                                foreach(var play in otherTeamPlayers)
+                                {
+                                    Server.SendPacketToClient(serverPacket, IMessage.SendModes.Reliable, Server.Players[play.Key].Client, NetChannels.Gamemodes);
+                                }
                             }
                         }
                     }

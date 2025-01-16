@@ -285,7 +285,7 @@ namespace BombRushMP.Plugin.Patches
             if (!grafRace.QuickGraffitiEnabled) return true;
             if (grafRace.IsRaceGraffitiSpot(graffitiSpot))
             {
-                grafRace.AddScore();
+                grafRace.AddScore(graffitiSpot);
                 grafRace.MarkGraffitiSpotDone(graffitiSpot);
             }
             Player.TrickType trickType = Player.TrickType.GRAFFITI_S;
@@ -301,7 +301,7 @@ namespace BombRushMP.Plugin.Patches
             {
                 trickType = Player.TrickType.GRAFFITI_XL;
             }
-            var art = GetRandomGraffitiArt(graffitiSpot, __instance);
+            var art = TagUtils.GetRandomGraffitiArt(graffitiSpot, __instance);
             __instance.DoTrick(trickType, art.title, 0);
             graffitiSpot.Paint(Crew.PLAYERS, art, null);
             __instance.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.BOOST_TRICK, true);
@@ -310,17 +310,6 @@ namespace BombRushMP.Plugin.Patches
             __instance.CreateGraffitiFinishEffect(graffitiSpot.transform, graffitiSpot.size);
             clientController.SendPacket(new PlayerGraffitiFinisher((byte)graffitiSpot.size), IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
             return false;
-        }
-
-        private static GraffitiArt GetRandomGraffitiArt(GraffitiSpot spot, Player player)
-        {
-            if (spot.size == GraffitiSize.S)
-                return spot.GraffitiArtInfo.FindByCharacter(player.character);
-            var grafs = spot.GraffitiArtInfo.graffitiArt.Where((art) =>
-            {
-                return art.graffitiSize == spot.size;
-            }).ToList();
-            return grafs[UnityEngine.Random.Range(0, grafs.Count)];
         }
 
         [HarmonyPostfix]
