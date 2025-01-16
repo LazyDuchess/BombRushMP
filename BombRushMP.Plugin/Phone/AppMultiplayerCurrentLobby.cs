@@ -50,6 +50,7 @@ namespace BombRushMP.Plugin.Phone
             var lobbyManager = clientController.ClientLobbyManager;
             var currentLobby = lobbyManager.CurrentLobby;
             if (currentLobby == null) return;
+            var gamemode = currentLobby.GetOrCreateGamemode();
             PhoneButton button = null;
             if (currentLobby.LobbyState.HostId == clientController.LocalID)
             {
@@ -128,6 +129,19 @@ namespace BombRushMP.Plugin.Phone
                 ScrollView.AddButton(button);
             }
 
+            if (!currentLobby.InGame && gamemode.TeamBased)
+            {
+                button = PhoneUIUtility.CreateSimpleButton("Switch Team");
+                button.OnConfirm += () =>
+                {
+                    var team = lobbyManager.CurrentLobby.LobbyState.Players[clientController.LocalID].Team;
+                    team++;
+                    if (team >= TeamManager.Teams.Length)
+                        team = 0;
+                    clientController.SendPacket(new ClientSetTeam(team), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+                };
+                ScrollView.AddButton(button);
+            }
             button = PhoneUIUtility.CreateSimpleButton("Leave Lobby");
             button.OnConfirm += () =>
             {

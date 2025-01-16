@@ -329,6 +329,17 @@ namespace BombRushMP.Server
                         }
                     }
                     break;
+
+                case Packets.ClientSetTeam:
+                    {
+                        if (existingLobby != null)
+                        {
+                            var teamPacket = (ClientSetTeam)packet;
+                            existingLobby.LobbyState.Players[playerId].Team = teamPacket.Team;
+                            QueueStageUpdate(existingLobby.LobbyState.Stage);
+                        }
+                    }
+                    break;
             }
         }
 
