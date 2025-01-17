@@ -535,7 +535,7 @@ namespace BombRushMP.Plugin
             Instance = this;
             _configFile = configFile;
             var authFilePath = Path.Combine(configPath, "auth.txt");
-            System.IO.Directory.CreateDirectory(authFilePath);
+            System.IO.Directory.CreateDirectory(configPath);
             if (!File.Exists(authFilePath))
                 File.Create(authFilePath);
             else
