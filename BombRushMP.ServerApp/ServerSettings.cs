@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common;
+using BombRushMP.Common.Networking;
 using BombRushMP.NetworkInterfaceProvider;
 using Newtonsoft.Json;
 using System;
@@ -36,5 +37,39 @@ namespace BombRushMP.ServerApp
         public bool LogChatsToFiles = false;
         public bool AllowNameChanges = false;
         public float ChatCooldown = 0.5f;
+        [JsonIgnore]
+        public IMessage.SendModes ClientAnimationSendMode
+        {
+            get
+            {
+                if (Enum.TryParse<IMessage.SendModes>(_clientAnimationSendMode, out var result))
+                    return result;
+                return IMessage.SendModes.ReliableUnordered;
+            }
+
+            set
+            {
+                _clientAnimationSendMode = value.ToString();
+            }
+        }
+        [JsonIgnore]
+        public IMessage.SendModes ServerAnimationSendMode
+        {
+            get
+            {
+                if (Enum.TryParse<IMessage.SendModes>(_serverAnimationSendMode, out var result))
+                    return result;
+                return IMessage.SendModes.Unreliable;
+            }
+
+            set
+            {
+                _serverAnimationSendMode = value.ToString();
+            }
+        }
+        [JsonProperty("ClientAnimationSendMode")]
+        private string _clientAnimationSendMode = IMessage.SendModes.ReliableUnordered.ToString();
+        [JsonProperty("ServerAnimationSendMode")]
+        private string _serverAnimationSendMode = IMessage.SendModes.Unreliable.ToString();
     }
 }

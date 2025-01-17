@@ -38,6 +38,7 @@ namespace BombRushMP.Server
         public bool LogMessages = true;
         public bool AllowNameChanges = true;
         public float ChatCooldown = 0.5f;
+        public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
 
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
@@ -430,7 +431,7 @@ namespace BombRushMP.Server
                             return;
                         }
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, User = clientState.User }, IMessage.SendModes.Reliable, client, NetChannels.Default);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User }, IMessage.SendModes.Reliable, client, NetChannels.Default);
                         var clientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
 

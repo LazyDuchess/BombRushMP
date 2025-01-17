@@ -45,6 +45,8 @@ namespace BombRushMP.ServerApp
             var port = (ushort)41585;
             var db = new ServerAppDatabase();
             var server = new BRCServer(port, 65534, 1f/serverSettings.TicksPerSecond, db);
+            PlayerAnimation.ServerSendMode = serverSettings.ServerAnimationSendMode;
+            server.ClientAnimationSendMode = serverSettings.ClientAnimationSendMode;
             server.LogMessagesToFile = serverSettings.LogChatsToFiles;
             server.LogMessages = serverSettings.LogChats;
             server.AllowNameChanges = serverSettings.AllowNameChanges;

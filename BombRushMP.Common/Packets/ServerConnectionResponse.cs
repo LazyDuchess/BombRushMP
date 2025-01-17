@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombRushMP.Common.Networking;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,12 +16,14 @@ namespace BombRushMP.Common.Packets
         public override Packets PacketId => Packets.ServerConnectionResponse;
         public ushort LocalClientId = 0;
         public float TickRate = Constants.DefaultNetworkingTickRate;
+        public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
         public AuthUser User;
 
         public override void Read(BinaryReader reader)
         {
             LocalClientId = reader.ReadUInt16();
             TickRate = reader.ReadSingle();
+            ClientAnimationSendMode = (IMessage.SendModes)reader.ReadByte();
             User = new AuthUser();
             User.Read(reader);
         }
@@ -29,6 +32,7 @@ namespace BombRushMP.Common.Packets
         {
             writer.Write(LocalClientId);
             writer.Write(TickRate);
+            writer.Write((byte)ClientAnimationSendMode);
             User.Write(writer);
         }
     }

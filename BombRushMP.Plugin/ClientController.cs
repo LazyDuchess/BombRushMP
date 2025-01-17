@@ -311,6 +311,7 @@ namespace BombRushMP.Plugin
                         var connectionResponse = (ServerConnectionResponse)packet;
                         LocalID = connectionResponse.LocalClientId;
                         TickRate = connectionResponse.TickRate;
+                        PlayerAnimation.ClientSendMode = connectionResponse.ClientAnimationSendMode;
                         _handShook = true;
                         ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.User.UserKind}.");
                         if (connectionResponse.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
