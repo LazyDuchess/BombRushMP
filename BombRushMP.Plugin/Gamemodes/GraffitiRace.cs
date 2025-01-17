@@ -21,7 +21,8 @@ namespace BombRushMP.Plugin.Gamemodes
         public enum SpawnMode
         {
             Automatic,
-            At_Host
+            At_Host,
+            Current_Positions
         }
 
         public enum MoveStyleMode
@@ -256,7 +257,14 @@ namespace BombRushMP.Plugin.Gamemodes
         private void OnReceive_GraffitiStart(ClientGraffitiRaceStart packet)
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
-            MPUtility.PlaceCurrentPlayer(packet.SpawnPosition.ToUnityVector3(), packet.SpawnRotation.ToUnityQuaternion());
+            var spawnPos = packet.SpawnPosition.ToUnityVector3();
+            var spawnRot = packet.SpawnRotation.ToUnityQuaternion();
+            if (Settings.SettingByID[SettingSpawnModeID].Value == (int)SpawnMode.Current_Positions)
+            {
+                spawnPos = player.transform.position;
+                spawnRot = player.transform.rotation;
+            }
+            MPUtility.PlaceCurrentPlayer(spawnPos, spawnRot);
         }
 
         private void OnReceive_TeamGraffitiRaceScore(ServerTeamGraffRaceScore packet)
