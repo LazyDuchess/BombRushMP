@@ -133,6 +133,7 @@ namespace BombRushMP.Plugin
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
             var puppetInstance = GameObject.Instantiate(_interactable.Player.Player.characterVisual.gameObject);
+            puppetInstance.transform.SetPositionAndRotation(_interactable.Player.Player.transform.position, _interactable.Player.Player.transform.rotation);
             _theirPuppet = puppetInstance.GetComponent<CharacterVisual>();
             _myPosition = player.transform.position;
             _myRotation = player.transform.rotation;
