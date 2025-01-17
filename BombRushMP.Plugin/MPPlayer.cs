@@ -176,6 +176,7 @@ namespace BombRushMP.Plugin
             }
             if (hidden)
             {
+                Player.characterVisual.SetSpraycan(false);
                 if (Player != null && Player.characterVisual != null)
                     Player.characterVisual.gameObject.SetActive(false);
                 if (NamePlate != null)
@@ -184,7 +185,11 @@ namespace BombRushMP.Plugin
             else
             {
                 if (Player != null && Player.characterVisual != null)
+                {
+                    if (!Player.characterVisual.gameObject.activeSelf)
+                        Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                     Player.characterVisual.gameObject.SetActive(true);
+                }
                 if (NamePlate != null)
                     NamePlate.gameObject.SetActive(true);
             }

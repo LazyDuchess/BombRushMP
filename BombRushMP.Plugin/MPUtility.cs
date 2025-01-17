@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -137,6 +138,13 @@ namespace BombRushMP.Plugin
                 }
             }
             return player;
+        }
+
+        public static string RemoveCrewTag(string text)
+        {
+            var rich = new Regex(@"\[[^\]]*\]");
+            text = rich.Replace(text, string.Empty);
+            return text;
         }
 
         public static bool IsMultiplayerPlayer(Player player)

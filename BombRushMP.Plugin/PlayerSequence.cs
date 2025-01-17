@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace BombRushMP.Plugin
 {
@@ -133,6 +134,9 @@ namespace BombRushMP.Plugin
             {
                 JoinOtherPlayer();
             }
+            var gameInput = Core.Instance.GameInput;
+            gameInput.DisableAllControllerMaps();
+            gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS);
         }
 
         private const float DistanceToPuppet = 1f;
@@ -181,6 +185,7 @@ namespace BombRushMP.Plugin
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
             var puppetInstance = GameObject.Instantiate(_interactable.Player.Player.characterVisual.gameObject);
+            puppetInstance.gameObject.SetActive(true);
             puppetInstance.transform.SetPositionAndRotation(_interactable.Player.Player.transform.position, _interactable.Player.Player.transform.rotation);
             TheirPuppet = puppetInstance.GetComponent<CharacterVisual>();
             _myPosition = player.transform.position;
@@ -214,7 +219,7 @@ namespace BombRushMP.Plugin
             var myHeadPos = player.characterVisual.head.position;
             var headingToTheirHead = (theirHeadPos - myHeadPos).normalized;
             var leftHead = Vector3.Cross(headingToTheirHead, Vector3.up);
-            var camPos = myHeadPos + (leftHead * 0.75f) - (Vector3.up * 0.25f) - (headingToTheirHead * 1f);
+            var camPos = myHeadPos - (leftHead * 1.25f) - (Vector3.up * 0.25f) - (headingToTheirHead * 1f);
 
             _cam.transform.position = camPos;
             var camToThemHeading = (theirHeadPos - camPos).normalized;
@@ -251,8 +256,8 @@ namespace BombRushMP.Plugin
 
             var myCrew = TMPFilter.RemoveAllTags(MPUtility.GetCrewDisplayName(localPlayer.ClientState.CrewName)).Trim();
             var theirCrew = TMPFilter.RemoveAllTags(MPUtility.GetCrewDisplayName(_interactable.Player.ClientState.CrewName)).Trim();
-            var theirName = TMPFilter.RemoveAllTags(MPUtility.GetPlayerDisplayName(_interactable.Player.ClientState.Name)).Trim();
-            var myName = TMPFilter.RemoveAllTags(MPUtility.GetPlayerDisplayName(localPlayer.ClientState.Name)).Trim();
+            var theirName = MPUtility.RemoveCrewTag(TMPFilter.RemoveAllTags(MPUtility.GetPlayerDisplayName(_interactable.Player.ClientState.Name))).Trim();
+            var myName = MPUtility.RemoveCrewTag(TMPFilter.RemoveAllTags(MPUtility.GetPlayerDisplayName(localPlayer.ClientState.Name))).Trim();
             var gamemodeName = GamemodeFactory.GetGamemodeName(otherLobby.LobbyState.Gamemode);
 
             var possibleIntros = new List<string>();
