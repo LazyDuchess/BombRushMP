@@ -526,7 +526,7 @@ namespace BombRushMP.Plugin
         private const string Visuals = "6. Visuals";
         private const string Advanced = "7. Advanced";
         private const string Server = "8. Server";
-        private const string MainServerAddress = "acn.lazyduchess.me";
+        private const string MainServerAddress = "free.soulisall.city";
         public const string DefaultName = "Goofiest Gooner";
 
         public MPSettings(ConfigFile configFile, string dir, string configPath)
