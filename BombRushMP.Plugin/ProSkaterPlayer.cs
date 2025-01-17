@@ -94,14 +94,14 @@ namespace BombRushMP.Plugin
     }
     public class ProSkaterPlayer : MonoBehaviour
     {
-        public const float GrindPenaltyTime = 0.1f;
+        public const float GrindPenaltyTime = 0.125f;
         private const float GrindSoftReset = 0.5f;
         private const float GrindPenalty = 1.25f;
         private const float GrindSensitivityPenalty = 1.1f;
         private const float GrindPenaltyMinimumBalance = 0.2f;
         public const float LeaveGrindSensitivity = 0.0025f;
 
-        public const float ManualPenaltyTime = 0.1f;
+        public const float ManualPenaltyTime = 0.125f;
         private const float ManualSoftReset = 0.5f;
         private const float ManualPenalty = 1.25f;
         private const float ManualSensitivityPenalty = 1.1f;
