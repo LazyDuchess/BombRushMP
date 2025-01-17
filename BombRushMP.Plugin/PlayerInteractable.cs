@@ -13,12 +13,44 @@ namespace BombRushMP.Plugin
     {
         public MPPlayer Player = null;
         public bool AlreadyTalked = false;
-        private PlayerSequence _sequence = null;
+        public PlayerSequence Sequence = null;
 
         private void Start()
         {
-            _sequence = new PlayerSequence(this);
+            Sequence = new PlayerSequence(this);
             PlacePlayerAtSnapPosition = false;
+        }
+
+        private Lobby GetLobby()
+        {
+            var clientController = ClientController.Instance;
+            foreach(var lobby in clientController.ClientLobbyManager.Lobbies)
+            {
+                if (lobby.Value.LobbyState.HostId == Player.ClientId)
+                    return lobby.Value;
+            }
+            return null;
+        }
+
+        private void Update()
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var sequenceHandler = CustomSequenceHandler.instance;
+            if (sequenceHandler.sequence == Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
+            {
+                var lobby = GetLobby();
+                if (Player == null || lobby == null || !lobby.LobbyState.Challenge || lobby.LobbyState.InGame)
+                {
+                    sequenceHandler.ExitCurrentSequence();
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            var sequenceHandler = CustomSequenceHandler.instance;
+            if (sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
+                sequenceHandler.ExitCurrentSequence();
         }
 
         public override Vector3 GetLookAtPos()
@@ -28,7 +60,7 @@ namespace BombRushMP.Plugin
 
         public override void Interact(Player player)
         {
-            CustomSequenceHandler.instance.StartEnteringSequence(_sequence, this, true, true, false, true, true, true, true, false);
+            CustomSequenceHandler.instance.StartEnteringSequence(Sequence, this, true, true, false, true, true, true, true, false);
         }
 
         public static PlayerInteractable Create(MPPlayer player)

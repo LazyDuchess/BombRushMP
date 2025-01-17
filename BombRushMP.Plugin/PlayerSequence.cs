@@ -23,7 +23,7 @@ namespace BombRushMP.Plugin
             $"What's up? You're {MyCrew}? I'm with {TheirCrew}.",
             $"Hey. You're {MyCrew}, right? I'm representing {TheirCrew}.",
             $"I'm thinking {TheirCrew} are gonna put {MyCrew} in their place. What do you think?",
-            $"{TheirCrew} owns this spot, kid. What's {MyCrew} gonna do about it?",
+            $"{TheirCrew} own this spot, kid. What's {MyCrew} gonna do about it?",
             $"{MyCrew}'s got NOTHING on {TheirCrew}, I'll show you!"
             ];
 

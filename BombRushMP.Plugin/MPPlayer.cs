@@ -3,6 +3,7 @@ using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Gamemodes;
 using BombRushMP.Plugin.Patches;
+using CommonAPI;
 using Reptile;
 using System;
 using System.Collections;
@@ -166,6 +167,13 @@ namespace BombRushMP.Plugin
 
         public void FrameUpdate(bool hidden)
         {
+            if (_interactable != null)
+            {
+                var player = WorldHandler.instance.GetCurrentPlayer();
+                var sequenceHandler = CustomSequenceHandler.instance;
+                if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
+                    hidden = true;
+            }
             if (hidden)
             {
                 if (Player != null && Player.characterVisual != null)
