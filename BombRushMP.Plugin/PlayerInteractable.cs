@@ -41,6 +41,7 @@ namespace BombRushMP.Plugin
                 var lobby = GetLobby();
                 if (Player == null || lobby == null || !lobby.LobbyState.Challenge || lobby.LobbyState.InGame)
                 {
+                    Sequence.SaidYes = false;
                     sequenceHandler.ExitCurrentSequence();
                 }
             }
@@ -50,7 +51,10 @@ namespace BombRushMP.Plugin
         {
             var sequenceHandler = CustomSequenceHandler.instance;
             if (sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
+            {
+                Sequence.SaidYes = false;
                 sequenceHandler.ExitCurrentSequence();
+            }
         }
 
         public override Vector3 GetLookAtPos()
@@ -69,7 +73,7 @@ namespace BombRushMP.Plugin
             interactBox.layer = Layers.TriggerDetectPlayer;
             interactBox.transform.SetParent(player.Player.transform, false);
             interactBox.transform.SetLocalPositionAndRotation(new Vector3(0f, 0.5f, 0f), Quaternion.identity);
-            interactBox.transform.localScale = new Vector3(2f, 2f, 2f);
+            interactBox.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
             interactBox.GetComponent<BoxCollider>().isTrigger = true;
             var interactable = interactBox.AddComponent<PlayerInteractable>();
             interactable.Player = player;

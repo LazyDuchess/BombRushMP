@@ -16,7 +16,7 @@ namespace BombRushMP.Plugin
         private const string MyCrew = "<color=yellow>{0}</color>";
         private const string TheirCrew = "<color=yellow>{1}</color>";
         private const string Gamemode = "<color=yellow>{2}</color>";
-        private bool _saidYes = false;
+        public bool SaidYes = false;
 
         private string[] RivalCrewsIntros = [
             $"{MyCrew}, huh? I'm with {TheirCrew}.",
@@ -113,7 +113,7 @@ namespace BombRushMP.Plugin
         public override void Stop()
         {
             base.Stop();
-            if (_saidYes)
+            if (SaidYes)
             {
                 JoinOtherPlayer();
             }
@@ -192,13 +192,12 @@ namespace BombRushMP.Plugin
             {
                 if (questionDialogue.AnsweredYes)
                 {
-                    _saidYes = true;
+                    SaidYes = true;
                     StartDialogue(yesDialogue);
-                    JoinOtherPlayer();
                 }
                 else
                 {
-                    _saidYes = false;
+                    SaidYes = false;
                     StartDialogue(noDialogue);
                 }
             };
@@ -206,12 +205,12 @@ namespace BombRushMP.Plugin
             if (_interactable.Player.ClientVisualState.State != PlayerStates.Dead)
             {
                 StartDialogue(introDialogue);
-                _saidYes = true;
+                SaidYes = true;
             }
             else
             {
                 StartDialogue(deadDialogue);
-                _saidYes = false;
+                SaidYes = false;
             }
         }
     }
