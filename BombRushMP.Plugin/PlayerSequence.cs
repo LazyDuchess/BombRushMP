@@ -1,11 +1,13 @@
 ﻿using BombRushMP.Common;
 using BombRushMP.Plugin.Gamemodes;
 using CommonAPI;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BombRushMP.Plugin
 {
@@ -17,6 +19,9 @@ namespace BombRushMP.Plugin
         private const string TheirCrew = "<color=yellow>{1}</color>";
         private const string Gamemode = "<color=yellow>{2}</color>";
         public bool SaidYes = false;
+        private CharacterVisual _theirPuppet;
+        private Vector3 _myPosition;
+        private Quaternion _myRotation;
 
         private string[] RivalCrewsIntros = [
             $"{MyCrew}, huh? I'm with {TheirCrew}.",
@@ -113,10 +118,25 @@ namespace BombRushMP.Plugin
         public override void Stop()
         {
             base.Stop();
+            MPUtility.PlaceCurrentPlayer(_myPosition, _myRotation);
+            if (_theirPuppet != null)
+            {
+                GameObject.Destroy(_theirPuppet.gameObject);
+            }
             if (SaidYes)
             {
                 JoinOtherPlayer();
             }
+        }
+
+        private void CreatePuppets()
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var puppetInstance = GameObject.Instantiate(_interactable.Player.Player.characterVisual.gameObject);
+            _theirPuppet = puppetInstance.GetComponent<CharacterVisual>();
+            _myPosition = player.transform.position;
+            _myRotation = player.transform.rotation;
+            MPUtility.PlaceCurrentPlayer(_myPosition, _myRotation);
         }
 
         public override void Play()
@@ -201,6 +221,8 @@ namespace BombRushMP.Plugin
                     StartDialogue(noDialogue);
                 }
             };
+
+            CreatePuppets();
 
             if (_interactable.Player.ClientVisualState.State != PlayerStates.Dead)
             {
