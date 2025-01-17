@@ -9,6 +9,7 @@ namespace BombRushMP.Common
     public static class SpecialPlayerUtils
     {
         public const string SpecialPlayerName = "Freesoul Elite";
+        public const string SpecialPlayerCrewName = "Freesoul";
         public const SpecialSkins SpecialPlayerSkin = SpecialSkins.SpecialPlayer;
         public const string SpecialPlayerTag = "elite";
         public const string SpecialPlayerUnlockName = "Goonie";

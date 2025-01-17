@@ -413,6 +413,7 @@ namespace BombRushMP.Server
                         if (clientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
                         {
                             clientState.Name = SpecialPlayerUtils.SpecialPlayerName;
+                            clientState.CrewName = SpecialPlayerUtils.SpecialPlayerCrewName;
                         }
                         else
                         {
