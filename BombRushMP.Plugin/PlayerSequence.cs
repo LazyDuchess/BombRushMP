@@ -24,13 +24,13 @@ namespace BombRushMP.Plugin
             $"Hey. You're {MyCrew}, right? I'm representing {TheirCrew}.",
             $"I'm thinking {TheirCrew} are gonna put {MyCrew} in their place. What do you think?",
             $"{TheirCrew} own this spot, kid. What's {MyCrew} gonna do about it?",
-            $"{MyCrew}'s got nothing on {TheirCrew}, I'll show you!"
+            $"{MyCrew} got nothing on {TheirCrew}, I'll show you!"
             ];
 
         private string[] MyCrewIntros = [
-            $"Yo! I think {MyCrew}'s got something to prove.",
+            $"Yo! I think {MyCrew} got something to prove.",
             $"I'd love to see how good {MyCrew} really are.",
-            $"What's the best {MyCrew}'s got to offer?",
+            $"Let's see what's the best {MyCrew} got to offer?",
             $"Are {MyCrew} looking for something to do? I've got an idea.",
             $"I've heard {MyCrew} doesn't back out of a challenge."
             ];
