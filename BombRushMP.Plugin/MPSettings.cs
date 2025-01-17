@@ -394,12 +394,12 @@ namespace BombRushMP.Plugin
         {
             get
             {
-                return _authKey.Value;
+                return _authKey;
             }
 
             set
             {
-                _authKey.Value = value;
+                _authKey = value;
             }
         }
 
