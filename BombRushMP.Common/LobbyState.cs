@@ -18,7 +18,7 @@ namespace BombRushMP.Common
         }
         public bool InGame = false;
         public bool AllowTeamSwitching = true;
-        public bool Challenge = true;
+        public bool Challenge = false;
         public GamemodeIDs Gamemode = GamemodeIDs.ScoreBattle;
         public byte[] GamemodeSettings = [];
         public int Stage = 0;

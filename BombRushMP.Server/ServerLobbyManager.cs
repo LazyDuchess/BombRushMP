@@ -364,6 +364,17 @@ namespace BombRushMP.Server
                         }
                     }
                     break;
+
+                case Packets.ClientLobbySetChallenge:
+                    {
+                        if (existingLobby != null && existingLobby.LobbyState.HostId == playerId)
+                        {
+                            var challengePacket = (ClientLobbySetChallenge)packet;
+                            existingLobby.LobbyState.Challenge = challengePacket.Set;
+                            QueueStageUpdate(existingLobby.LobbyState.Stage);
+                        }
+                    }
+                    break;
             }
         }
 

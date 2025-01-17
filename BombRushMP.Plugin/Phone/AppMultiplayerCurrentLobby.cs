@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin.Phone
     {
         public override bool Available => false;
         private SimplePhoneButton _allowTeamSwitchingButton;
+        private SimplePhoneButton _challengeModeButton;
 
         public static void Initialize()
         {
@@ -53,6 +54,10 @@ namespace BombRushMP.Plugin.Phone
             if (_allowTeamSwitchingButton != null)
             {
                 _allowTeamSwitchingButton.Label.text = "Allow Team Switching = " + (currentLobby.LobbyState.AllowTeamSwitching ? "ON" : "OFF");
+            }
+            if (_challengeModeButton != null)
+            {
+                _challengeModeButton.Label.text = "Challenge = " + (currentLobby.LobbyState.Challenge ? "ON" : "OFF");
             }
         }
 
@@ -111,6 +116,13 @@ namespace BombRushMP.Plugin.Phone
                     };
                     ScrollView.AddButton(button);
 
+                    button = PhoneUIUtility.CreateSimpleButton("Switch Teams");
+                    button.OnConfirm += () =>
+                    {
+                        MyPhone.OpenApp(typeof(AppMultiplayerSwitchPlayerTeams));
+                    };
+                    ScrollView.AddButton(button);
+
                     _allowTeamSwitchingButton = PhoneUIUtility.CreateSimpleButton("Allow Team Switching");
                     _allowTeamSwitchingButton.OnConfirm += () =>
                     {
@@ -118,12 +130,12 @@ namespace BombRushMP.Plugin.Phone
                     };
                     ScrollView.AddButton(_allowTeamSwitchingButton);
 
-                    button = PhoneUIUtility.CreateSimpleButton("Switch Teams");
-                    button.OnConfirm += () =>
+                    _challengeModeButton = PhoneUIUtility.CreateSimpleButton("Challenge");
+                    _challengeModeButton.OnConfirm += () =>
                     {
-                        MyPhone.OpenApp(typeof(AppMultiplayerSwitchPlayerTeams));
+                        clientController.ClientLobbyManager.SetChallenge(!currentLobby.LobbyState.Challenge);
                     };
-                    ScrollView.AddButton(button);
+                    ScrollView.AddButton(_challengeModeButton);
                 }
                 else
                 {

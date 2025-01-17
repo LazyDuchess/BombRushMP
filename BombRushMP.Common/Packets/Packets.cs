@@ -53,6 +53,7 @@ namespace BombRushMP.Common.Packets
         ClientTeamGraffRaceScore,
         ServerTeamGraffRaceScore,
         ClientLobbySetAllowTeamSwitching,
-        ClientLobbySetPlayerTeam
+        ClientLobbySetPlayerTeam,
+        ClientLobbySetChallenge
     }
 }
