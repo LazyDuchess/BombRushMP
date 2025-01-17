@@ -57,6 +57,16 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private void OnDisable()
+        {
+            var sequenceHandler = CustomSequenceHandler.instance;
+            if (sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
+            {
+                Sequence.SaidYes = false;
+                sequenceHandler.ExitCurrentSequence();
+            }
+        }
+
         public override Vector3 GetLookAtPos()
         {
             return Player.Player.characterVisual.head.transform.position;
@@ -64,7 +74,7 @@ namespace BombRushMP.Plugin
 
         public override void Interact(Player player)
         {
-            CustomSequenceHandler.instance.StartEnteringSequence(Sequence, this, true, true, false, true, true, true, true, false);
+            CustomSequenceHandler.instance.StartEnteringSequence(Sequence, this, false, true, false, true, true, true, true, false);
         }
 
         public static PlayerInteractable Create(MPPlayer player)
