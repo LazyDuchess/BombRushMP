@@ -102,6 +102,19 @@ namespace BombRushMP.Plugin
             return false;
         }
 
+        private bool IsChallengeable()
+        {
+            var clientController = ClientController.Instance;
+            var localLobby = clientController.ClientLobbyManager.CurrentLobby;
+            if (localLobby != null) return false;
+            foreach(var lobby in clientController.ClientLobbyManager.Lobbies)
+            {
+                if (lobby.Value.LobbyState.HostId == ClientId && lobby.Value.LobbyState.Challenge && !lobby.Value.LobbyState.InGame)
+                    return true;
+            }
+            return false;
+        }
+
         private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
         {
             yield return null;
@@ -387,6 +400,14 @@ namespace BombRushMP.Plugin
                 _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
             else 
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
+
+            if (IsChallengeable())
+            {
+                _mapPinMaterial.color = new Color(0.0f, 0.8f, 0.9f);
+                _mapPinParticles.SetActive(true);
+            }
+            else
+                _mapPinParticles.SetActive(false);
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
                 Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);

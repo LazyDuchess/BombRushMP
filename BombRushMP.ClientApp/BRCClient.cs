@@ -119,7 +119,7 @@ namespace BombRushMP.ClientApp
             switch (_taskStep)
             {
                 case 0:
-                    SendPacket(new ClientLobbyCreate());
+                    SendPacket(new ClientLobbyCreate(GamemodeIDs.ScoreBattle, new byte[] {}));
                     Log("Creating lobby.");
                     _taskStep++;
                     break;
