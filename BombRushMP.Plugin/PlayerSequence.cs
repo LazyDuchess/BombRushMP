@@ -79,9 +79,9 @@ namespace BombRushMP.Plugin
         private string[] NoOutros = [
             $"Maybe next time then.",
             $"Sucks.",
-            $"Scared?",
+            $"Awh... shame.",
             $"That's too bad.",
-            $"Lame.",
+            $"Laaameeee.",
             $"Boring."
             ];
 
@@ -135,7 +135,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private const float DistanceToPuppet = 1.5f;
+        private const float DistanceToPuppet = 1f;
 
         private Vector3 GetBestPlayerPosition()
         {
@@ -319,6 +319,7 @@ namespace BombRushMP.Plugin
 
             if (_interactable.Player.ClientVisualState.State != PlayerStates.Dead)
             {
+                Core.Instance.AudioManager.PlayVoice(_interactable.Player.Player.character, AudioClipID.VoiceTalk);
                 StartDialogue(introDialogue);
                 SaidYes = true;
             }
