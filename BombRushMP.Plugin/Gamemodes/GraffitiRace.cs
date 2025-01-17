@@ -36,6 +36,7 @@ namespace BombRushMP.Plugin.Gamemodes
         private static int SettingSpawnModeID = Animator.StringToHash("SpawnMode");
         private static int SettingQuickGraffitiID = Animator.StringToHash("QuickGraffiti");
         private static int SettingGraffitiAmountID = Animator.StringToHash("GraffitiAmount");
+        private static int SettingSingleGraffitiID = Animator.StringToHash("SingleGraffiti");
         private const int DefaultGraffiti = 10;
         private const int MinGraffiti = 5;
         private const int MaxGraffiti = 70;
@@ -347,6 +348,9 @@ namespace BombRushMP.Plugin.Gamemodes
             var spotAmount = Settings.SettingByID[SettingGraffitiAmountID].Value;
             var spawnMode = (SpawnMode)Settings.SettingByID[SettingSpawnModeID].Value;
 
+            if ((Settings.SettingByID[SettingSingleGraffitiID] as ToggleGamemodeSetting).IsOn)
+                spotAmount = 1;
+
             if (validSpots.Count <= 0)
             {
                 ClientLobbyManager.EndGame();
@@ -446,6 +450,7 @@ namespace BombRushMP.Plugin.Gamemodes
             if (maxSpots < MinGraffiti)
                 minSpots = 0;
             settings.SettingByID[SettingGraffitiAmountID] = new GamemodeSetting("Graffiti Amount", DefaultGraffiti, minSpots, maxSpots, 5);
+            settings.SettingByID[SettingSingleGraffitiID] = new ToggleGamemodeSetting("Single Graffiti", false);
             return settings;
         }
     }
