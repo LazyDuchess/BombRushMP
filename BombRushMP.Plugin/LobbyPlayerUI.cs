@@ -72,6 +72,7 @@ namespace BombRushMP.Plugin
 
         public void SetTeam(Lobby lobby, Team team, byte teamId, int standing)
         {
+            _lobby = lobby;
             var teamName = MPUtility.GetCrewDisplayName(MPUtility.GetTeamName(lobby.LobbyState, team, teamId));
             if (string.IsNullOrWhiteSpace(teamName))
                 teamName = team.Name;
