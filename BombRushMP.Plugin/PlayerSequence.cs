@@ -88,12 +88,8 @@ namespace BombRushMP.Plugin
 
         private string[] DeadDialogues = [
             "...",
-            "Maybe I should call an ambulance.",
-            "That doesn't look good.",
-            "They're not dead are they?",
-            "I don't think they're getting up.",
-            "They won't be saying much.",
-            "That looks painful."
+            "This person's hella dead.",
+            "I don't think this guy's getting up."
             ];
 
         public PlayerSequence(PlayerInteractable interactable)
@@ -203,7 +199,7 @@ namespace BombRushMP.Plugin
             var newPlayerRot = Quaternion.LookRotation(bestPosHeading);
             MPUtility.PlaceCurrentPlayer(newPlayerPos, newPlayerRot);
             player.PlayAnim(Animator.StringToHash("idle"), true, true);
-            TheirPuppet.anim.CrossFade(_interactable.Player.Player.curAnim, 1f);
+            TheirPuppet.anim.CrossFade(_interactable.Player.Player.curAnim, 0f, -1, 1f);
             _cam = CreateCam().gameObject;
             UpdateCameraPosition();
             _interactable.StartCoroutine(UpdateCamDelayed());
