@@ -26,6 +26,7 @@ namespace BombRushMP.Plugin
         private PlayerStates _previousState = PlayerStates.Normal;
         public Nameplate NamePlate;
         private MapPin _mapPin = null;
+        private GameObject _mapPinParticles = null;
         private Material _mapPinMaterial = null;
         private int _lastMoveStyleSkin = -1;
         private int _lastMPMoveStyleSkin = -1;
@@ -54,8 +55,8 @@ namespace BombRushMP.Plugin
             var pinInObj = _mapPin.transform.Find("InViewVisualization").gameObject;
 
             // Particles. Get rid of them.
-            var pinInPartObj = pinInObj.transform.Find("Particle System").gameObject;
-            GameObject.Destroy(pinInPartObj);
+            _mapPinParticles = pinInObj.transform.Find("Particle System").gameObject;
+            _mapPinParticles.SetActive(false);
 
             var pinOutObj = _mapPin.transform.Find("OutOfViewVisualization").gameObject;
             var pinOutPartS = pinOutObj.GetComponent<ParticleSystem>();
