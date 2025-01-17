@@ -539,7 +539,7 @@ namespace BombRushMP.Plugin
             if (!File.Exists(authFilePath))
                 File.Create(authFilePath);
             else
-                _authKey = File.ReadAllText(authFilePath);
+                _authKey = TMPFilter.Sanitize(File.ReadAllText(authFilePath));
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
             _playerName = configFile.Bind(General, "Player Name", DefaultName, "Your player name.");
             _playerName.SettingChanged += (sender, args) =>

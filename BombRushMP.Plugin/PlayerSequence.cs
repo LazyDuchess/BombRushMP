@@ -147,14 +147,20 @@ namespace BombRushMP.Plugin
             var frontPos = TheirPuppet.transform.position + TheirPuppet.transform.forward * DistanceToPuppet + Vector3.up * 1f;
             var frontRPos = TheirPuppet.transform.position + TheirPuppet.transform.forward * DistanceToPuppet + TheirPuppet.transform.right * DistanceToPuppet + Vector3.up * 1f;
             var frontLPos = TheirPuppet.transform.position + TheirPuppet.transform.forward * DistanceToPuppet - TheirPuppet.transform.right * DistanceToPuppet + Vector3.up * 1f;
+            var rightPos = TheirPuppet.transform.position + TheirPuppet.transform.right * DistanceToPuppet + Vector3.up * 1f;
+            var leftPos = TheirPuppet.transform.position - TheirPuppet.transform.right * DistanceToPuppet + Vector3.up * 1f;
             if (GetValidPosition(frontPos, out var result))
                 return result;
             if (GetValidPosition(frontRPos, out var result2))
                 return result2;
             if (GetValidPosition(frontLPos, out var result3))
                 return result3;
-            if (GetValidPosition(player.transform.position + Vector3.up * 1f, out var result4))
+            if (GetValidPosition(rightPos, out var result4))
                 return result4;
+            if (GetValidPosition(leftPos, out var result5))
+                return result5;
+            if (GetValidPosition(player.transform.position + Vector3.up * 1f, out var result6))
+                return result6;
             return player.transform.position;
         }
 
@@ -197,7 +203,7 @@ namespace BombRushMP.Plugin
             var newPlayerRot = Quaternion.LookRotation(bestPosHeading);
             MPUtility.PlaceCurrentPlayer(newPlayerPos, newPlayerRot);
             player.PlayAnim(Animator.StringToHash("idle"), true, true);
-            TheirPuppet.anim.CrossFade(_interactable.Player.Player.curAnim, 0f);
+            TheirPuppet.anim.CrossFade(_interactable.Player.Player.curAnim, 1f);
             _cam = CreateCam().gameObject;
             UpdateCameraPosition();
             _interactable.StartCoroutine(UpdateCamDelayed());
