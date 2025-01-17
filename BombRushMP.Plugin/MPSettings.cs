@@ -509,7 +509,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<float> _ticksPerSecond;
         private ConfigEntry<ushort> _maxPlayers;
         private ConfigEntry<bool> _offline;
-        private ConfigEntry<string> _authKey;
+        private string _authKey = "";
         private ConfigEntry<CharacterNames> _fallbackCharacter;
         private ConfigEntry<int> _fallbackOutfit;
         private ConfigEntry<bool> _invisible;
@@ -529,11 +529,17 @@ namespace BombRushMP.Plugin
         private const string MainServerAddress = "acn.lazyduchess.me";
         public const string DefaultName = "Goofiest Gooner";
 
-        public MPSettings(ConfigFile configFile, string dir)
+        public MPSettings(ConfigFile configFile, string dir, string configPath)
         {
             Directory = dir;
             Instance = this;
             _configFile = configFile;
+            var authFilePath = Path.Combine(configPath, "auth.txt");
+            System.IO.Directory.CreateDirectory(authFilePath);
+            if (!File.Exists(authFilePath))
+                File.Create(authFilePath);
+            else
+                _authKey = File.ReadAllText(authFilePath);
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
             _playerName = configFile.Bind(General, "Player Name", DefaultName, "Your player name.");
             _playerName.SettingChanged += (sender, args) =>
@@ -582,7 +588,6 @@ namespace BombRushMP.Plugin
             _ticksPerSecond = configFile.Bind(Server, "Ticks per second", 1f / Constants.DefaultNetworkingTickRate, "Networking updates per second for local server.");
             _maxPlayers = configFile.Bind(Server, "Max players", (ushort)64, "Max players for local server.");
             _offline = configFile.Bind(General, "Offline", false, "Run All City Network in singleplayer, offline mode.");
-            _authKey = configFile.Bind(General, "Authentication Key", "", "Optional secret key used to authenticate you.");
             _fallbackCharacter = configFile.Bind(General, "Fallback Character", CharacterNames.Red, "Character to display to other players when you're using a CrewBoom character they don't have.");
             _fallbackCharacter.SettingChanged += (sender, args) =>
             {

@@ -30,7 +30,7 @@ namespace BombRushMP.Plugin
         private ServerController _localServerController;
         private void Awake()
         {
-            new MPSettings(Config, Path.GetDirectoryName(Info.Location));
+            new MPSettings(Config, Path.GetDirectoryName(Info.Location), Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID));
             NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(MPSettings.Instance.NetworkInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
