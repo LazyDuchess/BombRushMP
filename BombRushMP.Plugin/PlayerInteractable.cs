@@ -32,6 +32,7 @@ namespace BombRushMP.Plugin
             return null;
         }
 
+
         private void Update()
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
@@ -44,6 +45,11 @@ namespace BombRushMP.Plugin
                     Sequence.SaidYes = false;
                     sequenceHandler.ExitCurrentSequence();
                 }
+            }
+
+            if (Sequence?.TheirPuppet != null)
+            {
+                Sequence.TheirPuppet.LookAtSubject(player.gameObject, player.characterVisual.head.transform.position);
             }
         }
 

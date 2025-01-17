@@ -3,6 +3,7 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
@@ -258,6 +259,8 @@ namespace BombRushMP.ClientApp
             }
         }
 
+        float degreesToRadians(float degrees) => degrees * ((float)Math.PI / 180f);
+
         private void SendDummyClientState()
         {
             var cs = new ClientState();
@@ -267,6 +270,9 @@ namespace BombRushMP.ClientApp
             SendPacket(cs);
 
             var vs = new ClientVisualState();
+            vs.CurrentAnimation = 1252092624;
+            vs.Position = new Vector3(2.7161f, -0.91f, -2.046f);
+            vs.Rotation = Quaternion.CreateFromYawPitchRoll(degreesToRadians(279.1345f),0f, 0f);
             SendPacket(vs);
         }
 
