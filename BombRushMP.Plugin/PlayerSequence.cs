@@ -30,7 +30,7 @@ namespace BombRushMP.Plugin
         private string[] MyCrewIntros = [
             $"Yo! I think {MyCrew} got something to prove.",
             $"I'd love to see how good {MyCrew} really are.",
-            $"Let's see what's the best {MyCrew} got to offer?",
+            $"Let's see what's the best {MyCrew} got to offer.",
             $"Are {MyCrew} looking for something to do? I've got an idea.",
             $"I've heard {MyCrew} doesn't back out of a challenge."
             ];
