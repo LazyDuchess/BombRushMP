@@ -224,10 +224,13 @@ namespace BombRushMP.Plugin
             if (sequenceHandler.IsInSequence())
             {
                 var sequence = sequenceHandler.sequence;
-                var toilet = sequence.GetComponentInParent<PublicToilet>(true);
-                if (toilet != null)
+                if (sequence != null)
                 {
-                    return toilet;
+                    var toilet = sequence.GetComponentInParent<PublicToilet>(true);
+                    if (toilet != null)
+                    {
+                        return toilet;
+                    }
                 }
             }
 

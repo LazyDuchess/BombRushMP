@@ -34,6 +34,7 @@ namespace BombRushMP.Plugin
         private int _lastAnimation = 0;
         private float _timeSpentInWrongAnimation = 0f;
         private const float MaxTimeSpentInWrongAnimation = 0.5f;
+        private PlayerInteractable _interactable = null;
 
         public void UpdateVisualState(ClientVisualState newVisualState)
         {
@@ -86,6 +87,17 @@ namespace BombRushMP.Plugin
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
             if (localLobby.LobbyState.Players.ContainsKey(ClientId) && localLobby.LobbyState.Players.ContainsKey(clientController.LocalID)) return true;
+            return false;
+        }
+
+        private bool HasLobby()
+        {
+            var clientController = ClientController.Instance;
+            foreach (var lobby in clientController.ClientLobbyManager.Lobbies)
+            {
+                if (lobby.Value.LobbyState.HostId == ClientId)
+                    return true;
+            }
             return false;
         }
 
@@ -401,13 +413,25 @@ namespace BombRushMP.Plugin
             else 
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
 
+            if (_interactable == null)
+            {
+                _interactable = PlayerInteractable.Create(this);
+            }
+
+            if (!HasLobby())
+                _interactable.AlreadyTalked = false;
+
             if (IsChallengeable())
             {
                 _mapPinMaterial.color = new Color(0.0f, 0.8f, 0.9f);
                 _mapPinParticles.SetActive(true);
+                _interactable.gameObject.SetActive(true);
             }
             else
+            {
                 _mapPinParticles.SetActive(false);
+                _interactable.gameObject.SetActive(false);
+            }
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
                 Player.characterVisual.SetBoostpackEffect((BoostpackEffectMode)ClientVisualState.BoostpackEffectMode);
