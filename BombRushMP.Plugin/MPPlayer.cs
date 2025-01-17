@@ -388,24 +388,11 @@ namespace BombRushMP.Plugin
                 }
             }
 
-            PlayerPatch.PlayAnimPatchEnabled = false;
-
-            try
+            if (Player.moveStyleEquipped != (MoveStyle)ClientVisualState.MoveStyle || Player.usingEquippedMovestyle != ClientVisualState.MoveStyleEquipped)
             {
-                if (Player.moveStyleEquipped != (MoveStyle)ClientVisualState.MoveStyle)
-                {
-                    Player.SetCurrentMoveStyleEquipped((MoveStyle)ClientVisualState.MoveStyle);
-                }
+                Player.StartCoroutine(UpdateMoveStyleDelayed());
+            }
 
-                if (Player.usingEquippedMovestyle != ClientVisualState.MoveStyleEquipped)
-                {
-                    Player.SwitchToEquippedMovestyle(ClientVisualState.MoveStyleEquipped, false, true, false);
-                }
-            }
-            finally
-            {
-                PlayerPatch.PlayAnimPatchEnabled = true;
-            }
             var rival = IsRival();
 
             UpdateSprayCan();
@@ -505,6 +492,26 @@ namespace BombRushMP.Plugin
             Player.characterVisual.VFX.boostpackTrail.SetActive(ClientVisualState.BoostpackTrail);
 
             _previousState = ClientVisualState.State;
+        }
+
+        private void UpdateMoveStyle()
+        {
+            PlayerPatch.PlayAnimPatchEnabled = false;
+            try
+            {
+                Player.SetCurrentMoveStyleEquipped((MoveStyle)ClientVisualState.MoveStyle);
+                Player.SwitchToEquippedMovestyle(ClientVisualState.MoveStyleEquipped, false, true, false);
+            }
+            finally
+            {
+                PlayerPatch.PlayAnimPatchEnabled = true;
+            }
+        }
+
+        private IEnumerator UpdateMoveStyleDelayed()
+        {
+            yield return null;
+            UpdateMoveStyle();   
         }
 
         public void SetClientState(ClientState newClientState)
