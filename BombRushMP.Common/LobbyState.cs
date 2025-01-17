@@ -13,10 +13,12 @@ namespace BombRushMP.Common
         {
             InGame,
             AllowTeamSwitching,
+            Challenge,
             MAX
         }
         public bool InGame = false;
         public bool AllowTeamSwitching = true;
+        public bool Challenge = true;
         public GamemodeIDs Gamemode = GamemodeIDs.ScoreBattle;
         public byte[] GamemodeSettings = [];
         public int Stage = 0;
@@ -53,6 +55,7 @@ namespace BombRushMP.Common
             var fields = Bitfield.ReadByte(reader);
             InGame = fields[BooleanMask.InGame];
             AllowTeamSwitching = fields[BooleanMask.AllowTeamSwitching];
+            Challenge = fields[BooleanMask.Challenge];
             Gamemode = (GamemodeIDs)reader.ReadInt32();
             var gameModeSettingsLength = reader.ReadInt32();
             GamemodeSettings = reader.ReadBytes(gameModeSettingsLength);
@@ -83,6 +86,7 @@ namespace BombRushMP.Common
             var fields = new Bitfield(BooleanMask.MAX);
             fields[BooleanMask.InGame] = InGame;
             fields[BooleanMask.AllowTeamSwitching] = AllowTeamSwitching;
+            fields[BooleanMask.Challenge] = Challenge;
             fields.WriteByte(writer);
             writer.Write((int)Gamemode);
             writer.Write(GamemodeSettings.Length);
