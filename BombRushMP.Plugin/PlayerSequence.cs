@@ -24,7 +24,7 @@ namespace BombRushMP.Plugin
             $"Hey. You're {MyCrew}, right? I'm representing {TheirCrew}.",
             $"I'm thinking {TheirCrew} are gonna put {MyCrew} in their place. What do you think?",
             $"{TheirCrew} own this spot, kid. What's {MyCrew} gonna do about it?",
-            $"{MyCrew}'s got NOTHING on {TheirCrew}, I'll show you!"
+            $"{MyCrew}'s got nothing on {TheirCrew}, I'll show you!"
             ];
 
         private string[] MyCrewIntros = [
