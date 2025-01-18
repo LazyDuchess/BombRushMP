@@ -26,6 +26,7 @@ namespace BombRushMP.Plugin
         public int Outfit = 0;
         private PlayerStates _previousState = PlayerStates.Normal;
         public Nameplate NamePlate;
+        private Lobby _lobby;
         private MapPin _mapPin = null;
         private GameObject _mapPinParticles = null;
         private Material _mapPinMaterial = null;
@@ -87,19 +88,8 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
-            if (localLobby.LobbyState.Players.ContainsKey(ClientId) && localLobby.LobbyState.Players.ContainsKey(clientController.LocalID)) return true;
-            return false;
-        }
-
-        private bool HasLobby()
-        {
-            var clientController = ClientController.Instance;
-            foreach (var lobby in clientController.ClientLobbyManager.Lobbies)
-            {
-                if (lobby.Value.LobbyState.HostId == ClientId)
-                    return true;
-            }
-            return false;
+            if (_lobby == null) return false;
+            return localLobby == _lobby;
         }
 
         private bool IsRival()
@@ -107,8 +97,11 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
-            if (localLobby.LobbyState.Players.TryGetValue(ClientId, out var otherPlayer) && localLobby.LobbyState.Players.TryGetValue(clientController.LocalID, out var myPlayer))
+            if (_lobby == null) return false;
+            if (localLobby == _lobby)
             {
+                var myPlayer = localLobby.LobbyState.Players[clientController.LocalID];
+                var otherPlayer = localLobby.LobbyState.Players[ClientId];
                 var gm = GamemodeFactory.GetGamemode(localLobby.LobbyState.Gamemode);
                 return (gm.TeamBased && otherPlayer.Team != myPlayer.Team);
             }
@@ -120,12 +113,8 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby != null) return false;
-            foreach(var lobby in clientController.ClientLobbyManager.Lobbies)
-            {
-                if (lobby.Value.LobbyState.HostId == ClientId && lobby.Value.LobbyState.Challenge && !lobby.Value.LobbyState.InGame)
-                    return true;
-            }
-            return false;
+            if (_lobby == null) return false;
+            return (_lobby.LobbyState.Challenge && !_lobby.LobbyState.InGame && _lobby.LobbyState.HostId == ClientId);
         }
 
         private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
@@ -252,6 +241,17 @@ namespace BombRushMP.Plugin
 
         public void TickUpdate()
         {
+            var clientController = ClientController.Instance;
+            _lobby = null;
+            foreach (var lobby in clientController.ClientLobbyManager.Lobbies)
+            {
+                if (lobby.Value.LobbyState.Players.ContainsKey(ClientId))
+                {
+                    _lobby = lobby.Value;
+                    break;
+                }
+            }
+
             if (Player != null)
             {
                 if (PlayerComponent.Get(Player).Chibi != ClientVisualState.Chibi)
@@ -261,8 +261,6 @@ namespace BombRushMP.Plugin
             }
 
             var mpSettings = MPSettings.Instance;
-
-            var clientController = ClientController.Instance;
 
             if (!mpSettings.DebugLocalPlayer)
             {
@@ -418,7 +416,7 @@ namespace BombRushMP.Plugin
                 _interactable = PlayerInteractable.Create(this);
             }
 
-            if (!HasLobby())
+            if (_lobby == null)
                 _interactable.AlreadyTalked = false;
 
             if (IsChallengeable())
