@@ -22,6 +22,7 @@ namespace BombRushMP.Plugin
         private LobbyPlayerUI[] _playerUIs = new LobbyPlayerUI[PlayerUIPoolSize];
         private TextMeshProUGUI _lobbySettings;
         private bool _updateQueued = false;
+        private bool _softUpdateQueued = false;
 
         private void Awake()
         {
@@ -31,7 +32,7 @@ namespace BombRushMP.Plugin
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
             ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
-            ClientLobbyManager.LobbySoftUpdated += OnLobbiesUpdated;
+            ClientLobbyManager.LobbySoftUpdated += OnLobbySoftUpdated;
             ClientController.ClientStatesUpdate += OnLobbiesUpdated;
             _playerName = _canvas.transform.Find("Player Name").gameObject;
             _playerName.SetActive(false);
@@ -43,6 +44,7 @@ namespace BombRushMP.Plugin
         {
             if (_updateQueued)
             {
+                _softUpdateQueued = false;
                 _updateQueued = false;
                 var currentLobby = _lobbyManager.CurrentLobby;
                 if (currentLobby == null)
@@ -50,12 +52,17 @@ namespace BombRushMP.Plugin
                 else
                     Activate();
             }
+            if (_softUpdateQueued)
+            {
+                _softUpdateQueued = false;
+                UpdatePlayerListing();
+            }
         }
 
         private void OnDestroy()
         {
             ClientLobbyManager.LobbiesUpdated -= OnLobbiesUpdated;
-            ClientLobbyManager.LobbySoftUpdated -= OnLobbiesUpdated;
+            ClientLobbyManager.LobbySoftUpdated -= OnLobbySoftUpdated;
             ClientController.ClientStatesUpdate -= OnLobbiesUpdated;
         }
 
@@ -77,33 +84,27 @@ namespace BombRushMP.Plugin
             _updateQueued = true;
         }
 
+        private void OnLobbySoftUpdated()
+        {
+            _softUpdateQueued = true;
+        }
+
         private void Activate()
         {
             _canvas.SetActive(true);
             UpdateUI();
         }
 
-        public void UpdateUI()
+        private void UpdatePlayerListing()
         {
-#if DEBUG
-            if (!MPSettings.Instance.UpdateLobbyUI)
-                return;
-#endif
             var lobby = _lobbyManager.CurrentLobby;
             if (lobby == null) return;
+            var players = lobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToArray();
             var gamemode = lobby.GetOrCreateGamemode();
-            GamemodeSettings lobbySettings = null;
-            if (lobby.InGame)
-                lobbySettings = lobby.CurrentGamemode.Settings;
-            else
-                lobbySettings = GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
-            _lobbySettings.text = lobbySettings.GetDisplayString(_lobbyManager.CurrentLobby.LobbyState.HostId == ClientController.Instance.LocalID, _lobbyManager.CurrentLobby.InGame);
-            _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
-            var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToArray();
             if (gamemode.TeamBased)
             {
                 var teamOrder = new byte[TeamManager.Teams.Length];
-                for(var i=0;i<TeamManager.Teams.Length;i++)
+                for (var i = 0; i < TeamManager.Teams.Length; i++)
                 {
                     teamOrder[i] = (byte)i;
                 }
@@ -113,7 +114,7 @@ namespace BombRushMP.Plugin
             var teamStanding = 1;
             var lastTeam = -1;
             var playerIndex = 0;
-            for(var i = 0; i < PlayerUIPoolSize; i++)
+            for (var i = 0; i < PlayerUIPoolSize; i++)
             {
                 var playerui = _playerUIs[i];
                 if (playerIndex >= players.Length)
@@ -145,6 +146,25 @@ namespace BombRushMP.Plugin
                     playerui.gameObject.SetActive(true);
                 playerui.SetPlayer(player, team);
             }
+        }
+
+        public void UpdateUI()
+        {
+#if DEBUG
+            if (!MPSettings.Instance.UpdateLobbyUI)
+                return;
+#endif
+            var lobby = _lobbyManager.CurrentLobby;
+            if (lobby == null) return;
+            var gamemode = lobby.GetOrCreateGamemode();
+            GamemodeSettings lobbySettings = null;
+            if (lobby.InGame)
+                lobbySettings = lobby.CurrentGamemode.Settings;
+            else
+                lobbySettings = GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
+            _lobbySettings.text = lobbySettings.GetDisplayString(_lobbyManager.CurrentLobby.LobbyState.HostId == ClientController.Instance.LocalID, _lobbyManager.CurrentLobby.InGame);
+            _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
+            UpdatePlayerListing();
         }
 
         private void Deactivate()
