@@ -79,7 +79,13 @@ namespace BombRushMP.Plugin
             var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToList();
             if (gamemode.TeamBased)
             {
-                players = players.OrderByDescending(p => lobby.LobbyState.GetScoreForTeam(p.Team)).ToList();
+                var teamOrder = new List<byte>();
+                for(var i=0;i<TeamManager.Teams.Length;i++)
+                {
+                    teamOrder.Add((byte)i);
+                }
+                teamOrder = teamOrder.OrderByDescending(t => lobby.LobbyState.GetScoreForTeam(t)).ToList();
+                players = players.OrderByDescending(p => teamOrder.IndexOf(p.Team)).ToList();
             }
             var teamStanding = 1;
             var lastTeam = -1;
