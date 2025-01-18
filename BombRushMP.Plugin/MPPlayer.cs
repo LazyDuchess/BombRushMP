@@ -234,6 +234,7 @@ namespace BombRushMP.Plugin
             Player.motor._rigidbody.velocity = clientVisualStateVelocity;
             UpdateLookAt();
             UpdatePhone();
+            UpdateSprayCan();
             if (NamePlate != null)
             {
                 NamePlate.transform.position = Player.transform.position + (Vector3.up * 2f);
@@ -406,7 +407,6 @@ namespace BombRushMP.Plugin
 
             var rival = IsRival();
 
-            UpdateSprayCan();
             TickUpdateNameplate();
             if (_mapPin == null)
                 MakeMapPin();
