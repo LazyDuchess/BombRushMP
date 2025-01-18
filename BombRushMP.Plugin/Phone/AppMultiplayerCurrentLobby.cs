@@ -51,6 +51,7 @@ namespace BombRushMP.Plugin.Phone
             var clientController = ClientController.Instance;
             var lobbyManager = clientController.ClientLobbyManager;
             var currentLobby = lobbyManager.CurrentLobby;
+            if (currentLobby?.LobbyState == null) return;
             if (_allowTeamSwitchingButton != null)
             {
                 _allowTeamSwitchingButton.Label.text = "Allow Team Switching = " + (currentLobby.LobbyState.AllowTeamSwitching ? "ON" : "OFF");
