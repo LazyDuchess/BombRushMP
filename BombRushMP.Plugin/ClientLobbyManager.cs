@@ -58,6 +58,9 @@ namespace BombRushMP.Plugin
 
         public void OnUpdate()
         {
+#if DEBUG
+            if (!MPSettings.Instance.UpdateLobbyController) return;
+#endif
             if (CurrentLobby != null && CurrentLobby.InGame)
             {
                 CurrentLobby.CurrentGamemode.OnUpdate_InGame();

@@ -220,16 +220,25 @@ namespace BombRushMP.Plugin
 
         private void Tick()
         {
+#if DEBUG
+            if (MPSettings.Instance.UpdateNetworkClient)
+#endif
             _client?.Update();
             if (Connected)
             {
                 SendVisualState();
             }
-
-            foreach (var player in Players)
+#if DEBUG
+            if (MPSettings.Instance.UpdatePlayers)
             {
-                player.Value.TickUpdate();
+#endif
+                foreach (var player in Players)
+                {
+                    player.Value.TickUpdate();
+                }
+#if DEBUG
             }
+#endif
             ClientLobbyManager.OnTick();
         }
 
@@ -252,6 +261,9 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+#if DEBUG
+            if (!MPSettings.Instance.UpdateClientController) return;
+#endif
             var playersHidden = MPUtility.GetCurrentToilet() != null;
             _tickTimer += Time.deltaTime;
             _infrequentUpdateTimer += Time.deltaTime;
@@ -266,10 +278,17 @@ namespace BombRushMP.Plugin
                 InfrequentUpdate();
                 _infrequentUpdateTimer = 0f;
             }
-            foreach (var player in Players)
+#if DEBUG
+            if (MPSettings.Instance.UpdatePlayers)
             {
-                player.Value.FrameUpdate(playersHidden);
+#endif
+                foreach (var player in Players)
+                {
+                    player.Value.FrameUpdate(playersHidden);
+                }
+#if DEBUG
             }
+#endif
             ClientLobbyManager.OnUpdate();
         }
 

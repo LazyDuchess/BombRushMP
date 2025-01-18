@@ -518,8 +518,14 @@ namespace BombRushMP.Plugin
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
+        public bool UpdateClientController => _updateClientController.Value;
+        public bool UpdateLobbyController => _updateLobbyController.Value;
+        public bool UpdateNetworkClient => _updateNetworkClient.Value;
         private ConfigEntry<bool> _updatePlayers;
         private ConfigEntry<bool> _updateLobbyUI;
+        private ConfigEntry<bool> _updateClientController;
+        private ConfigEntry<bool> _updateLobbyController;
+        private ConfigEntry<bool> _updateNetworkClient;
 #endif
         private string _savePath;
         private ConfigFile _configFile;
@@ -583,6 +589,9 @@ namespace BombRushMP.Plugin
             _invisible = configFile.Bind(Debug, "Invisible", false);
             _updatePlayers = configFile.Bind(Debug, "Update Players", true, "FOR STRESS TEST: update mpplayers");
             _updateLobbyUI = configFile.Bind(Debug, "Update Lobby UI", true, "FOR STRESS TEST: update lobby ui");
+            _updateClientController = configFile.Bind(Debug, "Update Client Controller", true, "FOR STRESS TEST: update client controller");
+            _updateLobbyController = configFile.Bind(Debug, "Update Lobby Controller", true, "FOR STRESS TEST: update client lobby controller");
+            _updateNetworkClient = configFile.Bind(Debug, "Update Network Client", true, "FOR STRESS TEST: update net interface client");
 #endif
             _networkInterface = configFile.Bind(Advanced, "Network Interface", NetworkInterfaces.LiteNetLib, "Networking library to use. Should match the server.");
             _useNativeSockets = configFile.Bind(Advanced, "Use Native Sockets", true, "Whether the networking library should use native sockets if available. Potentially better performance. Currently only supported via LiteNetLib networking.");
