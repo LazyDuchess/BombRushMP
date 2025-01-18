@@ -247,7 +247,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void LateUpdate()
+        private void Update()
         {
             var playersHidden = MPUtility.GetCurrentToilet() != null;
             _tickTimer += Time.deltaTime;
