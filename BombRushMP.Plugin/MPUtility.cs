@@ -80,6 +80,18 @@ namespace BombRushMP.Plugin
             return name;
         }
 
+        public static string GetPlayerDisplayNameWithoutTags(ClientState clientState)
+        {
+            var name = clientState.Name;
+            name = TMPFilter.RemoveAllTags(GetPlayerDisplayName(name));
+            var user = clientState.User;
+            foreach (var badge in user.Badges)
+            {
+                name = $"<sprite={badge}> {name}";
+            }
+            return name;
+        }
+
         public static string GetPlayerDisplayName(ClientState clientState)
         {
             var name = clientState.Name;

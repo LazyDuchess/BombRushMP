@@ -538,13 +538,19 @@ namespace BombRushMP.Plugin
             CreateNameplateIfNecessary();
 
             var name = MPUtility.GetPlayerDisplayName(ClientState);
-            if (NamePlate.Label.text != name)
-                NamePlate.Label.text = name;
 
             if (rival)
+            {
+                name = MPUtility.GetPlayerDisplayNameWithoutTags(ClientState);
                 NamePlate.Label.color = Color.red;
+            }
             else
+            {
                 NamePlate.Label.color = Color.white;
+            }
+
+            if (NamePlate.Label.text != name)
+                NamePlate.Label.text = name;
         }
 
         private void CreateNameplateIfNecessary()
