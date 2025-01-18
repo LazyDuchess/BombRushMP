@@ -119,7 +119,7 @@ namespace BombRushMP.Plugin
                 PutInPlayerPool(player);
             }
             _playerUIInUse.Clear();
-            var players = ClientController.Instance.Players.Values;
+            var players = ClientController.Instance.Players.Values.OrderBy((k) => k.ClientId);
             foreach(var player in players)
             {
                 var instance = CreateOrGetFromPlayerPool();
