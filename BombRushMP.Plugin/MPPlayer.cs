@@ -164,6 +164,11 @@ namespace BombRushMP.Plugin
                 if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
                     hidden = true;
             }
+
+            if (ClientState == null || ClientVisualState == null) return;
+
+            if (Player == null) return;
+
             if (hidden)
             {
                 Player.characterVisual.SetSpraycan(false);
@@ -185,10 +190,6 @@ namespace BombRushMP.Plugin
                 else if (NamePlate != null && !mpSettings.ShowNamePlates)
                     NamePlate.gameObject.SetActive(false);
             }
-
-            if (ClientState == null || ClientVisualState == null) return;
-
-            if (Player == null) return;
 
             if (ClientVisualState.State == PlayerStates.Toilet)
                 Teleporting = true;
