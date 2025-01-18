@@ -82,6 +82,7 @@ namespace BombRushMP.Plugin
             _readySprite.SetActive(false);
             _notReadySprite.SetActive(false);
             _teamBg.gameObject.SetActive(true);
+            _afkSprite.gameObject.SetActive(false);
             _teamBg.color = new Color(team.Color.r, team.Color.g, team.Color.b, _teamBg.color.a);
             _score.text = FormatScore(_lobby.LobbyState.GetScoreForTeam(teamId));
         }
