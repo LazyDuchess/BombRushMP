@@ -7,6 +7,7 @@ using BombRushMP.NetworkInterfaceProvider;
 using System.IO;
 using Newtonsoft.Json;
 using BombRushMP.Common.Networking;
+using System.Threading;
 
 namespace BombRushMP.ClientApp
 {
@@ -45,6 +46,7 @@ namespace BombRushMP.ClientApp
             while (true)
             {
                 client.Update();
+                Thread.Sleep(300);
             }
         }
     }

@@ -31,6 +31,7 @@ namespace BombRushMP.Plugin
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
             ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
+            ClientLobbyManager.LobbySoftUpdated += OnLobbiesUpdated;
             ClientController.ClientStatesUpdate += OnLobbiesUpdated;
             _playerName = _canvas.transform.Find("Player Name").gameObject;
             _playerName.SetActive(false);
@@ -54,6 +55,7 @@ namespace BombRushMP.Plugin
         private void OnDestroy()
         {
             ClientLobbyManager.LobbiesUpdated -= OnLobbiesUpdated;
+            ClientLobbyManager.LobbySoftUpdated -= OnLobbiesUpdated;
             ClientController.ClientStatesUpdate -= OnLobbiesUpdated;
         }
 
@@ -83,6 +85,10 @@ namespace BombRushMP.Plugin
 
         public void UpdateUI()
         {
+#if DEBUG
+            if (!MPSettings.Instance.UpdateLobbyUI)
+                return;
+#endif
             var lobby = _lobbyManager.CurrentLobby;
             if (lobby == null) return;
             var gamemode = lobby.GetOrCreateGamemode();

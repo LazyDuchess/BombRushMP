@@ -515,6 +515,12 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _invisible;
         private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
         private ConfigEntry<bool> _deathMessages;
+#if DEBUG
+        public bool UpdatePlayers => _updatePlayers.Value;
+        public bool UpdateLobbyUI => _updateLobbyUI.Value;
+        private ConfigEntry<bool> _updatePlayers;
+        private ConfigEntry<bool> _updateLobbyUI;
+#endif
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -575,6 +581,8 @@ namespace BombRushMP.Plugin
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");
             _invisible = configFile.Bind(Debug, "Invisible", false);
+            _updatePlayers = configFile.Bind(Debug, "Update Players", true, "FOR STRESS TEST: update mpplayers");
+            _updateLobbyUI = configFile.Bind(Debug, "Update Lobby UI", true, "FOR STRESS TEST: update lobby ui");
 #endif
             _networkInterface = configFile.Bind(Advanced, "Network Interface", NetworkInterfaces.LiteNetLib, "Networking library to use. Should match the server.");
             _useNativeSockets = configFile.Bind(Advanced, "Use Native Sockets", true, "Whether the networking library should use native sockets if available. Potentially better performance. Currently only supported via LiteNetLib networking.");

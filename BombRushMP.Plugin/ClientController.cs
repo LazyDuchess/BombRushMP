@@ -225,6 +225,7 @@ namespace BombRushMP.Plugin
             {
                 SendVisualState();
             }
+
             foreach (var player in Players)
             {
                 player.Value.TickUpdate();

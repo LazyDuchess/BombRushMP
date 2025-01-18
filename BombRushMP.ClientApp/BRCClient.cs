@@ -25,6 +25,8 @@ namespace BombRushMP.ClientApp
 
         private int _taskStep = 0;
 
+        private Random _random = new Random();
+
         public enum Tasks
         {
             CreateLobbyAndInvitePlayer,
@@ -70,6 +72,8 @@ namespace BombRushMP.ClientApp
                     CreateLobbyAndInvitePlayer_Update(true);
                     break;
             }
+            var scorePacket = new ClientGamemodeScore((float)(_random.NextDouble() * 10000000f));
+            SendPacket(scorePacket);
         }
 
         private void SendChatMessage_Update()
@@ -267,7 +271,7 @@ namespace BombRushMP.ClientApp
             var cs = new ClientState();
             cs.Name = BotName;
             cs.CrewName = CrewName;
-            cs.Stage = 5;
+            cs.Stage = 108518865;
             SendPacket(cs);
 
             var vs = new ClientVisualState();

@@ -17,6 +17,7 @@ namespace BombRushMP.Plugin
     {
         public static Action LobbiesUpdated;
         public static Action LobbyChanged;
+        public static Action LobbySoftUpdated;
         public Lobby CurrentLobby { get; private set; }
         public Dictionary<uint, Lobby> Lobbies = new();
         public List<uint> LobbiesInvited = new();
@@ -212,6 +213,16 @@ namespace BombRushMP.Plugin
                         OnEndGame(endPacket.Cancelled);
                     }
                     break;
+
+                case Packets.ServerLobbySoftUpdate:
+                    {
+                        var softUpdatePacket = (ServerLobbySoftUpdate)packet;
+                        if (CurrentLobby == null) UpdateCurrentLobby();
+                        if (CurrentLobby.LobbyState.Players.TryGetValue(softUpdatePacket.PlayerId, out var player))
+                            player.Score = softUpdatePacket.Score;
+                        OnLobbySoftUpdated();
+                    }
+                    break;
             }
         }
 
@@ -272,6 +283,11 @@ namespace BombRushMP.Plugin
             }
             UpdateCurrentLobby();
             LobbiesUpdated?.Invoke();
+        }
+
+        private void OnLobbySoftUpdated()
+        {
+            LobbySoftUpdated?.Invoke();
         }
 
         private void OnLobbiesUpdated()

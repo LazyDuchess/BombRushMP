@@ -67,7 +67,7 @@ namespace BombRushMP.Server
         {
             var existingLobby = GetLobbyPlayerIsIn(clientId);
             existingLobby.LobbyState.Players[clientId].Score = score;
-            SendLobbiesToStage(existingLobby.LobbyState.Stage);
+            SendLobbySoftUpdate(existingLobby, clientId, score);
         }
 
         public Lobby GetLobbyPlayerIsIn(ushort clientId)
@@ -407,6 +407,12 @@ namespace BombRushMP.Server
         private void QueueAction(Action action)
         {
             _queuedActions.Add(action);
+        }
+
+        private void SendLobbySoftUpdate(Lobby lobby, ushort playerId, float score)
+        {
+            var packet = new ServerLobbySoftUpdate(lobby.LobbyState.Id, playerId, score);
+            SendPacketToLobby(packet, IMessage.SendModes.Reliable, lobby.LobbyState.Id, NetChannels.ClientAndLobbyUpdates);
         }
 
         private void SendLobbiesToStage(int stage)
