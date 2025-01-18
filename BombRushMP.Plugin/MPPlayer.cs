@@ -239,7 +239,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public void TickUpdate()
+        public void UpdateLobby()
         {
             var clientController = ClientController.Instance;
             _lobby = null;
@@ -251,6 +251,11 @@ namespace BombRushMP.Plugin
                     break;
                 }
             }
+        }
+
+        public void TickUpdate()
+        {
+            var clientController = ClientController.Instance;
 
             if (Player != null)
             {

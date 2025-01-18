@@ -49,6 +49,7 @@ namespace BombRushMP.Plugin
             Instance = this;
             _mpSettings = MPSettings.Instance;
             ClientLobbyManager = new();
+            ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
         }
 
         public int GetPlayerCountForStage(Stage stage)
@@ -227,6 +228,14 @@ namespace BombRushMP.Plugin
                 player.Value.TickUpdate();
             }
             ClientLobbyManager.OnTick();
+        }
+
+        private void OnLobbiesUpdated()
+        {
+            foreach (var player in Players)
+            {
+                player.Value.UpdateLobby();
+            }
         }
 
         private void LateUpdate()
@@ -537,6 +546,7 @@ namespace BombRushMP.Plugin
         private void OnDestroy()
         {
             Disconnect();
+            ClientLobbyManager.LobbiesUpdated -= OnLobbiesUpdated;
             ClientLobbyManager?.Dispose();
         }
     }
