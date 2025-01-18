@@ -21,6 +21,7 @@ namespace BombRushMP.Plugin
         private const int PlayerUIPoolSize = 32;
         private LobbyPlayerUI[] _playerUIs = new LobbyPlayerUI[PlayerUIPoolSize];
         private TextMeshProUGUI _lobbySettings;
+        private bool _updateQueued = false;
 
         private void Awake()
         {
@@ -35,6 +36,19 @@ namespace BombRushMP.Plugin
             _playerName.SetActive(false);
             InitializePlayerUIPool();
             Deactivate();
+        }
+
+        private void Update()
+        {
+            if (_updateQueued)
+            {
+                _updateQueued = false;
+                var currentLobby = _lobbyManager.CurrentLobby;
+                if (currentLobby == null)
+                    Deactivate();
+                else
+                    Activate();
+            }
         }
 
         private void OnDestroy()
@@ -58,11 +72,7 @@ namespace BombRushMP.Plugin
 
         private void OnLobbiesUpdated()
         {
-            var currentLobby = _lobbyManager.CurrentLobby;
-            if (currentLobby == null)
-                Deactivate();
-            else
-                Activate();
+            _updateQueued = true;
         }
 
         private void Activate()
@@ -83,16 +93,16 @@ namespace BombRushMP.Plugin
                 lobbySettings = GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
             _lobbySettings.text = lobbySettings.GetDisplayString(_lobbyManager.CurrentLobby.LobbyState.HostId == ClientController.Instance.LocalID, _lobbyManager.CurrentLobby.InGame);
             _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
-            var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToList();
+            var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToArray();
             if (gamemode.TeamBased)
             {
-                var teamOrder = new List<byte>();
+                var teamOrder = new byte[TeamManager.Teams.Length];
                 for(var i=0;i<TeamManager.Teams.Length;i++)
                 {
-                    teamOrder.Add((byte)i);
+                    teamOrder[i] = (byte)i;
                 }
-                teamOrder = teamOrder.OrderByDescending(t => lobby.LobbyState.GetScoreForTeam(t)).ToList();
-                players = players.OrderBy(p => teamOrder.IndexOf(p.Team)).ToList();
+                teamOrder = teamOrder.OrderByDescending(t => lobby.LobbyState.GetScoreForTeam(t)).ToArray();
+                players = players.OrderBy(p => Array.IndexOf(teamOrder, p.Team)).ToArray();
             }
             var teamStanding = 1;
             var lastTeam = -1;
@@ -100,7 +110,7 @@ namespace BombRushMP.Plugin
             for(var i = 0; i < PlayerUIPoolSize; i++)
             {
                 var playerui = _playerUIs[i];
-                if (playerIndex >= players.Count)
+                if (playerIndex >= players.Length)
                 {
                     if (playerui.gameObject.activeSelf)
                         playerui.gameObject.SetActive(false);
