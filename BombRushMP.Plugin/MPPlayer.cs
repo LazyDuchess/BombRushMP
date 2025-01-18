@@ -365,6 +365,7 @@ namespace BombRushMP.Plugin
 
             if (justCreated)
             {
+                UpdateNameplate();
                 Teleporting = true;
                 snapAnim = true;
                 if (!Player.anim.GetComponent<InverseKinematicsRelay>())
