@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.Plugin.Gamemodes;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,11 @@ namespace BombRushMP.Plugin
             var lobby = _lobbyManager.CurrentLobby;
             if (lobby == null) return;
             var gamemode = lobby.GetOrCreateGamemode();
-            var lobbySettings = Gamemodes.GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
+            GamemodeSettings lobbySettings = null;
+            if (lobby.InGame)
+                lobbySettings = lobby.CurrentGamemode.Settings;
+            else
+                lobbySettings = GamemodeFactory.ParseGamemodeSettings(_lobbyManager.CurrentLobby.LobbyState.Gamemode, _lobbyManager.CurrentLobby.LobbyState.GamemodeSettings);
             _lobbySettings.text = lobbySettings.GetDisplayString(_lobbyManager.CurrentLobby.LobbyState.HostId == ClientController.Instance.LocalID, _lobbyManager.CurrentLobby.InGame);
             _lobbyName.text = _lobbyManager.GetLobbyName(_lobbyManager.CurrentLobby.LobbyState.Id);
             var players = _lobbyManager.CurrentLobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToList();
