@@ -156,6 +156,7 @@ namespace BombRushMP.Plugin
 
         public void FrameUpdate(bool hidden)
         {
+            var mpSettings = MPSettings.Instance;
             if (_interactable != null)
             {
                 var player = WorldHandler.instance.GetCurrentPlayer();
@@ -179,8 +180,10 @@ namespace BombRushMP.Plugin
                         Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                     Player.characterVisual.gameObject.SetActive(true);
                 }
-                if (NamePlate != null)
+                if (NamePlate != null && mpSettings.ShowNamePlates)
                     NamePlate.gameObject.SetActive(true);
+                else if (NamePlate != null && !mpSettings.ShowNamePlates)
+                    NamePlate.gameObject.SetActive(false);
             }
 
             if (ClientState == null || ClientVisualState == null) return;
@@ -557,14 +560,6 @@ namespace BombRushMP.Plugin
             var settings = MPSettings.Instance;
 
             CreateNameplateIfNecessary();
-
-            if (!settings.ShowNamePlates)
-            {
-                NamePlate.gameObject.SetActive(false);
-                return;
-            }
-            else
-                NamePlate.gameObject.SetActive(true);
         }
 
         private void UpdateSprayCan()
