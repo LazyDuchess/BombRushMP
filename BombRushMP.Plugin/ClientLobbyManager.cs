@@ -244,6 +244,8 @@ namespace BombRushMP.Plugin
 
         private void OnStartGame()
         {
+            if (CurrentLobby == null)
+                UpdateCurrentLobby();
             if (CurrentLobby.InGame)
             {
                 CurrentLobby.CurrentGamemode.OnEnd(true);
