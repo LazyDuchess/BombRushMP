@@ -92,8 +92,9 @@ namespace BombRushMP.Plugin
             return localLobby == _lobby;
         }
 
-        private bool IsRival()
+        private bool InOurTeamLobby(out bool rival)
         {
+            rival = false;
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
@@ -103,7 +104,8 @@ namespace BombRushMP.Plugin
                 var myPlayer = localLobby.LobbyState.Players[clientController.LocalID];
                 var otherPlayer = localLobby.LobbyState.Players[ClientId];
                 var gm = GamemodeFactory.GetGamemode(localLobby.LobbyState.Gamemode);
-                return (gm.TeamBased && otherPlayer.Team != myPlayer.Team);
+                rival = (otherPlayer.Team != myPlayer.Team);
+                return gm.TeamBased;
             }
             return false;
         }
@@ -407,14 +409,14 @@ namespace BombRushMP.Plugin
                 Player.StartCoroutine(UpdateMoveStyleDelayed());
             }
 
-            var rival = IsRival();
+            var inTeamLobby = InOurTeamLobby(out var rival);
 
             TickUpdateNameplate();
             if (_mapPin == null)
                 MakeMapPin();
             _mapPin.SetLocation();
 
-            if (rival)
+            if (rival && inTeamLobby)
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0f);
             else if (InSameLobbyAsLocalPlayer())
                 _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
@@ -535,21 +537,26 @@ namespace BombRushMP.Plugin
         public void UpdateNameplate()
         {
             var clientController = ClientController.Instance;
-            var rival = IsRival();
+            var inOurTeamLobby = InOurTeamLobby(out var rival);
 
             CreateNameplateIfNecessary();
 
             var name = MPUtility.GetPlayerDisplayName(ClientState);
 
-            if (rival)
+            if (inOurTeamLobby)
             {
                 name = MPUtility.GetPlayerDisplayNameWithoutTags(ClientState);
-                NamePlate.Label.color = Color.red;
+                if (rival)
+                {
+                    NamePlate.Label.color = Color.red;
+                }
+                else
+                {
+                    NamePlate.Label.color = Color.green;
+                }
             }
             else
-            {
                 NamePlate.Label.color = Color.white;
-            }
 
             if (NamePlate.Label.text != name)
                 NamePlate.Label.text = name;
