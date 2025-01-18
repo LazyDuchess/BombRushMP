@@ -23,6 +23,8 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _lobbySettings;
         private bool _updateQueued = false;
         private bool _softUpdateQueued = false;
+        private const float SoftUpdateRate = 0.5f;
+        private float _softUpdateTimer = 0f;
 
         private void Awake()
         {
@@ -42,6 +44,7 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            _softUpdateTimer += Time.deltaTime;
             if (_updateQueued)
             {
                 _softUpdateQueued = false;
@@ -52,11 +55,13 @@ namespace BombRushMP.Plugin
                 else
                     Activate();
             }
-            if (_softUpdateQueued)
+            if (_softUpdateQueued && _softUpdateTimer >= SoftUpdateRate)
             {
                 _softUpdateQueued = false;
                 UpdatePlayerListing();
             }
+            if (_softUpdateTimer >= SoftUpdateRate)
+                _softUpdateTimer = 0f;
         }
 
         private void OnDestroy()
