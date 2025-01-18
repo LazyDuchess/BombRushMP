@@ -545,15 +545,13 @@ namespace BombRushMP.Plugin
             _playerName.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
-                if (clientController.Connected)
-                    clientController.SendClientState();
+                clientController.InfrequentClientStateUpdateQueued = true;
             };
             _crewName = configFile.Bind(General, "Crew Name", "", "Name of your crew.");
             _crewName.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
-                if (clientController.Connected)
-                    clientController.SendClientState();
+                clientController.InfrequentClientStateUpdateQueued = true;
             };
             _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
@@ -592,15 +590,13 @@ namespace BombRushMP.Plugin
             _fallbackCharacter.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
-                if (clientController.Connected)
-                    clientController.SendClientState();
+                clientController.InfrequentClientStateUpdateQueued = true;
             };
             _fallbackOutfit = configFile.Bind(General, "Fallback Character Outfit", 0, "Outfit number to use for your fallback character.");
             _fallbackOutfit.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
-                if (clientController.Connected)
-                    clientController.SendClientState();
+                clientController.InfrequentClientStateUpdateQueued = true;
             };
             _deathMessages = configFile.Bind(ChatSettings, "Show Player Death Messages", true, "Whether to send messages in chat when players die.");
         }

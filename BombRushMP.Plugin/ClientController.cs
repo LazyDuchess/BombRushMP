@@ -38,8 +38,10 @@ namespace BombRushMP.Plugin
         public static Action<Packets, Packet> PacketReceived;
         public static Action ClientStatesUpdate;
         public string AuthKey;
+        public bool InfrequentClientStateUpdateQueued = false;
         private INetClient _client;
         private float _tickTimer = 0f;
+        private float _infrequentUpdateTimer = 0f;
         private bool _handShook = false;
         private MPSettings _mpSettings = null;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
@@ -251,17 +253,29 @@ namespace BombRushMP.Plugin
         {
             var playersHidden = MPUtility.GetCurrentToilet() != null;
             _tickTimer += Time.deltaTime;
+            _infrequentUpdateTimer += Time.deltaTime;
             if (_tickTimer >= TickRate)
             {
                 DeltaTime = _tickTimer;
                 Tick();
                 _tickTimer = 0f;
             }
+            if (_infrequentUpdateTimer >= ClientConstants.InfrequentUpdateRate)
+            {
+                InfrequentUpdate();
+                _infrequentUpdateTimer = 0f;
+            }
             foreach (var player in Players)
             {
                 player.Value.FrameUpdate(playersHidden);
             }
             ClientLobbyManager.OnUpdate();
+        }
+
+        private void InfrequentUpdate()
+        {
+            if (InfrequentClientStateUpdateQueued)
+                SendClientState();
         }
 
         private void OnClientDisconnected(object sender, ushort id)
@@ -545,6 +559,7 @@ namespace BombRushMP.Plugin
         public void SendClientState()
         {
             SendPacket(CreateClientState(), IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
+            InfrequentClientStateUpdateQueued = false;
         }
 
         private void OnConnected(object sender, EventArgs e)
