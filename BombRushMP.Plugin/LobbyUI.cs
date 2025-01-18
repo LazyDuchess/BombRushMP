@@ -29,6 +29,7 @@ namespace BombRushMP.Plugin
             _lobbyName = _canvas.transform.Find("Lobby Name").GetComponent<TextMeshProUGUI>();
             _lobbyManager = ClientController.Instance.ClientLobbyManager;
             ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
+            ClientController.ClientStatesUpdate += OnLobbiesUpdated;
             _playerName = _canvas.transform.Find("Player Name").gameObject;
             _playerName.SetActive(false);
             InitializePlayerUIPool();
@@ -38,6 +39,7 @@ namespace BombRushMP.Plugin
         private void OnDestroy()
         {
             ClientLobbyManager.LobbiesUpdated -= OnLobbiesUpdated;
+            ClientController.ClientStatesUpdate -= OnLobbiesUpdated;
         }
 
         private void InitializePlayerUIPool()
