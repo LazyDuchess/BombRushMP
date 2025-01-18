@@ -89,7 +89,7 @@ namespace BombRushMP.Plugin
             interactBox.layer = Layers.TriggerDetectPlayer;
             interactBox.transform.SetParent(player.Player.transform, false);
             interactBox.transform.SetLocalPositionAndRotation(new Vector3(0f, 0.5f, 0f), Quaternion.identity);
-            interactBox.transform.localScale = new Vector3(2.5f, 2.5f, 2.5f);
+            interactBox.transform.localScale = new Vector3(3f, 3f, 3f);
             interactBox.GetComponent<BoxCollider>().isTrigger = true;
             var interactable = interactBox.AddComponent<PlayerInteractable>();
             interactable.Player = player;
