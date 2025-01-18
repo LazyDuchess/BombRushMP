@@ -404,7 +404,7 @@ namespace BombRushMP.Plugin
             var rival = IsRival();
 
             UpdateSprayCan();
-            UpdateNameplate(rival);
+            TickUpdateNameplate();
             if (_mapPin == null)
                 MakeMapPin();
             _mapPin.SetLocation();
@@ -527,24 +527,12 @@ namespace BombRushMP.Plugin
             ClientState = newClientState;
         }
 
-        private void UpdateNameplate(bool rival)
+        public void UpdateNameplate()
         {
-            var settings = MPSettings.Instance;
+            var clientController = ClientController.Instance;
+            var rival = IsRival();
 
-            if (!settings.ShowNamePlates)
-            {
-                if (NamePlate != null)
-                {
-                    GameObject.Destroy(NamePlate.gameObject);
-                    NamePlate = null;
-                }
-                return;
-            }
-
-            if (NamePlate == null)
-            {
-                NamePlate = Nameplate.Create();
-            }
+            CreateNameplateIfNecessary();
 
             var name = MPUtility.GetPlayerDisplayName(ClientState);
             if (NamePlate.Label.text != name)
@@ -554,6 +542,29 @@ namespace BombRushMP.Plugin
                 NamePlate.Label.color = Color.red;
             else
                 NamePlate.Label.color = Color.white;
+        }
+
+        private void CreateNameplateIfNecessary()
+        {
+            if (NamePlate == null)
+            {
+                NamePlate = Nameplate.Create();
+            }
+        }
+
+        private void TickUpdateNameplate()
+        {
+            var settings = MPSettings.Instance;
+
+            CreateNameplateIfNecessary();
+
+            if (!settings.ShowNamePlates)
+            {
+                NamePlate.gameObject.SetActive(false);
+                return;
+            }
+            else
+                NamePlate.gameObject.SetActive(true);
         }
 
         private void UpdateSprayCan()

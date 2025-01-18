@@ -230,11 +230,20 @@ namespace BombRushMP.Plugin
             ClientLobbyManager.OnTick();
         }
 
+        private void OnClientStatesUpdated()
+        {
+            foreach (var player in Players)
+            {
+                player.Value.UpdateNameplate();
+            }
+        }
+
         private void OnLobbiesUpdated()
         {
             foreach (var player in Players)
             {
                 player.Value.UpdateLobby();
+                player.Value.UpdateNameplate();
             }
         }
 
@@ -364,6 +373,7 @@ namespace BombRushMP.Plugin
                                 }
                             }
                         }
+                        OnClientStatesUpdated();
                         ClientStatesUpdate?.Invoke();
                     }
                     break;
