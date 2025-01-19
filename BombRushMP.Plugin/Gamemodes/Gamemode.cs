@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin.Gamemodes
     public class Gamemode
     {
         private static int SettingCountdownID = Animator.StringToHash("Countdown");
+        private static int SettingTPToSpawnOnEnd = Animator.StringToHash("TPToSpawnOnEnd");
         private const int MinCountdown = 3;
         private const int MaxCountdown = 10;
         public bool TeamBased = false;
@@ -23,13 +24,23 @@ namespace BombRushMP.Plugin.Gamemodes
         public bool InGame { get; private set; }
         public GamemodeSettings Settings;
         protected int Countdown => CanChangeCountdown ? Settings.SettingByID[SettingCountdownID].Value : DefaultCountdown;
+        protected bool TeleportToSpawnOnEnd => (Settings.SettingByID[SettingTPToSpawnOnEnd] as ToggleGamemodeSetting).IsOn;
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;
+        private Vector3 _spawnPos = Vector3.zero;
+        private Quaternion _spawnRot = Quaternion.identity;
 
         public Gamemode()
         {
             ClientController = ClientController.Instance;
             ClientLobbyManager = ClientController.ClientLobbyManager;
+        }
+
+        protected void SetSpawnLocation()
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            _spawnPos = player.transform.position;
+            _spawnRot = player.transform.rotation;
         }
 
         public virtual void OnStart()
@@ -41,6 +52,7 @@ namespace BombRushMP.Plugin.Gamemodes
             Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);
             if (Lobby.LobbyState.HostId == ClientController.Instance.LocalID)
                 ClientController.SendPacket(new ClientGamemodeCountdown((ushort)Countdown), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.Gamemodes);
+            SetSpawnLocation();
         }
         
         protected int GetTeamAmount()
@@ -116,6 +128,8 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
             }
+            if (TeleportToSpawnOnEnd)
+                MPUtility.PlaceCurrentPlayer(_spawnPos, _spawnRot);
         }
 
         private bool AmIElite()
@@ -251,6 +265,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var settings = new GamemodeSettings();
             if (CanChangeCountdown)
                 settings.SettingByID[SettingCountdownID] = new GamemodeSetting("Countdown (Seconds)", DefaultCountdown, MinCountdown, MaxCountdown);
+            settings.SettingByID[SettingTPToSpawnOnEnd] = new ToggleGamemodeSetting("Teleport to Spawn On End", false);
             return settings;
         }
     }

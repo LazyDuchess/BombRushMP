@@ -266,6 +266,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 spawnRot = player.transform.rotation;
             }
             MPUtility.PlaceCurrentPlayer(spawnPos, spawnRot);
+            SetSpawnLocation();
         }
 
         private void OnReceive_TeamGraffitiRaceScore(ServerTeamGraffRaceScore packet)
