@@ -289,24 +289,24 @@ namespace BombRushMP.Server
                     helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}say (announcement for stage)\n{cmdChar}sayall (global announcement)\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n";
+                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
-                        helpStr += $"{cmdChar}reload - Reloads server auth keys and banned users\n{cmdChar}restart - Restarts the server\n";
+                        helpStr += $"{cmdChar}reload - Reloads server auth keys and banned users\n{cmdChar}restart - Restarts the server\n{cmdChar}say (announcement for stage)\n{cmdChar}sayall (global announcement)\n";
                     }
                     SendMessageToPlayer(helpStr, player);
                     break;
 
                 case "say":
-                    if (player.ClientState.User.IsModerator)
+                    if (player.ClientState.User.IsAdmin)
                     {
                         SendPacketToStage(new ServerChat(message.Substring(5)), IMessage.SendModes.ReliableUnordered, player.ClientState.Stage, NetChannels.Chat);
                     }
                     break;
 
                 case "sayall":
-                    if (player.ClientState.User.IsModerator)
+                    if (player.ClientState.User.IsAdmin)
                     {
                         SendPacket(new ServerChat(message.Substring(8)), IMessage.SendModes.ReliableUnordered, NetChannels.Chat);
                     }
