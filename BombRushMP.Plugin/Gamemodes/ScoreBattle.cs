@@ -55,6 +55,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 ClientController.SendPacket(new ClientScoreBattleLength((byte)Settings.SettingByID[SettingDurationID].Value), IMessage.SendModes.Reliable, NetChannels.Gamemodes);
             }
             TimerUI.Instance.Activate();
+            SetSpawnLocation();
         }
 
         public override void OnUpdate_InGame()
