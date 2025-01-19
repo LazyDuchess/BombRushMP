@@ -344,10 +344,11 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             var validSpots = GetValidSpots();
 
-            var raceSpots = new List<int>();
+            var raceSpots = new List<GraffitiSpot>();
 
             var spotAmount = Settings.SettingByID[SettingGraffitiAmountID].Value;
             var spawnMode = (SpawnMode)Settings.SettingByID[SettingSpawnModeID].Value;
+            var singleMode = (Settings.SettingByID[SettingSingleGraffitiID] as ToggleGamemodeSetting).IsOn;
 
             if ((Settings.SettingByID[SettingSingleGraffitiID] as ToggleGamemodeSetting).IsOn)
                 spotAmount = 1;
@@ -366,10 +367,10 @@ namespace BombRushMP.Plugin.Gamemodes
                 var index = UnityEngine.Random.Range(0, validSpots.Count);
                 var spot = validSpots[index];
                 validSpots.RemoveAt(index);
-                raceSpots.Add(Compression.HashString(spot.Uid));
+                raceSpots.Add(spot);
             }
 
-            var spawnSpot = GetGraffitiSpotByHash(raceSpots[0]);
+            var spawnSpot = raceSpots[0];
 
 
             var spawnForward = -spawnSpot.transform.forward;
@@ -377,13 +378,23 @@ namespace BombRushMP.Plugin.Gamemodes
             spawnForward.y = 0f;
             spawnForward = spawnForward.normalized;
             var spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
+            var spawnSpots = raceSpots;
+
+            if (singleMode)
+            {
+                validSpots.Remove(raceSpots[0]);
+                validSpots.Shuffle();
+                spawnSpots = validSpots;
+                if (spawnSpots.Count <= 0)
+                    spawnSpots = raceSpots;
+            }
 
             if (spawnMode == SpawnMode.Automatic)
             {
                 TurnOnAllStageChunks();
-                foreach (var raceSpot in raceSpots)
+                foreach (var raceSpot in spawnSpots)
                 {
-                    var grafSpot = GetGraffitiSpotByHash(raceSpot);
+                    var grafSpot = raceSpot;
                     var spotFw = -grafSpot.transform.forward;
                     var spotPos = grafSpot.transform.position - (spotFw * DistanceOffWall);
 
@@ -426,7 +437,7 @@ namespace BombRushMP.Plugin.Gamemodes
                     currentList = new List<int>();
                     curSpotAmount = 0;
                 }
-                currentList.Add(raceSpot);
+                currentList.Add(Compression.HashString(raceSpot.Uid));
                 curSpotAmount++;
             }
             spotLists.Add(currentList);
