@@ -494,6 +494,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public float PlayerDrawDistance
+        {
+            get
+            {
+                return _playerDrawDistance.Value;
+            }
+
+            set
+            {
+                _playerDrawDistance.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -529,6 +542,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
         private ConfigEntry<bool> _deathMessages;
         private ConfigEntry<bool> _hidePlayersOutOfView;
+        private ConfigEntry<float> _playerDrawDistance;
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
@@ -632,6 +646,7 @@ namespace BombRushMP.Plugin
             };
             _deathMessages = configFile.Bind(ChatSettings, "Show Player Death Messages", true, "Whether to send messages in chat when players die.");
             _hidePlayersOutOfView = configFile.Bind(Optimization, "Cull Players out of view", true, "Whether to cull players that are out of view, to save on resources.");
+            _playerDrawDistance = configFile.Bind(Optimization, "Player draw distance", 20000f, "Distance at which players will be hidden");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

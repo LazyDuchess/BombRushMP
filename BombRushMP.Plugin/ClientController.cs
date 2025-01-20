@@ -251,10 +251,13 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private List<Plane[]> _frustumList = new();
+
         private void Update()
         {
+            var mpSettings = MPSettings.Instance;
 #if DEBUG
-            if (!MPSettings.Instance.UpdateClientController) return;
+            if (!mpSettings.UpdateClientController) return;
 #endif
             var playersHidden = MPUtility.GetCurrentToilet() != null;
             _tickTimer += Time.deltaTime;
@@ -271,32 +274,41 @@ namespace BombRushMP.Plugin
                 _infrequentUpdateTimer = 0f;
             }
 #if DEBUG
-            if (MPSettings.Instance.UpdatePlayers)
+            if (mpSettings.UpdatePlayers)
             {
 #endif
-                List<Plane[]> planeList = new();
-                var hideOutOfView = MPSettings.Instance.HidePlayersOutOfView;
+                _frustumList.Clear();
+                var hideOutOfView = mpSettings.HidePlayersOutOfView;
+                var hideDist = mpSettings.PlayerDrawDistance;
                 if (hideOutOfView)
                 {
                     var mainCam = WorldHandler.instance.CurrentCamera;
-                    planeList.Add(GeometryUtility.CalculateFrustumPlanes(mainCam));
+                    _frustumList.Add(GeometryUtility.CalculateFrustumPlanes(mainCam));
                     var phoneCameras = PlayerPhoneCameras.Instance;
                     if (phoneCameras != null && phoneCameras.isActiveAndEnabled)
                     {
                         foreach(var cam in phoneCameras.Cameras)
                         {
                             if (cam.Value.enabled)
-                                planeList.Add(GeometryUtility.CalculateFrustumPlanes(cam.Value));
+                                _frustumList.Add(GeometryUtility.CalculateFrustumPlanes(cam.Value));
                         }
                     }
                 }
+                var localCamPos = WorldHandler.instance.currentCamera.transform.position;
                 foreach (var player in Players)
                 {
                     var hidden = playersHidden;
                     if (hideOutOfView && !playersHidden)
                     {
-                        if (!player.Value.CalculateVisibility(planeList))
+                        if (player.Value.Player != null && (player.Value.Player.transform.position - localCamPos).sqrMagnitude >= mpSettings.PlayerDrawDistance)
+                        {
                             hidden = true;
+                        }
+                        else
+                        {
+                            if (!player.Value.CalculateVisibility(_frustumList))
+                                hidden = true;
+                        }
                     }
                     player.Value.FrameUpdate(hidden);
                 }
