@@ -57,9 +57,11 @@ namespace BombRushMP.Plugin.Phone
             resetButton.OnConfirm += () =>
             {
                 var defaults = GetDefaultSettings();
+                currentSettings = defaults;
                 MPSaveData.Instance.GamemodeSettings[_currentGamemode] = defaults.ToSaved();
                 Core.Instance.SaveManager.SaveCurrentSaveSlot();
                 SendSettings(defaults);
+                UpdateLabels();
             };
             ScrollView.AddButton(resetButton);
             foreach(var setting in currentSettings.SettingByID)
@@ -68,10 +70,11 @@ namespace BombRushMP.Plugin.Phone
                 _buttonBySettingID[setting.Key] = button;
                 button.OnConfirm += () =>
                 {
-                    currentSettings.SettingByID[setting.Key].Next();
-                    MPSaveData.Instance.GamemodeSettings[_currentGamemode] = currentSettings.ToSaved();
+                    var settings = GetCurrentSettings();
+                    settings.SettingByID[setting.Key].Next();
+                    MPSaveData.Instance.GamemodeSettings[_currentGamemode] = settings.ToSaved();
                     Core.Instance.SaveManager.SaveCurrentSaveSlot();
-                    SendSettings(currentSettings);
+                    SendSettings(settings);
                     UpdateLabels();
                 };
                 ScrollView.AddButton(button);
