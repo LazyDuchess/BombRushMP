@@ -481,6 +481,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool HidePlayersOutOfView
+        {
+            get
+            {
+                return _hidePlayersOutOfView.Value;
+            }
+
+            set
+            {
+                _hidePlayersOutOfView.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -515,6 +528,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _invisible;
         private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
         private ConfigEntry<bool> _deathMessages;
+        private ConfigEntry<bool> _hidePlayersOutOfView;
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
@@ -538,6 +552,7 @@ namespace BombRushMP.Plugin
         private const string Visuals = "6. Visuals";
         private const string Advanced = "7. Advanced";
         private const string Server = "8. Server";
+        private const string Optimization = "9. Optimization";
         private const string MainServerAddress = "free.soulisall.city";
         public const string DefaultName = "Goofiest Gooner";
 
@@ -616,6 +631,7 @@ namespace BombRushMP.Plugin
                 clientController.InfrequentClientStateUpdateQueued = true;
             };
             _deathMessages = configFile.Bind(ChatSettings, "Show Player Death Messages", true, "Whether to send messages in chat when players die.");
+            _hidePlayersOutOfView = configFile.Bind(Optimization, "Cull Players out of view", true, "Whether to cull players that are out of view, to save on resources.");
         }
 
         private void _playerName_SettingChanged(object sender, EventArgs e)

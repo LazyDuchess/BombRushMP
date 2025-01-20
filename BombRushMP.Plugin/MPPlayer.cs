@@ -157,6 +157,16 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool CalculateVisibility(List<Plane[]> frustumPlanes)
+        {
+            if (Player == null) return false;
+            foreach(var planes in frustumPlanes)
+            {
+                if (GeometryUtility.TestPlanesAABB(planes, Player.characterVisual.mainRenderer.bounds)) return true;
+            }
+            return false;
+        }
+
         public void FrameUpdate(bool hidden)
         {
             var mpSettings = MPSettings.Instance;

@@ -274,9 +274,31 @@ namespace BombRushMP.Plugin
             if (MPSettings.Instance.UpdatePlayers)
             {
 #endif
+                List<Plane[]> planeList = new();
+                var hideOutOfView = MPSettings.Instance.HidePlayersOutOfView;
+                if (hideOutOfView)
+                {
+                    var mainCam = WorldHandler.instance.CurrentCamera;
+                    planeList.Add(GeometryUtility.CalculateFrustumPlanes(mainCam));
+                    var phoneCameras = PlayerPhoneCameras.Instance;
+                    if (phoneCameras != null && phoneCameras.isActiveAndEnabled)
+                    {
+                        foreach(var cam in phoneCameras.Cameras)
+                        {
+                            if (cam.Value.enabled)
+                                planeList.Add(GeometryUtility.CalculateFrustumPlanes(cam.Value));
+                        }
+                    }
+                }
                 foreach (var player in Players)
                 {
-                    player.Value.FrameUpdate(playersHidden);
+                    var hidden = playersHidden;
+                    if (hideOutOfView && !playersHidden)
+                    {
+                        if (!player.Value.CalculateVisibility(planeList))
+                            hidden = true;
+                    }
+                    player.Value.FrameUpdate(hidden);
                 }
 #if DEBUG
             }
