@@ -242,14 +242,6 @@ namespace BombRushMP.Plugin
             ClientLobbyManager.OnTick();
         }
 
-        private void OnClientStatesUpdated()
-        {
-            foreach (var player in Players)
-            {
-                player.Value.UpdateNameplate();
-            }
-        }
-
         private void OnLobbiesUpdated()
         {
             foreach (var player in Players)
@@ -395,6 +387,8 @@ namespace BombRushMP.Plugin
                             }
                             player.SetClientState(clientState.Value);
                             player.ClientId = clientState.Key;
+                            player.UpdateClientStateVisuals();
+                            player.UpdateNameplate();
                         }
                         if (clientStates.Full)
                         {
@@ -407,7 +401,6 @@ namespace BombRushMP.Plugin
                                 }
                             }
                         }
-                        OnClientStatesUpdated();
                         ClientStatesUpdate?.Invoke();
                     }
                     break;
@@ -418,7 +411,12 @@ namespace BombRushMP.Plugin
                         foreach (var clientVisualState in clientVisualStates.ClientVisualStates)
                         {
                             if (!Players.TryGetValue(clientVisualState.Key, out var player)) continue;
+                            var oldVisualState = player.ClientVisualState;
                             player.UpdateVisualState(clientVisualState.Value);
+                            if (oldVisualState == null)
+                            {
+                                player.UpdateClientStateVisuals();
+                            }
                         }
                     }
                     break;

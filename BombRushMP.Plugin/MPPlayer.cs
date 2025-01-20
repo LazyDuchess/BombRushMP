@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.LowLevel;
 
 namespace BombRushMP.Plugin
 {
@@ -260,44 +261,10 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public void TickUpdate()
+        public void UpdateClientStateVisuals()
         {
-            var clientController = ClientController.Instance;
+            if (ClientState == null || ClientVisualState == null) return;
 
-            if (Player != null)
-            {
-                if (PlayerComponent.Get(Player).Chibi != ClientVisualState.Chibi)
-                {
-                    DeletePlayer();
-                }
-            }
-
-            var mpSettings = MPSettings.Instance;
-
-            if (!mpSettings.DebugLocalPlayer)
-            {
-                if (ClientId == clientController.LocalID)
-                {
-                    if (NamePlate != null)
-                    {
-                        GameObject.Destroy(NamePlate.gameObject);
-                        NamePlate = null;
-                    }
-                    if (Player != null)
-                        DeletePlayer();
-                    return;
-                }
-            }
-
-            var worldHandler = WorldHandler.instance;
-            if (ClientState == null || ClientVisualState == null)
-            {
-                if (Player != null)
-                {
-                    DeletePlayer();
-                }
-                return;
-            }
             var chara = (Characters)ClientState.Character;
             var fallbackChara = (Characters)ClientState.FallbackCharacter;
 
@@ -331,7 +298,6 @@ namespace BombRushMP.Plugin
                 fit = 0;
 
             var justCreated = false;
-            var snapAnim = Teleporting;
 
             if (Player == null)
             {
@@ -339,6 +305,9 @@ namespace BombRushMP.Plugin
                 Outfit = fit;
                 justCreated = true;
             }
+
+            var playerComp = PlayerComponent.Get(Player);
+            playerComp.Chibi = ClientVisualState.Chibi;
 
             if (Player.character != chara)
             {
@@ -353,9 +322,7 @@ namespace BombRushMP.Plugin
                 Player.SetOutfit(fit);
                 Outfit = fit;
             }
-            var playerComp = PlayerComponent.Get(Player);
-            playerComp.AFK = ClientVisualState.AFK;
-            playerComp.Chibi = ClientVisualState.Chibi;
+
             if (ClientState.SpecialSkin != playerComp.SpecialSkin)
             {
                 SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(Player, ClientState.SpecialSkin);
@@ -370,10 +337,60 @@ namespace BombRushMP.Plugin
             {
                 UpdateNameplate();
                 Teleporting = true;
-                snapAnim = true;
                 if (!Player.anim.GetComponent<InverseKinematicsRelay>())
                     Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
+
+                if (ClientVisualState.CurrentAnimation != 0)
+                {
+                    _timeSpentInWrongAnimation = 0f;
+                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                }
+                UpdateMoveStyleSkin();
             }
+        }
+
+        public void TickUpdate()
+        {
+            var clientController = ClientController.Instance;
+            var mpSettings = MPSettings.Instance;
+
+            if (!mpSettings.DebugLocalPlayer)
+            {
+                if (ClientId == clientController.LocalID)
+                {
+                    if (NamePlate != null)
+                    {
+                        GameObject.Destroy(NamePlate.gameObject);
+                        NamePlate = null;
+                    }
+                    if (Player != null)
+                        DeletePlayer();
+                    return;
+                }
+            }
+
+            var worldHandler = WorldHandler.instance;
+            if (ClientState == null || ClientVisualState == null)
+            {
+                if (Player != null)
+                {
+                    DeletePlayer();
+                }
+                return;
+            }
+
+            var snapAnim = Teleporting;
+
+            var playerComp = PlayerComponent.Get(Player);
+
+            if (ClientVisualState.Chibi != playerComp.Chibi)
+            {
+                DeletePlayer();
+                UpdateClientStateVisuals();
+            }
+
+            playerComp.AFK = ClientVisualState.AFK;
+            playerComp.Chibi = ClientVisualState.Chibi;
 
             if (ClientVisualState.State == PlayerStates.Toilet)
             {
@@ -454,19 +471,9 @@ namespace BombRushMP.Plugin
             if (ClientVisualState.State != PlayerStates.Graffiti)
                 Player.RemoveGraffitiSlash();
 
-            if (ClientVisualState.MoveStyleSkin != _lastMoveStyleSkin || ClientVisualState.MPMoveStyleSkin != _lastMPMoveStyleSkin || justCreated)
+            if (ClientVisualState.MoveStyleSkin != _lastMoveStyleSkin || ClientVisualState.MPMoveStyleSkin != _lastMPMoveStyleSkin)
             {
-                _lastMoveStyleSkin = ClientVisualState.MoveStyleSkin;
-                _lastMPMoveStyleSkin = ClientVisualState.MPMoveStyleSkin;
-                if (ClientVisualState.MPMoveStyleSkin != -1)
-                {
-                    if (MPUnlockManager.Instance.UnlockByID.ContainsKey(ClientVisualState.MPMoveStyleSkin))
-                    {
-                        (MPUnlockManager.Instance.UnlockByID[ClientVisualState.MPMoveStyleSkin] as MPMoveStyleSkin).ApplyToPlayer(Player);
-                    }
-                }
-                else
-                    playerComp.ApplyMoveStyleSkin(ClientVisualState.MoveStyleSkin);
+                UpdateMoveStyleSkin();
             }
 
             if (ClientVisualState.Hitbox)
@@ -507,6 +514,23 @@ namespace BombRushMP.Plugin
             Player.characterVisual.VFX.boostpackTrail.SetActive(ClientVisualState.BoostpackTrail);
 
             _previousState = ClientVisualState.State;
+        }
+
+        private void UpdateMoveStyleSkin()
+        {
+            if (ClientVisualState == null) return;
+            var playerComp = PlayerComponent.Get(Player);
+            _lastMoveStyleSkin = ClientVisualState.MoveStyleSkin;
+            _lastMPMoveStyleSkin = ClientVisualState.MPMoveStyleSkin;
+            if (ClientVisualState.MPMoveStyleSkin != -1)
+            {
+                if (MPUnlockManager.Instance.UnlockByID.ContainsKey(ClientVisualState.MPMoveStyleSkin))
+                {
+                    (MPUnlockManager.Instance.UnlockByID[ClientVisualState.MPMoveStyleSkin] as MPMoveStyleSkin).ApplyToPlayer(Player);
+                }
+            }
+            else
+                playerComp.ApplyMoveStyleSkin(ClientVisualState.MoveStyleSkin);
         }
 
         private void UpdateMoveStyle()
