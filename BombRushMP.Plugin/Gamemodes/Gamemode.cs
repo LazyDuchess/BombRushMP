@@ -41,6 +41,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var player = WorldHandler.instance.GetCurrentPlayer();
             _spawnPos = player.transform.position;
             _spawnRot = player.transform.rotation;
+            player.saveLocation = player.GenerateSafeLocation();
         }
 
         public virtual void OnStart()
