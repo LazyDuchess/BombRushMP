@@ -1,4 +1,6 @@
 ﻿# A list of words that are bad. only detect on their own as they might be common in other safe words.
+arian
+aryan
 spac
 spic
 jap
