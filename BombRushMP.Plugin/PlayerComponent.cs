@@ -10,11 +10,13 @@ using MonoMod.Cil;
 using UnityEngine.UIElements;
 using ch.sycoforge.Decal.Projectors.Geometry;
 using System.Drawing.Text;
+using HarmonyLib;
 
 namespace BombRushMP.Plugin
 {
     public class PlayerComponent : MonoBehaviour
     {
+        public bool LOD = false;
         private const float HelloCooldown = 2f;
         private const float AFKEnterSpeed = 4f;
         private const float AFKExitSpeed = 8f;
@@ -205,7 +207,7 @@ namespace BombRushMP.Plugin
             _afkForced = true;
         }
 
-        private void UpdateChibi()
+        public void UpdateChibi()
         {
             if (Chibi)
             {
@@ -331,7 +333,62 @@ namespace BombRushMP.Plugin
 
         public static PlayerComponent GetLocal()
         {
-            return Get(WorldHandler.instance.GetCurrentPlayer());
+            return ClientController.Instance.LocalPlayerComponent;
+        }
+
+        public void MakeLOD()
+        {
+            var lodMat = MPAssets.Instance.LODMaterial;
+            var renderers = _player.characterVisual.GetComponentsInChildren<Renderer>(true);
+            var mainTexId = Shader.PropertyToID("_MainTex");
+            _player.anim.cullingMode = AnimatorCullingMode.CullCompletely;
+            foreach(var renderer in renderers)
+            {
+                var transp = true;
+                if (renderer.sharedMaterials != null && renderer.sharedMaterials.Length > 0)
+                {
+                    var matAmount = renderer.sharedMaterials.Length;
+                    var newMats = new Material[matAmount];
+                    for (var i = 0; i < matAmount; i++)
+                    {
+                        newMats[i] = lodMat;
+                        if (renderer.sharedMaterials[i] != null)
+                        {
+                            if (renderer.sharedMaterials[i].mainTexture != null)
+                            {
+                                if (renderer.sharedMaterials[i].renderQueue < 3000)
+                                    transp = false;
+                                var propBlock = new MaterialPropertyBlock();
+                                propBlock.SetTexture(mainTexId, renderer.sharedMaterials[i].mainTexture);
+                                renderer.SetPropertyBlock(propBlock, i);
+                            }
+                        }
+                    }
+                    if (transp && renderer != _player.characterVisual.mainRenderer)
+                    {
+                        renderer.forceRenderingOff = true;
+                        renderer.enabled = false;
+                    }
+                    renderer.sharedMaterials = newMats;
+                }
+                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                renderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
+                var skinned = (renderer as SkinnedMeshRenderer);
+                if (skinned != null)
+                    skinned.quality = SkinQuality.Bone1;
+
+                var stuffToRemove = _player.characterVisual.GetComponentsInChildren(typeof(DynamicBone), true);
+                stuffToRemove = stuffToRemove.AddRangeToArray(_player.characterVisual.GetComponentsInChildren(typeof(DynamicBoneCollider), true));
+                
+                foreach(var thingToRemove in stuffToRemove)
+                {
+                    Destroy(thingToRemove);
+                }
+
+                var ik = _player.anim.GetComponent<InverseKinematicsRelay>();
+                if (ik != null)
+                    Destroy(ik);
+            }
         }
     }
 }

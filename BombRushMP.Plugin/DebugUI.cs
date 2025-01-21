@@ -92,7 +92,8 @@ namespace BombRushMP.Plugin
             if (player == null) return;
             _curAnimLabel.text = $"CurAnim: {player.curAnim}\n";
             _curAnimLabel.text += $"Players: {RenderStats.Players}\n";
-            _curAnimLabel.text += $"Players Rendered: {RenderStats.PlayersRendered}\n";
+            _curAnimLabel.text += $"Players Rendered (High): {RenderStats.PlayersRendered}\n";
+            _curAnimLabel.text += $"Players Rendered (Low): {RenderStats.PlayersRenderedLOD}\n";
             _curAnimLabel.text += $"Players Culled: {RenderStats.PlayersCulled}\n";
         }
 

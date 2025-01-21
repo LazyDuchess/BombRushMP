@@ -11,12 +11,14 @@ namespace BombRushMP.Plugin
         public static int Players = 0;
         public static int PlayersCulled = 0;
         public static int PlayersRendered = 0;
+        public static int PlayersRenderedLOD = 0;
 
         public static void Reset()
         {
             Players = 0;
             PlayersCulled = 0;
             PlayersRendered = 0;
+            PlayersRenderedLOD = 0;
         }
     }
 }

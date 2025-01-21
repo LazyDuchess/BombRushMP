@@ -56,7 +56,7 @@ namespace BombRushMP.Plugin
         private void OnDestroy()
         {
             var sequenceHandler = CustomSequenceHandler.instance;
-            if (sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
+            if (sequenceHandler != null && sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
             {
                 Sequence.SaidYes = false;
                 sequenceHandler.ExitCurrentSequence();

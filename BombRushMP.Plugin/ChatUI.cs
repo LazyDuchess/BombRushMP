@@ -185,6 +185,9 @@ namespace BombRushMP.Plugin
                 case "show":
                     MPSettings.Instance.ShowChat = true;
                     break;
+                case "lodme":
+                    PlayerComponent.GetLocal().MakeLOD();
+                    break;
             }
                 
         }

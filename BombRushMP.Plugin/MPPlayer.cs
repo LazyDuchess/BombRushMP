@@ -167,17 +167,38 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public bool CalculateVisibility(List<Plane[]> frustumPlanes)
+        private bool CalculateChunkVisibility(List<StageChunk> chunks)
+        {
+            if (chunks == null || chunks.Count <= 0) return true;
+            var inAChunk = false;
+            foreach (var chunk in chunks)
+            {
+                foreach (var collider in chunk.colliders)
+                {
+                    if (StageChunk.PointInOBB(Player.transform.position, collider))
+                    {
+                        inAChunk = true;
+                        if (chunk.isActive) return true;
+                    }
+                }
+            }
+            return !inAChunk;
+        }
+
+        public bool CalculateVisibility(List<Plane[]> frustumPlanes, List<StageChunk> stageChunks)
         {
             if (Player == null) return false;
-            foreach(var planes in frustumPlanes)
+            if (CalculateChunkVisibility(stageChunks))
             {
-                if (GeometryUtility.TestPlanesAABB(planes, Player.characterVisual.mainRenderer.bounds)) return true;
+                foreach (var planes in frustumPlanes)
+                {
+                    if (GeometryUtility.TestPlanesAABB(planes, Player.characterVisual.mainRenderer.bounds)) return true;
+                }
             }
             return false;
         }
 
-        public void FrameUpdate(bool hidden)
+        public void FrameUpdate(bool hidden, bool lod)
         {
             var mpSettings = MPSettings.Instance;
             if (_interactable != null)
@@ -191,7 +212,12 @@ namespace BombRushMP.Plugin
             if (hidden)
                 RenderStats.PlayersCulled++;
             else
-                RenderStats.PlayersRendered++;
+            {
+                if (lod)
+                    RenderStats.PlayersRenderedLOD++;
+                else
+                    RenderStats.PlayersRendered++;
+            }
 #endif
 
             if (ClientState == null || ClientVisualState == null) return;
@@ -200,6 +226,7 @@ namespace BombRushMP.Plugin
 
             if (hidden)
             {
+                Player.RemoveGraffitiSlash();
                 Player.characterVisual.SetSpraycan(false);
                 if (Player != null && Player.characterVisual != null)
                     Player.characterVisual.gameObject.SetActive(false);
@@ -218,6 +245,14 @@ namespace BombRushMP.Plugin
                     NamePlate.gameObject.SetActive(true);
                 else if (NamePlate != null && !mpSettings.ShowNamePlates)
                     NamePlate.gameObject.SetActive(false);
+
+                if (lod != PlayerComponent.LOD)
+                {
+                    RefreshCharacterVisuals();
+                    PlayerComponent.LOD = lod;
+                    if (lod)
+                        PlayerComponent.MakeLOD();
+                }
             }
 
             if (ClientVisualState.State == PlayerStates.Toilet)
@@ -289,6 +324,8 @@ namespace BombRushMP.Plugin
 
         private void RefreshCharacterVisuals()
         {
+            PlayerComponent.Chibi = ClientVisualState.Chibi;
+            Player.character = Characters.NONE;
             var chara = (Characters)ClientState.Character;
             var fallbackChara = (Characters)ClientState.FallbackCharacter;
 
@@ -324,6 +361,20 @@ namespace BombRushMP.Plugin
             Player.SetCharacter(chara, fit);
             Player.InitVisual();
             Outfit = fit;
+            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(Player, ClientState.SpecialSkin);
+            SpecialSkinManager.Instance.ApplySpecialSkinVariantToPlayer(Player, ClientState.SpecialSkinVariant);
+            UpdateNameplate();
+            Teleporting = true;
+            if (!Player.anim.GetComponent<InverseKinematicsRelay>())
+                Player.anim.gameObject.AddComponent<InverseKinematicsRelay>();
+
+            if (ClientVisualState.CurrentAnimation != 0)
+            {
+                _timeSpentInWrongAnimation = 0f;
+                Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+            }
+            UpdateMoveStyleSkin();
+            PlayerComponent.UpdateChibi();
         }
 
         public void UpdateClientStateVisuals()
@@ -447,8 +498,8 @@ namespace BombRushMP.Plugin
 
             if (ClientVisualState.Chibi != PlayerComponent.Chibi)
             {
-                DeletePlayer();
                 UpdateClientStateVisuals();
+                RefreshCharacterVisuals();
             }
 
             PlayerComponent.AFK = ClientVisualState.AFK;
@@ -477,8 +528,6 @@ namespace BombRushMP.Plugin
                 if (ClientVisualState.CurrentAnimation != 0)
                 {
                     _timeSpentInWrongAnimation = 0f;
-                    if (mpSettings.DebugInfo)
-                        Debug.Log($"BRCMP: Applying animation {ClientVisualState.CurrentAnimation} at time {ClientVisualState.CurrentAnimationTime} to player {ClientState.Name} (justCreated == true)");
                     Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                 }
             }

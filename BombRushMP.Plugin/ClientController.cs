@@ -39,6 +39,16 @@ namespace BombRushMP.Plugin
         public static Action ClientStatesUpdate;
         public string AuthKey;
         public bool InfrequentClientStateUpdateQueued = false;
+        public PlayerComponent LocalPlayerComponent
+        {
+            get
+            {
+                if (_cachedPlayerComponent == null)
+                    _cachedPlayerComponent = PlayerComponent.Get(WorldHandler.instance.GetCurrentPlayer());
+                return _cachedPlayerComponent;
+            }
+        }
+        private PlayerComponent _cachedPlayerComponent = null;
         private INetClient _client;
         private float _tickTimer = 0f;
         private float _infrequentUpdateTimer = 0f;
@@ -144,7 +154,7 @@ namespace BombRushMP.Plugin
             if (player.IsDead())
                 state = PlayerStates.Dead;
 
-            var playerComp = PlayerComponent.Get(player);
+            var playerComp = LocalPlayerComponent;
 
             var packet = new ClientVisualState();
             packet.State = state;
@@ -280,11 +290,12 @@ namespace BombRushMP.Plugin
             {
 #endif
                 _frustumList.Clear();
+                var worldHandler = WorldHandler.instance;
                 var hideOutOfView = mpSettings.HidePlayersOutOfView;
                 var hideDist = mpSettings.PlayerDrawDistance;
                 if (hideOutOfView)
                 {
-                    var mainCam = WorldHandler.instance.CurrentCamera;
+                    var mainCam = worldHandler.CurrentCamera;
                     _frustumList.Add(GeometryUtility.CalculateFrustumPlanes(mainCam));
                     var phoneCameras = PlayerPhoneCameras.Instance;
                     if (phoneCameras != null && phoneCameras.isActiveAndEnabled)
@@ -296,7 +307,11 @@ namespace BombRushMP.Plugin
                         }
                     }
                 }
-                var localCamPos = WorldHandler.instance.currentCamera.transform.position;
+ 
+                var localCamPos = worldHandler.currentCamera.transform.position;
+                List<StageChunk> stageChunkList = null;
+                if (mpSettings.HidePlayersInInactiveChunks)
+                    stageChunkList = worldHandler.SceneObjectsRegister.stageChunks;
                 foreach (var player in Players)
                 {
                     var hidden = playersHidden;
@@ -308,11 +323,14 @@ namespace BombRushMP.Plugin
                         }
                         else
                         {
-                            if (!player.Value.CalculateVisibility(_frustumList))
+                            if (!player.Value.CalculateVisibility(_frustumList, stageChunkList))
                                 hidden = true;
                         }
                     }
-                    player.Value.FrameUpdate(hidden);
+                    var lod = false;
+                    if (!hidden && mpSettings.PlayerLodEnabled && (player.Value.Player.transform.position - localCamPos).sqrMagnitude >= mpSettings.PlayerLodDistance)
+                        lod = true;
+                    player.Value.FrameUpdate(hidden, lod);
                 }
 #if DEBUG
             }
@@ -373,7 +391,7 @@ namespace BombRushMP.Plugin
             {
                 case Packets.ServerSetChibi:
                     {
-                        PlayerComponent.GetLocal().Chibi = (packet as ServerSetChibi).Set;
+                        LocalPlayerComponent.Chibi = (packet as ServerSetChibi).Set;
                     }
                     break;
 
@@ -589,7 +607,7 @@ namespace BombRushMP.Plugin
         public ClientState CreateClientState()
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
-            var playerComp = PlayerComponent.Get(player);
+            var playerComp = LocalPlayerComponent;
             var statePacket = new ClientState()
             {
                 Name = _mpSettings.PlayerName,

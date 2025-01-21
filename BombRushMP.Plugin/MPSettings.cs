@@ -507,6 +507,45 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public float PlayerLodDistance
+        {
+            get
+            {
+                return _playerLodDistance.Value;
+            }
+
+            set
+            {
+                _playerLodDistance.Value = value;
+            }
+        }
+
+        public bool PlayerLodEnabled
+        {
+            get
+            {
+                return _playerLodEnabled.Value;
+            }
+
+            set
+            {
+                _playerLodEnabled.Value = value;
+            }
+        }
+
+        public bool HidePlayersInInactiveChunks
+        {
+            get
+            {
+                return _hidePlayersInInactiveChunks.Value;
+            }
+
+            set
+            {
+                _hidePlayersInInactiveChunks.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -542,7 +581,10 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _dontAutoScrollChatIfFocused;
         private ConfigEntry<bool> _deathMessages;
         private ConfigEntry<bool> _hidePlayersOutOfView;
+        private ConfigEntry<bool> _hidePlayersInInactiveChunks;
         private ConfigEntry<float> _playerDrawDistance;
+        private ConfigEntry<float> _playerLodDistance;
+        private ConfigEntry<bool> _playerLodEnabled;
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
@@ -646,7 +688,10 @@ namespace BombRushMP.Plugin
             };
             _deathMessages = configFile.Bind(ChatSettings, "Show Player Death Messages", true, "Whether to send messages in chat when players die.");
             _hidePlayersOutOfView = configFile.Bind(Optimization, "Cull Players out of view", true, "Whether to cull players that are out of view, to save on resources.");
-            _playerDrawDistance = configFile.Bind(Optimization, "Player draw distance", 20000f, "Distance at which players will be hidden");
+            _playerDrawDistance = configFile.Bind(Optimization, "Player draw distance", 20000f, "Distance at which players will be hidden to save on resources.");
+            _playerLodEnabled = configFile.Bind(Optimization, "Player LOD enabled", true, "Whether to reduce player quality at a certain distance.");
+            _playerLodDistance = configFile.Bind(Optimization, "Player LOD distance", 2500f, "Distance at which players will render at a lower quality to save on resources.");
+            _hidePlayersInInactiveChunks = configFile.Bind(Optimization, "Cull Players in inactive chunks", true, "Whether to cull players that are at culled stage chunks to save on resources.");
         }
 
         public void Save()
