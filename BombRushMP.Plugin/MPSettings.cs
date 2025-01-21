@@ -649,11 +649,6 @@ namespace BombRushMP.Plugin
             _playerDrawDistance = configFile.Bind(Optimization, "Player draw distance", 20000f, "Distance at which players will be hidden");
         }
 
-        private void _playerName_SettingChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Save()
         {
             _configFile.Save();
