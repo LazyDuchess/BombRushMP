@@ -224,9 +224,11 @@ namespace BombRushMP.Plugin
 
             if (Player == null) return;
 
+            if (hidden || lod)
+                Player.RemoveGraffitiSlash();
+
             if (hidden)
             {
-                Player.RemoveGraffitiSlash();
                 Player.characterVisual.SetSpraycan(false);
                 if (Player != null && Player.characterVisual != null)
                     Player.characterVisual.gameObject.SetActive(false);
