@@ -62,6 +62,7 @@ namespace BombRushMP.Plugin
             _mpSettings = MPSettings.Instance;
             ClientLobbyManager = new();
             ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
+            MPPlayer.OptimizationActions.Clear();
         }
 
         public int GetPlayerCountForStage(Stage stage)
@@ -332,6 +333,13 @@ namespace BombRushMP.Plugin
                         lod = true;
                     player.Value.FrameUpdate(hidden, lod);
                 }
+                if (MPPlayer.OptimizationActions.Count > 0)
+                {
+                    var act = MPPlayer.OptimizationActions[0];
+                    MPPlayer.OptimizationActions.RemoveAt(0);
+                    act?.Invoke();
+                }
+
 #if DEBUG
             }
 #endif

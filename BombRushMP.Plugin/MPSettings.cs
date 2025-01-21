@@ -546,6 +546,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool OptimizeOnePlayerAtATime
+        {
+            get
+            {
+                return _optimizeOnePlayerAtATime.Value;
+            }
+
+            set
+            {
+                _optimizeOnePlayerAtATime.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -585,6 +598,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<float> _playerDrawDistance;
         private ConfigEntry<float> _playerLodDistance;
         private ConfigEntry<bool> _playerLodEnabled;
+        private ConfigEntry<bool> _optimizeOnePlayerAtATime;
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
@@ -692,6 +706,7 @@ namespace BombRushMP.Plugin
             _playerLodEnabled = configFile.Bind(Optimization, "Player LOD enabled", true, "Whether to reduce player quality at a certain distance.");
             _playerLodDistance = configFile.Bind(Optimization, "Player LOD distance", 2500f, "Distance at which players will render at a lower quality to save on resources.");
             _hidePlayersInInactiveChunks = configFile.Bind(Optimization, "Cull Players in inactive chunks", true, "Whether to cull players that are at culled stage chunks to save on resources.");
+            _optimizeOnePlayerAtATime = configFile.Bind(Optimization, "Optimize one Player at a time", true, "Only update visibility and LODs for one player at a time, to avoid stutters.");
         }
 
         public void Save()

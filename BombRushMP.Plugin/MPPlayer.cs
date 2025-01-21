@@ -198,6 +198,43 @@ namespace BombRushMP.Plugin
             return false;
         }
 
+        private void Hide()
+        {
+            if (Player != null && Player.characterVisual != null)
+                Player.characterVisual.gameObject.SetActive(false);
+            if (NamePlate != null)
+                NamePlate.gameObject.SetActive(false);
+        }
+
+        private void Unhide()
+        {
+            if (Player != null && Player.characterVisual != null)
+            {
+                if (!Player.characterVisual.gameObject.activeSelf)
+                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                Player.characterVisual.gameObject.SetActive(true);
+
+                if (_targetLod != PlayerComponent.LOD)
+                {
+                    RefreshCharacterVisuals();
+                    PlayerComponent.LOD = _targetLod;
+                    if (_targetLod)
+                        PlayerComponent.MakeLOD();
+                }
+            }
+        }
+
+        public static List<Action> OptimizationActions = new();
+
+        private void ClearOptimizationActions()
+        {
+            OptimizationActions.Remove(Hide);
+            OptimizationActions.Remove(Unhide);
+        }
+
+        private bool _targetLod = false;
+        private bool _targetHidden = false;
+
         public void FrameUpdate(bool hidden, bool lod)
         {
             var mpSettings = MPSettings.Instance;
@@ -208,17 +245,6 @@ namespace BombRushMP.Plugin
                 if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
                     hidden = true;
             }
-#if DEBUG
-            if (hidden)
-                RenderStats.PlayersCulled++;
-            else
-            {
-                if (lod)
-                    RenderStats.PlayersRenderedLOD++;
-                else
-                    RenderStats.PlayersRendered++;
-            }
-#endif
 
             if (ClientState == null || ClientVisualState == null) return;
 
@@ -227,35 +253,20 @@ namespace BombRushMP.Plugin
             if (hidden || lod)
                 Player.RemoveGraffitiSlash();
 
-            if (hidden)
-            {
-                Player.characterVisual.SetSpraycan(false);
-                if (Player != null && Player.characterVisual != null)
-                    Player.characterVisual.gameObject.SetActive(false);
-                if (NamePlate != null)
-                    NamePlate.gameObject.SetActive(false);
-            }
+            _targetLod = lod;
+            _targetHidden = hidden;
+
+#if DEBUG
+            if (!Player.characterVisual.gameObject.activeSelf)
+                RenderStats.PlayersCulled++;
             else
             {
-                if (Player != null && Player.characterVisual != null)
-                {
-                    if (!Player.characterVisual.gameObject.activeSelf)
-                        Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
-                    Player.characterVisual.gameObject.SetActive(true);
-                }
-                if (NamePlate != null && mpSettings.ShowNamePlates)
-                    NamePlate.gameObject.SetActive(true);
-                else if (NamePlate != null && !mpSettings.ShowNamePlates)
-                    NamePlate.gameObject.SetActive(false);
-
-                if (lod != PlayerComponent.LOD)
-                {
-                    RefreshCharacterVisuals();
-                    PlayerComponent.LOD = lod;
-                    if (lod)
-                        PlayerComponent.MakeLOD();
-                }
+                if (PlayerComponent.LOD)
+                    RenderStats.PlayersRenderedLOD++;
+                else
+                    RenderStats.PlayersRendered++;
             }
+#endif
 
             if (ClientVisualState.State == PlayerStates.Toilet)
                 Teleporting = true;
@@ -470,6 +481,39 @@ namespace BombRushMP.Plugin
         {
             var clientController = ClientController.Instance;
             var mpSettings = MPSettings.Instance;
+
+            if (_targetHidden)
+            {
+                if (mpSettings.OptimizeOnePlayerAtATime)
+                {
+                    if (Player.characterVisual.gameObject.activeSelf)
+                    {
+                        ClearOptimizationActions();
+                        OptimizationActions.Add(Hide);
+                    }
+                }
+                else
+                    Hide();
+                Player.characterVisual.SetSpraycan(false);
+            }
+            else
+            {
+                if (mpSettings.OptimizeOnePlayerAtATime)
+                {
+                    if (!Player.characterVisual.gameObject.activeSelf || _targetLod != PlayerComponent.LOD)
+                    {
+                        ClearOptimizationActions();
+                        OptimizationActions.Add(Unhide);
+                    }
+                }
+                else
+                    Unhide();
+
+                if (NamePlate != null && mpSettings.ShowNamePlates)
+                    NamePlate.gameObject.SetActive(true);
+                else if (NamePlate != null && !mpSettings.ShowNamePlates)
+                    NamePlate.gameObject.SetActive(false);
+            }
 
             if (!mpSettings.DebugLocalPlayer)
             {
@@ -754,6 +798,7 @@ namespace BombRushMP.Plugin
 
         private void DeletePlayer()
         {
+            ClearOptimizationActions();
             var clientController = ClientController.Instance;
             var worldHandler = WorldHandler.instance;
             var mapController = Mapcontroller.Instance;
