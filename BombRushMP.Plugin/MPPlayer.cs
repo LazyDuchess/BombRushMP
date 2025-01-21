@@ -337,6 +337,7 @@ namespace BombRushMP.Plugin
 
         private void RefreshCharacterVisuals()
         {
+            Player.RemoveGraffitiSlash();
             PlayerComponent.Chibi = ClientVisualState.Chibi;
             Player.character = Characters.NONE;
             var chara = (Characters)ClientState.Character;
@@ -439,6 +440,7 @@ namespace BombRushMP.Plugin
 
             if (Player.character != chara)
             {
+                Player.RemoveGraffitiSlash();
                 Player.SetCharacter(chara, fit);
                 Player.InitVisual();
                 Outfit = fit;
@@ -482,6 +484,31 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var mpSettings = MPSettings.Instance;
 
+            if (!mpSettings.DebugLocalPlayer)
+            {
+                if (ClientId == clientController.LocalID)
+                {
+                    if (NamePlate != null)
+                    {
+                        GameObject.Destroy(NamePlate.gameObject);
+                        NamePlate = null;
+                    }
+                    if (Player != null)
+                        DeletePlayer();
+                    return;
+                }
+            }
+
+            var worldHandler = WorldHandler.instance;
+            if (ClientState == null || ClientVisualState == null)
+            {
+                if (Player != null)
+                {
+                    DeletePlayer();
+                }
+                return;
+            }
+
             if (_targetHidden)
             {
                 if (mpSettings.OptimizeOnePlayerAtATime)
@@ -513,31 +540,6 @@ namespace BombRushMP.Plugin
                     NamePlate.gameObject.SetActive(true);
                 else if (NamePlate != null && !mpSettings.ShowNamePlates)
                     NamePlate.gameObject.SetActive(false);
-            }
-
-            if (!mpSettings.DebugLocalPlayer)
-            {
-                if (ClientId == clientController.LocalID)
-                {
-                    if (NamePlate != null)
-                    {
-                        GameObject.Destroy(NamePlate.gameObject);
-                        NamePlate = null;
-                    }
-                    if (Player != null)
-                        DeletePlayer();
-                    return;
-                }
-            }
-
-            var worldHandler = WorldHandler.instance;
-            if (ClientState == null || ClientVisualState == null)
-            {
-                if (Player != null)
-                {
-                    DeletePlayer();
-                }
-                return;
             }
 
             var snapAnim = Teleporting;
