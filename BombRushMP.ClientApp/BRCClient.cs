@@ -14,7 +14,7 @@ namespace BombRushMP.ClientApp
 {
     public class BRCClient : IDisposable
     {
-        private const string BotName = "ACN BOT";
+        private const string BotName = "T-800";
         private const string CrewName = "Bots";
         private INetClient _client;
         private ServerClientStates _clientStates;
@@ -271,7 +271,7 @@ namespace BombRushMP.ClientApp
             var cs = new ClientState();
             cs.Name = BotName;
             cs.CrewName = CrewName;
-            cs.Stage = 108518865;
+            cs.Stage = 5;
             SendPacket(cs);
 
             var vs = new ClientVisualState();
