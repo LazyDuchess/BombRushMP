@@ -90,7 +90,10 @@ namespace BombRushMP.Plugin
             if (worldHandler == null) return;
             var player = worldHandler.GetCurrentPlayer();
             if (player == null) return;
-            _curAnimLabel.text = $"CurAnim: {player.curAnim}";
+            _curAnimLabel.text = $"CurAnim: {player.curAnim}\n";
+            _curAnimLabel.text += $"Players: {RenderStats.Players}\n";
+            _curAnimLabel.text += $"Players Rendered: {RenderStats.PlayersRendered}\n";
+            _curAnimLabel.text += $"Players Culled: {RenderStats.PlayersCulled}\n";
         }
 
         public static void Create()

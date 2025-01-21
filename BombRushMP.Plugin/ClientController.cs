@@ -274,6 +274,8 @@ namespace BombRushMP.Plugin
                 _infrequentUpdateTimer = 0f;
             }
 #if DEBUG
+            RenderStats.Reset();
+            RenderStats.Players = Players.Count;
             if (mpSettings.UpdatePlayers)
             {
 #endif

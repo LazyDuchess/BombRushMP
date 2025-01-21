@@ -177,6 +177,12 @@ namespace BombRushMP.Plugin
                 if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
                     hidden = true;
             }
+#if DEBUG
+            if (hidden)
+                RenderStats.PlayersCulled++;
+            else
+                RenderStats.PlayersRendered++;
+#endif
 
             if (ClientState == null || ClientVisualState == null) return;
 
@@ -213,7 +219,7 @@ namespace BombRushMP.Plugin
             var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
             var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
 
-            if (Teleporting)
+            if (Teleporting || hidden)
             {
                 Teleporting = false;
                 Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
