@@ -287,9 +287,43 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private void MarkVisualsDirty()
+        private void RefreshCharacterVisuals()
         {
-            var playerComp = PlayerComponent.Get(Player);
+            var chara = (Characters)ClientState.Character;
+            var fallbackChara = (Characters)ClientState.FallbackCharacter;
+
+            if (chara >= Characters.MAX || chara <= Characters.NONE)
+                chara = Characters.metalHead;
+
+            if (fallbackChara >= Characters.MAX || fallbackChara <= Characters.NONE)
+                fallbackChara = Characters.metalHead;
+
+            var fit = ClientState.Outfit;
+
+            if (ClientState.CrewBoomCharacter != Guid.Empty)
+            {
+                chara = fallbackChara;
+                if (CrewBoomSupport.Installed)
+                {
+                    chara = CrewBoomSupport.GetCharacterForGuid(ClientState.CrewBoomCharacter, Characters.NONE);
+                    if (chara == Characters.NONE)
+                    {
+                        chara = fallbackChara;
+                        fit = ClientState.FallbackOutfit;
+                    }
+                }
+                else
+                {
+                    fit = ClientState.FallbackOutfit;
+                }
+            }
+
+            if (fit < 0 || fit > 3)
+                fit = 0;
+
+            Player.SetCharacter(chara, fit);
+            Player.InitVisual();
+            Outfit = fit;
         }
 
         public void UpdateClientStateVisuals()

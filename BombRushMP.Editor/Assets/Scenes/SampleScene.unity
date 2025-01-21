@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44835013, g: 0.4983847, b: 0.5756117, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 705507995}
   - component: {fileID: 705507994}
+  - component: {fileID: 705507996}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -209,14 +210,28 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.7863333, y: 0.45091915, z: -0.047905732, w: 0.41959134}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 44.675, y: 154.774, z: 109.83}
+--- !u!114 &705507996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 705507993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1305c9ff3b21014a9afb89d940f0275, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LightColor: {r: 0.98090374, g: 0.9811321, b: 0.88394445, a: 0}
+  ShadowColor: {r: 0.54027236, g: 0.6381945, b: 0.6698113, a: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +614,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1159918572418369792, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 1159918572665963315, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_SizeDelta.y
@@ -947,6 +962,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerFemaleCopPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 3766136700429101048, guid: e63a6dde9a15f4849b4160ffb5cc5e9b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4544081225661496642, guid: e63a6dde9a15f4849b4160ffb5cc5e9b, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1057,6 +1076,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 986389392531582505, guid: abd6cca4e4b630843a49ad20aa2fb620, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0c7fb5f4225bdcf44b0e1bb4aaac48e2, type: 2}
     - target: {fileID: 3660703301713769859, guid: abd6cca4e4b630843a49ad20aa2fb620, type: 3}
       propertyPath: m_Name
       value: PlayerMaleCopPrefab
