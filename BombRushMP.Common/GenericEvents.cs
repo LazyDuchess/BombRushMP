@@ -11,6 +11,7 @@ namespace BombRushMP.Common
         Spray,
         Teleport,
         GraffitiGameOver,
-        Death
+        Death,
+        Land
     }
 }

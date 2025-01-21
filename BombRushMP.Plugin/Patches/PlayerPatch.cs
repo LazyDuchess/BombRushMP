@@ -363,6 +363,14 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.OnLanded))]
+        private static void OnLanded_Postfix(Player __instance)
+        {
+            if (__instance.isAI) return;
+            ClientController.Instance.SendGenericEvent(GenericEvents.Land, IMessage.SendModes.ReliableUnordered);
+        }
+
+        [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.LandCombo))]
         private static void LandCombo_Postfix(Player __instance)
         {

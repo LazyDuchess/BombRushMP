@@ -386,6 +386,12 @@ namespace BombRushMP.Plugin
                     if (!MPSettings.Instance.DeathMessages) break;
                     ChatUI.Instance.AddMessage(string.Format(ClientConstants.DeathMessage, MPUtility.GetPlayerDisplayName(player.ClientState)));
                     break;
+
+                case GenericEvents.Land:
+                    if (player.Player == null) break;
+                    player.Player.AudioManager.PlaySfxGameplay(player.Player.moveStyle, AudioClipID.land, player.Player.playerOneShotAudioSource);
+                    player.Player.CreateCircleDustEffect(-player.Player.transform.up);
+                    break;
             }
         }
 
