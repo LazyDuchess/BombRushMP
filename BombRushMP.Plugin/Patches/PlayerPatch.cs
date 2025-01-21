@@ -38,8 +38,8 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(nameof(Player.FixedUpdateAbilities))]
-        private static bool FixedUpdateAbilities_Prefix(Player __instance)
+        [HarmonyPatch(nameof(Player.FixedUpdatePlayer))]
+        private static bool FixedUpdatePlayer_Prefix(Player __instance)
         {
             if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
             return true;
