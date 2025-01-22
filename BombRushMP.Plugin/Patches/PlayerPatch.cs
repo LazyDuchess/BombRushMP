@@ -177,6 +177,7 @@ namespace BombRushMP.Plugin.Patches
             var playerComponent = PlayerComponent.Get(__instance);
             playerComponent.Chibi = false;
             playerComponent.SpecialSkin = SpecialSkins.None;
+            playerComponent.UnloadStreamedCharacter();
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;

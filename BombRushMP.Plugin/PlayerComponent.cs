@@ -421,6 +421,21 @@ namespace BombRushMP.Plugin
             MainRenderer = null;
             SpecialSkinVariant = -1;
             SpecialSkin = SpecialSkins.None;
+            UpdateSkateOffsets();
+        }
+
+        public void UpdateSkateOffsets()
+        {
+            var inlineOffsetL = _player.characterVisual.footL.Find(CrewBoomSupport.SKATE_OFFSET_L);
+            var inlineOffsetR = _player.characterVisual.footR.Find(CrewBoomSupport.SKATE_OFFSET_R);
+
+            if (inlineOffsetL != null && inlineOffsetR != null)
+            {
+                _player.characterVisual.moveStyleProps.skateL.transform.SetLocalPositionAndRotation(inlineOffsetL.localPosition, inlineOffsetL.localRotation);
+                _player.characterVisual.moveStyleProps.skateL.transform.localScale = inlineOffsetL.localScale;
+                _player.characterVisual.moveStyleProps.skateR.transform.SetLocalPositionAndRotation(inlineOffsetR.localPosition, inlineOffsetR.localRotation);
+                _player.characterVisual.moveStyleProps.skateR.transform.localScale = inlineOffsetR.localScale;
+            }
         }
 
         private static int MainTexId = Shader.PropertyToID("_MainTex");
