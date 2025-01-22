@@ -57,20 +57,32 @@ namespace BombRushMP.CrewBoom
                 }
                 else
                 {
-                    var bundle = AssetBundle.LoadFromFile(file);
-                    var gos = bundle.LoadAllAssets<GameObject>();
-                    foreach (var go in gos)
+                    AssetBundle bundle = null;
+                    try
                     {
-                        var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
-                        if (charDef != null)
+                        bundle = AssetBundle.LoadFromFile(file);
+                        var gos = bundle.LoadAllAssets<GameObject>();
+                        foreach (var go in gos)
                         {
-                            var id = Guid.Parse(CharacterDefinitionIdField.GetValue(charDef) as string);
-                            Register(id, file);
-                            File.WriteAllText(txtFile, id.ToString());
-                            break;
+                            var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
+                            if (charDef != null)
+                            {
+                                var id = Guid.Parse(CharacterDefinitionIdField.GetValue(charDef) as string);
+                                Register(id, file);
+                                File.WriteAllText(txtFile, id.ToString());
+                                break;
+                            }
                         }
                     }
-                    bundle.Unload(true);
+                    catch(Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
+                    finally
+                    {
+                        if (bundle != null)
+                            bundle.Unload(true);
+                    }
                 }
             }
         }
