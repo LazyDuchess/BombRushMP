@@ -197,7 +197,7 @@ namespace BombRushMP.Plugin
                         guid = Guid.Parse(args[1]);
                     if (args.Length > 2)
                         outfit = int.Parse(args[2]);
-                    playerComp.SetStreamedCharacter(guid, outfit);
+                    playerComp.SetStreamedCharacter(guid, outfit, (Characters)MPSettings.Instance.FallbackCharacter, MPSettings.Instance.FallbackOutfit);
                     ClientController.Instance.SendClientState();
                     break;
 #endif

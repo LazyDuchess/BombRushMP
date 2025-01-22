@@ -341,6 +341,7 @@ namespace BombRushMP.Plugin
 
         private void RefreshCharacterVisuals()
         {
+            if (ClientId == ClientController.Instance.LocalID && !MPSettings.Instance.DebugLocalPlayer) return;
             Player.characterVisual.SetSpraycan(false);
             Player.RemoveGraffitiSlash();
             PlayerComponent.Chibi = ClientVisualState.Chibi;
@@ -385,7 +386,7 @@ namespace BombRushMP.Plugin
 
             if (useStreamedCharacter)
             {
-                PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit);
+                PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit, (Characters)ClientState.FallbackCharacter, ClientState.FallbackOutfit);
                 Outfit = fit;
             }
             else
@@ -416,6 +417,7 @@ namespace BombRushMP.Plugin
         public void UpdateClientStateVisuals()
         {
             if (ClientState == null || ClientVisualState == null) return;
+            if (ClientId == ClientController.Instance.LocalID && !MPSettings.Instance.DebugLocalPlayer) return;
 
             var chara = (Characters)ClientState.Character;
             var fallbackChara = (Characters)ClientState.FallbackCharacter;
@@ -459,7 +461,10 @@ namespace BombRushMP.Plugin
 
             if (Player == null)
             {
-                Player = MPUtility.CreateMultiplayerPlayer(chara, fit, this);
+                if (useStreamedCharacter)
+                    Player = MPUtility.CreateMultiplayerPlayer(fallbackChara, ClientState.FallbackOutfit, this);
+                else
+                    Player = MPUtility.CreateMultiplayerPlayer(chara, fit, this);
                 Outfit = fit;
                 justCreated = true;
             }
@@ -485,7 +490,7 @@ namespace BombRushMP.Plugin
             {
                 if (PlayerComponent.StreamedCharacter == null || PlayerComponent.StreamedCharacter.Handle.GUID != ClientState.CrewBoomCharacter)
                 {
-                    PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit);
+                    PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit, (Characters)ClientState.FallbackCharacter, ClientState.FallbackOutfit);
                 }
                 if (PlayerComponent.StreamedCharacter != null && PlayerComponent.StreamedCharacter.Outfit != fit)
                 {
