@@ -200,6 +200,7 @@ namespace BombRushMP.Plugin
 
         private void Hide()
         {
+            Player.characterVisual.SetSpraycan(false);
             if (Player != null && Player.characterVisual != null)
                 Player.characterVisual.gameObject.SetActive(false);
             if (NamePlate != null)
@@ -211,7 +212,10 @@ namespace BombRushMP.Plugin
             if (Player != null && Player.characterVisual != null)
             {
                 if (!Player.characterVisual.gameObject.activeSelf)
+                {
+                    Player.characterVisual.SetSpraycan(false);
                     Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                }
                 Player.characterVisual.gameObject.SetActive(true);
 
                 if (_targetLod != PlayerComponent.LOD)
@@ -337,6 +341,7 @@ namespace BombRushMP.Plugin
 
         private void RefreshCharacterVisuals()
         {
+            Player.characterVisual.SetSpraycan(false);
             Player.RemoveGraffitiSlash();
             PlayerComponent.Chibi = ClientVisualState.Chibi;
             Player.character = Characters.NONE;

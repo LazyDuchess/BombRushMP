@@ -336,11 +336,12 @@ namespace BombRushMP.Plugin
             return ClientController.Instance.LocalPlayerComponent;
         }
 
+        private static int MainTexId = Shader.PropertyToID("_MainTex");
+
         public void MakeLOD()
         {
             var lodMat = MPAssets.Instance.LODMaterial;
             var renderers = _player.characterVisual.GetComponentsInChildren<Renderer>(true);
-            var mainTexId = Shader.PropertyToID("_MainTex");
             _player.anim.cullingMode = AnimatorCullingMode.CullCompletely;
             foreach(var renderer in renderers)
             {
@@ -354,12 +355,12 @@ namespace BombRushMP.Plugin
                         newMats[i] = lodMat;
                         if (renderer.sharedMaterials[i] != null)
                         {
-                            if (renderer.sharedMaterials[i].mainTexture != null)
+                            if (renderer.sharedMaterials[i].renderQueue < 3000)
+                                transp = false;
+                            if (renderer.sharedMaterials[i].HasProperty(MainTexId))
                             {
-                                if (renderer.sharedMaterials[i].renderQueue < 3000)
-                                    transp = false;
                                 var propBlock = new MaterialPropertyBlock();
-                                propBlock.SetTexture(mainTexId, renderer.sharedMaterials[i].mainTexture);
+                                propBlock.SetTexture(MainTexId, renderer.sharedMaterials[i].GetTexture(MainTexId));
                                 renderer.SetPropertyBlock(propBlock, i);
                             }
                         }
