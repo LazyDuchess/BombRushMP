@@ -41,7 +41,11 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.FixedUpdatePlayer))]
         private static bool FixedUpdatePlayer_Prefix(Player __instance)
         {
-            if (MPUtility.IsMultiplayerPlayer(__instance)) return false;
+            if (MPUtility.IsMultiplayerPlayer(__instance))
+            {
+                __instance.UpdateAnim();
+                return false;
+            }
             return true;
         }
 

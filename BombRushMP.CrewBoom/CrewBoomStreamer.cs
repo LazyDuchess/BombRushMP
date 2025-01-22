@@ -75,6 +75,11 @@ namespace BombRushMP.CrewBoom
             }
         }
 
+        public static bool HasCharacter(Guid guid)
+        {
+            return BundlePathByGUID.ContainsKey(guid);
+        }
+
         public static CharacterHandle RequestCharacter(Guid guid)
         {
             if (CharacterHandleByGUID.TryGetValue(guid, out var handle))
