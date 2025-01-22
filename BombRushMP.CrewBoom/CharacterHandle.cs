@@ -14,7 +14,7 @@ namespace BombRushMP.CrewBoom
         public GameObject CharacterPrefab { get; private set; } = null;
         public int References { get; private set; } = 0;
         public AudioLibrary AudioLibrary { get; private set; }
-        public bool Finished => _bundle != null || Failed;
+        public bool Finished = false;
         public bool Failed = false;
         public Action OnLoadFinished;
         private AssetBundleCreateRequest _request = null;
@@ -29,15 +29,52 @@ namespace BombRushMP.CrewBoom
         public void LoadAsync(string bundle)
         {
             _request = AssetBundle.LoadFromFileAsync(bundle);
-            _request.completed += OnLoadCompletion;
+            _request.completed += OnAssetBundleLoadCompletion;
         }
 
-        private void OnLoadCompletion(AsyncOperation operation)
+        private AssetBundleRequest _assetRequest;
+
+        private void OnAssetBundleLoadCompletion(AsyncOperation operation)
         {
             _bundle = _request.assetBundle;
             Failed = _bundle == null;
             if (!Failed)
             {
+                _assetRequest = _bundle.LoadAllAssetsAsync<GameObject>();
+                _assetRequest.completed += OnGameObjectsLoadCompletion;
+            }
+            else
+            {
+                Finished = true;
+                OnLoadFinished?.Invoke();
+            }
+        }
+
+        private void OnGameObjectsLoadCompletion(AsyncOperation operation)
+        {
+            var gos = _assetRequest.allAssets;
+            foreach (var obj in gos)
+            {
+                var go = obj as GameObject;
+                if (go == null) continue;
+                var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
+                if (charDef != null)
+                {
+                    CharacterPrefab = go;
+                    AudioLibrary = AudioLibraryUtils.CreateFromCrewBoomCharacterDefinition(charDef);
+                    break;
+                }
+            }
+            Failed = CharacterPrefab != null;
+            Finished = true;
+            OnLoadFinished?.Invoke();
+        }
+
+        public void Load(string bundle)
+        {
+            try
+            {
+                _bundle = AssetBundle.LoadFromFile(bundle);
                 var gos = _bundle.LoadAllAssets<GameObject>();
                 foreach (var go in gos)
                 {
@@ -50,24 +87,12 @@ namespace BombRushMP.CrewBoom
                     }
                 }
             }
-            OnLoadFinished?.Invoke();
-        }
-
-        public void Load(string bundle)
-        {
-            _bundle = AssetBundle.LoadFromFile(bundle);
-            var gos = _bundle.LoadAllAssets<GameObject>();
-            foreach (var go in gos)
+            finally
             {
-                var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
-                if (charDef != null)
-                {
-                    CharacterPrefab = go;
-                    AudioLibrary = AudioLibraryUtils.CreateFromCrewBoomCharacterDefinition(charDef);
-                    break;
-                }
+                Failed = _bundle == null;
+                Finished = true;
+                OnLoadFinished?.Invoke();
             }
-            OnLoadFinished?.Invoke();
         }
 
         public void AddReference()
