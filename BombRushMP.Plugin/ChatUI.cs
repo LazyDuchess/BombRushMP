@@ -191,7 +191,7 @@ namespace BombRushMP.Plugin
                     break;
                 case "streamcb":
                     var playerComp = PlayerComponent.GetLocal();
-                    playerComp.SetStreamedCharacter(args[1]);
+                    playerComp.SetStreamedCharacter(args[1], 0);
                     break;
 #endif
             }

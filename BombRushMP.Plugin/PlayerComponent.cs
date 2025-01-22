@@ -38,7 +38,7 @@ namespace BombRushMP.Plugin
         public Material BMXSpokesMaterial = null;
         public MPMoveStyleSkin MovestyleSkin = null;
         public bool Chibi = false;
-        private CharacterHandle _streamedCharacter = null;
+        public StreamedCharacterInstance StreamedCharacter = null;
 
         public void RefreshSkin()
         {
@@ -56,10 +56,10 @@ namespace BombRushMP.Plugin
                 Destroy(InlineMaterial);
             if (BMXSpokesMaterial != null)
                 Destroy(BMXSpokesMaterial);
-            if (_streamedCharacter != null)
+            if (StreamedCharacter != null)
             {
-                _streamedCharacter.Release();
-                _streamedCharacter = null;
+                StreamedCharacter.Handle.Release();
+                StreamedCharacter = null;
             }
         }
 
@@ -343,28 +343,28 @@ namespace BombRushMP.Plugin
             return ClientController.Instance.LocalPlayerComponent;
         }
 
-        public bool SetStreamedCharacter(string guid)
+        public bool SetStreamedCharacter(string guid, int outfit)
         {
             UnloadStreamedCharacter();
             var charHandle = CrewBoomStreamer.RequestCharacter(guid);
             if (charHandle == null) return false;
-            _streamedCharacter = charHandle;
+            StreamedCharacter = new StreamedCharacterInstance(charHandle);
             ApplyStreamedCharacter();
             return true;
         }
 
         public void UnloadStreamedCharacter()
         {
-            if (_streamedCharacter == null) return;
-            _streamedCharacter.Release();
-            _streamedCharacter = null;
+            if (StreamedCharacter == null) return;
+            StreamedCharacter.Handle.Release();
+            StreamedCharacter = null;
         }
 
         public void ApplyStreamedCharacter()
         {
             if (_player.visualTf != null)
                 GameObject.Destroy(_player.visualTf.gameObject);
-            var visual = _streamedCharacter.ConstructVisual();
+            var visual = StreamedCharacter.Handle.ConstructVisual();
             visual.Init(Characters.NONE, _player.animatorController, true, _player.motor.groundDetection.groundLimit);
             _player.characterVisual = visual;
             _player.characterMesh = _player.characterVisual.mainRenderer.sharedMesh;
@@ -422,6 +422,8 @@ namespace BombRushMP.Plugin
             SpecialSkinVariant = -1;
             SpecialSkin = SpecialSkins.None;
             UpdateSkateOffsets();
+            StreamedCharacter.SetVisual(visual);
+            StreamedCharacter.ApplyOutfit(0);
         }
 
         public void UpdateSkateOffsets()

@@ -21,6 +21,18 @@ namespace BombRushMP.Plugin.Patches
             if (player == null) return true;
             var playerComponent = PlayerComponent.Get(player);
             if (playerComponent == null) return true;
+            if (playerComponent.StreamedCharacter != null)
+            {
+                var lib = playerComponent.StreamedCharacter.AudioLibrary;
+                if (playbackPriority > currentPriority || !audioSource.isPlaying)
+                {
+                    var clip = lib.GetRandom(audioClipID);
+                    if (clip == null) return false;
+                    __instance.PlayNonloopingSfx(audioSource, clip, __instance.mixerGroups[5], 0f);
+                    currentPriority = playbackPriority;
+                }
+                return false;
+            }
             if (playerComponent.SpecialSkin == SpecialSkins.None) return true;
             var library = SpecialSkinManager.Instance.GetAudioLibrary(playerComponent.SpecialSkin);
             if (library == null) return false;

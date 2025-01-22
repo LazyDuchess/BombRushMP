@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common;
+using CommonAPI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace BombRushMP.CrewBoom
     public static class CrewBoomStreamer
     {
         public static int LoadedCharacters => CharacterHandleByGUID.Count;
-        internal static Type CharacterDefinitionType;
+        public static Shader CharacterShader { get; private set; }
         internal static FieldInfo CharacterDefinitionIdField;
         internal static Dictionary<string, CharacterHandle> CharacterHandleByGUID = new();
         private static Dictionary<string, string> BundlePathByGUID = new();
@@ -21,8 +22,7 @@ namespace BombRushMP.CrewBoom
 
         public static void Initialize()
         {
-            CharacterDefinitionType = ReflectionUtility.GetTypeByName("CrewBoomMono.CharacterDefinition");
-            CharacterDefinitionIdField = CharacterDefinitionType.GetField("Id");
+            CharacterDefinitionIdField = CrewBoomTypes.CharacterDefinitionType.GetField("Id");
         }
 
         public static void AddDirectory(string directory)
@@ -32,6 +32,7 @@ namespace BombRushMP.CrewBoom
 
         public static void Reload()
         {
+            CharacterShader = AssetAPI.GetShader(AssetAPI.ShaderNames.AmbientCharacter);
             foreach(var ch in CharacterHandleByGUID)
             {
                 ch.Value.Dispose();
@@ -60,7 +61,7 @@ namespace BombRushMP.CrewBoom
                     var gos = bundle.LoadAllAssets<GameObject>();
                     foreach (var go in gos)
                     {
-                        var charDef = go.GetComponent(CharacterDefinitionType);
+                        var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
                         if (charDef != null)
                         {
                             var id = CharacterDefinitionIdField.GetValue(charDef) as string;

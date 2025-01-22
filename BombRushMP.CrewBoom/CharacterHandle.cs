@@ -22,7 +22,7 @@ namespace BombRushMP.CrewBoom
             var gos = _bundle.LoadAllAssets<GameObject>();
             foreach(var go in gos)
             {
-                var charDef = go.GetComponent(CrewBoomStreamer.CharacterDefinitionType);
+                var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
                 if (charDef != null)
                 {
                     CharacterPrefab = go;

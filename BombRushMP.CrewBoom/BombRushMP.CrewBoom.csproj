@@ -34,5 +34,6 @@
 		  <Publicize>true</Publicize>
 	  </Reference>
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
+    <ProjectReference Include="..\libs\BRC-CommonAPI\CommonAPI.csproj" />
   </ItemGroup>
 </Project>

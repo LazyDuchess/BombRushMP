@@ -26,6 +26,7 @@ namespace BombRushMP.CrewBoom
         public static void Initialize()
         {
             Installed = true;
+            CrewBoomTypes.Initialize();
             var characterDatabase = ReflectionUtility.GetTypeByName("CrewBoom.CharacterDatabase");
             _characterIds = characterDatabase.GetField("_characterIds", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null) as Dictionary<Characters, List<Guid>>;
         }
