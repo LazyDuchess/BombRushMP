@@ -191,13 +191,14 @@ namespace BombRushMP.Plugin
                     break;
                 case "streamcb":
                     var playerComp = PlayerComponent.GetLocal();
-                    var guid = "";
+                    var guid = Guid.Empty;
                     var outfit = 0;
                     if (args.Length > 1)
-                        guid = args[1];
+                        guid = Guid.Parse(args[1]);
                     if (args.Length > 2)
                         outfit = int.Parse(args[2]);
                     playerComp.SetStreamedCharacter(guid, outfit);
+                    ClientController.Instance.SendClientState();
                     break;
 #endif
             }

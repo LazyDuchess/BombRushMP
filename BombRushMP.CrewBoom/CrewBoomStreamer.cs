@@ -16,8 +16,8 @@ namespace BombRushMP.CrewBoom
         public static int LoadedCharacters => CharacterHandleByGUID.Count;
         public static Shader CharacterShader { get; private set; }
         internal static FieldInfo CharacterDefinitionIdField;
-        internal static Dictionary<string, CharacterHandle> CharacterHandleByGUID = new();
-        private static Dictionary<string, string> BundlePathByGUID = new();
+        internal static Dictionary<Guid, CharacterHandle> CharacterHandleByGUID = new();
+        private static Dictionary<Guid, string> BundlePathByGUID = new();
         private static List<string> Directories = new();
 
         public static void Initialize()
@@ -53,7 +53,7 @@ namespace BombRushMP.CrewBoom
                 var txtFile = Path.ChangeExtension(file, ".txt");
                 if (File.Exists(txtFile))
                 {
-                    Register(file, File.ReadAllText(txtFile));
+                    Register(Guid.Parse(File.ReadAllText(txtFile)), file);
                 }
                 else
                 {
@@ -64,9 +64,9 @@ namespace BombRushMP.CrewBoom
                         var charDef = go.GetComponent(CrewBoomTypes.CharacterDefinitionType);
                         if (charDef != null)
                         {
-                            var id = CharacterDefinitionIdField.GetValue(charDef) as string;
-                            Register(file, id);
-                            File.WriteAllText(txtFile, id);
+                            var id = Guid.Parse(CharacterDefinitionIdField.GetValue(charDef) as string);
+                            Register(id, file);
+                            File.WriteAllText(txtFile, id.ToString());
                             break;
                         }
                     }
@@ -75,7 +75,7 @@ namespace BombRushMP.CrewBoom
             }
         }
 
-        public static CharacterHandle RequestCharacter(string guid)
+        public static CharacterHandle RequestCharacter(Guid guid)
         {
             if (CharacterHandleByGUID.TryGetValue(guid, out var handle))
             {
@@ -96,7 +96,7 @@ namespace BombRushMP.CrewBoom
         }
         public static void Tick()
         {
-            var charHandles = new Dictionary<string, CharacterHandle>(CharacterHandleByGUID);
+            var charHandles = new Dictionary<Guid, CharacterHandle>(CharacterHandleByGUID);
             foreach(var handle in charHandles)
             {
                 if (handle.Value.References <= 0)
@@ -107,7 +107,7 @@ namespace BombRushMP.CrewBoom
             }
         }
 
-        private static void Register(string file, string guid)
+        private static void Register(Guid guid, string file)
         {
             BundlePathByGUID[guid] = file;
         }

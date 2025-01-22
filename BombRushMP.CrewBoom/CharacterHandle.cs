@@ -15,11 +15,11 @@ namespace BombRushMP.CrewBoom
         public int References { get; private set; } = 0;
         public AudioLibrary AudioLibrary { get; private set; }
         private AssetBundle _bundle = null;
-        private string _guid = string.Empty;
+        public Guid GUID = Guid.Empty;
 
-        public CharacterHandle(string guid, string bundle)
+        public CharacterHandle(Guid guid, string bundle)
         {
-            _guid = guid;
+            GUID = guid;
             _bundle = AssetBundle.LoadFromFile(bundle);
             var gos = _bundle.LoadAllAssets<GameObject>();
             foreach(var go in gos)

@@ -343,12 +343,13 @@ namespace BombRushMP.Plugin
             return ClientController.Instance.LocalPlayerComponent;
         }
 
-        public bool SetStreamedCharacter(string guid, int outfit)
+        public bool SetStreamedCharacter(Guid guid, int outfit)
         {
             UnloadStreamedCharacter();
             var charHandle = CrewBoomStreamer.RequestCharacter(guid);
             if (charHandle == null) return false;
             StreamedCharacter = new StreamedCharacterInstance(charHandle);
+            StreamedCharacter.Outfit = outfit;
             ApplyStreamedCharacter();
             return true;
         }
@@ -423,7 +424,7 @@ namespace BombRushMP.Plugin
             SpecialSkin = SpecialSkins.None;
             UpdateSkateOffsets();
             StreamedCharacter.SetVisual(visual);
-            StreamedCharacter.ApplyOutfit(0);
+            StreamedCharacter.ApplyOutfit(StreamedCharacter.Outfit);
         }
 
         public void UpdateSkateOffsets()

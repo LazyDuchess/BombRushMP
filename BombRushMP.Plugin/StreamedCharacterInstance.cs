@@ -13,6 +13,7 @@ namespace BombRushMP.Plugin
     public class StreamedCharacterInstance
     {
         public CharacterHandle Handle { get; private set; }
+        public int Outfit = 0;
         private CharacterVisual _visual;
         private object _charDef;
 
@@ -29,6 +30,7 @@ namespace BombRushMP.Plugin
 
         public void ApplyOutfit(int outfitIndex)
         {
+            Outfit = outfitIndex;
             var fits = CrewBoomTypes.CharacterDefinitionOutfitsField.GetValue(_charDef) as object[];
             var fit = fits[outfitIndex];
             var materialContainers = CrewBoomTypes.CharacterOutfitMaterialContainersField.GetValue(fit) as object[];
