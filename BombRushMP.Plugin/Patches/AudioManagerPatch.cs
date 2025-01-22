@@ -23,7 +23,7 @@ namespace BombRushMP.Plugin.Patches
             if (playerComponent == null) return true;
             if (playerComponent.StreamedCharacter != null)
             {
-                var lib = playerComponent.StreamedCharacter.AudioLibrary;
+                var lib = playerComponent.StreamedCharacter.Handle.AudioLibrary;
                 if (playbackPriority > currentPriority || !audioSource.isPlaying)
                 {
                     var clip = lib.GetRandom(audioClipID);

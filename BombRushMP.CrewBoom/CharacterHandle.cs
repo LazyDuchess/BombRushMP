@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Reptile;
+using BombRushMP.PluginCommon;
 
 namespace BombRushMP.CrewBoom
 {
@@ -12,6 +13,7 @@ namespace BombRushMP.CrewBoom
     {
         public GameObject CharacterPrefab { get; private set; } = null;
         public int References { get; private set; } = 0;
+        public AudioLibrary AudioLibrary { get; private set; }
         private AssetBundle _bundle = null;
         private string _guid = string.Empty;
 
@@ -26,6 +28,7 @@ namespace BombRushMP.CrewBoom
                 if (charDef != null)
                 {
                     CharacterPrefab = go;
+                    AudioLibrary = AudioLibraryUtils.CreateFromCrewBoomCharacterDefinition(charDef);
                     break;
                 }
             }

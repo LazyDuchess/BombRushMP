@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using BombRushMP.PluginCommon;
 
 namespace BombRushMP.Plugin
 {
     public class StreamedCharacterInstance
     {
         public CharacterHandle Handle { get; private set; }
-        public AudioLibrary AudioLibrary { get; private set; }
         private CharacterVisual _visual;
         private object _charDef;
 
@@ -25,7 +25,6 @@ namespace BombRushMP.Plugin
         {
             _visual = visual;
             _charDef = visual.GetComponentInChildren(CrewBoomTypes.CharacterDefinitionType);
-            AudioLibrary = AudioLibrary.CreateFromCrewBoomCharacterDefinition(_charDef);
         }
 
         public void ApplyOutfit(int outfitIndex)

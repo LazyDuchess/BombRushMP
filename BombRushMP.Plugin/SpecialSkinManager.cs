@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using BombRushMP.Common;
+using BombRushMP.PluginCommon;
 
 namespace BombRushMP.Plugin
 {
@@ -38,7 +39,7 @@ namespace BombRushMP.Plugin
         {
             var prefab = _assets.Bundle.LoadAsset<GameObject>(prefabName);
             var definition = prefab.GetComponent<SpecialSkinDefinition>();
-            var library = AudioLibrary.CreateFromSpecialSkin(definition);
+            var library = AudioLibraryUtils.CreateFromSpecialSkin(definition);
             _specialSkinAudio[skinEnum] = library;
             var prefabInstance = GameObject.Instantiate<GameObject>(prefab);
             var visual = new GameObject($"{skinEnum} Visual");
