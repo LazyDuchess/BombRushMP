@@ -281,7 +281,7 @@ namespace BombRushMP.Plugin
             var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
             var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
 
-            if (Teleporting || hidden)
+            if (Teleporting)
             {
                 Teleporting = false;
                 Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
