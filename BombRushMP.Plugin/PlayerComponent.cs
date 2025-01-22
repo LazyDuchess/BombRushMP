@@ -345,14 +345,7 @@ namespace BombRushMP.Plugin
         public bool SetStreamedCharacter(Guid guid, int outfit)
         {
             if (StreamedCharacterHandle != null)
-            {
-                StreamedCharacterHandle.OnLoadFinished -= OnSkinLoadFinished;
-                if (StreamedCharacter == null || StreamedCharacter.Handle != StreamedCharacterHandle)
-                {
-                    StreamedCharacterHandle.Release();
-                    StreamedCharacterHandle = null;
-                }
-            }
+                StreamedCharacterHandle.Release();
             StreamedCharacterHandle = CrewBoomStreamer.RequestCharacter(guid, MPSettings.Instance.LoadCharactersAsync);
             StreamedOutfit = outfit;
             if (StreamedCharacterHandle == null) return false;
@@ -367,7 +360,7 @@ namespace BombRushMP.Plugin
             return true;
         }
 
-        private void UnloadPreviousStreamedCharacter()
+        private void UnloadShownStreamedCharacter()
         {
             if (StreamedCharacter != null)
             {
@@ -384,10 +377,11 @@ namespace BombRushMP.Plugin
                 StreamedCharacterHandle.Release();
                 StreamedCharacterHandle = null;
             }
-            if (StreamedCharacter != null && StreamedCharacter.Handle != StreamedCharacterHandle)
-                UnloadPreviousStreamedCharacter();
             if (StreamedCharacter != null)
+            {
+                UnloadShownStreamedCharacter();
                 StreamedCharacter = null;
+            }
         }
 
         public void ApplyStreamedCharacter()
@@ -473,7 +467,7 @@ namespace BombRushMP.Plugin
 
         private void OnSkinLoadFinished()
         {
-            UnloadPreviousStreamedCharacter();
+            UnloadShownStreamedCharacter();
             StreamedCharacter = new StreamedCharacterInstance(StreamedCharacterHandle);
             StreamedCharacter.Outfit = StreamedOutfit;
             ApplyStreamedCharacter();

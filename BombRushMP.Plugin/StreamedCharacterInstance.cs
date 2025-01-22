@@ -20,6 +20,7 @@ namespace BombRushMP.Plugin
         public StreamedCharacterInstance(CharacterHandle handle)
         {
             Handle = handle;
+            Handle.AddReference();
         }
 
         public void SetVisual(CharacterVisual visual)
