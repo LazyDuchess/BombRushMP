@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.CrewBoom;
 using Reptile;
 using TMPro;
 using UnityEngine;
@@ -95,6 +96,7 @@ namespace BombRushMP.Plugin
             _curAnimLabel.text += $"Players Rendered (High): {RenderStats.PlayersRendered}\n";
             _curAnimLabel.text += $"Players Rendered (Low): {RenderStats.PlayersRenderedLOD}\n";
             _curAnimLabel.text += $"Players Culled: {RenderStats.PlayersCulled}\n";
+            _curAnimLabel.text += $"Loaded Characters: {CrewBoomStreamer.LoadedCharacters}\n";
         }
 
         public static void Create()

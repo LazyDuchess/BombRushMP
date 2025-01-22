@@ -21,9 +21,18 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.27" IncludeAssets="compile" />
+	  <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
+	  <Reference Include="Assembly-CSharp">
+		  <HintPath>$(ManagedPath)/Assembly-CSharp.dll</HintPath>
+		  <Private>false</Private>
+		  <Publicize>true</Publicize>
+	  </Reference>
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
   </ItemGroup>
 </Project>

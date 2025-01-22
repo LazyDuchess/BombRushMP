@@ -11,6 +11,7 @@ using UnityEngine.UIElements;
 using ch.sycoforge.Decal.Projectors.Geometry;
 using System.Drawing.Text;
 using HarmonyLib;
+using BombRushMP.CrewBoom;
 
 namespace BombRushMP.Plugin
 {
@@ -37,6 +38,7 @@ namespace BombRushMP.Plugin
         public Material BMXSpokesMaterial = null;
         public MPMoveStyleSkin MovestyleSkin = null;
         public bool Chibi = false;
+        private CharacterHandle _streamedCharacter = null;
 
         public void RefreshSkin()
         {
@@ -54,6 +56,11 @@ namespace BombRushMP.Plugin
                 Destroy(InlineMaterial);
             if (BMXSpokesMaterial != null)
                 Destroy(BMXSpokesMaterial);
+            if (_streamedCharacter != null)
+            {
+                _streamedCharacter.Release();
+                _streamedCharacter = null;
+            }
         }
 
         public void ApplyMoveStyleMaterial(Material[] customMaterials)
@@ -336,6 +343,86 @@ namespace BombRushMP.Plugin
             return ClientController.Instance.LocalPlayerComponent;
         }
 
+        public bool SetStreamedCharacter(string guid)
+        {
+            UnloadStreamedCharacter();
+            var charHandle = CrewBoomStreamer.RequestCharacter(guid);
+            if (charHandle == null) return false;
+            _streamedCharacter = charHandle;
+            ApplyStreamedCharacter();
+            return true;
+        }
+
+        public void UnloadStreamedCharacter()
+        {
+            if (_streamedCharacter == null) return;
+            _streamedCharacter.Release();
+            _streamedCharacter = null;
+        }
+
+        public void ApplyStreamedCharacter()
+        {
+            if (_player.visualTf != null)
+                GameObject.Destroy(_player.visualTf.gameObject);
+            var visual = _streamedCharacter.ConstructVisual();
+            visual.Init(Characters.NONE, _player.animatorController, true, _player.motor.groundDetection.groundLimit);
+            _player.characterVisual = visual;
+            _player.characterMesh = _player.characterVisual.mainRenderer.sharedMesh;
+            _player.characterVisual.transform.SetParent(_player.transform.GetChild(0), false);
+            _player.characterVisual.transform.localPosition = Vector3.zero;
+            _player.characterVisual.transform.rotation = Quaternion.LookRotation(_player.transform.forward);
+            _player.characterVisual.anim.gameObject.AddComponent<AnimationEventRelay>().Init();
+            _player.visualTf = _player.characterVisual.transform;
+            _player.headTf = _player.visualTf.FindRecursive("head");
+            _player.phoneDirBone = _player.visualTf.FindRecursive("phoneDirection");
+            _player.heightToHead = (_player.headTf.position - _player.visualTf.position).y;
+            _player.anim = _player.characterVisual.anim;
+            if (_player.curAnim != 0)
+            {
+                var anim = _player.curAnim;
+                _player.curAnim = 0;
+                _player.PlayAnim(anim, false, false, -1f);
+            }
+            _player.characterVisual.InitVFX(_player.VFXPrefabs);
+            _player.characterVisual.InitMoveStyleProps(_player.MoveStylePropsPrefabs);
+            _player.characterConstructor.SetMoveStyleSkinsForCharacter(_player, _player.character);
+            if (_player.characterVisual.hasEffects)
+            {
+                _player.boostpackTrail = _player.characterVisual.VFX.boostpackTrail.GetComponent<TrailRenderer>();
+                _player.boostpackTrailDefaultWidth = _player.boostpackTrail.startWidth;
+                _player.boostpackTrailDefaultTime = _player.boostpackTrail.time;
+                _player.spraypaintParticles = _player.characterVisual.VFX.spraypaint.GetComponent<ParticleSystem>();
+                _player.characterVisual.VFX.spraypaint.transform.localScale = Vector3.one * 0.5f;
+                _player.SetDustEmission(0);
+                _player.ringParticles = _player.characterVisual.VFX.ring.GetComponent<ParticleSystem>();
+                _player.SetRingEmission(0);
+            }
+            var wasMovestyleEquipped = _player.usingEquippedMovestyle;
+            _player.SetCurrentMoveStyleEquipped(_player.moveStyleEquipped, true, true);
+            _player.InitVisual();
+            RefreshSkin();
+            if (!wasMovestyleEquipped)
+                _player.SetMoveStyle(MoveStyle.ON_FOOT, true, true);
+            if (!_player.isAI)
+            {
+                var saveData = MPSaveData.Instance.GetCharacterData(_player.character);
+                if (saveData.MPMoveStyleSkin != -1)
+                {
+                    var mpUnlockManager = MPUnlockManager.Instance;
+                    if (mpUnlockManager.UnlockByID.ContainsKey(saveData.MPMoveStyleSkin))
+                    {
+                        var mskin = mpUnlockManager.UnlockByID[saveData.MPMoveStyleSkin] as MPMoveStyleSkin;
+                        if (mskin != null)
+                            mskin.ApplyToPlayer(_player);
+                    }
+                }
+            }
+            _player.usingEquippedMovestyle = false;
+            MainRenderer = null;
+            SpecialSkinVariant = -1;
+            SpecialSkin = SpecialSkins.None;
+        }
+
         private static int MainTexId = Shader.PropertyToID("_MainTex");
 
         public void MakeLOD()
@@ -359,9 +446,13 @@ namespace BombRushMP.Plugin
                                 transp = false;
                             if (renderer.sharedMaterials[i].HasProperty(MainTexId))
                             {
-                                var propBlock = new MaterialPropertyBlock();
-                                propBlock.SetTexture(MainTexId, renderer.sharedMaterials[i].GetTexture(MainTexId));
-                                renderer.SetPropertyBlock(propBlock, i);
+                                var mainTex = renderer.sharedMaterials[i].GetTexture(MainTexId);
+                                if (mainTex != null)
+                                {
+                                    var propBlock = new MaterialPropertyBlock();
+                                    propBlock.SetTexture(MainTexId, mainTex);
+                                    renderer.SetPropertyBlock(propBlock, i);
+                                }
                             }
                         }
                     }

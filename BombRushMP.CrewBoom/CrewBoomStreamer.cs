@@ -12,10 +12,67 @@ namespace BombRushMP.CrewBoom
 {
     public static class CrewBoomStreamer
     {
+        public static int LoadedCharacters => CharacterHandleByGUID.Count;
         internal static Type CharacterDefinitionType;
         internal static FieldInfo CharacterDefinitionIdField;
         internal static Dictionary<string, CharacterHandle> CharacterHandleByGUID = new();
         private static Dictionary<string, string> BundlePathByGUID = new();
+        private static List<string> Directories = new();
+
+        public static void Initialize()
+        {
+            CharacterDefinitionType = ReflectionUtility.GetTypeByName("CrewBoomMono.CharacterDefinition");
+            CharacterDefinitionIdField = CharacterDefinitionType.GetField("Id");
+        }
+
+        public static void AddDirectory(string directory)
+        {
+            Directories.Add(directory);
+        }
+
+        public static void Reload()
+        {
+            foreach(var ch in CharacterHandleByGUID)
+            {
+                ch.Value.Dispose();
+            }
+            CharacterHandleByGUID.Clear();
+            BundlePathByGUID.Clear();
+            foreach(var directory in Directories)
+            {
+                LoadFromDirectory(directory);
+            }
+        }
+
+        public static void LoadFromDirectory(string directory)
+        {
+            var cbbFiles = Directory.GetFiles(directory, "*.cbb", SearchOption.AllDirectories);
+            foreach (var file in cbbFiles)
+            {
+                var txtFile = Path.ChangeExtension(file, ".txt");
+                if (File.Exists(txtFile))
+                {
+                    Register(file, File.ReadAllText(txtFile));
+                }
+                else
+                {
+                    var bundle = AssetBundle.LoadFromFile(file);
+                    var gos = bundle.LoadAllAssets<GameObject>();
+                    foreach (var go in gos)
+                    {
+                        var charDef = go.GetComponent(CharacterDefinitionType);
+                        if (charDef != null)
+                        {
+                            var id = CharacterDefinitionIdField.GetValue(charDef) as string;
+                            Register(file, id);
+                            File.WriteAllText(txtFile, id);
+                            break;
+                        }
+                    }
+                    bundle.Unload(true);
+                }
+            }
+        }
 
         public static CharacterHandle RequestCharacter(string guid)
         {
@@ -36,35 +93,15 @@ namespace BombRushMP.CrewBoom
             }
             return null;
         }
-
-        public static void Initialize(string cbbDirectory)
+        public static void Tick()
         {
-            CharacterDefinitionType = ReflectionUtility.GetTypeByName("CrewBoomMono.CharacterDefinition");
-            CharacterDefinitionIdField = CharacterDefinitionType.GetField("Id");
-            var cbbFiles = Directory.GetFiles(cbbDirectory, "*.cbb", SearchOption.AllDirectories);
-            foreach(var file in cbbFiles)
+            var charHandles = new Dictionary<string, CharacterHandle>(CharacterHandleByGUID);
+            foreach(var handle in charHandles)
             {
-                var txtFile = Path.ChangeExtension(file, ".txt");
-                if (File.Exists(txtFile))
+                if (handle.Value.References <= 0)
                 {
-                    Register(file, File.ReadAllText(txtFile));
-                }
-                else
-                {
-                    var bundle = AssetBundle.LoadFromFile(file);
-                    var gos = bundle.LoadAllAssets<GameObject>();
-                    foreach(var go in gos)
-                    {
-                        var charDef = go.GetComponent(CharacterDefinitionType);
-                        if (charDef != null)
-                        {
-                            var id = CharacterDefinitionIdField.GetValue(charDef) as string;
-                            Register(file, id);
-                            File.WriteAllText(txtFile, id);
-                            break;
-                        }
-                    }
-                    bundle.Unload(true);
+                    handle.Value.Dispose();
+                    CharacterHandleByGUID.Remove(handle.Key);
                 }
             }
         }

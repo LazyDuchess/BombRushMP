@@ -54,9 +54,10 @@ namespace BombRushMP.Plugin
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
             {
                 CrewBoomSupport.Initialize();
+                CrewBoomStreamer.Initialize();
                 var cbFolder = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "CrewBoom");
                 Directory.CreateDirectory(cbFolder);
-                CrewBoomStreamer.Initialize(cbFolder);
+                CrewBoomStreamer.AddDirectory(cbFolder);
             }
             if (Chainloader.PluginInfos.ContainsKey("MapStation.Plugin"))
             {
@@ -74,6 +75,11 @@ namespace BombRushMP.Plugin
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
             ReflectionController.Initialize();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private void Update()
+        {
+            CrewBoomStreamer.Tick();
         }
 
         private void InitializePhone()
@@ -98,6 +104,8 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
+            if (CrewBoomSupport.Installed)
+                CrewBoomStreamer.Reload();
             var addr = MPSettings.Instance.ServerAddress;
             var authKey = MPSettings.Instance.AuthKey;
             if (_selfHosting)

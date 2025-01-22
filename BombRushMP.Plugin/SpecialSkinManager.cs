@@ -68,6 +68,7 @@ namespace BombRushMP.Plugin
         {
             var playerComponent = PlayerComponent.Get(player);
             if (playerComponent.SpecialSkin == SpecialSkins.None) return;
+            playerComponent.UnloadStreamedCharacter();
             playerComponent.SpecialSkin = SpecialSkins.None;
             playerComponent.MainRenderer = null;
             playerComponent.SpecialSkinVariant = -1;
@@ -170,6 +171,7 @@ namespace BombRushMP.Plugin
                 }
             }
             var playerComponent = PlayerComponent.Get(player);
+            playerComponent.UnloadStreamedCharacter();
             playerComponent.SpecialSkin = skin;
             player.usingEquippedMovestyle = false;
             var definition = GetDefinition(skin);

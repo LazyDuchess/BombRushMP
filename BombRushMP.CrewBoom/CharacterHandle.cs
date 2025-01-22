@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Reptile;
 
 namespace BombRushMP.CrewBoom
 {
-    public class CharacterHandle
+    public class CharacterHandle : IDisposable
     {
         public GameObject CharacterPrefab { get; private set; } = null;
         public int References { get; private set; } = 0;
@@ -38,14 +39,25 @@ namespace BombRushMP.CrewBoom
         public void Release()
         {
             References--;
-            UpdateDeletion();
         }
 
-        private void UpdateDeletion()
+        public void Dispose()
         {
-            if (References > 0) return;
-            CrewBoomStreamer.CharacterHandleByGUID.Remove(_guid);
-            _bundle.Unload(true);
+            if (_bundle != null)
+            {
+                _bundle.Unload(true);
+                _bundle = null;
+            }
+        }
+
+        public CharacterVisual ConstructVisual()
+        {
+            var prefabInstance = GameObject.Instantiate(CharacterPrefab);
+            var visual = new GameObject($"{CharacterPrefab.name} Visual");
+            prefabInstance.transform.SetParent(visual.transform, false);
+            prefabInstance.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            var visualComp = visual.AddComponent<CharacterVisual>();
+            return visualComp;
         }
     }
 }
