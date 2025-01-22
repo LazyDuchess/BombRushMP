@@ -491,6 +491,7 @@ namespace BombRushMP.Plugin
                 {
                     PlayerComponent.StreamedCharacter.ApplyOutfit(fit);
                 }
+                PlayerComponent.StreamedOutfit = fit;
                 Outfit = fit;
             }
 

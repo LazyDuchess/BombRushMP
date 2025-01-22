@@ -56,11 +56,7 @@ namespace BombRushMP.Plugin
                 Destroy(InlineMaterial);
             if (BMXSpokesMaterial != null)
                 Destroy(BMXSpokesMaterial);
-            if (StreamedCharacter != null)
-            {
-                StreamedCharacter.Handle.Release();
-                StreamedCharacter = null;
-            }
+            UnloadStreamedCharacter();
         }
 
         public void ApplyMoveStyleMaterial(Material[] customMaterials)
@@ -343,22 +339,36 @@ namespace BombRushMP.Plugin
             return ClientController.Instance.LocalPlayerComponent;
         }
 
+        public CharacterHandle StreamedCharacterHandle = null;
+        public int StreamedOutfit;
+
         public bool SetStreamedCharacter(Guid guid, int outfit)
         {
             UnloadStreamedCharacter();
-            var charHandle = CrewBoomStreamer.RequestCharacter(guid);
-            if (charHandle == null) return false;
-            StreamedCharacter = new StreamedCharacterInstance(charHandle);
-            StreamedCharacter.Outfit = outfit;
-            ApplyStreamedCharacter();
+            StreamedCharacterHandle = CrewBoomStreamer.RequestCharacter(guid);
+            StreamedOutfit = outfit;
+            if (StreamedCharacterHandle == null) return false;
+            if (StreamedCharacterHandle.Finished)
+            {
+                OnSkinLoadFinished();
+            }
+            else
+            {
+                StreamedCharacterHandle.OnLoadFinished += OnSkinLoadFinished;
+            }
             return true;
         }
 
         public void UnloadStreamedCharacter()
         {
-            if (StreamedCharacter == null) return;
-            StreamedCharacter.Handle.Release();
-            StreamedCharacter = null;
+            if (StreamedCharacterHandle != null)
+            {
+                StreamedCharacterHandle.OnLoadFinished -= OnSkinLoadFinished;
+                StreamedCharacterHandle.Release();
+                StreamedCharacterHandle = null;
+            }
+            if (StreamedCharacter != null)
+                StreamedCharacter = null;
         }
 
         public void ApplyStreamedCharacter()
@@ -440,6 +450,13 @@ namespace BombRushMP.Plugin
                 _player.characterVisual.moveStyleProps.skateR.transform.SetLocalPositionAndRotation(inlineOffsetR.localPosition, inlineOffsetR.localRotation);
                 _player.characterVisual.moveStyleProps.skateR.transform.localScale = inlineOffsetR.localScale;
             }
+        }
+
+        private void OnSkinLoadFinished()
+        {
+            StreamedCharacter = new StreamedCharacterInstance(StreamedCharacterHandle);
+            StreamedCharacter.Outfit = StreamedOutfit;
+            ApplyStreamedCharacter();
         }
 
         private static int MainTexId = Shader.PropertyToID("_MainTex");

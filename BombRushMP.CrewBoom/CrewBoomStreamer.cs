@@ -103,7 +103,8 @@ namespace BombRushMP.CrewBoom
             {
                 if (BundlePathByGUID.TryGetValue(guid, out var path))
                 {
-                    var newHandle = new CharacterHandle(guid, path);
+                    var newHandle = new CharacterHandle(guid);
+                    newHandle.LoadAsync(path);
                     newHandle.AddReference();
                     CharacterHandleByGUID[guid] = newHandle;
                     return newHandle;
@@ -116,7 +117,7 @@ namespace BombRushMP.CrewBoom
             var charHandles = new Dictionary<Guid, CharacterHandle>(CharacterHandleByGUID);
             foreach(var handle in charHandles)
             {
-                if (handle.Value.References <= 0)
+                if (handle.Value.References <= 0 && handle.Value.Finished)
                 {
                     handle.Value.Dispose();
                     CharacterHandleByGUID.Remove(handle.Key);

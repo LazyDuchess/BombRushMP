@@ -638,10 +638,10 @@ namespace BombRushMP.Plugin
             if (CrewBoomSupport.Installed)
             {
                 statePacket.CrewBoomCharacter = CrewBoomSupport.GetGuidForCharacter(player.character);
-                if (playerComp.StreamedCharacter != null)
+                if (playerComp.StreamedCharacterHandle != null)
                 {
-                    statePacket.CrewBoomCharacter = playerComp.StreamedCharacter.Handle.GUID;
-                    statePacket.Outfit = (byte)playerComp.StreamedCharacter.Outfit;
+                    statePacket.CrewBoomCharacter = playerComp.StreamedCharacterHandle.GUID;
+                    statePacket.Outfit = (byte)playerComp.StreamedOutfit;
                 }
             }
             return statePacket;
