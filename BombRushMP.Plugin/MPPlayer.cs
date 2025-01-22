@@ -386,7 +386,7 @@ namespace BombRushMP.Plugin
 
             if (useStreamedCharacter)
             {
-                PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit, (Characters)ClientState.FallbackCharacter, ClientState.FallbackOutfit);
+                PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit);
                 Outfit = fit;
             }
             else
@@ -490,7 +490,7 @@ namespace BombRushMP.Plugin
             {
                 if (PlayerComponent.StreamedCharacter == null || PlayerComponent.StreamedCharacter.Handle.GUID != ClientState.CrewBoomCharacter)
                 {
-                    PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit, (Characters)ClientState.FallbackCharacter, ClientState.FallbackOutfit);
+                    PlayerComponent.SetStreamedCharacter(ClientState.CrewBoomCharacter, fit);
                 }
                 if (PlayerComponent.StreamedCharacter != null && PlayerComponent.StreamedCharacter.Outfit != fit)
                 {
