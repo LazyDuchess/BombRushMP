@@ -345,7 +345,7 @@ namespace BombRushMP.Plugin
         public bool SetStreamedCharacter(Guid guid, int outfit)
         {
             UnloadStreamedCharacter();
-            StreamedCharacterHandle = CrewBoomStreamer.RequestCharacter(guid);
+            StreamedCharacterHandle = CrewBoomStreamer.RequestCharacter(guid, MPSettings.Instance.LoadCharactersAsync);
             StreamedOutfit = outfit;
             if (StreamedCharacterHandle == null) return false;
             if (StreamedCharacterHandle.Finished)

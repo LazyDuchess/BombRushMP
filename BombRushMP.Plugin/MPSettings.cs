@@ -559,6 +559,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool LoadCharactersAsync
+        {
+            get
+            {
+                return _loadCharactersAsync.Value;
+            }
+
+            set
+            {
+                _loadCharactersAsync.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -610,6 +623,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateClientController;
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
+        private ConfigEntry<bool> _loadCharactersAsync;
 #endif
         private string _savePath;
         private ConfigFile _configFile;
@@ -623,6 +637,7 @@ namespace BombRushMP.Plugin
         private const string Advanced = "7. Advanced";
         private const string Server = "8. Server";
         private const string Optimization = "9. Optimization";
+        private const string CrewBoom = "10. CrewBoom";
         private const string MainServerAddress = "free.soulisall.city";
         public const string DefaultName = "Goofiest Gooner";
 
@@ -707,6 +722,7 @@ namespace BombRushMP.Plugin
             _playerLodDistance = configFile.Bind(Optimization, "Player LOD distance", 2500f, "Distance at which players will render at a lower quality to save on resources.");
             _hidePlayersInInactiveChunks = configFile.Bind(Optimization, "Cull Players in inactive chunks", true, "Whether to cull players that are at culled stage chunks to save on resources.");
             _optimizeOnePlayerAtATime = configFile.Bind(Optimization, "Optimize one Player at a time", true, "Only update visibility and LODs for one player at a time, to avoid stutters.");
+            _loadCharactersAsync = configFile.Bind(CrewBoom, "Load Characters Async", true, "Loads characters from your ACN CrewBoom folder asynchronously to prevent stutters.");
         }
 
         public void Save()

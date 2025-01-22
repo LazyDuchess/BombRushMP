@@ -92,7 +92,7 @@ namespace BombRushMP.CrewBoom
             return BundlePathByGUID.ContainsKey(guid);
         }
 
-        public static CharacterHandle RequestCharacter(Guid guid)
+        public static CharacterHandle RequestCharacter(Guid guid, bool isAsync)
         {
             if (CharacterHandleByGUID.TryGetValue(guid, out var handle))
             {
@@ -104,7 +104,10 @@ namespace BombRushMP.CrewBoom
                 if (BundlePathByGUID.TryGetValue(guid, out var path))
                 {
                     var newHandle = new CharacterHandle(guid);
-                    newHandle.LoadAsync(path);
+                    if (isAsync)
+                        newHandle.LoadAsync(path);
+                    else
+                        newHandle.Load(path);
                     newHandle.AddReference();
                     CharacterHandleByGUID[guid] = newHandle;
                     return newHandle;
