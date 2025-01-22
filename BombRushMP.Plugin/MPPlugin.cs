@@ -54,6 +54,9 @@ namespace BombRushMP.Plugin
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
             {
                 CrewBoomSupport.Initialize();
+                var cbFolder = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "CrewBoom");
+                Directory.CreateDirectory(cbFolder);
+                CrewBoomStreamer.Initialize(cbFolder);
             }
             if (Chainloader.PluginInfos.ContainsKey("MapStation.Plugin"))
             {

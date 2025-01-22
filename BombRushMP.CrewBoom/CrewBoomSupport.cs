@@ -20,6 +20,7 @@ namespace BombRushMP.CrewBoom
         private static MethodInfo _customCharactersTryGetValueMethod;
         private static PropertyInfo _customCharacterDefinitionProperty;
         private static FieldInfo _characterDefinitionIdField;
+        
         public static void Initialize()
         {
             Installed = true;
