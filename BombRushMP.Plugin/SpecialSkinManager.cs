@@ -114,6 +114,7 @@ namespace BombRushMP.Plugin
                 RemoveSpecialSkinFromPlayer(player);
                 return;
             }
+            player.character = Characters.metalHead;
             if (player.visualTf != null)
                 GameObject.Destroy(player.visualTf.gameObject);
             var visual = GameObject.Instantiate<GameObject>(_specialSkinVisuals[skin]).AddComponent<CharacterVisual>();

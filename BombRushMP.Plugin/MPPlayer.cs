@@ -390,9 +390,12 @@ namespace BombRushMP.Plugin
             }
             else
             {
-                Player.SetCharacter(chara, fit);
-                Player.InitVisual();
-                Outfit = fit;
+                if (ClientState.SpecialSkin == SpecialSkins.None)
+                {
+                    Player.SetCharacter(chara, fit);
+                    Player.InitVisual();
+                    Outfit = fit;
+                }
                 SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(Player, ClientState.SpecialSkin);
                 SpecialSkinManager.Instance.ApplySpecialSkinVariantToPlayer(Player, ClientState.SpecialSkinVariant);
             }
@@ -463,7 +466,7 @@ namespace BombRushMP.Plugin
 
             PlayerComponent.Chibi = ClientVisualState.Chibi;
 
-            if (Player.character != chara && !useStreamedCharacter)
+            if (Player.character != chara && !useStreamedCharacter && ClientState.SpecialSkin == SpecialSkins.None)
             {
                 Player.RemoveGraffitiSlash();
                 Player.SetCharacter(chara, fit);
@@ -472,7 +475,7 @@ namespace BombRushMP.Plugin
                 justCreated = true;
             }
 
-            if (Outfit != fit && !useStreamedCharacter)
+            if (Outfit != fit && !useStreamedCharacter && ClientState.SpecialSkin == SpecialSkins.None)
             {
                 Player.SetOutfit(fit);
                 Outfit = fit;

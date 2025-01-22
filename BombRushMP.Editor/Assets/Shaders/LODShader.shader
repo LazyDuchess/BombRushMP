@@ -3,6 +3,7 @@ Shader "All City Network/LODShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _Color ("Color", Color) = (1, 1, 1, 1)
     }
     SubShader
     {
@@ -70,6 +71,7 @@ Shader "All City Network/LODShader"
             half4 _MainTex_ST;
             half4 LightColor;
             half4 ShadowColor;
+            half4 _Color;
 
             v2f vert (appdata v)
             {
@@ -82,7 +84,7 @@ Shader "All City Network/LODShader"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                half4 col = tex2D(_MainTex, i.uv);
+                half4 col = tex2D(_MainTex, i.uv) * _Color;
                 clip(col.a - 0.9);
                 half3 lightCol = LightColor.rgb * _LightColor0.rgb;
                 half3 shadCol = ShadowColor.rgb * _LightColor0.rgb;

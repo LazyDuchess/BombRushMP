@@ -363,6 +363,7 @@ namespace BombRushMP.Plugin
 
         public void ApplyStreamedCharacter()
         {
+            _player.character = Characters.metalHead;
             if (_player.visualTf != null)
                 GameObject.Destroy(_player.visualTf.gameObject);
             var visual = StreamedCharacter.Handle.ConstructVisual();
@@ -442,6 +443,7 @@ namespace BombRushMP.Plugin
         }
 
         private static int MainTexId = Shader.PropertyToID("_MainTex");
+        private static int ColorId = Shader.PropertyToID("_Color");
 
         public void MakeLOD()
         {
@@ -462,16 +464,24 @@ namespace BombRushMP.Plugin
                         {
                             if (renderer.sharedMaterials[i].renderQueue < 3000)
                                 transp = false;
+                            var propBlock = new MaterialPropertyBlock();
                             if (renderer.sharedMaterials[i].HasProperty(MainTexId))
                             {
                                 var mainTex = renderer.sharedMaterials[i].GetTexture(MainTexId);
                                 if (mainTex != null)
                                 {
-                                    var propBlock = new MaterialPropertyBlock();
                                     propBlock.SetTexture(MainTexId, mainTex);
-                                    renderer.SetPropertyBlock(propBlock, i);
                                 }
                             }
+                            if (renderer.sharedMaterials[i].HasProperty(ColorId))
+                            {
+                                var color = renderer.sharedMaterials[i].GetColor(ColorId);
+                                if (color != null)
+                                {
+                                    propBlock.SetColor(ColorId, color);
+                                }
+                            }
+                            renderer.SetPropertyBlock(propBlock, i);
                         }
                     }
                     if (transp && renderer != _player.characterVisual.mainRenderer)
