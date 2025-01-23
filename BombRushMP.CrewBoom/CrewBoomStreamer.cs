@@ -31,9 +31,13 @@ namespace BombRushMP.CrewBoom
             Directories.Add(directory);
         }
 
-        public static void Reload()
+        public static void ReloadResources()
         {
             CharacterShader = AssetAPI.GetShader(AssetAPI.ShaderNames.AmbientCharacter);
+        }
+
+        public static void ReloadCharacters()
+        {
             foreach(var ch in CharacterHandleByGUID)
             {
                 ch.Value.Dispose();

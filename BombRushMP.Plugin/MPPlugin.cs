@@ -106,12 +106,13 @@ namespace BombRushMP.Plugin
         {
             if (CrewBoomSupport.Installed)
             {
+                CrewBoomStreamer.ReloadResources();
                 if (!MPSettings.Instance.ReloadCharactersInLoadingScreens && CrewBoomStreamer.AlreadyLoadedThisSession)
                 {
                     //wao
                 }
                 else
-                    CrewBoomStreamer.Reload();
+                    CrewBoomStreamer.ReloadCharacters();
             }
             var addr = MPSettings.Instance.ServerAddress;
             var authKey = MPSettings.Instance.AuthKey;
