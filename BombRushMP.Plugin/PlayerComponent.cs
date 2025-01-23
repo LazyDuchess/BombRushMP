@@ -39,6 +39,7 @@ namespace BombRushMP.Plugin
         public MPMoveStyleSkin MovestyleSkin = null;
         public bool Chibi = false;
         public StreamedCharacterInstance StreamedCharacter = null;
+        public Action SkinLoaded;
 
         public void RefreshSkin()
         {
@@ -471,6 +472,7 @@ namespace BombRushMP.Plugin
             StreamedCharacter = new StreamedCharacterInstance(StreamedCharacterHandle);
             StreamedCharacter.Outfit = StreamedOutfit;
             ApplyStreamedCharacter();
+            SkinLoaded?.Invoke();
         }
 
         private static int MainTexId = Shader.PropertyToID("_MainTex");

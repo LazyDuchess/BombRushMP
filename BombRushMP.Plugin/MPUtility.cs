@@ -149,6 +149,7 @@ namespace BombRushMP.Plugin
                     audio.dopplerLevel = 0f;
                 }
             }
+            PlayerComponent.Get(player).SkinLoaded += multiplayerPlayer.OnSkinLoaded;
             return player;
         }
 
@@ -244,7 +245,7 @@ namespace BombRushMP.Plugin
             if (sequenceHandler.IsInSequence())
             {
                 var sequence = sequenceHandler.sequence;
-                if (sequence != null)
+                if (sequence != null && sequence.state == UnityEngine.Playables.PlayState.Playing)
                 {
                     var toilet = sequence.GetComponentInParent<PublicToilet>(true);
                     if (toilet != null)

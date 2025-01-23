@@ -246,7 +246,7 @@ namespace BombRushMP.Plugin
             {
                 var player = WorldHandler.instance.GetCurrentPlayer();
                 var sequenceHandler = CustomSequenceHandler.instance;
-                if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
+                if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING) && _interactable.Sequence.)
                     hidden = true;
             }
 
@@ -523,6 +523,15 @@ namespace BombRushMP.Plugin
                     Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
                 }
                 UpdateMoveStyleSkin();
+            }
+        }
+
+        public void OnSkinLoaded()
+        {
+            if (ClientVisualState.CurrentAnimation != 0)
+            {
+                _timeSpentInWrongAnimation = 0f;
+                Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
             }
         }
 
