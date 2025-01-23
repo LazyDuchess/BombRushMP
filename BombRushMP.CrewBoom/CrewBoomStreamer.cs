@@ -29,6 +29,7 @@ namespace BombRushMP.CrewBoom
         public static void AddDirectory(string directory)
         {
             Directories.Add(directory);
+            Directory.CreateDirectory(directory);
         }
 
         public static void ReloadResources()
