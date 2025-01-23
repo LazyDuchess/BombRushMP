@@ -583,6 +583,16 @@ namespace BombRushMP.Plugin
                         }
                     }
                     break;
+
+                case Packets.ServerClientDisconnected:
+                    {
+                        var discPacket = (ServerClientDisconnected)packet;
+                        if (Players.ContainsKey(discPacket.ClientId))
+                        {
+                            OnClientDisconnected(this, discPacket.ClientId);
+                        }
+                    }
+                    break;
             }
         }
 

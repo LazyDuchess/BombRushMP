@@ -423,18 +423,19 @@ namespace BombRushMP.Server
                             }
                         }
                         player.ClientState = clientState;
+
+                        var updateClientState = CreatePlayerClientState(player);
+                        if (updateClientState != null)
+                            SendPacketToStage(updateClientState, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+
                         if (oldClientState != null)
-                        {
-                            var clientStateUpdatePacket = new ServerClientStates();
-                            clientStateUpdatePacket.ClientStates[client.Id] = clientState;
-                            if (!player.Invisible)
-                                SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage, NetChannels.ClientAndLobbyUpdates);
                             return;
-                        }
+
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User }, IMessage.SendModes.Reliable, client, NetChannels.Default);
-                        var clientStates = CreateClientStatesPacket(clientState.Stage);
-                        SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+
+                        var currentClientStates = CreateClientStatesPacket(clientState.Stage);
+                        SendPacketToClient(currentClientStates, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);
 
                         var joinMessage = ServerConstants.JoinMessage;
 
@@ -629,8 +630,7 @@ namespace BombRushMP.Server
             }
             if (clientState != null)
             {
-                var clientStates = CreateClientStatesPacket(clientState.Stage);
-                SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                SendPacketToStage(new ServerClientDisconnected(e.Client.Id), IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
 
                 var user = clientState.User;
                 var leaveMessage = ServerConstants.LeaveMessage;
@@ -645,6 +645,16 @@ namespace BombRushMP.Server
                         IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                 }
             }
+        }
+
+        private ServerClientStates CreatePlayerClientState(Player player)
+        {
+            if (player.Invisible) return null;
+            if (player.ClientState == null) return null;
+            var packet = new ServerClientStates();
+            packet.Full = false;
+            packet.ClientStates[player.Client.Id] = player.ClientState;
+            return packet;
         }
 
         private ServerClientStates CreateClientStatesPacket(int stage)
