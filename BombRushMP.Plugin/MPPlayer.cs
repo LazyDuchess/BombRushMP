@@ -246,7 +246,7 @@ namespace BombRushMP.Plugin
             {
                 var player = WorldHandler.instance.GetCurrentPlayer();
                 var sequenceHandler = CustomSequenceHandler.instance;
-                if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING) && _interactable.Sequence.)
+                if (sequenceHandler.sequence == _interactable.Sequence && (player.sequenceState == SequenceState.IN_SEQUENCE || player.sequenceState == SequenceState.EXITING))
                     hidden = true;
             }
 
