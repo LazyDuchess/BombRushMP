@@ -105,7 +105,14 @@ namespace BombRushMP.Plugin
         private void StageManager_OnStagePostInitialization()
         {
             if (CrewBoomSupport.Installed)
-                CrewBoomStreamer.Reload();
+            {
+                if (!MPSettings.Instance.ReloadCharactersInLoadingScreens && CrewBoomStreamer.AlreadyLoadedThisSession)
+                {
+                    //wao
+                }
+                else
+                    CrewBoomStreamer.Reload();
+            }
             var addr = MPSettings.Instance.ServerAddress;
             var authKey = MPSettings.Instance.AuthKey;
             if (_selfHosting)

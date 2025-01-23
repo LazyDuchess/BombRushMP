@@ -13,6 +13,7 @@ namespace BombRushMP.CrewBoom
 {
     public static class CrewBoomStreamer
     {
+        public static bool AlreadyLoadedThisSession = false;
         public static int LoadedCharacters => CharacterHandleByGUID.Count;
         public static Shader CharacterShader { get; private set; }
         internal static FieldInfo CharacterDefinitionIdField;
@@ -43,6 +44,7 @@ namespace BombRushMP.CrewBoom
             {
                 LoadFromDirectory(directory);
             }
+            AlreadyLoadedThisSession = true;
         }
 
         public static void LoadFromDirectory(string directory)

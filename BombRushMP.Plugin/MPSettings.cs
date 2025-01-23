@@ -572,6 +572,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool ReloadCharactersInLoadingScreens
+        {
+            get
+            {
+                return _reloadCharactersInLoadingScreens.Value;
+            }
+
+            set
+            {
+                _reloadCharactersInLoadingScreens.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -612,6 +625,8 @@ namespace BombRushMP.Plugin
         private ConfigEntry<float> _playerLodDistance;
         private ConfigEntry<bool> _playerLodEnabled;
         private ConfigEntry<bool> _optimizeOnePlayerAtATime;
+        private ConfigEntry<bool> _loadCharactersAsync;
+        private ConfigEntry<bool> _reloadCharactersInLoadingScreens;
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
@@ -623,7 +638,6 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateClientController;
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
-        private ConfigEntry<bool> _loadCharactersAsync;
 #endif
         private string _savePath;
         private ConfigFile _configFile;
@@ -723,6 +737,7 @@ namespace BombRushMP.Plugin
             _hidePlayersInInactiveChunks = configFile.Bind(Optimization, "Cull Players in inactive chunks", true, "Whether to cull players that are at culled stage chunks to save on resources.");
             _optimizeOnePlayerAtATime = configFile.Bind(Optimization, "Optimize one Player at a time", true, "Only update visibility and LODs for one player at a time, to avoid stutters.");
             _loadCharactersAsync = configFile.Bind(CrewBoom, "Load Characters Async", true, "Loads characters from your ACN CrewBoom folder asynchronously to prevent stutters.");
+            _reloadCharactersInLoadingScreens = configFile.Bind(CrewBoom, "Reload Characters", true, "Reloads your CrewBoom folder during loading screens in between stages. Allows you to add new characters at runtime.");
         }
 
         public void Save()
