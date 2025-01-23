@@ -124,6 +124,7 @@ namespace BombRushMP.Plugin
             {
                 var instance = CreateOrGetFromPlayerPool();
                 instance.SetPlayer(player);
+                instance.transform.SetAsFirstSibling();
             }
         }
 
