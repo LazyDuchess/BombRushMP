@@ -56,6 +56,7 @@ namespace BombRushMP.Plugin
         private void OnDestroy()
         {
             var sequenceHandler = CustomSequenceHandler.instance;
+            if (sequenceHandler == null) return;
             if (sequenceHandler != null && sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
             {
                 Sequence.SaidYes = false;
@@ -66,6 +67,7 @@ namespace BombRushMP.Plugin
         private void OnDisable()
         {
             var sequenceHandler = CustomSequenceHandler.instance;
+            if (sequenceHandler == null) return;
             if (sequenceHandler.sequence == Sequence && sequenceHandler.IsInSequence())
             {
                 Sequence.SaidYes = false;

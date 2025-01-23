@@ -271,7 +271,7 @@ namespace BombRushMP.ClientApp
             var cs = new ClientState();
             cs.Name = BotName;
             cs.CrewName = CrewName;
-            cs.Stage = 50851934;
+            cs.Stage = 5;
             SendPacket(cs);
 
             var vs = new ClientVisualState();
