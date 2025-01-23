@@ -590,6 +590,7 @@ namespace BombRushMP.Plugin
                         if (Players.ContainsKey(discPacket.ClientId))
                         {
                             OnClientDisconnected(this, discPacket.ClientId);
+                            ClientStatesUpdate?.Invoke();
                         }
                     }
                     break;
