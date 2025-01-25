@@ -504,8 +504,13 @@ namespace BombRushMP.Plugin
                             if (player.Player != null)
                             {
                                 var newAnim = playerPacket.NewAnim;
-                                if (playerPacket.BoE && BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(newAnim, out var gameAnim))
-                                    newAnim = gameAnim;
+                                if (playerPacket.BoE)
+                                {
+                                    if (BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(newAnim, out var gameAnim))
+                                        newAnim = gameAnim;
+                                    else
+                                        newAnim = ClientConstants.MissingAnimationHash;
+                                }
                                 MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, newAnim, playerPacket.ForceOverwrite, playerPacket.Instant, playerPacket.AtTime);
                             }
                         }

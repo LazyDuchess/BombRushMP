@@ -136,8 +136,13 @@ namespace BombRushMP.Plugin
             yield return null;
             var animation = ClientVisualState.CurrentAnimation;
             var time = ClientVisualState.CurrentAnimationTime;
-            if (ClientVisualState.BoEAnimation && BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(animation, out var gameAnim))
-                animation = gameAnim;
+            if (ClientVisualState.BoEAnimation)
+            {
+                if (BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(animation, out var gameAnim))
+                    animation = gameAnim;
+                else
+                    animation = ClientConstants.MissingAnimationHash;
+            }
             switch (player.moveStyle)
             {
                 case MoveStyle.BMX:
