@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common;
+﻿using BombRushMP.BunchOfEmotes;
+using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
@@ -198,6 +199,12 @@ namespace BombRushMP.Plugin
                         packet.HitboxAerial = player.airialHitbox.activeSelf;
                         packet.HitboxRadial = player.radialHitbox.activeSelf;
                         packet.HitboxSpray = player.sprayHitbox.activeSelf;
+
+                        if (BunchOfEmotesSupport.TryGetCustomAnimationHashByGameAnimation(packet.CurrentAnimation, out var hash))
+                        {
+                            packet.BoEAnimation = true;
+                            packet.CurrentAnimation = hash;
+                        }
                     }
                     break;
 
@@ -495,7 +502,12 @@ namespace BombRushMP.Plugin
                         if (Players.TryGetValue(playerPacket.ClientId, out var player))
                         {
                             if (player.Player != null)
-                                MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, playerPacket.NewAnim, playerPacket.ForceOverwrite, playerPacket.Instant, playerPacket.AtTime);
+                            {
+                                var newAnim = playerPacket.NewAnim;
+                                if (playerPacket.BoE && BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(newAnim, out var gameAnim))
+                                    newAnim = gameAnim;
+                                MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, newAnim, playerPacket.ForceOverwrite, playerPacket.Instant, playerPacket.AtTime);
+                            }
                         }
                     }
                     break;

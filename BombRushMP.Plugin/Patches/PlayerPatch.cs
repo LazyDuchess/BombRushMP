@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.BunchOfEmotes;
 using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
@@ -30,6 +31,11 @@ namespace BombRushMP.Plugin.Patches
             {
                 if (__instance.inGraffitiGame) return true;
                 var packet = new PlayerAnimation(newAnim, forceOverwrite, instant, atTime);
+                if (BunchOfEmotesSupport.TryGetCustomAnimationHashByGameAnimation(newAnim, out var customAnim))
+                {
+                    packet.BoE = true;
+                    packet.NewAnim = customAnim;
+                }
                 clientController.SendPacket(packet, PlayerAnimation.ClientSendMode, NetChannels.Animation);
             }
             if (!PlayAnimPatchEnabled) return true;

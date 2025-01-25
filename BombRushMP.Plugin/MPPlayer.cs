@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common;
+﻿using BombRushMP.BunchOfEmotes;
+using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Gamemodes;
@@ -130,9 +131,13 @@ namespace BombRushMP.Plugin
             return (_lobby.LobbyState.Challenge && !_lobby.LobbyState.InGame && _lobby.LobbyState.HostId == ClientId);
         }
 
-        private IEnumerator ApplyAnimationToPlayerDelayed(Player player, int animation, float time)
+        private IEnumerator ApplyCurrentAnimationToPlayerDelayed(Player player)
         {
             yield return null;
+            var animation = ClientVisualState.CurrentAnimation;
+            var time = ClientVisualState.CurrentAnimationTime;
+            if (ClientVisualState.BoEAnimation && BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(animation, out var gameAnim))
+                animation = gameAnim;
             switch (player.moveStyle)
             {
                 case MoveStyle.BMX:
@@ -214,7 +219,7 @@ namespace BombRushMP.Plugin
                 if (!Player.characterVisual.gameObject.activeSelf)
                 {
                     Player.characterVisual.SetSpraycan(false);
-                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                    Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
                 }
                 Player.characterVisual.gameObject.SetActive(true);
 
@@ -408,7 +413,7 @@ namespace BombRushMP.Plugin
             if (ClientVisualState.CurrentAnimation != 0)
             {
                 _timeSpentInWrongAnimation = 0f;
-                Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
             }
             UpdateMoveStyleSkin();
             PlayerComponent.UpdateChibi();
@@ -520,7 +525,7 @@ namespace BombRushMP.Plugin
                 if (ClientVisualState.CurrentAnimation != 0)
                 {
                     _timeSpentInWrongAnimation = 0f;
-                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                    Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
                 }
                 UpdateMoveStyleSkin();
             }
@@ -531,7 +536,7 @@ namespace BombRushMP.Plugin
             if (ClientVisualState.CurrentAnimation != 0)
             {
                 _timeSpentInWrongAnimation = 0f;
-                Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
             }
         }
 
@@ -632,7 +637,7 @@ namespace BombRushMP.Plugin
                 if (ClientVisualState.CurrentAnimation != 0)
                 {
                     _timeSpentInWrongAnimation = 0f;
-                    Player.StartCoroutine(ApplyAnimationToPlayerDelayed(Player, ClientVisualState.CurrentAnimation, ClientVisualState.CurrentAnimationTime));
+                    Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
                 }
             }
 

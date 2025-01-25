@@ -15,6 +15,7 @@ using BombRushMP.NetworkInterfaceProvider;
 using BombRushMP.Plugin.LocalServer;
 using BombRushMP.Plugin.OfflineInterface;
 using System;
+using BombRushMP.BunchOfEmotes;
 
 namespace BombRushMP.Plugin
 {
@@ -22,6 +23,7 @@ namespace BombRushMP.Plugin
     [BepInDependency("CommonAPI", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("CrewBoom", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("com.Dragsun.BunchOfEmotes", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
     {
         private string _localAdminKey = Guid.NewGuid().ToString();
@@ -62,6 +64,10 @@ namespace BombRushMP.Plugin
             if (Chainloader.PluginInfos.ContainsKey("MapStation.Plugin"))
             {
                 MapStationSupport.Initialize();
+            }
+            if (Chainloader.PluginInfos.ContainsKey("com.Dragsun.BunchOfEmotes"))
+            {
+                BunchOfEmotesSupport.Initialize();
             }
             ProxyEncounter.Initialize();
             InitializePhone();
