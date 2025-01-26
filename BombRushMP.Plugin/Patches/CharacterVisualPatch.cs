@@ -14,8 +14,9 @@ namespace BombRushMP.Plugin.Patches
     {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(CharacterVisual.SetInlineSkatesPropsMode))]
-        private static void SetInlineSkatesPropsMode_Postfix(CharacterVisual __instance)
+        private static void SetInlineSkatesPropsMode_Postfix(CharacterVisual __instance, CharacterVisual.MoveStylePropMode mode)
         {
+            if (mode == CharacterVisual.MoveStylePropMode.ON_BACK || mode == CharacterVisual.MoveStylePropMode.OFF) return;
             var inlineOffsetL = __instance.footL.Find(CrewBoomSupport.SKATE_OFFSET_L);
             var inlineOffsetR = __instance.footR.Find(CrewBoomSupport.SKATE_OFFSET_R);
 
