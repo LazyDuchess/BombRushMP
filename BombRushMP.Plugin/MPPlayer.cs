@@ -624,7 +624,15 @@ namespace BombRushMP.Plugin
                 Player.characterVisual.feetIK = false;
             }
 
-            if (Player.curAnim != ClientVisualState.CurrentAnimation)
+            var targetAnim = ClientVisualState.CurrentAnimation;
+            if (ClientVisualState.BoEAnimation)
+            {
+                if (BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(targetAnim, out var gameAnim))
+                    targetAnim = gameAnim;
+                else
+                    targetAnim = ClientConstants.MissingAnimationHash;
+            }    
+            if (Player.curAnim != targetAnim)
             {
                 if (Player.curAnim != _lastAnimation)
                     _timeSpentInWrongAnimation = 0f;
