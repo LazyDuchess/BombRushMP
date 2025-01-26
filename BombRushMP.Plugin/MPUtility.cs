@@ -202,6 +202,16 @@ namespace BombRushMP.Plugin
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (player.IsDead())
                 Revive();
+            var tps = GameObject.FindObjectsOfType<Teleport>();
+            foreach(var tp in tps)
+            {
+                if (tp.teleportRoutine != null)
+                {
+                    tp.StopAllCoroutines();
+                    tp.teleportRoutine = null;
+                }
+            }
+            Core.Instance.UIManager.effects.fullScreenFade.gameObject.SetActive(false);
         }
 
         public static void CloseMenusAndSpectator()
