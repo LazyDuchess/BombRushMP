@@ -41,6 +41,9 @@ namespace BombRushMP.Plugin
         public StreamedCharacterInstance StreamedCharacter = null;
         public Action SkinLoaded;
 
+        public bool ChallengeIndicatorVisible = false;
+        private GameObject _challengeIndicator;
+
         public void RefreshSkin()
         {
             if (MovestyleSkin != null)
@@ -188,6 +191,11 @@ namespace BombRushMP.Plugin
         {
             _player = GetComponent<Player>();
             var afkParticlesPrefab = MPAssets.Instance.Bundle.LoadAsset<GameObject>("AFK Particles");
+            var indicatorPrefab = MPAssets.Instance.Bundle.LoadAsset<GameObject>("Challenge Indicator");
+            _challengeIndicator = Instantiate(indicatorPrefab);
+            _challengeIndicator.transform.SetParent(transform);
+            _challengeIndicator.transform.SetLocalPositionAndRotation(Vector3.up * 2.5f, Quaternion.identity);
+            _challengeIndicator.SetActive(false);
             _afkParticles = Instantiate(afkParticlesPrefab).GetComponent<ParticleSystem>();
             _afkParticles.transform.SetParent(transform);
         }
@@ -234,6 +242,19 @@ namespace BombRushMP.Plugin
         {
             UpdateChibi();
             var mpSettings = MPSettings.Instance;
+            if (!Local && ChallengeIndicatorVisible && _player.characterVisual.gameObject.activeSelf)
+            {
+                if (!_challengeIndicator.gameObject.activeSelf)
+                    _challengeIndicator.SetActive(true);
+                _challengeIndicator.transform.Rotate(Vector3.up * 150f * Core.dt, Space.Self);
+                var indicatorHeight = Vector3.up * 2.5f + (Mathf.Sin(Time.realtimeSinceStartup * 5f) * Vector3.up * 0.1f);
+                _challengeIndicator.transform.localPosition = indicatorHeight;
+            }
+            else
+            {
+                if (_challengeIndicator.gameObject.activeSelf)
+                    _challengeIndicator.SetActive(false);
+            }
             if (Local)
             {
                 _helloTimer -= Core.dt;

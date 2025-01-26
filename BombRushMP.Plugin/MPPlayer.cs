@@ -686,11 +686,13 @@ namespace BombRushMP.Plugin
                 _mapPinMaterial.color = new Color(0.0f, 0.8f, 0.9f);
                 _mapPinParticles.SetActive(true);
                 _interactable.gameObject.SetActive(true);
+                PlayerComponent.ChallengeIndicatorVisible = true;
             }
             else
             {
                 _mapPinParticles.SetActive(false);
                 _interactable.gameObject.SetActive(false);
+                PlayerComponent.ChallengeIndicatorVisible = false;
             }
 
             if (Player.characterVisual.boostpackEffectMode != (BoostpackEffectMode)ClientVisualState.BoostpackEffectMode)
