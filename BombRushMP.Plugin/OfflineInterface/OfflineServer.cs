@@ -62,6 +62,7 @@ namespace BombRushMP.Plugin.OfflineInterface
             lock (OfflineInterface.ClientToServerMessages)
             {
                 _snapshot = new List<OfflineMessage>(OfflineInterface.ClientToServerMessages);
+                OfflineInterface.ClientToServerMessages.Clear();
             }
             foreach (var packet in _snapshot)
             {
@@ -73,10 +74,6 @@ namespace BombRushMP.Plugin.OfflineInterface
                 {
                     UnityEngine.Debug.LogError(e);
                 }
-            }
-            lock (OfflineInterface.ClientToServerMessages)
-            {
-                OfflineInterface.ClientToServerMessages.Clear();
             }
         }
 
