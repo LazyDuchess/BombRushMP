@@ -80,7 +80,7 @@ namespace BombRushMP.Plugin
             player.InitVisual();
             player.usingEquippedMovestyle = false;
             var clientController = ClientController.Instance;
-            if (clientController != null)
+            if (clientController != null && playerComponent.Local)
                 clientController.SendClientState();
         }
 
@@ -104,7 +104,7 @@ namespace BombRushMP.Plugin
             playerComponent.MainRenderer.sharedMaterial = variantMaterial;
             playerComponent.SpecialSkinVariant = variant;
             var clientController = ClientController.Instance;
-            if (clientController != null)
+            if (clientController != null && playerComponent.Local)
                 clientController.SendClientState();
         }
 
@@ -187,7 +187,7 @@ namespace BombRushMP.Plugin
                 ApplySpecialSkinVariantToPlayer(player, 0);
             }
             var clientController = ClientController.Instance;
-            if (clientController != null)
+            if (clientController != null && playerComponent.Local)
                 clientController.SendClientState();
         }
     }

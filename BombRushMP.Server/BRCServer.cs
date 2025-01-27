@@ -194,6 +194,21 @@ namespace BombRushMP.Server
             var cmd = args[0].Substring(1, args[0].Length - 1);
             switch (cmd)
             {
+                case "makeseankingston":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                            {
+                                if (Players.TryGetValue(result, out var playa))
+                                {
+                                    SendPacketToClient(new ServerSetSpecialSkin(SpecialSkins.SeanKingston), IMessage.SendModes.ReliableUnordered, playa.Client, NetChannels.Default);
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case "makechibi":
                     if (player.ClientState.User.IsModerator)
                     {
@@ -289,7 +304,7 @@ namespace BombRushMP.Server
                     helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n";
+                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {

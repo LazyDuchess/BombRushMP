@@ -56,6 +56,7 @@ namespace BombRushMP.Common.Packets
         ClientLobbySetPlayerTeam,
         ClientLobbySetChallenge,
         ServerLobbySoftUpdate,
-        ServerClientDisconnected
+        ServerClientDisconnected,
+        ServerSetSpecialSkin
     }
 }

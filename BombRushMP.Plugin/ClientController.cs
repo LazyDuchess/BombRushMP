@@ -410,6 +410,21 @@ namespace BombRushMP.Plugin
             PacketReceived?.Invoke(packetId, packet);
             switch (packetId)
             {
+                case Packets.ServerSetSpecialSkin:
+                    {
+                        var skinPacket = packet as ServerSetSpecialSkin;
+                        var player = WorldHandler.instance.GetCurrentPlayer();
+                        if (skinPacket.SpecialSkin == SpecialSkins.None)
+                        {
+                            SpecialSkinManager.Instance.RemoveSpecialSkinFromPlayer(player);
+                        }
+                        else
+                        {
+                            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, skinPacket.SpecialSkin);
+                        }
+
+                    }
+                    break;
                 case Packets.ServerSetChibi:
                     {
                         LocalPlayerComponent.Chibi = (packet as ServerSetChibi).Set;
