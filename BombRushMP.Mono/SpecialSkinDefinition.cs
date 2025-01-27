@@ -10,6 +10,7 @@ namespace BombRushMP.Mono
     public class SpecialSkinDefinition : MonoBehaviour
     {
         [Header("Visuals")]
+        public bool CanBlink = false;
         public string MainRendererName;
         public Material[] Variants;
         [Header("Voice Lines")]

@@ -11,6 +11,7 @@ namespace BombRushMP.Common
         None = -1,
         FemaleCop,
         MaleCop,
-        SpecialPlayer
+        SpecialPlayer,
+        SeanKingston
     }
 }
