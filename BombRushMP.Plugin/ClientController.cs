@@ -336,7 +336,7 @@ namespace BombRushMP.Plugin
                         }
                     }
                     var lod = false;
-                    if (!hidden && mpSettings.PlayerLodEnabled && (player.Value.Player.transform.position - localCamPos).sqrMagnitude >= mpSettings.PlayerLodDistance)
+                    if (!hidden && player.Value.Player != null && mpSettings.PlayerLodEnabled && (player.Value.Player.transform.position - localCamPos).sqrMagnitude >= mpSettings.PlayerLodDistance)
                         lod = true;
                     player.Value.FrameUpdate(hidden, lod);
                 }
