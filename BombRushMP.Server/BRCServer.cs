@@ -40,6 +40,8 @@ namespace BombRushMP.Server
         public float ChatCooldown = 0.5f;
         public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
 
+        public ServerState ServerState = new();
+
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
             Instance = this;
@@ -194,6 +196,37 @@ namespace BombRushMP.Server
             var cmd = args[0].Substring(1, args[0].Length - 1);
             switch (cmd)
             {
+                case "getservertags":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        var tagtxt = "Current server tags:\n";
+                        foreach(var tag in ServerState.Tags)
+                        {
+                            tagtxt += $"{tag}\n";
+                        }
+                        SendPacketToClient(new ServerChat(tagtxt), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                    }
+                    break;
+                case "removeservertag":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            ServerState.Tags.Remove(args[1]);
+                            SendPacket(new ServerServerStateUpdate(ServerState), IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
+                        }
+                    }
+                    break;
+                case "setservertag":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            ServerState.Tags.Add(args[1]);
+                            SendPacket(new ServerServerStateUpdate(ServerState), IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
+                        }
+                    }
+                    break;
                 case "makeseankingston":
                     if (player.ClientState.User.IsModerator)
                     {
@@ -304,7 +337,7 @@ namespace BombRushMP.Server
                     helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n";
+                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
@@ -447,7 +480,7 @@ namespace BombRushMP.Server
                             return;
 
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User }, IMessage.SendModes.Reliable, client, NetChannels.Default);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState }, IMessage.SendModes.Reliable, client, NetChannels.Default);
 
                         var currentClientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToClient(currentClientStates, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);

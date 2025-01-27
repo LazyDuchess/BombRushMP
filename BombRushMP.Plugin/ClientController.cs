@@ -40,6 +40,7 @@ namespace BombRushMP.Plugin
         public static Action ClientStatesUpdate;
         public string AuthKey;
         public bool InfrequentClientStateUpdateQueued = false;
+        public ServerState ServerState = new();
         public PlayerComponent LocalPlayerComponent
         {
             get
@@ -410,6 +411,12 @@ namespace BombRushMP.Plugin
             PacketReceived?.Invoke(packetId, packet);
             switch (packetId)
             {
+                case Packets.ServerServerStateUpdate:
+                    {
+                        var statePacket = packet as ServerServerStateUpdate;
+                        ServerState = statePacket.State;
+                    }
+                    break;
                 case Packets.ServerSetSpecialSkin:
                     {
                         var skinPacket = packet as ServerSetSpecialSkin;
@@ -446,6 +453,7 @@ namespace BombRushMP.Plugin
                         var connectionResponse = (ServerConnectionResponse)packet;
                         LocalID = connectionResponse.LocalClientId;
                         TickRate = connectionResponse.TickRate;
+                        ServerState = connectionResponse.ServerState;
                         PlayerAnimation.ClientSendMode = connectionResponse.ClientAnimationSendMode;
                         _handShook = true;
                         ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.User.UserKind}.");
