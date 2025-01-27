@@ -326,7 +326,15 @@ namespace BombRushMP.Plugin
 
             if (_interactable.Player.ClientVisualState.State != PlayerStates.Dead)
             {
-                Core.Instance.AudioManager.PlayVoice(_interactable.Player.Player.character, AudioClipID.VoiceTalk);
+                var audioManager = Core.Instance.AudioManager;
+                if (_interactable.Player.PlayerComponent != null && _interactable.Player.PlayerComponent.StreamedCharacter != null)
+                {
+                    var clip = _interactable.Player.PlayerComponent.StreamedCharacter.Handle.AudioLibrary.GetRandom(AudioClipID.VoiceTalk);
+                    if (clip != null)
+                        audioManager.PlayNonloopingSfx(audioManager.audioSources[5], clip, audioManager.mixerGroups[5], 0f);
+                }
+                else
+                    audioManager.PlayVoice(_interactable.Player.Player.character, AudioClipID.VoiceTalk);
                 StartDialogue(introDialogue);
                 SaidYes = true;
             }

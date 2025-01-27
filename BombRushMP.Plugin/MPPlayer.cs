@@ -24,7 +24,7 @@ namespace BombRushMP.Plugin
         public ClientState ClientState = null;
         public ClientVisualState ClientVisualState = null;
         public Player Player;
-        private PlayerComponent PlayerComponent
+        public PlayerComponent PlayerComponent
         {
             get
             {
