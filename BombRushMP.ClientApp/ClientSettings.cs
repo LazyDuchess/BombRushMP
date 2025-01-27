@@ -10,6 +10,8 @@ namespace BombRushMP.ClientApp
     public class ClientSettings
     {
         public string NetworkInterface = NetworkInterfaces.LiteNetLib.ToString();
+        public string Name = "ACN Bot";
+        public int Stage = 5;
         public string Address = "localhost";
         public int Port = 41585;
         public bool UseNativeSockets = true;
