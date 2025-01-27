@@ -608,7 +608,7 @@ namespace BombRushMP.Plugin
                     NamePlate.gameObject.SetActive(false);
             }
 
-            var snapAnim = Teleporting;
+            var snapAnim = false;
 
             if (ClientVisualState.Chibi != PlayerComponent.Chibi)
             {
