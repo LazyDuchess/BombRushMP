@@ -22,6 +22,8 @@ namespace BombRushMP.Plugin
 
         public const string CensoredName = "Punished Gooner";
 
+        public const string FilteredIndicator = "<sprite=37><color=red>[FILTERED]</color>";
+
         private static List<string> BannedContent = LoadBannedContent();
         private static List<string> SafeWords = LoadSafeWords();
         private static List<string> BadWords = LoadBadWords();

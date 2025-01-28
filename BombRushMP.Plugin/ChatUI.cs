@@ -112,10 +112,12 @@ namespace BombRushMP.Plugin
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
                 text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(text, MPSettings.Instance.ChatCriteria));
-                if (MPSettings.Instance.FilterProfanity)
+                if (ProfanityFilter.TMPContainsProfanity(text))
                 {
-                    if (ProfanityFilter.TMPContainsProfanity(text))
+                    if (MPSettings.Instance.FilterProfanity)
                         text = ProfanityFilter.CensoredMessage;
+                    else
+                        text += ProfanityFilter.FilteredIndicator;
                 }
                 text = MPUtility.ParseMessageEmojis(text);
                 text = string.Format(ClientConstants.ChatMessage, authorname, text);
