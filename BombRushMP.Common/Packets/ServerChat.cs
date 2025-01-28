@@ -20,6 +20,11 @@ namespace BombRushMP.Common.Packets
 
         }
 
+        public ServerChat(ChatMessageTypes messageType)
+        {
+            MessageType = messageType;
+        }
+
         public ServerChat(string author, string message, int[] badges = null, ChatMessageTypes messageType = ChatMessageTypes.Chat)
         {
             Author = author;

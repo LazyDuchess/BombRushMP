@@ -331,13 +331,20 @@ namespace BombRushMP.Server
                     }
                     break;
 
+                case "clearall":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        SendPacketToStage(new ServerChat(ChatMessageTypes.ClearChat), IMessage.SendModes.ReliableUnordered, player.ClientState.Stage, NetChannels.Chat);
+                    }
+                    break;
+
                 case "help":
                     var cmdChar = Constants.CommandChar;
                     var helpStr = "\nAvailable commands:\n";
-                    helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
+                    helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n{cmdChar}clear - Clear chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n";
+                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n{cmdChar}clearall - Clears everyones chats\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
