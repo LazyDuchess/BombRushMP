@@ -607,7 +607,6 @@ namespace BombRushMP.Server
         {
             if (Players.TryGetValue(id, out var result))
             {
-                if (_database.BannedUsers.IsBanned(result.Client.Address)) return false;
                 return BanPlayerByAddress(result.Client.Address);
             }
             return false;
@@ -626,7 +625,6 @@ namespace BombRushMP.Server
         public bool BanPlayerByAddress(string address, string reason = "None")
         {
             _database.Load();
-            if (_database.BannedUsers.IsBanned(address)) return false;
             var playerName = "None";
             ushort playerId = 0;
             foreach(var player in Players)
