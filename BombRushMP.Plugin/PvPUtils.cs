@@ -17,7 +17,7 @@ namespace BombRushMP.Plugin
             if (player == null) return false;
             var mpPlayer = MPUtility.GetMuliplayerPlayer(player);
             if (mpPlayer == null) return false;
-            return mpPlayer.ClientState.User.HasTag(PvPTag);
+            return mpPlayer.ClientState.User.HasTag(PvPTag) || ClientController.Instance.ServerState.Tags.Contains(PvPTag);
         }
 
         public static bool CanIGetHit()

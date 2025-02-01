@@ -97,6 +97,11 @@ namespace BombRushMP.Plugin
         {
             var mpSettings = MPSettings.Instance;
             var text = serverMessage.Message;
+            if (serverMessage.MessageType == ChatMessageTypes.ClearChat)
+            {
+                Clear();
+                return;
+            }
             if (serverMessage.MessageType == ChatMessageTypes.PlayerJoinedOrLeft && mpSettings.LeaveJoinMessages == false)
                 return;
             if (serverMessage.MessageType == ChatMessageTypes.PlayerAFK && mpSettings.AFKMessages == false)
@@ -112,10 +117,12 @@ namespace BombRushMP.Plugin
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
                 text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(text, MPSettings.Instance.ChatCriteria));
-                if (MPSettings.Instance.FilterProfanity)
+                if (ProfanityFilter.TMPContainsProfanity(text))
                 {
-                    if (ProfanityFilter.TMPContainsProfanity(text))
+                    if (MPSettings.Instance.FilterProfanity)
                         text = ProfanityFilter.CensoredMessage;
+                    else
+                        text += ProfanityFilter.FilteredIndicator;
                 }
                 text = MPUtility.ParseMessageEmojis(text);
                 text = string.Format(ClientConstants.ChatMessage, authorname, text);
@@ -125,6 +132,17 @@ namespace BombRushMP.Plugin
                 text = string.Format(text, authorname);
             }
             AddMessage(text);
+        }
+
+        private void Clear()
+        {
+            foreach(var message in _messages)
+            {
+                Destroy(message.gameObject);
+            }
+            _messages.Clear();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_scrollRect.RectTransform());
+            _scrollRect.normalizedPosition = new Vector2(0, 0);
         }
 
         public void AddMessage(string text)
@@ -184,6 +202,9 @@ namespace BombRushMP.Plugin
                     break;
                 case "show":
                     MPSettings.Instance.ShowChat = true;
+                    break;
+                case "clear":
+                    Clear();
                     break;
 #if DEBUG
                 case "lodme":

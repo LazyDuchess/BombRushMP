@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BombRushMP.BunchOfEmotes\BombRushMP.BunchOfEmotes.csproj" />
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
     <ProjectReference Include="..\BombRushMP.CrewBoom\BombRushMP.CrewBoom.csproj" />
     <ProjectReference Include="..\BombRushMP.MapStation\BombRushMP.MapStation.csproj" />

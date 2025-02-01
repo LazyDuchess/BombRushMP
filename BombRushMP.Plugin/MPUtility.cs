@@ -53,10 +53,12 @@ namespace BombRushMP.Plugin
             name = TMPFilter.Sanitize(name);
             name = TMPFilter.FilterTags(name, MPSettings.Instance.ChatCriteria);
             name = TMPFilter.CloseAllTags(name);
-            if (MPSettings.Instance.FilterProfanity)
+            if (ProfanityFilter.TMPContainsProfanity(name))
             {
-                if (ProfanityFilter.TMPContainsProfanity(name))
+                if (MPSettings.Instance.FilterProfanity)
                     name = "";
+                else
+                    name += ProfanityFilter.FilteredIndicator;
             }
             name = name.Trim();
             if (TMPFilter.RemoveAllTags(name).IsNullOrWhiteSpace())
@@ -69,10 +71,12 @@ namespace BombRushMP.Plugin
             name = TMPFilter.Sanitize(name);
             name = TMPFilter.FilterTags(name, MPSettings.Instance.ChatCriteria);
             name = TMPFilter.CloseAllTags(name);
-            if (MPSettings.Instance.FilterProfanity)
+            if (ProfanityFilter.TMPContainsProfanity(name))
             {
-                if (ProfanityFilter.TMPContainsProfanity(name))
+                if (MPSettings.Instance.FilterProfanity)
                     name = ProfanityFilter.CensoredName;
+                else
+                    name += ProfanityFilter.FilteredIndicator;
             }
             name = name.Trim();
             if (TMPFilter.RemoveAllTags(name).IsNullOrWhiteSpace())
@@ -202,6 +206,16 @@ namespace BombRushMP.Plugin
             var player = WorldHandler.instance.GetCurrentPlayer();
             if (player.IsDead())
                 Revive();
+            var tps = GameObject.FindObjectsOfType<Teleport>();
+            foreach(var tp in tps)
+            {
+                if (tp.teleportRoutine != null)
+                {
+                    tp.StopAllCoroutines();
+                    tp.teleportRoutine = null;
+                }
+            }
+            Core.Instance.UIManager.effects.fullScreenFade.gameObject.SetActive(false);
         }
 
         public static void CloseMenusAndSpectator()

@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common;
+﻿using BombRushMP.BunchOfEmotes;
+using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
@@ -39,6 +40,7 @@ namespace BombRushMP.Plugin
         public static Action ClientStatesUpdate;
         public string AuthKey;
         public bool InfrequentClientStateUpdateQueued = false;
+        public ServerState ServerState = new();
         public PlayerComponent LocalPlayerComponent
         {
             get
@@ -198,6 +200,12 @@ namespace BombRushMP.Plugin
                         packet.HitboxAerial = player.airialHitbox.activeSelf;
                         packet.HitboxRadial = player.radialHitbox.activeSelf;
                         packet.HitboxSpray = player.sprayHitbox.activeSelf;
+
+                        if (BunchOfEmotesSupport.TryGetCustomAnimationHashByGameAnimation(packet.CurrentAnimation, out var hash))
+                        {
+                            packet.BoEAnimation = true;
+                            packet.CurrentAnimation = hash;
+                        }
                     }
                     break;
 
@@ -329,7 +337,7 @@ namespace BombRushMP.Plugin
                         }
                     }
                     var lod = false;
-                    if (!hidden && mpSettings.PlayerLodEnabled && (player.Value.Player.transform.position - localCamPos).sqrMagnitude >= mpSettings.PlayerLodDistance)
+                    if (!hidden && player.Value.Player != null && mpSettings.PlayerLodEnabled && (player.Value.Player.transform.position - localCamPos).sqrMagnitude >= mpSettings.PlayerLodDistance)
                         lod = true;
                     player.Value.FrameUpdate(hidden, lod);
                 }
@@ -403,6 +411,27 @@ namespace BombRushMP.Plugin
             PacketReceived?.Invoke(packetId, packet);
             switch (packetId)
             {
+                case Packets.ServerServerStateUpdate:
+                    {
+                        var statePacket = packet as ServerServerStateUpdate;
+                        ServerState = statePacket.State;
+                    }
+                    break;
+                case Packets.ServerSetSpecialSkin:
+                    {
+                        var skinPacket = packet as ServerSetSpecialSkin;
+                        var player = WorldHandler.instance.GetCurrentPlayer();
+                        if (skinPacket.SpecialSkin == SpecialSkins.None)
+                        {
+                            SpecialSkinManager.Instance.RemoveSpecialSkinFromPlayer(player);
+                        }
+                        else
+                        {
+                            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, skinPacket.SpecialSkin);
+                        }
+
+                    }
+                    break;
                 case Packets.ServerSetChibi:
                     {
                         LocalPlayerComponent.Chibi = (packet as ServerSetChibi).Set;
@@ -424,6 +453,7 @@ namespace BombRushMP.Plugin
                         var connectionResponse = (ServerConnectionResponse)packet;
                         LocalID = connectionResponse.LocalClientId;
                         TickRate = connectionResponse.TickRate;
+                        ServerState = connectionResponse.ServerState;
                         PlayerAnimation.ClientSendMode = connectionResponse.ClientAnimationSendMode;
                         _handShook = true;
                         ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.User.UserKind}.");
@@ -495,7 +525,17 @@ namespace BombRushMP.Plugin
                         if (Players.TryGetValue(playerPacket.ClientId, out var player))
                         {
                             if (player.Player != null)
-                                MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, playerPacket.NewAnim, playerPacket.ForceOverwrite, playerPacket.Instant, playerPacket.AtTime);
+                            {
+                                var newAnim = playerPacket.NewAnim;
+                                if (playerPacket.BoE)
+                                {
+                                    if (BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(newAnim, out var gameAnim))
+                                        newAnim = gameAnim;
+                                    else
+                                        newAnim = ClientConstants.MissingAnimationHash;
+                                }
+                                MPUtility.PlayAnimationOnMultiplayerPlayer(player.Player, newAnim, playerPacket.ForceOverwrite, playerPacket.Instant, playerPacket.AtTime);
+                            }
                         }
                     }
                     break;
@@ -580,6 +620,17 @@ namespace BombRushMP.Plugin
                         {
                             chatUi.AddMessage("Failed to write ban list.");
                             Debug.LogError(ex);
+                        }
+                    }
+                    break;
+
+                case Packets.ServerClientDisconnected:
+                    {
+                        var discPacket = (ServerClientDisconnected)packet;
+                        if (Players.ContainsKey(discPacket.ClientId))
+                        {
+                            OnClientDisconnected(this, discPacket.ClientId);
+                            ClientStatesUpdate?.Invoke();
                         }
                     }
                     break;

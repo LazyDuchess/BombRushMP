@@ -17,12 +17,14 @@ namespace BombRushMP.Common.Packets
         {
             ForceOverwrite,
             Instant,
+            BoE,
             MAX
         }
         public override Packets PacketId => Packets.PlayerAnimation;
         public int NewAnim;
         public bool ForceOverwrite;
         public bool Instant;
+        public bool BoE;
         public float AtTime;
         public PlayerAnimation()
         {
@@ -45,6 +47,7 @@ namespace BombRushMP.Common.Packets
             var bits = new Bitfield(BooleanMask.MAX);
             bits[BooleanMask.Instant] = Instant;
             bits[BooleanMask.ForceOverwrite] = ForceOverwrite;
+            bits[BooleanMask.BoE] = BoE;
             bits.WriteByte(writer);
             writer.Write(Compression.CompressNormal(AtTime));
         }
@@ -57,6 +60,7 @@ namespace BombRushMP.Common.Packets
             var bits = Bitfield.ReadByte(reader);
             Instant = bits[BooleanMask.Instant];
             ForceOverwrite = bits[BooleanMask.ForceOverwrite];
+            BoE = bits[BooleanMask.BoE];
             AtTime = Compression.DecompressNormal(reader.ReadSByte());
         }
     }

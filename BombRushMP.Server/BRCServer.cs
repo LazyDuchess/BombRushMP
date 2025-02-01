@@ -40,6 +40,8 @@ namespace BombRushMP.Server
         public float ChatCooldown = 0.5f;
         public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
 
+        public ServerState ServerState = new();
+
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
             Instance = this;
@@ -194,6 +196,67 @@ namespace BombRushMP.Server
             var cmd = args[0].Substring(1, args[0].Length - 1);
             switch (cmd)
             {
+                case "getservertags":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        var tagtxt = "Current server tags:\n";
+                        foreach(var tag in ServerState.Tags)
+                        {
+                            tagtxt += $"{tag}\n";
+                        }
+                        SendPacketToClient(new ServerChat(tagtxt), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Chat);
+                    }
+                    break;
+                case "removeservertag":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            ServerState.Tags.Remove(args[1]);
+                            SendPacket(new ServerServerStateUpdate(ServerState), IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
+                        }
+                    }
+                    break;
+                case "setservertag":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            ServerState.Tags.Add(args[1]);
+                            SendPacket(new ServerServerStateUpdate(ServerState), IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
+                        }
+                    }
+                    break;
+                case "makeseankingston":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                            {
+                                if (Players.TryGetValue(result, out var playa))
+                                {
+                                    SendPacketToClient(new ServerSetSpecialSkin(SpecialSkins.SeanKingston), IMessage.SendModes.ReliableUnordered, playa.Client, NetChannels.Default);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "makeforkliftcertified":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                            {
+                                if (Players.TryGetValue(result, out var playa))
+                                {
+                                    SendPacketToClient(new ServerSetSpecialSkin(SpecialSkins.Forklift), IMessage.SendModes.ReliableUnordered, playa.Client, NetChannels.Default);
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case "makechibi":
                     if (player.ClientState.User.IsModerator)
                     {
@@ -283,13 +346,20 @@ namespace BombRushMP.Server
                     }
                     break;
 
+                case "clearall":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        SendPacketToStage(new ServerChat(ChatMessageTypes.ClearChat), IMessage.SendModes.ReliableUnordered, player.ClientState.Stage, NetChannels.Chat);
+                    }
+                    break;
+
                 case "help":
                     var cmdChar = Constants.CommandChar;
                     var helpStr = "\nAvailable commands:\n";
-                    helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n";
+                    helpStr += $"{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n{cmdChar}clear - Clear chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n";
+                        helpStr += $"{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}makeforkliftcertified (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n{cmdChar}clearall - Clears everyones chats\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
@@ -423,18 +493,19 @@ namespace BombRushMP.Server
                             }
                         }
                         player.ClientState = clientState;
+
+                        var updateClientState = CreatePlayerClientState(player);
+                        if (updateClientState != null)
+                            SendPacketToStage(updateClientState, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+
                         if (oldClientState != null)
-                        {
-                            var clientStateUpdatePacket = new ServerClientStates();
-                            clientStateUpdatePacket.ClientStates[client.Id] = clientState;
-                            if (!player.Invisible)
-                                SendPacketToStage(clientStateUpdatePacket, IMessage.SendModes.Reliable, oldClientState.Stage, NetChannels.ClientAndLobbyUpdates);
                             return;
-                        }
+
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User }, IMessage.SendModes.Reliable, client, NetChannels.Default);
-                        var clientStates = CreateClientStatesPacket(clientState.Stage);
-                        SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState }, IMessage.SendModes.Reliable, client, NetChannels.Default);
+
+                        var currentClientStates = CreateClientStatesPacket(clientState.Stage);
+                        SendPacketToClient(currentClientStates, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);
 
                         var joinMessage = ServerConstants.JoinMessage;
 
@@ -558,7 +629,6 @@ namespace BombRushMP.Server
         {
             if (Players.TryGetValue(id, out var result))
             {
-                if (_database.BannedUsers.IsBanned(result.Client.Address)) return false;
                 return BanPlayerByAddress(result.Client.Address);
             }
             return false;
@@ -577,7 +647,6 @@ namespace BombRushMP.Server
         public bool BanPlayerByAddress(string address, string reason = "None")
         {
             _database.Load();
-            if (_database.BannedUsers.IsBanned(address)) return false;
             var playerName = "None";
             ushort playerId = 0;
             foreach(var player in Players)
@@ -629,8 +698,7 @@ namespace BombRushMP.Server
             }
             if (clientState != null)
             {
-                var clientStates = CreateClientStatesPacket(clientState.Stage);
-                SendPacketToStage(clientStates, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                SendPacketToStage(new ServerClientDisconnected(e.Client.Id), IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
 
                 var user = clientState.User;
                 var leaveMessage = ServerConstants.LeaveMessage;
@@ -645,6 +713,16 @@ namespace BombRushMP.Server
                         IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                 }
             }
+        }
+
+        private ServerClientStates CreatePlayerClientState(Player player)
+        {
+            if (player.Invisible) return null;
+            if (player.ClientState == null) return null;
+            var packet = new ServerClientStates();
+            packet.Full = false;
+            packet.ClientStates[player.Client.Id] = player.ClientState;
+            return packet;
         }
 
         private ServerClientStates CreateClientStatesPacket(int stage)

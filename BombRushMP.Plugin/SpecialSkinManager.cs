@@ -18,7 +18,9 @@ namespace BombRushMP.Plugin
         {
             {SpecialSkins.FemaleCop, "PlayerFemaleCopPrefab" },
             {SpecialSkins.MaleCop, "PlayerMaleCopPrefab" },
-            {SpecialSkins.SpecialPlayer, "SpecialPlayerPrefab" }
+            {SpecialSkins.SpecialPlayer, "SpecialPlayerPrefab" },
+            {SpecialSkins.SeanKingston, "SeanKingstonPrefab" },
+            {SpecialSkins.Forklift, "ForkliftPrefab" }
         };
         private Dictionary<SpecialSkins, GameObject> _specialSkinVisuals = new();
         private Dictionary<SpecialSkins, AudioLibrary> _specialSkinAudio = new();
@@ -79,7 +81,7 @@ namespace BombRushMP.Plugin
             player.InitVisual();
             player.usingEquippedMovestyle = false;
             var clientController = ClientController.Instance;
-            if (clientController != null)
+            if (clientController != null && playerComponent.Local)
                 clientController.SendClientState();
         }
 
@@ -103,7 +105,7 @@ namespace BombRushMP.Plugin
             playerComponent.MainRenderer.sharedMaterial = variantMaterial;
             playerComponent.SpecialSkinVariant = variant;
             var clientController = ClientController.Instance;
-            if (clientController != null)
+            if (clientController != null && playerComponent.Local)
                 clientController.SendClientState();
         }
 
@@ -119,6 +121,8 @@ namespace BombRushMP.Plugin
                 GameObject.Destroy(player.visualTf.gameObject);
             var visual = GameObject.Instantiate<GameObject>(_specialSkinVisuals[skin]).AddComponent<CharacterVisual>();
             visual.Init(Characters.NONE, player.animatorController, true, player.motor.groundDetection.groundLimit);
+            var definition = GetDefinition(skin);
+            visual.canBlink = definition.CanBlink;
             visual.gameObject.SetActive(true);
             player.characterVisual = visual;
             player.characterMesh = player.characterVisual.mainRenderer.sharedMesh;
@@ -130,7 +134,7 @@ namespace BombRushMP.Plugin
             player.headTf = player.visualTf.FindRecursive("head");
             player.phoneDirBone = player.visualTf.FindRecursive("phoneDirection");
             player.heightToHead = (player.headTf.position - player.visualTf.position).y;
-            player.isGirl = true;
+            player.isGirl = false;
             player.anim = player.characterVisual.anim;
             if (player.curAnim != 0)
             {
@@ -176,7 +180,6 @@ namespace BombRushMP.Plugin
             playerComponent.UnloadStreamedCharacter();
             playerComponent.SpecialSkin = skin;
             player.usingEquippedMovestyle = false;
-            var definition = GetDefinition(skin);
             playerComponent.MainRenderer = null;
             playerComponent.SpecialSkinVariant = -1;
             if (!string.IsNullOrEmpty(definition.MainRendererName))
@@ -185,7 +188,7 @@ namespace BombRushMP.Plugin
                 ApplySpecialSkinVariantToPlayer(player, 0);
             }
             var clientController = ClientController.Instance;
-            if (clientController != null)
+            if (clientController != null && playerComponent.Local)
                 clientController.SendClientState();
         }
     }

@@ -26,5 +26,6 @@ namespace BombRushMP.Plugin
         public static int TurnDirection2Hash = Animator.StringToHash("turnDirectionX2");
         public static int TurnDirection3Hash = Animator.StringToHash("turnDirectionX3");
         public static int TurnDirectionSkateboardHash = Animator.StringToHash("turnDirectionSkateboard");
+        public static int MissingAnimationHash = Animator.StringToHash("softBounce17");
     }
 }

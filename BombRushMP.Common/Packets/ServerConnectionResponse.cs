@@ -18,6 +18,7 @@ namespace BombRushMP.Common.Packets
         public float TickRate = Constants.DefaultNetworkingTickRate;
         public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
         public AuthUser User;
+        public ServerState ServerState;
 
         public override void Read(BinaryReader reader)
         {
@@ -26,6 +27,8 @@ namespace BombRushMP.Common.Packets
             ClientAnimationSendMode = (IMessage.SendModes)reader.ReadByte();
             User = new AuthUser();
             User.Read(reader);
+            ServerState = new ServerState();
+            ServerState.Read(reader);
         }
 
         public override void Write(BinaryWriter writer)
@@ -34,6 +37,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(TickRate);
             writer.Write((byte)ClientAnimationSendMode);
             User.Write(writer);
+            ServerState.Write(writer);
         }
     }
 }

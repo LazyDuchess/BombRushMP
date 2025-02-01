@@ -15,6 +15,7 @@ using BombRushMP.NetworkInterfaceProvider;
 using BombRushMP.Plugin.LocalServer;
 using BombRushMP.Plugin.OfflineInterface;
 using System;
+using BombRushMP.BunchOfEmotes;
 
 namespace BombRushMP.Plugin
 {
@@ -22,6 +23,7 @@ namespace BombRushMP.Plugin
     [BepInDependency("CommonAPI", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("CrewBoom", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("MapStation.Plugin", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("com.Dragsun.BunchOfEmotes", BepInDependency.DependencyFlags.SoftDependency)]
     public class MPPlugin : BaseUnityPlugin
     {
         private string _localAdminKey = Guid.NewGuid().ToString();
@@ -63,6 +65,10 @@ namespace BombRushMP.Plugin
             {
                 MapStationSupport.Initialize();
             }
+            if (Chainloader.PluginInfos.ContainsKey("com.Dragsun.BunchOfEmotes"))
+            {
+                BunchOfEmotesSupport.Initialize();
+            }
             ProxyEncounter.Initialize();
             InitializePhone();
             PacketFactory.Initialize();
@@ -72,9 +78,24 @@ namespace BombRushMP.Plugin
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
             InputPatch.Patch(harmony);
+            StageManager.OnStageInitialized += StageManager_OnStageInitialized;
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
             ReflectionController.Initialize();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private void StageManager_OnStageInitialized()
+        {
+            if (CrewBoomSupport.Installed)
+            {
+                CrewBoomStreamer.ReloadResources();
+                if (!MPSettings.Instance.ReloadCharactersInLoadingScreens && CrewBoomStreamer.AlreadyLoadedThisSession)
+                {
+                    //wao
+                }
+                else
+                    CrewBoomStreamer.ReloadCharacters();
+            }
         }
 
         private void Update()
@@ -104,16 +125,6 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStagePostInitialization()
         {
-            if (CrewBoomSupport.Installed)
-            {
-                CrewBoomStreamer.ReloadResources();
-                if (!MPSettings.Instance.ReloadCharactersInLoadingScreens && CrewBoomStreamer.AlreadyLoadedThisSession)
-                {
-                    //wao
-                }
-                else
-                    CrewBoomStreamer.ReloadCharacters();
-            }
             var addr = MPSettings.Instance.ServerAddress;
             var authKey = MPSettings.Instance.AuthKey;
             if (_selfHosting)
