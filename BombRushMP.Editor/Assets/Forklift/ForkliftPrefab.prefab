@@ -1838,7 +1838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CanBlink: 0
-  MainRendererName: forklift
+  MainRendererName: mesh
   Variants:
   - {fileID: 2100000, guid: 0342cc0f32a83c1478bc103906889ca9, type: 2}
   Jump:
