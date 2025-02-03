@@ -730,11 +730,11 @@ namespace BombRushMP.Plugin
                 clientController.InfrequentClientStateUpdateQueued = true;
             };
             _deathMessages = configFile.Bind(ChatSettings, "Show Player Death Messages", true, "Whether to send messages in chat when players die.");
-            _hidePlayersOutOfView = configFile.Bind(Optimization, "Cull Players out of view", false, "Whether to cull players that are out of view, to save on resources.");
+            _hidePlayersOutOfView = configFile.Bind(Optimization, "Cull Players out of view", true, "Whether to cull players that are out of view, to save on resources.");
             _playerDrawDistance = configFile.Bind(Optimization, "Player draw distance", 20000f, "Distance at which players will be hidden to save on resources.");
             _playerLodEnabled = configFile.Bind(Optimization, "Player LOD enabled", false, "Whether to reduce player quality at a certain distance.");
             _playerLodDistance = configFile.Bind(Optimization, "Player LOD distance", 2500f, "Distance at which players will render at a lower quality to save on resources.");
-            _hidePlayersInInactiveChunks = configFile.Bind(Optimization, "Cull Players in inactive chunks", false, "Whether to cull players that are at culled stage chunks to save on resources.");
+            _hidePlayersInInactiveChunks = configFile.Bind(Optimization, "Cull Players in inactive chunks", true, "Whether to cull players that are at culled stage chunks to save on resources.");
             _optimizeOnePlayerAtATime = configFile.Bind(Optimization, "Optimize one Player at a time", true, "Only update visibility and LODs for one player at a time, to avoid stutters.");
             _loadCharactersAsync = configFile.Bind(CrewBoom, "Load Characters Async", true, "Loads characters from your ACN CrewBoom folder asynchronously to prevent stutters.");
             _reloadCharactersInLoadingScreens = configFile.Bind(CrewBoom, "Reload Characters", true, "Reloads your CrewBoom folder during loading screens in between stages. Allows you to add new characters at runtime.");
