@@ -12,7 +12,8 @@ namespace BombRushMP.Plugin
         {
             { ":car:", 25 },
             { ":akkowot:", 24 },
-            { ":krehs:", 26 }
+            { ":krehs:", 26 },
+            { ":ben:", 38 }
         };
     }
 }
