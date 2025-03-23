@@ -23,6 +23,7 @@ namespace BombRushMP.Plugin
         private const float AutoScrollSpeed = 60f;
         private const float ManualScrollSpeed = 400f;
         private const float AutoScrollTime = 3f;
+        private const int UpDownAxis = 1;
         private const int UpButton = 21;
         private const int DownButton = 56;
         private const int CloseButton = 3;
@@ -44,11 +45,11 @@ namespace BombRushMP.Plugin
             _originalText = _statsLabel.text;
             var controls = _canvas.transform.Find("Controls");
             var closeGlyph = controls.Find("Close Glyph").GetComponent<TextMeshProUGUI>();
-            var downGlyph = controls.Find("Down Glyph").GetComponent<TextMeshProUGUI>();
-            var upGlyph = controls.Find("Up Glyph").GetComponent<TextMeshProUGUI>();
+            //var downGlyph = controls.Find("Down Glyph").GetComponent<TextMeshProUGUI>();
+            //var upGlyph = controls.Find("Up Glyph").GetComponent<TextMeshProUGUI>();
             UIUtility.MakeGlyph(closeGlyph, CloseButton);
-            UIUtility.MakeGlyph(downGlyph, DownButton);
-            UIUtility.MakeGlyph(upGlyph, UpButton);
+            //UIUtility.MakeGlyph(downGlyph, DownButton);
+            //UIUtility.MakeGlyph(upGlyph, UpButton);
             _canvas.SetActive(false);
         }
 
@@ -60,8 +61,9 @@ namespace BombRushMP.Plugin
                     _statsLabel.rectTransform.localPosition += new Vector3(0f, AutoScrollSpeed * Core.dt, 0f);
 
                 var gameInput = Core.Instance.GameInput;
-                var upHeld = gameInput.GetButtonHeld(UpButton);
-                var downHeld = gameInput.GetButtonHeld(DownButton);
+                var upDownAxis = gameInput.GetAxis(UpDownAxis);
+                var upHeld = upDownAxis > 0;
+                var downHeld = upDownAxis < 0;
                 var closeNew = gameInput.GetButtonNew(CloseButton);
 
                 if (upHeld || downHeld)
@@ -102,7 +104,6 @@ namespace BombRushMP.Plugin
             _autoScrollTimer = 0f;
             var gameInput = Core.Instance.GameInput;
             gameInput.DisableAllControllerMaps(0);
-            gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS);
             gameInput.EnableControllerMaps(BaseModule.MENU_INPUT_MAPS);
             player.userInputEnabled = false;
         }
@@ -122,6 +123,8 @@ namespace BombRushMP.Plugin
             var gameInput = Core.Instance.GameInput;
             gameInput.DisableAllControllerMaps(0);
             gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS, 0);
+            if (SpectatorController.Instance != null)
+                gameInput.EnableControllerMaps(BaseModule.MENU_INPUT_MAPS);
         }
 
         private void ReplaceStatToken(string statToken, string text)

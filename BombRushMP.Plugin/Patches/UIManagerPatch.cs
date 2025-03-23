@@ -15,6 +15,8 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(UIManager.ShowPauseMenu))]
         private static bool ShowPauseMenu_Prefix()
         {
+            if (MPUtility.AnyMenusOpen())
+                return false;
             var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
             if (currentLobby != null && currentLobby.InGame)
                 return false;
