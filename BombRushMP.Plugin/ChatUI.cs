@@ -197,6 +197,14 @@ namespace BombRushMP.Plugin
             var args = cmd.Split(' ');
             ClientLogger.Log($"Processing chat command {args[0]}");
             switch (args[0]) {
+                case "emojis":
+                    var emojiStr = "Available emojis:\n";
+                    foreach(var emoji in MPAssets.Instance.Emojis.Sprites)
+                    {
+                        emojiStr += $"{emoji.Key} - <sprite={emoji.Value}>\n";
+                    }
+                    AddMessage(emojiStr);
+                    break;
                 case "hide":
                     MPSettings.Instance.ShowChat = false;
                     break;
