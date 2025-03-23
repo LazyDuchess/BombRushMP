@@ -141,6 +141,7 @@ namespace BombRushMP.Plugin
             NotificationController.Create();
             ChatUI.Create();
             BalanceUI.Create();
+            StatsUI.Create();
             if (MPSettings.Instance.DebugInfo)
                 DebugUI.Create();
         }
