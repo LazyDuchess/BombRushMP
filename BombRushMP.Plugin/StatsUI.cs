@@ -26,13 +26,19 @@ namespace BombRushMP.Plugin
         private const int UpButton = 21;
         private const int DownButton = 56;
         private const int CloseButton = 3;
+        private const string Music = "MusicTrack_InThePocket";
         private float _autoScrollTimer = 0f;
         private string _originalText;
+        private bool _wasMusicPlaying = false;
+        private AudioSource _musicAudioSource;
 
         private void Awake()
         {
             Instance = this;
             _canvas = transform.Find("Canvas").gameObject;
+            _musicAudioSource = transform.Find("Stats Music").GetComponent<AudioSource>();
+            _musicAudioSource.outputAudioMixerGroup = Core.Instance.AudioManager.mixerGroups[4];
+            _musicAudioSource.clip = Core.Instance.Assets.LoadAssetFromBundle<MusicTrack>("coreassets", Music).AudioClip;
             _statsLabel = _canvas.transform.Find("Stats").GetComponent<TextMeshProUGUI>();
             _statsLabel.spriteAsset = MPAssets.Instance.Sprites;
             _originalText = _statsLabel.text;
@@ -81,6 +87,10 @@ namespace BombRushMP.Plugin
 
         public void Activate()
         {
+            var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
+            _wasMusicPlaying = musicPlayer.IsPlaying;
+            musicPlayer.Pause();
+            _musicAudioSource.Play();
             MPUtility.CloseMenusAndSpectator();
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.ui.TurnOn(false);
@@ -99,6 +109,10 @@ namespace BombRushMP.Plugin
 
         public void Deactivate()
         {
+            _musicAudioSource.Stop();
+            var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
+            if (_wasMusicPlaying)
+                musicPlayer.Play();
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.userInputEnabled = true;
             player.ui.TurnOn(true);
