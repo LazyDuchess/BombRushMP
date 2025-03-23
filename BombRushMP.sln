@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.PluginCommon", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.BunchOfEmotes", "BombRushMP.BunchOfEmotes\BombRushMP.BunchOfEmotes.csproj", "{2CE33301-B400-41BE-9513-FF280C53A5A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BombRushMP.NetRadio", "BombRushMP.NetRadio\BombRushMP.NetRadio.csproj", "{BFDD3C5C-6D63-468F-A2C4-9D2371ADE169}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{2CE33301-B400-41BE-9513-FF280C53A5A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CE33301-B400-41BE-9513-FF280C53A5A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CE33301-B400-41BE-9513-FF280C53A5A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFDD3C5C-6D63-468F-A2C4-9D2371ADE169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFDD3C5C-6D63-468F-A2C4-9D2371ADE169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFDD3C5C-6D63-468F-A2C4-9D2371ADE169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFDD3C5C-6D63-468F-A2C4-9D2371ADE169}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

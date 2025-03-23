@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common;
+using BombRushMP.NetRadio;
 using Reptile;
 using System;
 using System.Collections;
@@ -89,6 +90,10 @@ namespace BombRushMP.Plugin
 
         public void Activate()
         {
+            if (NetRadioSupport.Installed)
+            {
+                NetRadioSupport.Paused = true;
+            }
             var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
             _wasMusicPlaying = musicPlayer.IsPlaying;
             musicPlayer.Pause();
@@ -110,6 +115,10 @@ namespace BombRushMP.Plugin
 
         public void Deactivate()
         {
+            if (NetRadioSupport.Installed)
+            {
+                NetRadioSupport.Paused = false;
+            }
             _musicAudioSource.Stop();
             var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
             if (_wasMusicPlaying)
