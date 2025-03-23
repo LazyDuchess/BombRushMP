@@ -155,6 +155,18 @@ public class AppMultiplayer : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Stats");
+        button.OnConfirm += () =>
+        {
+            var statsUi = StatsUI.Instance;
+            if (!statsUi.Displaying)
+            {
+                MyPhone.TurnOff(false);
+                statsUi.Activate();
+            }
+        };
+        ScrollView.AddButton(button);
+
 #if DEBUG
         button = PhoneUIUtility.CreateSimpleButton("Debug");
         button.OnConfirm += () =>

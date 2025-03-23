@@ -226,12 +226,18 @@ namespace BombRushMP.Plugin
             var playerList = PlayerListUI.Instance;
             if (playerList != null)
                 playerList.Displaying = false;
+            var statsUi = StatsUI.Instance;
+            if (statsUi != null && statsUi.Displaying)
+                statsUi.Deactivate();
         }
 
         public static bool AnyMenusOpen()
         {
             var playerList = PlayerListUI.Instance;
             if (playerList.Displaying)
+                return true;
+            var statsUi = StatsUI.Instance;
+            if (statsUi.Displaying)
                 return true;
             return false;
         }
