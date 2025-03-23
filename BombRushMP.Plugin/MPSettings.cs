@@ -585,6 +585,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool StatsScreenMusic
+        {
+            get
+            {
+                return _statsScreenMusic.Value;
+            }
+
+            set
+            {
+                _statsScreenMusic.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -627,6 +640,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _optimizeOnePlayerAtATime;
         private ConfigEntry<bool> _loadCharactersAsync;
         private ConfigEntry<bool> _reloadCharactersInLoadingScreens;
+        private ConfigEntry<bool> _statsScreenMusic;
 #if DEBUG
         public bool UpdatePlayers => _updatePlayers.Value;
         public bool UpdateLobbyUI => _updateLobbyUI.Value;
@@ -681,6 +695,7 @@ namespace BombRushMP.Plugin
             };
             _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");
+            _statsScreenMusic = configFile.Bind(Settings, "Stats Screen Music", true, "Play music when viewing the Stats screen.");
             _playerAudioEnabled = configFile.Bind(Settings, "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
             _playerDopplerEnabled = configFile.Bind(Settings, "Player Audio Doppler", false, "Whether to enable the doppler effect on other players' sound effects.");
             _showNamePlates = configFile.Bind(Settings, "Show Nameplates", true, "Whether to show nameplates above players.");

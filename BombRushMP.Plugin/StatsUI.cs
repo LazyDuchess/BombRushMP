@@ -90,14 +90,17 @@ namespace BombRushMP.Plugin
 
         public void Activate()
         {
-            if (NetRadioSupport.Installed)
+            if (MPSettings.Instance.StatsScreenMusic)
             {
-                NetRadioSupport.Paused = true;
+                if (NetRadioSupport.Installed)
+                {
+                    NetRadioSupport.Paused = true;
+                }
+                var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
+                _wasMusicPlaying = musicPlayer.IsPlaying;
+                musicPlayer.Pause();
+                _musicAudioSource.Play();
             }
-            var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
-            _wasMusicPlaying = musicPlayer.IsPlaying;
-            musicPlayer.Pause();
-            _musicAudioSource.Play();
             MPUtility.CloseMenusAndSpectator();
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.ui.TurnOn(false);
@@ -115,14 +118,17 @@ namespace BombRushMP.Plugin
 
         public void Deactivate()
         {
-            if (NetRadioSupport.Installed)
+            if (MPSettings.Instance.StatsScreenMusic)
             {
-                NetRadioSupport.Paused = false;
+                if (NetRadioSupport.Installed)
+                {
+                    NetRadioSupport.Paused = false;
+                }
+                _musicAudioSource.Stop();
+                var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
+                if (_wasMusicPlaying)
+                    musicPlayer.Play();
             }
-            _musicAudioSource.Stop();
-            var musicPlayer = Core.Instance.AudioManager.MusicPlayer;
-            if (_wasMusicPlaying)
-                musicPlayer.Play();
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.userInputEnabled = true;
             player.ui.TurnOn(true);
