@@ -1145,6 +1145,185 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3621213238141107653, guid: 28bce1cd086b4104a92b1927ceac9aeb, type: 3}
+      propertyPath: m_text
+      value: '
+
+
+        <size=50><b>Lifetime Stats for $s_name</b></size>
+
+
+        Elites
+        Played Against
+
+        $s_elites
+
+
+        Elites Beaten
+
+        $s_elitesbeaten
+
+
+        Times
+        Fallen Asleep
+
+        $s_asleep
+
+
+        Time Spent Asleep
+
+        $s_asleeptime
+
+
+        Time
+        Spent Spectating
+
+        $s_spectating
+
+
+        Times You''ve Hit Other
+        Players
+
+        $s_playershit
+
+
+        Times You''ve Been Hit
+
+        $s_timeshit
+
+
+        Times
+        You''ve Died
+
+        $s_deaths
+
+
+        Times You''ve Said Hello
+
+        $s_hello
+
+
+        Score
+        Battles Played
+
+        $s_played0
+
+
+        Score Battles Played Alone
+
+        $s_alone0
+
+
+        Score
+        Battles Won
+
+        $s_won0
+
+
+        Graffiti Races Played
+
+        $s_played1
+
+
+        Graffiti
+        Races Played Alone
+
+        $s_alone1
+
+
+        Graffiti Races Won
+
+        $s_won1
+
+
+        Crew
+        Graffiti Races Played
+
+        $s_played2
+
+
+        Crew Graffiti Races Played
+        Alone
+
+        $s_alone2
+
+
+        Crew Graffiti Races Won
+
+        $s_won2
+
+
+        Pro
+        Skater Score Battles Played
+
+        $s_played3
+
+
+        Pro Skater Score
+        Battles Played Alone
+
+        $s_alone3
+
+
+        Pro Skater Score Battles
+        Won
+
+        $s_won3
+
+
+        Crew Score Battles Played
+
+        $s_played4
+
+
+        Crew
+        Score Battles Played Alone
+
+        $s_alone4
+
+
+        Crew Score Battles
+        Won
+
+        $s_won4
+
+
+        Crew Pro Skater Score Battles Played
+
+        $s_played5
+
+
+        Crew
+        Pro Skater Score Battles Played Alone
+
+        $s_alone5
+
+
+        Crew Pro
+        Skater Score Battles Won
+
+        $s_won5
+
+
+
+
+        <size=50><b>Thanks
+        for playing All City Network!</b></size>
+
+
+        <size=300><sprite=44>
+        <sprite=45> <sprite=51></size>
+
+
+
+        <size=50><b>Thank you, Team Reptile!</b></size>
+
+
+        For
+        creating Bomb Rush Cyberfunk
+
+'
+      objectReference: {fileID: 0}
     - target: {fileID: 3621213238350278400, guid: 28bce1cd086b4104a92b1927ceac9aeb, type: 3}
       propertyPath: m_RootOrder
       value: 20

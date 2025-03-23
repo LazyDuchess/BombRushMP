@@ -228,7 +228,7 @@ MonoBehaviour:
 
 
     <size=300><sprite=44>
-    <sprite=45></size>
+    <sprite=45> <sprite=51></size>
 
 
 
