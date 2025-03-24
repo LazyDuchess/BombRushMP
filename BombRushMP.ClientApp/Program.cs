@@ -45,6 +45,7 @@ namespace BombRushMP.ClientApp
             var client = new BRCClient(clientSettings.Address, clientSettings.Port, (BRCClient.Tasks)taskID);
             client.Stage = clientSettings.Stage;
             client.BotName = clientSettings.Name;
+            client.Message = clientSettings.Message;
             while (true)
             {
                 client.Update();

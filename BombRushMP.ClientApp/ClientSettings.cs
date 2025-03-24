@@ -13,6 +13,7 @@ namespace BombRushMP.ClientApp
         public string Name = "ACN Bot";
         public int Stage = 5;
         public string Address = "localhost";
+        public string Message = "Hello, world!";
         public int Port = 41585;
         public bool UseNativeSockets = true;
     }

@@ -15,6 +15,7 @@ namespace BombRushMP.ClientApp
     public class BRCClient : IDisposable
     {
         public string BotName = "ACN Bot";
+        public string Message = "Hello, world!";
         public int Stage = 5;
         private const string CrewName = "Bots";
         private INetClient _client;
@@ -85,7 +86,7 @@ namespace BombRushMP.ClientApp
             {
                 case 0:
                     Log("Sending chat message.");
-                    SendPacket(new ClientChat("Hello, world!"));
+                    SendPacket(new ClientChat(Message));
                     _taskStep++;
                     break;
             }
