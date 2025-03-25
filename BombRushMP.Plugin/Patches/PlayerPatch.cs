@@ -107,6 +107,23 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.OnTriggerStay))]
+        private static void OnTriggerStay_Postfix(Player __instance)
+        {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return;
+            var lobbyManager = clientController.ClientLobbyManager;
+            if (lobbyManager == null) return;
+            var lobby = lobbyManager.CurrentLobby;
+            if (lobby == null || lobby.CurrentGamemode == null || !lobby.InGame) return;
+            var grafRace = lobby.CurrentGamemode as GraffitiRace;
+            if (grafRace == null) return;
+            if (!grafRace.QuickGraffitiEnabled) return;
+            if (!grafRace.AutoGraffitiEnabled) return;
+            __instance.graffitiContextAvailable = 0;
+        }
+
+        [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.InitHitboxes))]
         private static void InitHitboxes_Postfix(Player __instance)
         {
@@ -302,7 +319,7 @@ namespace BombRushMP.Plugin.Patches
                 }
             }
 
-            if (grafSpot != null)
+            if (grafSpot != null && __instance.userInputEnabled)
             {
                 __instance.StartGraffitiMode(grafSpot);
                 __instance.graffitiSpotsAvailable.Clear();
