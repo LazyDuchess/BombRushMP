@@ -460,15 +460,19 @@ namespace BombRushMP.Plugin.Gamemodes
             settings.SettingByID[SettingSpawnModeID] = new GamemodeSetting("Spawn Mode", SpawnMode.Automatic);
             settings.SettingByID[SettingQuickGraffitiID] = new ToggleGamemodeSetting("Quick Graffiti", true);
             settings.SettingByID[SettingAutoGraffitiID] = new ToggleGamemodeSetting("Auto Graffiti", false);
-            settings.SettingByID[SettingAutoGraffitiID].OnCheckVisibility += () =>
+            settings.SettingByID[SettingAutoGraffitiID].OnCheckVisibility += (Dictionary<int, GamemodeSetting> settingById) =>
             {
-                return QuickGraffitiEnabled;
+                return (settingById[SettingQuickGraffitiID] as ToggleGamemodeSetting).IsOn;
             };
             var maxSpots = GetValidSpots().Count;
             var minSpots = MinGraffiti;
             if (maxSpots < MinGraffiti)
                 minSpots = 0;
             settings.SettingByID[SettingGraffitiAmountID] = new GamemodeSetting("Graffiti Amount", DefaultGraffiti, minSpots, maxSpots, 5);
+            settings.SettingByID[SettingGraffitiAmountID].OnCheckVisibility += (Dictionary<int, GamemodeSetting> settingById) =>
+            {
+                return !(settingById[SettingSingleGraffitiID] as ToggleGamemodeSetting).IsOn;
+            };
             settings.SettingByID[SettingSingleGraffitiID] = new ToggleGamemodeSetting("Single Graffiti", false);
             return settings;
         }

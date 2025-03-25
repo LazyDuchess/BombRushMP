@@ -15,7 +15,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public int MaxValue = 0;
         public int AddSteps = 1;
         public Type EnumType = null;
-        public Func<bool> OnCheckVisibility;
+        public Func<Dictionary<int, GamemodeSetting>, bool> OnCheckVisibility;
 
         public GamemodeSetting(string label, int value, int min, int max, int addSteps = 1) 
         {

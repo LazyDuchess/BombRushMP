@@ -41,7 +41,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var str = "";
             foreach (var setting in SettingByID.Values)
             {
-                if (setting.OnCheckVisibility != null && !setting.OnCheckVisibility()) continue;
+                if (setting.OnCheckVisibility != null && !setting.OnCheckVisibility(SettingByID)) continue;
                 str += $"{setting.ToString()}\n";
             }
             if (!inGame) {

@@ -71,7 +71,10 @@ namespace BombRushMP.Plugin.Phone
                 button.OnConfirm += () =>
                 {
                     var settings = GetCurrentSettings();
-                    settings.SettingByID[setting.Key].Next();
+                    var set = settings.SettingByID[setting.Key];
+                    if (set.OnCheckVisibility != null && !set.OnCheckVisibility(settings.SettingByID))
+                        return;
+                    set.Next();
                     MPSaveData.Instance.GamemodeSettings[_currentGamemode] = settings.ToSaved();
                     Core.Instance.SaveManager.SaveCurrentSaveSlot();
                     SendSettings(settings);
@@ -88,7 +91,10 @@ namespace BombRushMP.Plugin.Phone
             {
                 if (_buttonBySettingID.TryGetValue(setting.Key, out var result))
                 {
-                    result.Label.text = setting.Value.ToString();
+                    if (setting.Value.OnCheckVisibility != null && !setting.Value.OnCheckVisibility(currentSettings.SettingByID))
+                        result.Label.text = "-";
+                    else
+                        result.Label.text = setting.Value.ToString();
                 }
             }
         }
