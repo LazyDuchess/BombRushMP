@@ -278,6 +278,40 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.CheckAvailableGraffitiSpots))]
+        private static bool CheckAvailableGraffitiSpots_Prefix(Player __instance)
+        {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return true;
+            var lobbyManager = clientController.ClientLobbyManager;
+            if (lobbyManager == null) return true;
+            var lobby = lobbyManager.CurrentLobby;
+            if (lobby == null || lobby.CurrentGamemode == null || !lobby.InGame) return true;
+            var grafRace = lobby.CurrentGamemode as GraffitiRace;
+            if (grafRace == null) return true;
+            if (!grafRace.QuickGraffitiEnabled) return true;
+            if (!grafRace.AutoGraffitiEnabled) return true;
+
+            GraffitiSpot grafSpot = null;
+            foreach(var gspot in __instance.graffitiSpotsAvailable)
+            {
+                if (grafRace.IsRaceGraffitiSpot(gspot))
+                {
+                    grafSpot = gspot;
+                    break;
+                }
+            }
+
+            if (grafSpot != null)
+            {
+                __instance.StartGraffitiMode(grafSpot);
+                __instance.graffitiSpotsAvailable.Clear();
+            }
+
+            return false;
+        }
+
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.StartGraffitiMode))]
         private static bool StartGraffitiMode_Prefix(Player __instance, GraffitiSpot graffitiSpot)
         {
