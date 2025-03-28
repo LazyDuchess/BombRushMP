@@ -41,6 +41,7 @@ namespace BombRushMP.Server
         public float ChatCooldown = 0.5f;
         public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
         public string MOTD = "";
+        public bool AlwaysShowMOTD = false;
 
         public ServerState ServerState = new();
 
@@ -530,7 +531,7 @@ namespace BombRushMP.Server
                             return;
 
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
-                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState, MOTD = MOTD }, IMessage.SendModes.Reliable, client, NetChannels.Default);
+                        SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState, MOTD = MOTD, AlwaysShowMOTD = AlwaysShowMOTD }, IMessage.SendModes.Reliable, client, NetChannels.Default);
 
                         var currentClientStates = CreateClientStatesPacket(clientState.Stage);
                         SendPacketToClient(currentClientStates, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);

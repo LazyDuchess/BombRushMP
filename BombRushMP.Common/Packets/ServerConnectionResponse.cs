@@ -20,6 +20,7 @@ namespace BombRushMP.Common.Packets
         public AuthUser User;
         public ServerState ServerState;
         public string MOTD = "";
+        public bool AlwaysShowMOTD = false;
 
         public override void Read(BinaryReader reader)
         {
@@ -31,6 +32,7 @@ namespace BombRushMP.Common.Packets
             ServerState = new ServerState();
             ServerState.Read(reader);
             MOTD = reader.ReadString();
+            AlwaysShowMOTD = reader.ReadBoolean();
         }
 
         public override void Write(BinaryWriter writer)
@@ -41,6 +43,7 @@ namespace BombRushMP.Common.Packets
             User.Write(writer);
             ServerState.Write(writer);
             writer.Write(MOTD);
+            writer.Write(AlwaysShowMOTD);
         }
     }
 }

@@ -471,7 +471,7 @@ namespace BombRushMP.Plugin
                             saveManager.SaveCurrentSaveSlot();
                             SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
                         }
-                        if (!SeenMOTD)
+                        if (!SeenMOTD || connectionResponse.AlwaysShowMOTD)
                         {
                             SeenMOTD = true;
                             if (!string.IsNullOrEmpty(connectionResponse.MOTD))

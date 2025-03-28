@@ -37,7 +37,8 @@ namespace BombRushMP.ServerApp
         public bool LogChatsToFiles = false;
         public bool AllowNameChanges = false;
         public float ChatCooldown = 0.5f;
-        public string MOTD = "<color=yellow>Welcome to Freesoul!";
+        public string MOTD = "<color=yellow>Welcome to All City Network!";
+        public bool AlwaysShowMOTD = false;
         [JsonIgnore]
         public IMessage.SendModes ClientAnimationSendMode
         {

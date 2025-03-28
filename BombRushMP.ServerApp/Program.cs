@@ -51,6 +51,8 @@ namespace BombRushMP.ServerApp
             server.AllowNameChanges = serverSettings.AllowNameChanges;
             server.ChatCooldown = serverSettings.ChatCooldown;
             server.RestartAction = Restart;
+            server.MOTD = serverSettings.MOTD;
+            server.AlwaysShowMOTD = serverSettings.AlwaysShowMOTD;
             while(true)
             {
                 server.Update();
