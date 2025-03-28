@@ -16,6 +16,7 @@ namespace BombRushMP.ServerApp
     internal class Program
     {
         private const string ServerSettingsPath = "server.json";
+        private const string ServerTagsPath = "tags.txt";
 
         static void Restart()
         {
@@ -53,6 +54,14 @@ namespace BombRushMP.ServerApp
             server.RestartAction = Restart;
             server.MOTD = serverSettings.MOTD;
             server.AlwaysShowMOTD = serverSettings.AlwaysShowMOTD;
+            if (File.Exists(ServerTagsPath))
+            {
+                var tags = File.ReadAllLines(ServerTagsPath);
+                foreach(var tag in tags)
+                {
+                    server.ServerState.Tags.Add(tag);
+                }
+            }
             while(true)
             {
                 server.Update();
