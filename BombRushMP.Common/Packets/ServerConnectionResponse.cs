@@ -19,6 +19,7 @@ namespace BombRushMP.Common.Packets
         public IMessage.SendModes ClientAnimationSendMode = IMessage.SendModes.ReliableUnordered;
         public AuthUser User;
         public ServerState ServerState;
+        public string MOTD = "";
 
         public override void Read(BinaryReader reader)
         {
@@ -29,6 +30,7 @@ namespace BombRushMP.Common.Packets
             User.Read(reader);
             ServerState = new ServerState();
             ServerState.Read(reader);
+            MOTD = reader.ReadString();
         }
 
         public override void Write(BinaryWriter writer)
@@ -38,6 +40,7 @@ namespace BombRushMP.Common.Packets
             writer.Write((byte)ClientAnimationSendMode);
             User.Write(writer);
             ServerState.Write(writer);
+            writer.Write(MOTD);
         }
     }
 }
