@@ -530,6 +530,12 @@ namespace BombRushMP.Server
                         if (oldClientState != null)
                             return;
 
+                        if (LogMessagesToFile)
+                        {
+                            var logText = $"Player Connected: {clientState.Name}/{TMPFilter.RemoveAllTags(clientState.Name)} ({client.Address})";
+                            _database.LogChatMessage($"[{DateTime.Now.ToShortTimeString()}] {logText}", clientState.Stage);
+                        }
+
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState, MOTD = MOTD, AlwaysShowMOTD = AlwaysShowMOTD }, IMessage.SendModes.Reliable, client, NetChannels.Default);
 
@@ -727,6 +733,11 @@ namespace BombRushMP.Server
             }
             if (clientState != null)
             {
+                if (LogMessagesToFile)
+                {
+                    var logText = $"Player Disconnected: {player.ClientState.Name}/{TMPFilter.RemoveAllTags(player.ClientState.Name)} ({player.Client.Address})";
+                    _database.LogChatMessage($"[{DateTime.Now.ToShortTimeString()}] {logText}", player.ClientState.Stage);
+                }
                 SendPacketToStage(new ServerClientDisconnected(e.Client.Id), IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
 
                 var user = clientState.User;
