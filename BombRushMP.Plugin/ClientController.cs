@@ -20,6 +20,7 @@ namespace BombRushMP.Plugin
     {
         public static float DeltaTime { get; private set; }
         public static ClientController Instance { get; private set; }
+        public static bool SeenMOTD = false;
         public Dictionary<int, int> PlayerCountByStage = new();
         public ClientLobbyManager ClientLobbyManager = null;
         public Dictionary<Player, MPPlayer> MultiplayerPlayerByPlayer = new();
@@ -469,6 +470,14 @@ namespace BombRushMP.Plugin
                             skin.ApplyToPlayer(player);
                             saveManager.SaveCurrentSaveSlot();
                             SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SpecialPlayer);
+                        }
+                        if (!SeenMOTD)
+                        {
+                            SeenMOTD = true;
+                            if (!string.IsNullOrEmpty(connectionResponse.MOTD))
+                            {
+                                ChatUI.Instance.AddMessage(connectionResponse.MOTD);
+                            }
                         }
                     }
                     break;
