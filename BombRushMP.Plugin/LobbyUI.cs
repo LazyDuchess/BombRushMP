@@ -1,4 +1,6 @@
-﻿using BombRushMP.Plugin.Gamemodes;
+﻿using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
+using BombRushMP.Plugin.Gamemodes;
 using Reptile;
 using System;
 using System.Collections.Generic;
@@ -44,12 +46,13 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            var clientController = ClientController.Instance;
+            var currentLobby = _lobbyManager.CurrentLobby;
             _softUpdateTimer += Time.deltaTime;
             if (_updateQueued)
             {
                 _softUpdateQueued = false;
                 _updateQueued = false;
-                var currentLobby = _lobbyManager.CurrentLobby;
                 if (currentLobby == null)
                     Deactivate();
                 else
@@ -62,6 +65,22 @@ namespace BombRushMP.Plugin
             }
             if (_softUpdateTimer >= SoftUpdateRate)
                 _softUpdateTimer = 0f;
+
+            if (currentLobby != null && !currentLobby.InGame)
+            {
+                if (currentLobby.LobbyState.HostId != clientController.LocalID)
+                {
+                    var gameInput = Core.Instance.GameInput;
+                    var enabledMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs(0);
+                    if (enabledMaps.controllerMapCategoryIDs.Contains(0) && enabledMaps.controllerMapCategoryIDs.Contains(6) && !Core.Instance.IsCorePaused && !MPUtility.AnyMenusOpen())
+                    {
+                        if (Input.GetKeyDown(MPSettings.Instance.ReadyKey))
+                        {
+                            clientController.SendPacket(new ClientLobbySetReady(!currentLobby.LobbyState.Players[clientController.LocalID].Ready), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+                        }
+                    }
+                }
+            }
         }
 
         private void OnDestroy()

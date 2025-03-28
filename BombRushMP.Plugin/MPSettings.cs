@@ -229,6 +229,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public KeyCode ReadyKey
+        {
+            get
+            {
+                return _readyKey.Value;
+            }
+
+            set
+            {
+                _readyKey.Value = value;
+            }
+        }
+
         public KeyCode ChatKey
         {
             get
@@ -617,6 +630,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<KeyCode> _talkKey;
         private ConfigEntry<KeyCode> _chatKey;
         private ConfigEntry<KeyCode> _playerListKey;
+        private ConfigEntry<KeyCode> _readyKey;
         private ConfigEntry<bool> _filterProfanity;
         private ConfigEntry<bool> _showChat;
         private ConfigEntry<BalanceUI.Types> _balanceUIType;
@@ -707,6 +721,7 @@ namespace BombRushMP.Plugin
             _inviteMessages = configFile.Bind(ChatSettings, "Show Lobby Invite Messages", true, "Whether to show a message in chat when you're invited to a lobby.");
             _talkKey = configFile.Bind(Input, "Talk Key", KeyCode.H, "Press this key to make your character talk.");
             _chatKey = configFile.Bind(Input, "Chat Key", KeyCode.Tab, "Press this key to open the chat.");
+            _readyKey = configFile.Bind(Input, "(Lobby) Ready Key", KeyCode.R, "Press this key to toggle ready when in a lobby.");
             _playerListKey = configFile.Bind(Input, "Player List Key", KeyCode.J, "Press this key to toggle the player list.");
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
             _dontAutoScrollChatIfFocused = configFile.Bind(ChatSettings, "No auto scroll chat if focused", false, "If true, will not scroll to the bottom when messages are received if the chat window is open for typing/scrolling.");
