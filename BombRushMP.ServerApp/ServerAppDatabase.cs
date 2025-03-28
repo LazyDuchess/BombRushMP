@@ -63,6 +63,11 @@ namespace BombRushMP.ServerApp
             {
                 writer.WriteLine(message);
             }
+            var globalPath = Path.Combine(dir, "Global.txt");
+            using (var writer = File.AppendText(globalPath))
+            {
+                writer.WriteLine($"({stage}) {message}");
+            }
         }
     }
 }

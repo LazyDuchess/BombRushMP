@@ -26,7 +26,10 @@ namespace BombRushMP.Plugin
             60,
             61,
             62,
-            54
+            54,
+            64,
+            65,
+            66
             ];
 
         public static int GetBadgeForName(string name)
