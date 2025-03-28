@@ -428,8 +428,8 @@ namespace BombRushMP.Plugin
                         else
                         {
                             SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, skinPacket.SpecialSkin);
+                            SpecialSkinManager.Instance.ApplyRandomVariantToPlayer(player);
                         }
-
                     }
                     break;
                 case Packets.ServerSetChibi:

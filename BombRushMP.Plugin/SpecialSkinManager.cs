@@ -91,6 +91,7 @@ namespace BombRushMP.Plugin
             if (playerComponent.SpecialSkin == SpecialSkins.None) return;
             if (playerComponent.MainRenderer == null) return;
             var definition = GetDefinition(playerComponent.SpecialSkin);
+            if (definition.Variants.Length == 0) return;
             var variant = UnityEngine.Random.Range(0, definition.Variants.Length);
             ApplySpecialSkinVariantToPlayer(player, variant);
         }
