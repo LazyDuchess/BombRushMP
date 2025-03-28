@@ -89,6 +89,10 @@ namespace BombRushMP.Plugin
             var name = clientState.Name;
             name = TMPFilter.RemoveAllTags(GetPlayerDisplayName(name));
             var user = clientState.User;
+            if (AprilUtils.GetAprilEventEnabled())
+            {
+                name = $"<sprite={AprilUtils.GetBadgeForName(clientState.Name)}> {name}";
+            }
             foreach (var badge in user.Badges)
             {
                 name = $"<sprite={badge}> {name}";
@@ -101,7 +105,11 @@ namespace BombRushMP.Plugin
             var name = clientState.Name;
             name = GetPlayerDisplayName(name);
             var user = clientState.User;
-            foreach(var badge in user.Badges)
+            if (AprilUtils.GetAprilEventEnabled())
+            {
+                name = $"<sprite={AprilUtils.GetBadgeForName(clientState.Name)}> {name}";
+            }
+            foreach (var badge in user.Badges)
             {
                 name = $"<sprite={badge}> {name}";
             }

@@ -110,7 +110,11 @@ namespace BombRushMP.Plugin
             if (string.IsNullOrEmpty(authorname))
                 authorname = "";
             authorname = MPUtility.GetPlayerDisplayName(authorname);
-            foreach(var badge in serverMessage.Badges)
+            if (AprilUtils.GetAprilEventEnabled())
+            {
+                authorname = $"<sprite={AprilUtils.GetBadgeForName(serverMessage.Author)}> {authorname}";
+            }
+            foreach (var badge in serverMessage.Badges)
             {
                 authorname = $"<sprite={badge}> {authorname}";
             }
