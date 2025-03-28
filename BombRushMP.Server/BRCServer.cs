@@ -20,6 +20,7 @@ namespace BombRushMP.Server
     public class BRCServer : IDisposable
     {
         public static BRCServer Instance { get; private set; }
+        public Random RNG = new Random();
         public ServerLobbyManager ServerLobbyManager;
         public static Action<INetConnection> ClientHandshook;
         public static Action<INetConnection> ClientDisconnected;
@@ -365,7 +366,33 @@ namespace BombRushMP.Server
                     {
                         helpStr += $"{cmdChar}reload - Reloads server auth keys and banned users\n{cmdChar}restart - Restarts the server\n{cmdChar}say (announcement for stage)\n{cmdChar}sayall (global announcement)\n";
                     }
+                    if (AprilServer.GetAprilEventEnabled())
+                    {
+                        helpStr += $"{cmdChar}chibi - Turn into a chibi\n{cmdChar}rtd - Turn into a random special character\n";
+                    }
                     SendMessageToPlayer(helpStr, player);
+                    break;
+
+                case "chibi":
+                    if (AprilServer.GetAprilEventEnabled())
+                    {
+                        SendPacketToClient(new ServerSetChibi(true), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Default);
+                    }
+                    break;
+
+                case "rtd":
+                    if (AprilServer.GetAprilEventEnabled())
+                    {
+                        var specialSkins = new SpecialSkins[]
+                        {
+                            SpecialSkins.FemaleCop,
+                            SpecialSkins.MaleCop,
+                            SpecialSkins.SeanKingston,
+                            SpecialSkins.Forklift
+                        };
+                        var specialSkin = specialSkins[RNG.Next(specialSkins.Length)];
+                        SendPacketToClient(new ServerSetSpecialSkin(specialSkin), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Default);
+                    }
                     break;
 
                 case "say":

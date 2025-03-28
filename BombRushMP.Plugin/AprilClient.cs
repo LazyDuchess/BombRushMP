@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombRushMP.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BombRushMP.Plugin
 {
-    public static class AprilUtils
+    public static class AprilClient
     {
-        public const string AprilTag = "april";
+        public const string AprilTag = AprilCommon.Tag;
 
         public static int[] AprilBadges = [
             38,
@@ -16,7 +17,7 @@ namespace BombRushMP.Plugin
             34,
             35,
             25,
-            54,
+            2,
             55,
             56,
             57,
@@ -25,7 +26,7 @@ namespace BombRushMP.Plugin
             60,
             61,
             62,
-            2
+            54
             ];
 
         public static int GetBadgeForName(string name)
