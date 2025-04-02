@@ -643,6 +643,13 @@ namespace BombRushMP.Plugin
                         }
                     }
                     break;
+
+                case Packets.ServerTeleportPlayer:
+                    {
+                        var tpPacket = (ServerTeleportPlayer)packet;
+                        MPUtility.PlaceCurrentPlayer(tpPacket.Position.ToUnityVector3(), tpPacket.Rotation.ToUnityQuaternion());
+                    }
+                    break;
             }
         }
 

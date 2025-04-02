@@ -58,6 +58,7 @@ namespace BombRushMP.Common.Packets
         ServerLobbySoftUpdate,
         ServerClientDisconnected,
         ServerSetSpecialSkin,
-        ServerServerStateUpdate
+        ServerServerStateUpdate,
+        ServerTeleportPlayer
     }
 }
