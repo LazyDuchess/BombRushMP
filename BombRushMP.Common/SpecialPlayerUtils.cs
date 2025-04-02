@@ -15,6 +15,7 @@ namespace BombRushMP.Common
         public const string SpecialPlayerUnlockName = "Goonie";
         public const string SpecialPlayerUnlockID = "goonieskateboard";
 
+        public const string RegularPlayerUnlockNotification = $"<color=yellow>You've unlocked the {SpecialPlayerUnlockName} skateboard skin for beating a player who unlocked it!</color>";
         public const string SpecialPlayerUnlockNotification = $"<color=yellow>You've unlocked the {SpecialPlayerUnlockName} skateboard skin for beating a {SpecialPlayerName}!</color>";
         public const string SpecialPlayerNag = $"<color=yellow>Beat a {SpecialPlayerName} in any gamemode to unlock a skateboard skin.</color>";
 

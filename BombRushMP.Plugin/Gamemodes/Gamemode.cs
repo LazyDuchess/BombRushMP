@@ -106,6 +106,8 @@ namespace BombRushMP.Plugin.Gamemodes
                     }
                 }
 
+                var showedGoonieBoardUnlock = false;
+
                 if (!AmIElite())
                 {
                     if (AnyEliteInLobby())
@@ -118,8 +120,16 @@ namespace BombRushMP.Plugin.Gamemodes
                             {
                                 ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
                                 saveData.UnlockedGoonieBoard = true;
+                                showedGoonieBoardUnlock = true;
                             }
                         }
+                    }
+
+                    if (!saveData.ShouldDisplayGoonieBoard() && !showedGoonieBoardUnlock && WonAgainstPlayerWithSpecialUnlock())
+                    {
+                        ChatUI.Instance.AddMessage(SpecialPlayerUtils.RegularPlayerUnlockNotification);
+                        saveData.UnlockedGoonieBoard = true;
+                        showedGoonieBoardUnlock = true;
                     }
                 }
 
@@ -191,6 +201,46 @@ namespace BombRushMP.Plugin.Gamemodes
                     ls.Add(playa.Key);
             }
             return ls;
+        }
+
+        private bool AnyPlayerWithSpecialUnlockInOppositeTeam()
+        {
+            var myTeam = Lobby.LobbyState.Players[ClientController.LocalID].Team;
+            foreach (var player in Lobby.LobbyState.Players)
+            {
+                if (ClientController.Players[player.Key].ClientState.HasSpecialUnlock && player.Value.Team != myTeam)
+                    return true;
+            }
+            return false;
+        }
+
+        private bool WonAgainstPlayerWithSpecialUnlock()
+        {
+            if (Lobby == null) return false;
+            if (Lobby.LobbyState == null) return false;
+            if (Lobby.LobbyState.Players == null) return false;
+
+            if (TeamBased)
+            {
+                if (AnyPlayerWithSpecialUnlockInOppositeTeam())
+                {
+                    var winners = GetWinningPlayers();
+                    if (winners.Contains(ClientController.LocalID))
+                        return true;
+                }
+                return false;
+            }
+
+            var myScore = Lobby.LobbyState.Players[ClientController.LocalID].Score;
+
+            foreach (var player in Lobby.LobbyState.Players)
+            {
+                var client = ClientController.Players[player.Key];
+                if (client.ClientState.HasSpecialUnlock && player.Value.Score < myScore)
+                    return true;
+            }
+
+            return false;
         }
 
         private bool WonAgainstElite()

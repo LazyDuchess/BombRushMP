@@ -23,6 +23,7 @@ namespace BombRushMP.Common.Packets
         public string Name = "Player";
         public string CrewName = "";
         public int Stage = 0;
+        public bool HasSpecialUnlock = false;
         public AuthUser User = new AuthUser();
 
         public override void Read(BinaryReader reader)
@@ -38,6 +39,7 @@ namespace BombRushMP.Common.Packets
             CrewName = reader.ReadString();
             SpecialSkin = (SpecialSkins)reader.ReadInt32();
             SpecialSkinVariant = reader.ReadInt32();
+            HasSpecialUnlock = reader.ReadBoolean();
             var user = new AuthUser();
             User.Read(reader);
         }
@@ -54,6 +56,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(CrewName);
             writer.Write((int)SpecialSkin);
             writer.Write(SpecialSkinVariant);
+            writer.Write(HasSpecialUnlock);
             User.Write(writer);
         }
     }

@@ -693,6 +693,7 @@ namespace BombRushMP.Plugin
                 Stage = (int)Utility.SceneNameToStage(SceneManager.GetActiveScene().name),
                 SpecialSkin = playerComp.SpecialSkin,
                 SpecialSkinVariant = playerComp.SpecialSkinVariant,
+                HasSpecialUnlock = MPSaveData.Instance.UnlockedGoonieBoard
             };
 
             if (CrewBoomSupport.Installed)
