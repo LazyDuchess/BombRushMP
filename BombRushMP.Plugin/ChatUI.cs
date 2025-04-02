@@ -133,7 +133,8 @@ namespace BombRushMP.Plugin
             }
             else
             {
-                text = string.Format(text, authorname);
+                if (!string.IsNullOrEmpty(serverMessage.Author))
+                    text = string.Format(text, authorname);
             }
             AddMessage(text);
         }
