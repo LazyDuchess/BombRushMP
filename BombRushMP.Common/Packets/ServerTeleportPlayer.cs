@@ -15,6 +15,16 @@ namespace BombRushMP.Common.Packets
         public Vector3 Position;
         public Quaternion Rotation;
 
+        public ServerTeleportPlayer()
+        {
+
+        }
+        public ServerTeleportPlayer(Vector3 position, Quaternion rotation)
+        {
+            Position = position;
+            Rotation = rotation;
+        }
+
         public override void Write(BinaryWriter writer)
         {
             writer.Write(Position.X);
