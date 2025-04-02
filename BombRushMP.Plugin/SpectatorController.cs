@@ -68,6 +68,16 @@ namespace BombRushMP.Plugin
             CurrentSpectatingClient = _players[index].ClientId;
         }
 
+        public bool CanTeleportToCurrentPlayer()
+        {
+            if (_clientController == null) return false;
+            var user = _clientController.GetLocalUser();
+            if (user?.IsModerator == true) return true;
+            if (_clientController.ClientLobbyManager.CurrentLobby != null && _clientController.ClientLobbyManager.CurrentLobby.InGame)
+                return false;
+            return (_clientController.Players[CurrentSpectatingClient].ClientState.AllowTeleports);
+        }
+
         private void Update()
         {
             MPSaveData.Instance.Stats.TimeSpentSpectating += Core.dt;
@@ -89,7 +99,7 @@ namespace BombRushMP.Plugin
                 _currentSpectatingPlayer = targetPlayer;
                 _gameplayCamera.SetPlayerToFollow(targetPlayer);
             }
-            if (_gameInput.GetButtonNew(2, 0) && user?.IsModerator == true)
+            if (_gameInput.GetButtonNew(2, 0) && CanTeleportToCurrentPlayer())
             {
                 EndSpectating();
                 MPUtility.PlaceCurrentPlayer(targetPlayer.transform.position, targetPlayer.transform.rotation);

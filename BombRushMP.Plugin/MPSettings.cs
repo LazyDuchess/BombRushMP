@@ -611,6 +611,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool AllowTeleports
+        {
+            get
+            {
+                return _allowTeleports.Value;
+            }
+
+            set
+            {
+                _allowTeleports.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -666,6 +679,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateClientController;
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
+        private ConfigEntry<bool> _allowTeleports;
 #endif
         private string _savePath;
         private ConfigFile _configFile;
@@ -703,6 +717,12 @@ namespace BombRushMP.Plugin
             };
             _crewName = configFile.Bind(General, "Crew Name", "", "Name of your crew.");
             _crewName.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                clientController.InfrequentClientStateUpdateQueued = true;
+            };
+            _allowTeleports = configFile.Bind(Settings, "Allow Players to Teleport to you", true, "Whether to allow spectators to teleport to you.");
+            _allowTeleports.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;

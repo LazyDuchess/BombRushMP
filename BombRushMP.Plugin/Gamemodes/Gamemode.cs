@@ -119,7 +119,7 @@ namespace BombRushMP.Plugin.Gamemodes
                             if (!saveData.ShouldDisplayGoonieBoard())
                             {
                                 ChatUI.Instance.AddMessage(SpecialPlayerUtils.SpecialPlayerUnlockNotification);
-                                saveData.UnlockedGoonieBoard = true;
+                                saveData.UnlockGoonieBoard();
                                 showedGoonieBoardUnlock = true;
                             }
                         }
@@ -128,7 +128,7 @@ namespace BombRushMP.Plugin.Gamemodes
                     if (!saveData.ShouldDisplayGoonieBoard() && !showedGoonieBoardUnlock && WonAgainstPlayerWithSpecialUnlock())
                     {
                         ChatUI.Instance.AddMessage(SpecialPlayerUtils.RegularPlayerUnlockNotification);
-                        saveData.UnlockedGoonieBoard = true;
+                        saveData.UnlockGoonieBoard();
                         showedGoonieBoardUnlock = true;
                     }
                 }

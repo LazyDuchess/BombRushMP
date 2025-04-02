@@ -144,5 +144,12 @@ namespace BombRushMP.Plugin
             if (user.HasTag(SpecialPlayerUtils.SpecialPlayerTag)) return true;
             return false;
         }
+
+        public void UnlockGoonieBoard()
+        {
+            UnlockedGoonieBoard = true;
+            Core.Instance.SaveManager.SaveCurrentSaveSlot();
+            ClientController.Instance.SendClientState();
+        }
     }
 }

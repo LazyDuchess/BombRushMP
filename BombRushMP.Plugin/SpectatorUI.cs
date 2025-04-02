@@ -24,13 +24,11 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             var user = clientController.GetLocalUser();
+            var spec = SpectatorController.Instance;
             if (user?.IsModerator == true)
             {
-                _tpLabel.gameObject.SetActive(true);
-                _tpGlyph.gameObject.SetActive(true);
                 _idLabel.gameObject.SetActive(true);
                 var plid = 0;
-                var spec = SpectatorController.Instance;
                 if (spec != null)
                 {
                     plid = spec.CurrentSpectatingClient;
@@ -40,6 +38,14 @@ namespace BombRushMP.Plugin
             else
             {
                 _idLabel.gameObject.SetActive(false);
+            }
+            if (spec.CanTeleportToCurrentPlayer())
+            {
+                _tpLabel.gameObject.SetActive(true);
+                _tpGlyph.gameObject.SetActive(true);
+            }
+            else
+            {
                 _tpLabel.gameObject.SetActive(false);
                 _tpGlyph.gameObject.SetActive(false);
             }
