@@ -58,6 +58,7 @@ namespace BombRushMP.Plugin
         private bool _handShook = false;
         private MPSettings _mpSettings = null;
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
+        private AuthUser _cachedLocalUser = null;
 
         private void Awake()
         {
@@ -87,6 +88,8 @@ namespace BombRushMP.Plugin
 
         public AuthUser GetLocalUser()
         {
+            if (!Players.ContainsKey(LocalID))
+                return _cachedLocalUser;
             return GetUser(LocalID);
         }
 
@@ -455,6 +458,7 @@ namespace BombRushMP.Plugin
                         LocalID = connectionResponse.LocalClientId;
                         TickRate = connectionResponse.TickRate;
                         ServerState = connectionResponse.ServerState;
+                        _cachedLocalUser = connectionResponse.User;
                         PlayerAnimation.ClientSendMode = connectionResponse.ClientAnimationSendMode;
                         _handShook = true;
                         ClientLogger.Log($"Received server handshake - our local ID is {connectionResponse.LocalClientId}, our UserKind is {connectionResponse.User.UserKind}.");
