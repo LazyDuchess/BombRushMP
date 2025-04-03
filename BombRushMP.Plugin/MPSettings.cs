@@ -624,6 +624,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public float ChatFontSize
+        {
+            get
+            {
+                return _chatFontSize.Value;
+            }
+
+            set
+            {
+                _chatFontSize.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -680,6 +693,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
         private ConfigEntry<bool> _allowTeleports;
+        private ConfigEntry<float> _chatFontSize;
 #endif
         private string _savePath;
         private ConfigFile _configFile;
@@ -726,6 +740,13 @@ namespace BombRushMP.Plugin
             {
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;
+            };
+            _chatFontSize = configFile.Bind(ChatSettings, "Chat Font Size", 20f, "Size of the chat font.");
+            _chatFontSize.SettingChanged += (sender, args) =>
+            {
+                var chatUI = ChatUI.Instance;
+                if (chatUI != null)
+                    chatUI.UpdateSizes();
             };
             _serverAddress = configFile.Bind(General, "Server Address", MainServerAddress, "Address of the server to connect to.");
             _serverPort = configFile.Bind(General, "Server Port", 41585, "Port of the server to connect to.");

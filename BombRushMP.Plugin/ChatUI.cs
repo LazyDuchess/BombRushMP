@@ -17,6 +17,7 @@ namespace BombRushMP.Plugin
     public class ChatUI : MonoBehaviour
     {
         public static ChatUI Instance { get; private set; }
+        private float FontSize => MPSettings.Instance.ChatFontSize;
         private const int MaxMessages = 250;
         private Button _sendButton;
         private TMP_InputField _inputField;
@@ -139,6 +140,14 @@ namespace BombRushMP.Plugin
             AddMessage(text);
         }
 
+        public void UpdateSizes()
+        {
+            foreach(var message in _messages)
+            {
+                message.fontSize = FontSize;
+            }
+        }
+
         private void Clear()
         {
             foreach(var message in _messages)
@@ -170,6 +179,7 @@ namespace BombRushMP.Plugin
             newText.transform.SetParent(_scrollRect.content, false);
             var label = newText.GetComponent<TextMeshProUGUI>();
             label.text = text;
+            label.fontSize = FontSize;
             _messages.Add(label);
             LayoutRebuilder.ForceRebuildLayoutImmediate(_scrollRect.RectTransform());
             if (scrollToBottom)
