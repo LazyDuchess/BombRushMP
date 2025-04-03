@@ -692,9 +692,9 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateClientController;
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
+#endif
         private ConfigEntry<bool> _allowTeleports;
         private ConfigEntry<float> _chatFontSize;
-#endif
         private string _savePath;
         private ConfigFile _configFile;
 
