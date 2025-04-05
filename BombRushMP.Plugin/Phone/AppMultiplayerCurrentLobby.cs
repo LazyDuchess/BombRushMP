@@ -58,7 +58,7 @@ namespace BombRushMP.Plugin.Phone
             }
             if (_challengeModeButton != null)
             {
-                _challengeModeButton.Label.text = "Public Challenge = " + (currentLobby.LobbyState.Challenge ? "ON" : "OFF");
+                _challengeModeButton.Label.text = "NPC Mode = " + (currentLobby.LobbyState.Challenge ? "ON" : "OFF");
             }
         }
 
@@ -131,7 +131,7 @@ namespace BombRushMP.Plugin.Phone
                     };
                     ScrollView.AddButton(_allowTeamSwitchingButton);
 
-                    _challengeModeButton = PhoneUIUtility.CreateSimpleButton("Public Challenge");
+                    _challengeModeButton = PhoneUIUtility.CreateSimpleButton("NPC Mode");
                     _challengeModeButton.OnConfirm += () =>
                     {
                         clientController.ClientLobbyManager.SetChallenge(!currentLobby.LobbyState.Challenge);
