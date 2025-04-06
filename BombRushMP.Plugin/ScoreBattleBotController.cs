@@ -14,6 +14,7 @@ namespace BombRushMP.Plugin
 {
     public class ScoreBattleBotController : MonoBehaviour
     {
+        private const float HelpMessageInterval = 30f;
         private const float Timeout = 30f;
         private bool _sentStartPacket = false;
         private bool _sentCancelPacket = false;
@@ -24,6 +25,72 @@ namespace BombRushMP.Plugin
         private Quaternion _battleRotation = Quaternion.identity;
         private Vector3 _returnPosition = Vector3.zero;
         private Quaternion _returnRotation = Quaternion.identity;
+        private string _botPrefix = "!";
+        private float _helpMessageTimer = 0f;
+
+        private void MakeAvailable()
+        {
+            ClientController.Instance.ClientLobbyManager.SetChallenge(true);
+            if (_helpMessageTimer <= 0f)
+            {
+                _helpMessageTimer = HelpMessageInterval;
+                ClientController.Instance.SendPacket(new ClientChat($"I'm now Available. {_botPrefix}help to know more."), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+            }
+        }
+
+        private void SendHelp()
+        {
+            SendChat($"Hi! I'm score battle bot. Use me to practice score battles! Commands: {_botPrefix}help, {_botPrefix}seankingston, {_botPrefix}chibi, {_botPrefix}forklift, {_botPrefix}changechar");
+        }
+
+        private void RandomizeCharacter()
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var possibleChars = new List<Characters>();
+            var chars = Enum.GetValues(typeof(Characters));
+            foreach(var ch in chars)
+            {
+                if ((Characters)ch == Characters.NONE || (Characters)ch == Characters.MAX) continue;
+                possibleChars.Add((Characters)ch);
+            }
+            player.character = possibleChars[UnityEngine.Random.Range(0, possibleChars.Count)];
+            SpecialSkinManager.Instance.RemoveSpecialSkinFromPlayer(player);
+        }
+
+        private void ParseChatMessage(string chatmessage)
+        {
+            var clientController = ClientController.Instance;
+            var msg = chatmessage.Trim();
+            if (!msg.StartsWith(_botPrefix)) return;
+            var cmd = msg.Substring(_botPrefix.Length).ToLowerInvariant();
+            switch (cmd)
+            {
+                case "help":
+                    SendHelp();
+                    break;
+
+                case "seankingston":
+                    SendChat($"/makeseankingston {clientController.LocalID}");
+                    break;
+
+                case "chibi":
+                    SendChat($"/chibi");
+                    break;
+
+                case "forklift":
+                    SendChat($"/makeforkliftcertified {clientController.LocalID}");
+                    break;
+
+                case "changechar":
+                    RandomizeCharacter();
+                    break;
+            }
+        }
+
+        private void SendChat(string message)
+        {
+            ClientController.Instance.SendPacket(new ClientChat(message), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+        }
 
         private void Awake()
         {
@@ -39,9 +106,15 @@ namespace BombRushMP.Plugin
             {
                 _battlePosition = taxiSpot.transform.position + (taxiSpot.transform.forward * 1f);
                 _battleRotation = Quaternion.LookRotation(taxiSpot.transform.forward);
+
+                _returnPosition = taxiSpot.transform.position + (taxiSpot.transform.forward * 2f) + (taxiSpot.transform.right * 3f);
+                _returnRotation = Quaternion.LookRotation(taxiSpot.transform.forward);
             }
             else
+            {
                 SetBattlePos(false);
+                SetReturnPos(false);
+            }
         }
 
         private void SetBattlePos(bool message)
@@ -85,6 +158,9 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            _helpMessageTimer -= Time.unscaledDeltaTime;
+            if (_helpMessageTimer <= 0f)
+                _helpMessageTimer = 0f;
             if (Input.GetKeyDown(KeyCode.F3))
                 SetReturnPos(true);
             if (Input.GetKeyDown(KeyCode.F4))
@@ -180,12 +256,18 @@ namespace BombRushMP.Plugin
                     if (_cachedPlayerCount <= 1)
                     {
                         PlaceAtReturn();
-                        clientController.ClientLobbyManager.SetChallenge(true);
+                        MakeAvailable();
                     }
                     break;
 
                 case Packets.ServerConnectionResponse:
                     clientController.SendPacket(new ClientChat($"Hi! It's me, Score Battle Bot! Interact with me to practice!"), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+                    break;
+
+                case Packets.ServerChat:
+                    var chatPacket = packet as ServerChat;
+                    if (chatPacket.MessageType == ChatMessageTypes.Chat)
+                        ParseChatMessage(chatPacket.Message);
                     break;
             }
         }
@@ -211,7 +293,7 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var currentLobby = clientController.ClientLobbyManager.CurrentLobby;
             Debug.Log("SETTING CHALLENGE TO TRUE (OnLobbyChanged)");
-            clientController.ClientLobbyManager.SetChallenge(true);
+            MakeAvailable();
             _lobbyCreated = true;
             _sentCancelPacket = false;
         }
@@ -237,7 +319,7 @@ namespace BombRushMP.Plugin
                     if (currentLobby.LobbyState.Players.Count <= 1)
                     {
                         Debug.Log("SETTING CHALLENGE TO TRUE (LOBBYUPDATE)");
-                        clientController.ClientLobbyManager.SetChallenge(true);
+                        MakeAvailable();
                     }
                     else if (currentLobby.LobbyState.Players.Count > 1)
                     {
