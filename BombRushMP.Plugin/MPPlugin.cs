@@ -150,6 +150,7 @@ namespace BombRushMP.Plugin
             StatsUI.Create();
             if (MPSettings.Instance.DebugInfo)
                 DebugUI.Create();
+            ScoreBattleBotController.Create();
         }
     }
 }
