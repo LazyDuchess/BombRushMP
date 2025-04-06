@@ -27,6 +27,7 @@ namespace BombRushMP.Plugin
         private GameObject _chatWindow;
         private TextMeshProUGUI _referenceText;
         private List<TextMeshProUGUI> _messages = new();
+        public Action<string> OnTrySendMessage;
 
         private const float TimeForMessagesToHide = 30f;
         private bool _messagesHidden = false;
@@ -197,6 +198,7 @@ namespace BombRushMP.Plugin
         public void TrySendChatMessage()
         {
             var message = _inputField.text;
+            OnTrySendMessage?.Invoke(message);
             _inputField.text = "";
             SetState(States.Unfocused);
             if (!TMPFilter.IsValidChatMessage(message)) return;
