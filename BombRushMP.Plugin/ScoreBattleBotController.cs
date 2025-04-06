@@ -178,7 +178,10 @@ namespace BombRushMP.Plugin
                         clientController.SendPacket(new ClientChat($"Score for {MPUtility.GetPlayerDisplayName(clientController.Players[play.Id].ClientState.Name)}: {FormatScore(hiScore)}"), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
                     }
                     if (_cachedPlayerCount <= 1)
+                    {
                         PlaceAtReturn();
+                        clientController.ClientLobbyManager.SetChallenge(true);
+                    }
                     break;
 
                 case Packets.ServerConnectionResponse:
