@@ -47,6 +47,11 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.FixedUpdatePlayer))]
         private static bool FixedUpdatePlayer_Prefix(Player __instance)
         {
+            if (!__instance.isAI && ClientController.Instance != null && ClientController.Instance.PlayerAttached != null)
+            {
+                __instance.UpdateAnim();
+                return false;
+            }
             if (MPUtility.IsMultiplayerPlayer(__instance))
             {
                 __instance.UpdateAnim();

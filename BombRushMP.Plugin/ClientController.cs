@@ -60,6 +60,26 @@ namespace BombRushMP.Plugin
         private INetworkingInterface NetworkingInterface => NetworkingEnvironment.NetworkingInterface;
         private AuthUser _cachedLocalUser = null;
 
+        public Player PlayerAttached;
+        private Vector3 AttachedPosition;
+        private Vector3 AttachedHeading;
+
+        public void AttachToPlayerID(ushort playerId)
+        {
+            if (Players.TryGetValue(playerId, out var play))
+            {
+                if (play.Player != null)
+                {
+                    var me = WorldHandler.instance.GetCurrentPlayer();
+                    PlayerAttached = play.Player;
+                    AttachedPosition = play.Player.transform.InverseTransformPoint(me.transform.position);
+                    AttachedHeading = play.Player.transform.InverseTransformDirection(me.transform.forward);
+                    return;
+                }
+            }
+            PlayerAttached = null;
+        }
+
         private void Awake()
         {
             Instance = this;
@@ -282,6 +302,15 @@ namespace BombRushMP.Plugin
 #if DEBUG
             if (!mpSettings.UpdateClientController) return;
 #endif
+            if (PlayerAttached != null)
+            {
+                var me = WorldHandler.instance.GetCurrentPlayer();
+                me.transform.position = PlayerAttached.transform.TransformPoint(AttachedPosition);
+                var rot = Quaternion.LookRotation(PlayerAttached.transform.TransformDirection(AttachedHeading), Vector3.up);
+                me.transform.rotation = rot;
+                me.SetVisualRot(me.transform.rotation);
+                me.SetRotation(me.transform.rotation);
+            }
             var playersHidden = MPUtility.GetCurrentToilet() != null;
             _tickTimer += Time.deltaTime;
             _infrequentUpdateTimer += Time.deltaTime;
