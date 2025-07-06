@@ -464,7 +464,7 @@ namespace BombRushMP.Plugin
                 }
             }
 
-            if (PlayerComponent.StreamedCharacter != null && !useStreamedCharacter)
+            if (PlayerComponent?.StreamedCharacter != null && !useStreamedCharacter)
             {
                 // Force refresh
                 Player.character = Characters.NONE;
