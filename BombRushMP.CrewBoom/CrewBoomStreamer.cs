@@ -75,7 +75,7 @@ namespace BombRushMP.CrewBoom
                 {
                     Debug.LogError(errString);
                     Debug.LogError("A CBB with the same name already exists in your regular CrewBoom folder.");
-                    break;
+                    continue;
                 }
                 if (File.Exists(txtFile))
                 {
@@ -84,13 +84,13 @@ namespace BombRushMP.CrewBoom
                     {
                         Debug.LogError(errString);
                         Debug.LogError($"GUID ({guid.ToString()}) is already taken by another streamed CrewBoom character.");
-                        break;
+                        continue;
                     }
                     if (CrewBoomSupport.GetCharacterForGuid(guid, Reptile.Characters.NONE) != Reptile.Characters.NONE)
                     {
                         Debug.LogError(errString);
                         Debug.LogError($"GUID ({guid.ToString()}) is already taken by a CrewBoom character.");
-                        break;
+                        continue;
                     }
                     Register(guid, file);
                 }
