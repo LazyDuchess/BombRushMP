@@ -492,7 +492,8 @@ namespace BombRushMP.Plugin
             UnloadShownStreamedCharacter();
             StreamedCharacter = new StreamedCharacterInstance(StreamedCharacterHandle);
             StreamedCharacter.Outfit = StreamedOutfit;
-            ApplyStreamedCharacter();
+            if (!StreamedCharacter.Handle.Failed)
+                ApplyStreamedCharacter();
             SkinLoaded?.Invoke();
         }
 
