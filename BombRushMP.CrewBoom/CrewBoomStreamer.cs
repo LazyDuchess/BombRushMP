@@ -80,6 +80,12 @@ namespace BombRushMP.CrewBoom
                 if (File.Exists(txtFile))
                 {
                     var guid = Guid.Parse(File.ReadAllText(txtFile));
+                    if (HasCharacter(guid))
+                    {
+                        Debug.LogError(errString);
+                        Debug.LogError($"GUID ({guid.ToString()}) is already taken by another streamed CrewBoom character.");
+                        break;
+                    }
                     if (CrewBoomSupport.GetCharacterForGuid(guid, Reptile.Characters.NONE) != Reptile.Characters.NONE)
                     {
                         Debug.LogError(errString);
@@ -101,6 +107,12 @@ namespace BombRushMP.CrewBoom
                             if (charDef != null)
                             {
                                 var id = Guid.Parse(CharacterDefinitionIdField.GetValue(charDef) as string);
+                                if (HasCharacter(id))
+                                {
+                                    Debug.LogError(errString);
+                                    Debug.LogError($"GUID ({id.ToString()}) is already taken by another streamed CrewBoom character.");
+                                    break;
+                                }
                                 if (CrewBoomSupport.GetCharacterForGuid(id, Reptile.Characters.NONE) != Reptile.Characters.NONE)
                                 {
                                     Debug.LogError(errString);
