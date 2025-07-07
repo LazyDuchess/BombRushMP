@@ -113,6 +113,13 @@ namespace BombRushMP.Common
                 }
                 else
                 {
+                    if (c == '<')
+                    {
+                        inTag = true;
+                        tag = "";
+                        tagStartIndex = i;
+                        continue;
+                    }
                     if (c == '>')
                     {
                         inTag = false;
@@ -174,6 +181,12 @@ namespace BombRushMP.Common
                 }
                 else
                 {
+                    if (c == '<')
+                    {
+                        inTag = true;
+                        tag = "";
+                        continue;
+                    }
                     if (c == '>')
                     {
                         inTag = false;
