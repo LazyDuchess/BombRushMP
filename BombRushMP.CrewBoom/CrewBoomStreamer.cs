@@ -1,5 +1,6 @@
 ﻿using BombRushMP.Common;
 using CommonAPI;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,10 +21,21 @@ namespace BombRushMP.CrewBoom
         internal static Dictionary<Guid, CharacterHandle> CharacterHandleByGUID = new();
         private static Dictionary<Guid, string> BundlePathByGUID = new();
         private static List<string> Directories = new();
+        private static HashSet<string> CrewBoomFilenames = new();
 
         public static void Initialize()
         {
             CharacterDefinitionIdField = CrewBoomTypes.CharacterDefinitionType.GetField("Id");
+        }
+
+        public static void LoadCrewBoomConfigFolder(string configFolder)
+        {
+            var cbFiles = Directory.GetFiles(configFolder, "*.cbb", SearchOption.TopDirectoryOnly).ToList();
+            cbFiles.AddRange(Directory.GetFiles(Path.Combine(configFolder, "no_cypher"), "*.cbb", SearchOption.TopDirectoryOnly));
+            foreach(var cbFile in cbFiles)
+            {
+                CrewBoomFilenames.Add(Path.GetFileNameWithoutExtension(cbFile));
+            }
         }
 
         public static void AddDirectory(string directory)
@@ -57,10 +69,24 @@ namespace BombRushMP.CrewBoom
             var cbbFiles = Directory.GetFiles(directory, "*.cbb", SearchOption.AllDirectories);
             foreach (var file in cbbFiles)
             {
+                var errString = $"Shit! Error trying to load streamed character {Path.GetFileName(file)}";
                 var txtFile = Path.ChangeExtension(file, ".txt");
+                if (CrewBoomFilenames.Contains(Path.GetFileNameWithoutExtension(file)))
+                {
+                    Debug.LogError(errString);
+                    Debug.LogError("A CBB with the same name already exists in your regular CrewBoom folder.");
+                    break;
+                }
                 if (File.Exists(txtFile))
                 {
-                    Register(Guid.Parse(File.ReadAllText(txtFile)), file);
+                    var guid = Guid.Parse(File.ReadAllText(txtFile));
+                    if (CrewBoomSupport.GetCharacterForGuid(guid, Reptile.Characters.NONE) != Reptile.Characters.NONE)
+                    {
+                        Debug.LogError(errString);
+                        Debug.LogError($"GUID ({guid.ToString()}) is already taken by a CrewBoom character.");
+                        break;
+                    }
+                    Register(guid, file);
                 }
                 else
                 {
@@ -75,6 +101,12 @@ namespace BombRushMP.CrewBoom
                             if (charDef != null)
                             {
                                 var id = Guid.Parse(CharacterDefinitionIdField.GetValue(charDef) as string);
+                                if (CrewBoomSupport.GetCharacterForGuid(id, Reptile.Characters.NONE) != Reptile.Characters.NONE)
+                                {
+                                    Debug.LogError(errString);
+                                    Debug.LogError($"GUID ({id.ToString()}) is already taken by a CrewBoom character.");
+                                    break;
+                                }
                                 Register(id, file);
                                 File.WriteAllText(txtFile, id.ToString());
                                 break;
@@ -83,6 +115,7 @@ namespace BombRushMP.CrewBoom
                     }
                     catch(Exception e)
                     {
+                        Debug.LogError(errString);
                         Debug.LogException(e);
                     }
                     finally
