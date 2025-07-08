@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static UnityEngine.UIElements.TextField;
 
 namespace BombRushMP.Plugin
 {
@@ -134,6 +135,11 @@ namespace BombRushMP.Plugin
 
         public static bool TMPContainsProfanity(string tmpText)
         {
+            var addedSpaces = AddSpaces(TMPFilter.RemoveAllTags(tmpText));
+            var addedSpacesNoRepeats = RemoveRepeatedLetters(addedSpaces);
+            if (ContainsBadWords(addedSpaces) || ContainsBadWords(addedSpacesNoRepeats))
+                return true;
+
             tmpText = RemoveSafeWords(tmpText);
 
             var removedTags = TMPFilter.RemoveAllTags(tmpText);
@@ -180,6 +186,16 @@ namespace BombRushMP.Plugin
             var reg = new Regex(@"[^A-Za-z0-9 ]");
             text = reg.Replace(text, string.Empty);
             return text;
+        }
+
+        public static string AddSpaces(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return text;
+            var specialSeparated = Regex.Replace(text, @"[^a-zA-Z0-9]", m => $" {m.Value} ");
+            var capsSeparated = Regex.Replace(specialSeparated, @"(?<=[a-z0-9])(?=[A-Z])", " ");
+            var cleaned = Regex.Replace(capsSeparated, @"\s+", " ").Trim();
+            return cleaned;
         }
 
         public static string RemoveSpaces(string text)

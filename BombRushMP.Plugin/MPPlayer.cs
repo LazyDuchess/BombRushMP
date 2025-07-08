@@ -464,6 +464,12 @@ namespace BombRushMP.Plugin
                 }
             }
 
+            if (PlayerComponent?.StreamedCharacter != null && !useStreamedCharacter)
+            {
+                // Force refresh
+                Player.character = Characters.NONE;
+            }
+
             if (fit < 0 || fit > 3)
                 fit = 0;
 

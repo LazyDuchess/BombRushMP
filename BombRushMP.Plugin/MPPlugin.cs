@@ -59,9 +59,11 @@ namespace BombRushMP.Plugin
             {
                 CrewBoomSupport.Initialize();
                 CrewBoomStreamer.Initialize();
-                var cbFolder = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "CrewBoom");
-                Directory.CreateDirectory(cbFolder);
-                CrewBoomStreamer.AddDirectory(cbFolder);
+                var cbFolder = Path.Combine(Paths.ConfigPath, "CrewBoom");
+                var cbStreamFolder = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "CrewBoom");
+                Directory.CreateDirectory(cbStreamFolder);
+                CrewBoomStreamer.AddDirectory(cbStreamFolder);
+                CrewBoomStreamer.LoadCrewBoomConfigFolder(cbFolder);
             }
             if (Chainloader.PluginInfos.ContainsKey("MapStation.Plugin"))
             {

@@ -247,6 +247,12 @@ namespace BombRushMP.Plugin
                     ClientController.Instance.SendClientState();
                     break;
 #endif
+                case "parent":
+                    var play = (ushort)0;
+                    if (args.Length > 1)
+                        play = ushort.Parse(args[1]);
+                    ClientController.Instance.AttachToPlayerID(play);
+                    break;
             }
                 
         }

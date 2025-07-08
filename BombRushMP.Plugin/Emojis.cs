@@ -20,6 +20,8 @@ namespace BombRushMP.Plugin
             { ":trans:", 48 },
             { ":pride:", 49 },
             { ":heart:", 50 },
+            { ":bear:", 70 },
+            { ":moke:", 69 }
         };
     }
 }
