@@ -65,7 +65,7 @@ namespace BombRushMP.CrewBoom
                     break;
                 }
             }
-            Failed = CharacterPrefab == null;
+            Failed = CharacterPrefab == null || !_assetRequest.isDone;
             Finished = true;
             OnLoadFinished?.Invoke();
         }
