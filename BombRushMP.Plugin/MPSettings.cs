@@ -128,7 +128,7 @@ namespace BombRushMP.Plugin
             Instance = this;
             _configFile = configFile;
             _playerName = configFile.Bind("General", "Player Name", "Goofiest Gooner", "Your player name.");
-            _serverAddress = configFile.Bind("General", "Server Address", "brcmp.lazyduchess.me", "Address of the server to connect to.");
+            _serverAddress = configFile.Bind("General", "Server Address", "anni.lazyduchess.online", "Address of the server to connect to.");
             _serverPort = configFile.Bind("General", "Server Port", 41585, "Port of the server to connect to.");
             _playerAudioEnabled = configFile.Bind("Settings", "Player Voices Enabled", true, "Whether to enable voices for other players' actions.");
             _showNamePlates = configFile.Bind("Settings", "Show Nameplates", true, "Whether to show nameplates above players.");
