@@ -141,6 +141,10 @@ namespace BombRushMP.Plugin
 
         public static Player CreateMultiplayerPlayer(Characters character, int outfit, MPPlayer multiplayerPlayer)
         {
+            if (character == Characters.NONE)
+                character = Characters.metalHead;
+            if (outfit < 0 || outfit > 3)
+                outfit = 0;
             var clientController = ClientController.Instance;
             var worldHandler = WorldHandler.instance;
             Player player = UnityEngine.Object.Instantiate(worldHandler.playerPrefab, Vector3.zero, Quaternion.identity).GetComponent<Player>();
