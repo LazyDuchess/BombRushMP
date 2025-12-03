@@ -3,6 +3,7 @@ using CommonAPI.Phone;
 using Reptile;
 using UnityEngine;
 using BombRushMP.Common;
+using System.Linq.Expressions;
 
 public class AppMultiplayerDebug : CustomApp
 {
@@ -78,6 +79,35 @@ public class AppMultiplayerDebug : CustomApp
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
             ProSkaterPlayer.Set(player, false);
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Apply Nearest Prop");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var props = FindObjectsOfType<Junk>();
+            var nearestDist = Mathf.Infinity;
+            Junk nearest = null;
+            foreach(var prop in props)
+            {
+                var dist = Vector3.Distance(player.transform.position, prop.transform.position);
+                if (nearest == null)
+                {
+                    nearestDist = dist;
+                    nearest = prop;
+                }
+                else
+                {
+                    if (dist < nearestDist)
+                    {
+                        nearestDist = dist;
+                        nearest = prop;
+                    }
+                }
+            }
+            if (nearest == null) return;
+            PlayerComponent.Get(player).ApplyPropDisguise(nearest.gameObject);
         };
         ScrollView.AddButton(button);
 

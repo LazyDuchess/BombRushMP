@@ -44,6 +44,9 @@ namespace BombRushMP.Plugin
         public bool ChallengeIndicatorVisible = false;
         private GameObject _challengeIndicator;
 
+        public bool HasPropDisguise => _propDisguise != null;
+        private GameObject _propDisguise = null;
+
         public void RefreshSkin()
         {
             if (MovestyleSkin != null)
@@ -61,6 +64,34 @@ namespace BombRushMP.Plugin
             if (BMXSpokesMaterial != null)
                 Destroy(BMXSpokesMaterial);
             UnloadStreamedCharacter();
+        }
+
+        public void ApplyPropDisguise(GameObject prop)
+        {
+            if (HasPropDisguise)
+            {
+                Destroy(_propDisguise);
+            }
+            _player.visualTf.gameObject.SetActive(false);
+            var disguise = Instantiate(prop);
+            _propDisguise = disguise;
+            var junk = disguise.GetComponent<Junk>();
+            if (junk != null)
+                Destroy(junk);
+            var rb = disguise.GetComponent<Rigidbody>();
+            if (rb != null)
+                Destroy(rb);
+            disguise.transform.SetParent(_player.transform);
+            disguise.transform.SetLocalPositionAndRotation(Vector2.zero, Quaternion.identity);
+            if (Local)
+            {
+                disguise.gameObject.layer = Layers.Player;
+                var colliders = disguise.GetComponents<Collider>();
+                foreach(var collider in colliders)
+                {
+                    Destroy(collider);
+                }
+            }
         }
 
         public void ApplyMoveStyleMaterial(Material[] customMaterials)
