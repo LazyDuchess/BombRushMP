@@ -264,6 +264,14 @@ namespace BombRushMP.Plugin
 
             if (Player == null) return;
 
+            if (ClientVisualState.Disguised)
+            {
+                if (Player.visualTf.gameObject.activeSelf)
+                    Player.visualTf.gameObject.SetActive(false);
+                hidden = true;
+                lod = false;
+            }
+
             if (hidden || lod)
                 Player.RemoveGraffitiSlash();
 
@@ -672,11 +680,16 @@ namespace BombRushMP.Plugin
                 MakeMapPin();
             _mapPin.SetLocation();
 
+            if (ClientVisualState.Disguised)
+                _mapPin.gameObject.SetActive(false);
+            else
+                _mapPin.gameObject.SetActive(true);
+
             if (rival && inTeamLobby)
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0f);
             else if (InSameLobbyAsLocalPlayer())
                 _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
-            else 
+            else
                 _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
 
             if (_interactable == null)
@@ -753,6 +766,27 @@ namespace BombRushMP.Plugin
                 Player.sprayHitbox.SetActive(false);
 
             Player.characterVisual.VFX.boostpackTrail.SetActive(ClientVisualState.BoostpackTrail);
+
+            if (ClientVisualState.Disguised != PlayerComponent.HasPropDisguise)
+            {
+                if (!ClientVisualState.Disguised)
+                {
+                    PlayerComponent.RemovePropDisguise();
+                }
+                else
+                {
+                    PlayerComponent.ApplyPropDisguise(ClientVisualState.DisguiseId);
+                }
+            }
+            else if (ClientVisualState.Disguised && PlayerComponent.DisguiseID != ClientVisualState.DisguiseId)
+            {
+                PlayerComponent.ApplyPropDisguise(ClientVisualState.DisguiseId);
+            }
+
+            if (PlayerComponent.HasPropDisguise)
+            {
+                PlayerComponent.DisguiseGameObject.transform.SetLocalPositionAndRotation(Vector3.zero, ClientVisualState.VisualRotation.ToUnityQuaternion());
+            }
 
             _previousState = ClientVisualState.State;
         }
@@ -839,6 +873,15 @@ namespace BombRushMP.Plugin
             var settings = MPSettings.Instance;
 
             CreateNameplateIfNecessary();
+
+            if (ClientVisualState.Disguised)
+            {
+                NamePlate.gameObject.SetActive(false);
+            }
+            else
+            {
+                NamePlate.gameObject.SetActive(true);
+            }
         }
 
         private void UpdateSprayCan()

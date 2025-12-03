@@ -252,6 +252,10 @@ namespace BombRushMP.Plugin
                     }
                     break;
             }
+            if (packet.Disguised)
+            {
+                packet.VisualRotation = playerComp.DisguiseGameObject.transform.localRotation.ToSystemQuaternion();
+            }
             return packet;
         }
 
@@ -470,6 +474,13 @@ namespace BombRushMP.Plugin
                 case Packets.ServerSetChibi:
                     {
                         LocalPlayerComponent.Chibi = (packet as ServerSetChibi).Set;
+                    }
+                    break;
+                case Packets.ServerDamage:
+                    {
+                        var dmgPacket = packet as ServerDamage;
+                        var player = WorldHandler.instance.GetCurrentPlayer();
+                        player.ChangeHP(dmgPacket.Damage);
                     }
                     break;
 
