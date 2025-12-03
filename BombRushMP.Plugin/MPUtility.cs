@@ -16,6 +16,26 @@ namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
+        public static string GetHierarchyPath(GameObject go)
+        {
+            var path = go.name;
+            var tf = go.transform;
+
+            while (tf.parent != null)
+            {
+                tf = tf.parent;
+                path = tf.name + "/" + path;
+            }
+
+            return path;
+        }
+
+        public static int GenerateGameObjectID(GameObject obj)
+        {
+            string path = GetHierarchyPath(obj);
+            return Compression.HashString(path + $"${obj.transform.GetSiblingIndex()}");
+        }
+
         public static string ParseMessageEmojis(string message)
         {
             var emojis = MPAssets.Instance.Emojis;

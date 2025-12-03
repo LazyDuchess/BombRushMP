@@ -4,6 +4,7 @@ using Reptile;
 using UnityEngine;
 using BombRushMP.Common;
 using System.Linq.Expressions;
+using BombRushMP.Plugin.Gamemodes;
 
 public class AppMultiplayerDebug : CustomApp
 {
@@ -82,63 +83,32 @@ public class AppMultiplayerDebug : CustomApp
         };
         ScrollView.AddButton(button);
 
-        button = PhoneUIUtility.CreateSimpleButton("Apply Nearest Prop");
+        button = PhoneUIUtility.CreateSimpleButton("Apply Nearest Disguise");
         button.OnConfirm += () =>
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
-            var props = FindObjectsOfType<Junk>();
+            var propController = PropDisguiseController.Instance;
             var nearestDist = Mathf.Infinity;
-            Junk nearest = null;
-            foreach(var prop in props)
+            GameObject nearest = null;
+            foreach(var prop in propController.Props)
             {
-                var dist = Vector3.Distance(player.transform.position, prop.transform.position);
+                var dist = Vector3.Distance(player.transform.position, prop.Value.transform.position);
                 if (nearest == null)
                 {
                     nearestDist = dist;
-                    nearest = prop;
+                    nearest = prop.Value;
                 }
                 else
                 {
                     if (dist < nearestDist)
                     {
                         nearestDist = dist;
-                        nearest = prop;
+                        nearest = prop.Value;
                     }
                 }
             }
             if (nearest == null) return;
-            PlayerComponent.Get(player).ApplyPropDisguise(nearest.gameObject);
-        };
-        ScrollView.AddButton(button);
-
-        button = PhoneUIUtility.CreateSimpleButton("Apply Nearest Ped");
-        button.OnConfirm += () =>
-        {
-            var player = WorldHandler.instance.GetCurrentPlayer();
-            var props = FindObjectsOfType<StreetLife>();
-            var nearestDist = Mathf.Infinity;
-            StreetLife nearest = null;
-            foreach (var prop in props)
-            {
-                var moveAlong = prop.GetComponent<MoveAlongPoints>();
-                if (moveAlong != null) continue;
-                var dist = Vector3.Distance(player.transform.position, prop.transform.position);
-                if (nearest == null)
-                {
-                    nearestDist = dist;
-                    nearest = prop;
-                }
-                else
-                {
-                    if (dist < nearestDist)
-                    {
-                        nearestDist = dist;
-                        nearest = prop;
-                    }
-                }
-            }
-            if (nearest == null) return;
-            PlayerComponent.Get(player).ApplyPropDisguise(nearest.gameObject);
+            PlayerComponent.Get(player).ApplyPropDisguise(nearest);
         };
         ScrollView.AddButton(button);
 

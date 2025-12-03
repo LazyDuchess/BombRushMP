@@ -17,6 +17,7 @@ using BombRushMP.Plugin.OfflineInterface;
 using System;
 using BombRushMP.BunchOfEmotes;
 using BombRushMP.NetRadio;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -104,6 +105,7 @@ namespace BombRushMP.Plugin
                 else
                     CrewBoomStreamer.ReloadCharacters();
             }
+            PropDisguiseController.Create();
         }
 
         private void Update()
