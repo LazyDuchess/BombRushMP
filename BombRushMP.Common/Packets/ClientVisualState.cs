@@ -28,6 +28,7 @@ namespace BombRushMP.Common.Packets
             BoostpackTrail,
             Chibi,
             BoEAnimation,
+            Disguised,
             MAX
         }
         public override Packets PacketId => Packets.ClientVisualState;
@@ -66,6 +67,8 @@ namespace BombRushMP.Common.Packets
         public bool BoostpackTrail = false;
         public bool Chibi = false;
         public bool BoEAnimation = false;
+        public bool Disguised = false;
+        public int DisguiseId = 0;
 
         public override void Write(BinaryWriter writer)
         {
@@ -102,6 +105,7 @@ namespace BombRushMP.Common.Packets
             bitField[BooleanMask.BoostpackTrail] = BoostpackTrail;
             bitField[BooleanMask.Chibi] = Chibi;
             bitField[BooleanMask.BoEAnimation] = BoEAnimation;
+            bitField[BooleanMask.Disguised] = Disguised;
 
             bitField.WriteShort(writer);
 
@@ -126,6 +130,8 @@ namespace BombRushMP.Common.Packets
 
             writer.Write(MoveStyleSkin);
             writer.Write(MPMoveStyleSkin);
+
+            writer.Write(DisguiseId);
         }
 
         public override void Read(BinaryReader reader)
@@ -163,6 +169,7 @@ namespace BombRushMP.Common.Packets
             BoostpackTrail = bitField[BooleanMask.BoostpackTrail];
             Chibi = bitField[BooleanMask.Chibi];
             BoEAnimation = bitField[BooleanMask.BoEAnimation];
+            Disguised = bitField[BooleanMask.Disguised];
 
             MoveStyle = reader.ReadInt32();
 
@@ -189,6 +196,8 @@ namespace BombRushMP.Common.Packets
 
             MoveStyleSkin = reader.ReadByte();
             MPMoveStyleSkin = reader.ReadInt32();
+
+            DisguiseId = reader.ReadInt32();
         }
     }
 }
