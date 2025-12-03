@@ -12,6 +12,7 @@ using ch.sycoforge.Decal.Projectors.Geometry;
 using System.Drawing.Text;
 using HarmonyLib;
 using BombRushMP.CrewBoom;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -44,8 +45,9 @@ namespace BombRushMP.Plugin
         public bool ChallengeIndicatorVisible = false;
         private GameObject _challengeIndicator;
 
-        public bool HasPropDisguise => _propDisguise != null;
-        private GameObject _propDisguise = null;
+        public bool HasPropDisguise => DisguiseGameObject != null;
+        public GameObject DisguiseGameObject = null;
+        public int DisguiseID = 0;
 
         public void RefreshSkin()
         {
@@ -69,20 +71,24 @@ namespace BombRushMP.Plugin
         public void RemovePropDisguise()
         {
             if (!HasPropDisguise) return;
-            Destroy(_propDisguise);
-            _propDisguise = null;
+            Destroy(DisguiseGameObject);
+            DisguiseGameObject = null;
             _player.visualTf.gameObject.SetActive(true);
         }
 
-        public void ApplyPropDisguise(GameObject prop)
+        public void ApplyPropDisguise(int disguiseId)
         {
+            var disguiseController = PropDisguiseController.Instance;
+            if (!disguiseController.Props.TryGetValue(disguiseId, out var prop))
+                return;
+            DisguiseID = disguiseId;
             if (HasPropDisguise)
             {
-                Destroy(_propDisguise);
+                Destroy(DisguiseGameObject);
             }
             _player.visualTf.gameObject.SetActive(false);
             var disguise = Instantiate(prop);
-            _propDisguise = disguise;
+            DisguiseGameObject = disguise;
             var isJunk = false;
             var junk = disguise.GetComponent<Junk>();
             if (junk != null)

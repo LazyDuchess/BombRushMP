@@ -89,25 +89,27 @@ public class AppMultiplayerDebug : CustomApp
             var player = WorldHandler.instance.GetCurrentPlayer();
             var propController = PropDisguiseController.Instance;
             var nearestDist = Mathf.Infinity;
-            GameObject nearest = null;
+            var nearest = 0;
+            var nearestSet = false;
             foreach(var prop in propController.Props)
             {
                 var dist = Vector3.Distance(player.transform.position, prop.Value.transform.position);
-                if (nearest == null)
+                if (!nearestSet)
                 {
                     nearestDist = dist;
-                    nearest = prop.Value;
+                    nearest = prop.Key;
+                    nearestSet = true;
                 }
                 else
                 {
                     if (dist < nearestDist)
                     {
                         nearestDist = dist;
-                        nearest = prop.Value;
+                        nearest = prop.Key;
                     }
                 }
             }
-            if (nearest == null) return;
+            if (!nearestSet) return;
             PlayerComponent.Get(player).ApplyPropDisguise(nearest);
         };
         ScrollView.AddButton(button);
