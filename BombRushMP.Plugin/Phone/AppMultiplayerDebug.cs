@@ -142,6 +142,13 @@ public class AppMultiplayerDebug : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Remove Disguise");
+        button.OnConfirm += () =>
+        {
+            PlayerComponent.GetLocal().RemovePropDisguise();
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Kill Yourself");
         button.OnConfirm += () =>
         {

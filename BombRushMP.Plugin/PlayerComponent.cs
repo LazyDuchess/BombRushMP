@@ -65,6 +65,14 @@ namespace BombRushMP.Plugin
                 Destroy(BMXSpokesMaterial);
             UnloadStreamedCharacter();
         }
+        
+        public void RemovePropDisguise()
+        {
+            if (!HasPropDisguise) return;
+            Destroy(_propDisguise);
+            _propDisguise = null;
+            _player.visualTf.gameObject.SetActive(true);
+        }
 
         public void ApplyPropDisguise(GameObject prop)
         {
