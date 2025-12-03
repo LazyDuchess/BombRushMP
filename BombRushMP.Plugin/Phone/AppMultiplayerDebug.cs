@@ -111,6 +111,37 @@ public class AppMultiplayerDebug : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Apply Nearest Ped");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var props = FindObjectsOfType<StreetLife>();
+            var nearestDist = Mathf.Infinity;
+            StreetLife nearest = null;
+            foreach (var prop in props)
+            {
+                var moveAlong = prop.GetComponent<MoveAlongPoints>();
+                if (moveAlong != null) continue;
+                var dist = Vector3.Distance(player.transform.position, prop.transform.position);
+                if (nearest == null)
+                {
+                    nearestDist = dist;
+                    nearest = prop;
+                }
+                else
+                {
+                    if (dist < nearestDist)
+                    {
+                        nearestDist = dist;
+                        nearest = prop;
+                    }
+                }
+            }
+            if (nearest == null) return;
+            PlayerComponent.Get(player).ApplyPropDisguise(nearest.gameObject);
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Kill Yourself");
         button.OnConfirm += () =>
         {

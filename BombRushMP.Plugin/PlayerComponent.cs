@@ -75,14 +75,31 @@ namespace BombRushMP.Plugin
             _player.visualTf.gameObject.SetActive(false);
             var disguise = Instantiate(prop);
             _propDisguise = disguise;
+            var isJunk = false;
             var junk = disguise.GetComponent<Junk>();
             if (junk != null)
+            {
                 Destroy(junk);
+                isJunk = true;
+            }
             var rb = disguise.GetComponent<Rigidbody>();
             if (rb != null)
                 Destroy(rb);
+            var ped = disguise.GetComponent<StreetLife>();
+            if (ped != null)
+            {
+                var anim = disguise.GetComponent<Animator>();
+                if (anim != null)
+                {
+                    var animHash = Animator.StringToHash(ped.idleAnimation.ToString());
+                    anim.Play(animHash, 0);
+                }
+                Destroy(ped);
+            }
             disguise.transform.SetParent(_player.transform);
             disguise.transform.SetLocalPositionAndRotation(Vector2.zero, Quaternion.identity);
+            if (isJunk)
+                disguise.transform.rotation = prop.transform.rotation;
             if (Local)
             {
                 disguise.gameObject.layer = Layers.Player;
