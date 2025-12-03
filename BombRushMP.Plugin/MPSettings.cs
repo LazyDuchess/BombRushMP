@@ -637,6 +637,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool DeathSequence
+        {
+            get
+            {
+                return _deathSequence.Value;
+            }
+
+            set
+            {
+                _deathSequence.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -695,6 +708,8 @@ namespace BombRushMP.Plugin
 #endif
         private ConfigEntry<bool> _allowTeleports;
         private ConfigEntry<float> _chatFontSize;
+        private ConfigEntry<bool> _deathSequence;
+
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -708,6 +723,8 @@ namespace BombRushMP.Plugin
         private const string Server = "8. Server";
         private const string Optimization = "9. Optimization";
         private const string CrewBoom = "10. CrewBoom";
+        private const string Misc = "11. Misc";
+
         private const string MainServerAddress = "free.soulisall.city";
         public const string DefaultName = "Goofiest Gooner";
 
@@ -809,6 +826,7 @@ namespace BombRushMP.Plugin
             _optimizeOnePlayerAtATime = configFile.Bind(Optimization, "Optimize one Player at a time", true, "Only update visibility and LODs for one player at a time, to avoid stutters.");
             _loadCharactersAsync = configFile.Bind(CrewBoom, "Load Characters Async", true, "Loads characters from your ACN CrewBoom folder asynchronously to prevent stutters.");
             _reloadCharactersInLoadingScreens = configFile.Bind(CrewBoom, "Reload Characters", true, "Reloads your CrewBoom folder during loading screens in between stages. Allows you to add new characters at runtime.");
+            _deathSequence = configFile.Bind(Misc, "Death Sequence", true, "Whether to play the death sequence when you die.");
         }
 
         public void Save()

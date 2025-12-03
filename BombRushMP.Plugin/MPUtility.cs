@@ -256,6 +256,11 @@ namespace BombRushMP.Plugin
 
         public static void Revive()
         {
+            var deathSequence = DeathSequenceController.Instance;
+            if (deathSequence != null)
+            {
+                deathSequence.End();
+            }
             var dieMenu = Core.instance.UIManager.dieMenu;
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.Revive();

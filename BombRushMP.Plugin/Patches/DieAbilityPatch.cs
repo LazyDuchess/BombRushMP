@@ -16,6 +16,8 @@ namespace BombRushMP.Plugin.Patches
             MPSaveData.Instance.Stats.Deaths++;
             MPUtility.CloseMenusAndSpectator();
             ClientController.Instance.SendGenericEvent(GenericEvents.Death, IMessage.SendModes.ReliableUnordered);
+            if (MPSettings.Instance.DeathSequence)
+                DeathSequenceController.Create();
         }
     }
 }

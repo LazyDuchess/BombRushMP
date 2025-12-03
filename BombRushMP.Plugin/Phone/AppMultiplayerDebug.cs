@@ -80,5 +80,13 @@ public class AppMultiplayerDebug : CustomApp
             ProSkaterPlayer.Set(player, false);
         };
         ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Kill Yourself");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            player.ChangeHP(99999);
+        };
+        ScrollView.AddButton(button);
     }
 }
