@@ -34,6 +34,18 @@ namespace BombRushMP.Plugin.Gamemodes
                     JunkBehaviour.RestoreSingle(junkBehaviour, junk);
                 }
             });
+
+            var junkStageHandlers = FindObjectsOfType<JunkStageHandler>();
+            foreach(var junkStageHandler in junkStageHandlers)
+            {
+                var junkBehaviour = junkStageHandler.junkBehaviour;
+                junkBehaviour.kickedJunkIndex = 0;
+                junkBehaviour.nonupdatingJunkIndex = 0;
+                foreach (var junk in junkBehaviour.totalJunk)
+                {
+                    JunkBehaviour.RestoreSingle(junkBehaviour, junk);
+                }
+            }
         }
 
         public void UnfreezeProps()
@@ -56,7 +68,8 @@ namespace BombRushMP.Plugin.Gamemodes
             foreach (var j in junk)
             {
                 var stageChunk = j.GetComponentInParent<StageChunk>();
-                if (stageChunk == null) continue;
+                var junkStageHandler = j.GetComponentInParent<JunkStageHandler>();
+                if (stageChunk == null && junkStageHandler == null) continue;
                 Props[MPUtility.GenerateGameObjectID(j.gameObject)] = j.gameObject;
             }
 
