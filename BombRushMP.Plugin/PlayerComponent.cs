@@ -88,6 +88,7 @@ namespace BombRushMP.Plugin
             }
             _player.visualTf.gameObject.SetActive(false);
             var disguise = Instantiate(prop);
+            disguise.gameObject.SetActive(true);
             DisguiseGameObject = disguise;
             var isJunk = false;
             var junk = disguise.GetComponent<Junk>();
