@@ -17,7 +17,8 @@ namespace BombRushMP.Plugin.Gamemodes
             {GamemodeIDs.TeamGraffitiRace, typeof(TeamGraffitiRace) },
             {GamemodeIDs.ProSkaterScoreBattle, typeof(ProSkaterScoreBattle) },
             {GamemodeIDs.TeamScoreBattle, typeof(TeamScoreBattle) },
-            {GamemodeIDs.TeamProSkaterScoreBattle, typeof(TeamProSkaterScoreBattle) }
+            {GamemodeIDs.TeamProSkaterScoreBattle, typeof(TeamProSkaterScoreBattle) },
+            {GamemodeIDs.PropHunt, typeof(PropHunt) }
         };
 
         private static Dictionary<GamemodeIDs, string> GamemodeNames = new()
@@ -27,7 +28,8 @@ namespace BombRushMP.Plugin.Gamemodes
             {GamemodeIDs.TeamGraffitiRace, "Crew Graffiti Race" },
             {GamemodeIDs.ProSkaterScoreBattle, "Pro Skater Score Battle" },
             {GamemodeIDs.TeamScoreBattle, "Crew Score Battle" },
-            {GamemodeIDs.TeamProSkaterScoreBattle, "Crew Pro Skater Score Battle" }
+            {GamemodeIDs.TeamProSkaterScoreBattle, "Crew Pro Skater Score Battle" },
+            {GamemodeIDs.PropHunt, "Prop Hunt" }
         };
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)

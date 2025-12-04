@@ -16,7 +16,8 @@ namespace BombRushMP.Server.Gamemodes
             {GamemodeIDs.TeamGraffitiRace, typeof(TeamGraffitiRace) },
             {GamemodeIDs.ProSkaterScoreBattle, typeof(ProSkaterScoreBattle) },
             {GamemodeIDs.TeamScoreBattle, typeof(TeamScoreBattle) },
-            {GamemodeIDs.TeamProSkaterScoreBattle, typeof(TeamProSkaterScoreBattle) }
+            {GamemodeIDs.TeamProSkaterScoreBattle, typeof(TeamProSkaterScoreBattle) },
+            {GamemodeIDs.PropHunt, typeof(PropHunt) }
         };
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)

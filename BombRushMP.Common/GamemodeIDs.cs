@@ -13,6 +13,7 @@ namespace BombRushMP.Common
         TeamGraffitiRace,
         ProSkaterScoreBattle,
         TeamScoreBattle,
-        TeamProSkaterScoreBattle
+        TeamProSkaterScoreBattle,
+        PropHunt
     }
 }
