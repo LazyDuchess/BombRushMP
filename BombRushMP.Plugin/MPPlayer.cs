@@ -617,9 +617,16 @@ namespace BombRushMP.Plugin
                     Unhide();
 
                 if (NamePlate != null && mpSettings.ShowNamePlates)
-                    NamePlate.gameObject.SetActive(true);
+                {
+                    if (ClientVisualState.Disguised)
+                        NamePlate.gameObject.SetActive(false);
+                    else
+                        NamePlate.gameObject.SetActive(true);
+                }
                 else if (NamePlate != null && !mpSettings.ShowNamePlates)
+                {
                     NamePlate.gameObject.SetActive(false);
+                }
             }
 
             var snapAnim = false;
@@ -873,15 +880,6 @@ namespace BombRushMP.Plugin
             var settings = MPSettings.Instance;
 
             CreateNameplateIfNecessary();
-
-            if (ClientVisualState.Disguised)
-            {
-                NamePlate.gameObject.SetActive(false);
-            }
-            else
-            {
-                NamePlate.gameObject.SetActive(true);
-            }
         }
 
         private void UpdateSprayCan()
