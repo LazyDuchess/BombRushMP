@@ -60,6 +60,7 @@ namespace BombRushMP.Common.Packets
         ServerSetSpecialSkin,
         ServerServerStateUpdate,
         ServerTeleportPlayer,
-        ServerDamage
+        ServerDamage,
+        ServerSetProp
     }
 }

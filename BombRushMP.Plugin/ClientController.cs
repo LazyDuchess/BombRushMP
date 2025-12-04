@@ -484,6 +484,20 @@ namespace BombRushMP.Plugin
                     }
                     break;
 
+                case Packets.ServerSetProp:
+                    {
+                        var propPacket = packet as ServerSetProp;
+                        if (propPacket.Disguised)
+                        {
+                            PlayerComponent.GetLocal().ApplyPropDisguise(propPacket.PropId);
+                        }
+                        else
+                        {
+                            PlayerComponent.GetLocal().RemovePropDisguise();
+                        }
+                    }
+                    break;
+
                 case Packets.ClientHitByPlayer:
                     {
                         var hitPacket = packet as ClientHitByPlayer;
