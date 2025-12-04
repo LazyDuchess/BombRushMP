@@ -14,6 +14,11 @@ namespace BombRushMP.Common.Packets
         public bool Disguised = false;
         public int PropId = 0;
 
+        public ServerSetProp()
+        {
+
+        }
+
         public ServerSetProp(bool disguised, int propId)
         {
             Disguised = disguised;
