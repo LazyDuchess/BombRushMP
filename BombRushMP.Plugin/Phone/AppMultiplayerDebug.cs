@@ -83,6 +83,20 @@ public class AppMultiplayerDebug : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Enable Prop Hunt Mode");
+        button.OnConfirm += () =>
+        {
+            PropDisguiseController.Instance.FreezeProps();
+        };
+        ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Disable Prop Hunt Mode");
+        button.OnConfirm += () =>
+        {
+            PropDisguiseController.Instance.UnfreezeProps();
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Apply Nearest Disguise");
         button.OnConfirm += () =>
         {

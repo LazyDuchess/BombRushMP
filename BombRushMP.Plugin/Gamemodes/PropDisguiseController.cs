@@ -12,11 +12,34 @@ namespace BombRushMP.Plugin.Gamemodes
     {
         public static PropDisguiseController Instance { get; private set; }
         public Dictionary<int, GameObject> Props = new();
+        public bool FrozenProps = false;
 
         public static void Create()
         {
             var go = new GameObject("Prop Disguise Controller");
             go.AddComponent<PropDisguiseController>();
+        }
+
+        public void FreezeProps()
+        {
+            if (FrozenProps) return;
+            FrozenProps = true;
+            WorldHandler.instance.SceneObjectsRegister.stageChunks.ForEach(chunk =>
+            {
+                var junkBehaviour = chunk.junkBehaviour;
+                junkBehaviour.kickedJunkIndex = 0;
+                junkBehaviour.nonupdatingJunkIndex = 0;
+                foreach(var junk in junkBehaviour.totalJunk)
+                {
+                    JunkBehaviour.RestoreSingle(junkBehaviour, junk);
+                }
+            });
+        }
+
+        public void UnfreezeProps()
+        {
+            if (!FrozenProps) return;
+            FrozenProps = false;
         }
 
         private void Awake()

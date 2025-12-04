@@ -21,6 +21,18 @@ namespace BombRushMP.Plugin.Patches
         internal static bool PlayAnimPatchEnabled = true;
 
         [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.OnCollisionEnter))]
+        private static bool OnCollisionEnter_Prefix(Collision other)
+        {
+            var propDisguiseController = PropDisguiseController.Instance;
+            if (propDisguiseController == null) return true;
+            if (!propDisguiseController.FrozenProps) return true;
+            if (other.gameObject.layer == Layers.Junk) return false;
+            return true;
+        }
+
+
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.PlayAnim))]
         private static bool PlayAnim_Prefix(Player __instance, int newAnim, bool forceOverwrite, bool instant, float atTime)
         {
