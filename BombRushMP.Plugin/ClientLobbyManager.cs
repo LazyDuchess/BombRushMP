@@ -317,6 +317,7 @@ namespace BombRushMP.Plugin
                 LobbyChanged?.Invoke();
             }
             LobbiesUpdated?.Invoke();
+            
         }
     }
 }

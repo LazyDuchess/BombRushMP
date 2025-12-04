@@ -125,10 +125,11 @@ namespace BombRushMP.Plugin
             if (lobby == null) return;
             var players = lobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToArray();
             var gamemode = lobby.GetOrCreateGamemode();
+            var teams = GamemodeFactory.GetTeams(lobby.LobbyState.Gamemode);
             if (gamemode.TeamBased)
             {
-                var teamOrder = new byte[TeamManager.Teams.Length];
-                for (var i = 0; i < TeamManager.Teams.Length; i++)
+                var teamOrder = new byte[teams.Length];
+                for (var i = 0; i < teams.Length; i++)
                 {
                     teamOrder[i] = (byte)i;
                 }
@@ -151,7 +152,7 @@ namespace BombRushMP.Plugin
                 Team team = null;
                 if (gamemode.TeamBased)
                 {
-                    team = TeamManager.Teams[player.Team];
+                    team = teams[player.Team];
                 }
                 if (player.Team != lastTeam && gamemode.TeamBased)
                 {

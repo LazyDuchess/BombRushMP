@@ -5,11 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
+using UnityEngine;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
     public static class GamemodeFactory
     {
+        private static Team[] _defaultTeams =
+        {
+            new Team("Red Team", Color.red),
+            new Team("Blue Team", Color.blue),
+            new Team("Yellow Team", Color.yellow),
+            new Team("Green Team", Color.green)
+        };
+
+        private static Team[] _propHuntTeams =
+        {
+            new Team("Hunters", Color.red),
+            new Team("Props", Color.green)
+        };
+
         private static Dictionary<GamemodeIDs, Type> Gamemodes = new()
         {
             {GamemodeIDs.ScoreBattle, typeof(ScoreBattle) },
@@ -31,6 +46,13 @@ namespace BombRushMP.Plugin.Gamemodes
             {GamemodeIDs.TeamProSkaterScoreBattle, "Crew Pro Skater Score Battle" },
             {GamemodeIDs.PropHunt, "Prop Hunt" }
         };
+
+        public static Team[] GetTeams(GamemodeIDs gamemodeId)
+        {
+            if (gamemodeId == GamemodeIDs.PropHunt)
+                return _propHuntTeams;
+            return _defaultTeams;
+        }
 
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)
         {

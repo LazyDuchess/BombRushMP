@@ -167,8 +167,9 @@ namespace BombRushMP.Plugin.Phone
                     button.OnConfirm += () =>
                     {
                         var team = lobbyManager.CurrentLobby.LobbyState.Players[clientController.LocalID].Team;
+                        var teams = GamemodeFactory.GetTeams(lobbyManager.CurrentLobby.LobbyState.Gamemode);
                         team++;
-                        if (team >= TeamManager.Teams.Length)
+                        if (team >= teams.Length)
                             team = 0;
                         clientController.SendPacket(new ClientSetTeam(team), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
                     };

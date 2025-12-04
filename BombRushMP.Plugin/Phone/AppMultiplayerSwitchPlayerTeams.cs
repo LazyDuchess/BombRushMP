@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common.Packets;
+using BombRushMP.Plugin.Gamemodes;
 using CommonAPI.Phone;
 using System;
 using System.Collections.Generic;
@@ -40,7 +41,8 @@ namespace BombRushMP.Plugin.Phone
             {
                 var team = lobbyManager.CurrentLobby.LobbyState.Players[player].Team;
                 team++;
-                if (team >= TeamManager.Teams.Length)
+                var teams = GamemodeFactory.GetTeams(lobbyManager.CurrentLobby.LobbyState.Gamemode);
+                if (team >= teams.Length)
                     team = 0;
                 clientController.SendPacket(new ClientLobbySetPlayerTeam(player, team), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.ClientAndLobbyUpdates);
             }

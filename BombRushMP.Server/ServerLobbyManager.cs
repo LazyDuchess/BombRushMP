@@ -190,6 +190,26 @@ namespace BombRushMP.Server
             }
         }
 
+        private void VerifyLobbyTeams(Lobby lobby)
+        {
+            var maxTeamCount = 4;
+            if (lobby.LobbyState.Gamemode == GamemodeIDs.PropHunt)
+                maxTeamCount = 2;
+            foreach (var player in lobby.LobbyState.Players)
+            {
+                if (player.Value.Team >= maxTeamCount)
+                {
+                    player.Value.Team = (byte)(maxTeamCount - 1);
+                    QueueStageUpdate(lobby.LobbyState.Stage);
+                }
+                else if (player.Value.Team <= 0)
+                {
+                    player.Value.Team = 0;
+                    QueueStageUpdate(lobby.LobbyState.Stage);
+                }
+            }
+        }
+
         private void OnPacketReceived(INetConnection client, Packets packetId, Packet packet)
         {
             var playerId = client.Id;
@@ -218,6 +238,7 @@ namespace BombRushMP.Server
 
                         existingLobby.LobbyState.Gamemode = ((ClientLobbySetGamemode)packet).Gamemode;
                         existingLobby.LobbyState.GamemodeSettings = ((ClientLobbySetGamemode)packet).GamemodeSettings;
+                        VerifyLobbyTeams(existingLobby);
                         QueueStageUpdate(existingLobby.LobbyState.Stage);
                     }
                     break;
@@ -337,6 +358,7 @@ namespace BombRushMP.Server
                             if (!existingLobby.LobbyState.AllowTeamSwitching && existingLobby.LobbyState.HostId != playerId) break;
                             var teamPacket = (ClientSetTeam)packet;
                             existingLobby.LobbyState.Players[playerId].Team = teamPacket.Team;
+                            VerifyLobbyTeams(existingLobby);
                             QueueStageUpdate(existingLobby.LobbyState.Stage);
                         }
                     }
@@ -360,6 +382,7 @@ namespace BombRushMP.Server
                             var teamPacket = (ClientLobbySetPlayerTeam)packet;
                             if (!existingLobby.LobbyState.Players.ContainsKey(teamPacket.PlayerId)) break;
                             existingLobby.LobbyState.Players[teamPacket.PlayerId].Team = teamPacket.TeamId;
+                            VerifyLobbyTeams(existingLobby);
                             QueueStageUpdate(existingLobby.LobbyState.Stage);
                         }
                     }

@@ -27,6 +27,7 @@ namespace BombRushMP.Plugin.Gamemodes
         protected bool TeleportToSpawnOnEnd => (Settings.SettingByID[SettingTPToSpawnOnEnd] as ToggleGamemodeSetting).IsOn;
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;
+        protected GamemodeIDs GamemodeId => Lobby.LobbyState.Gamemode;
         private Vector3 _spawnPos = Vector3.zero;
         private Quaternion _spawnRot = Quaternion.identity;
 
@@ -178,7 +179,8 @@ namespace BombRushMP.Plugin.Gamemodes
             var ls = new List<ushort>();
             var highestScoringTeam = -1;
             var highestTeamScore = 0f;
-            for(var i = 0; i < TeamManager.Teams.Length; i++)
+            var teams = GamemodeFactory.GetTeams(GamemodeId);
+            for (var i = 0; i < teams.Length; i++)
             {
                 var teamScore = Lobby.LobbyState.GetScoreForTeam((byte)i);
                 if (highestScoringTeam == -1)
