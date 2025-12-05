@@ -128,7 +128,7 @@ public class AppMultiplayer : CustomApp
         button = PhoneUIUtility.CreateSimpleButton("Spectate");
         button.OnConfirm += () =>
         {
-            SpectatorController.StartSpectating();
+            SpectatorController.StartSpectating(false);
         };
         ScrollView.AddButton(button);
 
@@ -158,6 +158,8 @@ public class AppMultiplayer : CustomApp
         button = PhoneUIUtility.CreateSimpleButton("Stats");
         button.OnConfirm += () =>
         {
+            var spec = SpectatorController.Instance;
+            if (spec != null && spec.Forced) return;
             var statsUi = StatsUI.Instance;
             if (!statsUi.Displaying)
             {

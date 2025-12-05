@@ -49,6 +49,10 @@ namespace BombRushMP.Plugin
                 _tpLabel.gameObject.SetActive(false);
                 _tpGlyph.gameObject.SetActive(false);
             }
+            if (spec.Forced)
+                _backLabel.gameObject.SetActive(false);
+            else
+                _backLabel.gameObject.SetActive(true);
         }
 
         static TextMeshProUGUI MakeLabel(TextMeshProUGUI reference, string name)

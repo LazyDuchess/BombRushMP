@@ -12,6 +12,7 @@ namespace BombRushMP.Plugin
 {
     public class SpectatorController : MonoBehaviour
     {
+        public bool Forced = false;
         public ushort CurrentSpectatingClient = 0;
         public static SpectatorController Instance { get; private set; }
         private ClientController _clientController = null;
@@ -33,7 +34,7 @@ namespace BombRushMP.Plugin
             _gameInput = Core.Instance.GameInput;
             _worldHandler = WorldHandler.instance;
             var currentPlayer = _worldHandler.GetCurrentPlayer();
-            if (!currentPlayer.userInputEnabled)
+            if (!currentPlayer.userInputEnabled && !Forced)
             {
                 EndSpectating();
                 return;
@@ -52,7 +53,7 @@ namespace BombRushMP.Plugin
             _gameplayCamera = GameplayCamera.instance;
             _clientController = ClientController.Instance;
             CachePlayers();
-            if (_players.Count == 0)
+            if (_players.Count == 0 && !Forced)
             {
                 EndSpectating();
                 return;
@@ -84,7 +85,7 @@ namespace BombRushMP.Plugin
             MPSaveData.Instance.Stats.TimeSpentSpectating += Core.dt;
             var user = ClientController.Instance.GetLocalUser();
             CachePlayers();
-            if (_players.Count == 0)
+            if (_players.Count == 0 && !Forced)
             {
                 EndSpectating();
                 return;
@@ -103,14 +104,14 @@ namespace BombRushMP.Plugin
                 _currentSpectatingPlayer = targetPlayer;
                 _gameplayCamera.SetPlayerToFollow(targetPlayer);
             }
-            if (_gameInput.GetButtonNew(2, 0) && CanTeleportToCurrentPlayer())
+            if (_gameInput.GetButtonNew(2, 0) && CanTeleportToCurrentPlayer() && !Forced)
             {
                 EndSpectating();
                 MPUtility.PlaceCurrentPlayer(targetPlayer.transform.position, targetPlayer.transform.rotation);
                 return;
             }
 
-            if (_gameInput.GetButtonNew(3, 0))
+            if (_gameInput.GetButtonNew(3, 0) && !Forced)
             {
                 EndSpectating();
                 return;
@@ -201,12 +202,17 @@ namespace BombRushMP.Plugin
             Destroy(gameObject);
         }
 
-        public static void StartSpectating()
+        public static void StartSpectating(bool forced)
         {
             if (Instance != null)
+            {
+                if (forced)
+                    Instance.Forced = true;
                 return;
+            }
             var go = new GameObject("Spectator Controller");
             Instance = go.AddComponent<SpectatorController>();
+            Instance.Forced = forced;
         }
     }
 }

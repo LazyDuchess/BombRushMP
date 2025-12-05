@@ -99,7 +99,7 @@ namespace BombRushMP.Plugin
         private void TrySpectate()
         {
             if (_player == null) return;
-            SpectatorController.StartSpectating();
+            SpectatorController.StartSpectating(false);
             SpectatorController.Instance.SpectatePlayer(_player);
         }
 
