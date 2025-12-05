@@ -115,6 +115,13 @@ public class AppMultiplayer : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Join Public Lobby");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppMultiplayerPublicLobbies));
+        };
+        ScrollView.AddButton(button);
+
         button = PhoneUIUtility.CreateSimpleButton("Stages");
         button.OnConfirm += () =>
         {
