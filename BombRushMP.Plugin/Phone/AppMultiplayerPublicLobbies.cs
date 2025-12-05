@@ -33,11 +33,14 @@ public class AppMultiplayerPublicLobbies : CustomApp
         foreach (var lobby in lobbies)
         {
             if (!lobby.Value.LobbyState.Challenge) continue;
+            if (lobby.Value.LobbyState.InGame) continue;
             var host = clientController.Players[lobby.Value.LobbyState.HostId];
             var button = PhoneUIUtility.CreateSimpleButton($"({lobby.Value.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(lobby.Key)} - {MPUtility.GetPlayerDisplayName(clientController.Players[lobby.Value.LobbyState.HostId].ClientState)}");
             button.Label.spriteAsset = MPAssets.Instance.Sprites;
             button.OnConfirm += () =>
             {
+                if (!lobby.Value.LobbyState.Challenge) return;
+                if (lobby.Value.LobbyState.InGame) return;
                 clientController.ClientLobbyManager.JoinLobby(lobby.Key);
             };
             ScrollView.AddButton(button);
