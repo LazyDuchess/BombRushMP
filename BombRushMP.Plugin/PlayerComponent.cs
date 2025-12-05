@@ -353,24 +353,33 @@ namespace BombRushMP.Plugin
                         StopAFK();
                     }
                 }
-                _afkTimer += Core.dt;
 
-                if (_afkTimer >= ClientConstants.AFKTime)
+                var lobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
+
+                if (lobby != null && lobby.InGame)
                 {
-                    if (!AFK)
-                    {
-                        MPSaveData.Instance.Stats.TimesFallenAsleep++;
-                        Core.Instance.SaveManager.SaveCurrentSaveSlot();
-                    }
-                    AFK = true;
-                    _afkTimer = ClientConstants.AFKTime;
+                    StopAFK();
                 }
                 else
                 {
-                    AFK = false;
-                    _afkForced = false;
-                }
+                    _afkTimer += Core.dt;
 
+                    if (_afkTimer >= ClientConstants.AFKTime)
+                    {
+                        if (!AFK)
+                        {
+                            MPSaveData.Instance.Stats.TimesFallenAsleep++;
+                            Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                        }
+                        AFK = true;
+                        _afkTimer = ClientConstants.AFKTime;
+                    }
+                    else
+                    {
+                        AFK = false;
+                        _afkForced = false;
+                    }
+                }
                 if (AFK)
                     MPSaveData.Instance.Stats.TimeSpentAsleep += Core.dt;
             }
