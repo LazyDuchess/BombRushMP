@@ -80,7 +80,13 @@ namespace BombRushMP.Plugin
         {
             if (HasPropDisguise)
             {
-                ApplyPropDisguise(DisguiseID);
+                var disguiseController = PropDisguiseController.Instance;
+                if (!disguiseController.Props.TryGetValue(DisguiseID, out var prop)) return;
+                var ped = prop.GetComponent<StreetLife>();
+                if (ped == null) return;
+                var disguiseAnimator = DisguiseGameObject.GetComponent<Animator>();
+                var animHash = Animator.StringToHash(ped.idleAnimation.ToString());
+                disguiseAnimator.Play(animHash, 0);
             }
         }
 
