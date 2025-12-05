@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Reptile;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
@@ -12,6 +14,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             TeamBased = true;
             CanChangeCountdown = false;
+            MinimapOverrideMode = MinimapOverrideModes.ForceOn;
         }
 
         public override void OnStart()
@@ -21,6 +24,8 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.FreezeProps();
             propDisguiseController.InPropHunt = true;
             propDisguiseController.InSetupPhase = true;
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            player.gameObject.AddComponent<PropHuntPlayer>();
         }
 
         public override void OnEnd(bool cancelled)
@@ -32,6 +37,9 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.InSetupPhase = false;
             propDisguiseController.LocalPropHuntTeam = PropHuntTeams.None;
             PlayerComponent.GetLocal().RemovePropDisguise();
+            var localPropHuntPlayer = PropHuntPlayer.GetLocal();
+            if (localPropHuntPlayer != null)
+                GameObject.Destroy(localPropHuntPlayer);
         }
     }
 }

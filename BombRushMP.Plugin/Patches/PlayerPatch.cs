@@ -321,6 +321,8 @@ namespace BombRushMP.Plugin.Patches
             if (lobbyManager == null) return true;
             var lobby = lobbyManager.CurrentLobby;
             if (lobby == null || lobby.CurrentGamemode == null || !lobby.InGame) return true;
+            var propHunt = lobby.CurrentGamemode as PropHunt;
+            if (propHunt != null) return false;
             var grafRace = lobby.CurrentGamemode as GraffitiRace;
             if (grafRace == null) return true;
             if (!grafRace.QuickGraffitiEnabled) return true;
