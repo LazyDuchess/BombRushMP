@@ -60,11 +60,18 @@ namespace BombRushMP.Plugin
 
         public bool ShouldIgnore()
         {
-            var localLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
+            var clientController = ClientController.Instance;
+            var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby != null && localLobby.InGame && GamemodeFactory.IsExclusive(localLobby.LobbyState.Gamemode) && _lobby != localLobby)
                 return true;
             if (_lobby != null && _lobby.InGame && GamemodeFactory.IsExclusive(_lobby.LobbyState.Gamemode) && _lobby != localLobby)
                 return true;
+            if (_lobby != null && _lobby.InGame && _lobby == localLobby)
+            {
+                var propDisguiseController = PropDisguiseController.Instance;
+                if (_lobby.LobbyState.Players[ClientId].Team != _lobby.LobbyState.Players[clientController.LocalID].Team && propDisguiseController.InPropHunt && propDisguiseController.InSetupPhase)
+                    return true;
+            }
             return false;
         }
 

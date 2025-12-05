@@ -13,6 +13,9 @@ namespace BombRushMP.Plugin.Gamemodes
         public static PropDisguiseController Instance { get; private set; }
         public Dictionary<int, GameObject> Props = new();
         public bool FrozenProps = false;
+        public bool InPropHunt = false;
+        public bool InSetupPhase = false;
+        public PropHuntTeams LocalPropHuntTeam = PropHuntTeams.None;
 
         public static void Create()
         {
