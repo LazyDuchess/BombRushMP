@@ -19,6 +19,8 @@ namespace BombRushMP.Plugin
         private float _cameraAimSpeed = 20f;
         private float _spineAimSpeed = 10f;
 
+        private bool _aiming = false;
+
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -32,31 +34,37 @@ namespace BombRushMP.Plugin
 
         private void LateUpdate()
         {
+            _aiming = false;
             if (_player.sprayButtonHeld)
             {
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 1f, _cameraAimSpeed * Time.deltaTime);
-                _spineAimAmount = Mathf.Lerp(_spineAimAmount, 1f, _spineAimSpeed * Time.deltaTime);
+                _aiming = true;
             }
             else
             {
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 0f, _cameraAimSpeed * Time.deltaTime);
-                _spineAimAmount = Mathf.Lerp(_spineAimAmount, 0f, _spineAimSpeed * Time.deltaTime);
             }
 
             if (_player.sprayButtonHeld && _player.ability == null)
             {
                 _spineAimAmount = Mathf.Lerp(_spineAimAmount, 1f, _spineAimSpeed * Time.deltaTime);
+                _player.anim.Play(_player.canSprayHash, 1, 0f);
             }
             else
             {
                 _spineAimAmount = Mathf.Lerp(_spineAimAmount, 0f, _spineAimSpeed * Time.deltaTime);
             }
+
+            _player.spraycanLayerWeight = _spineAimAmount;
+            _player.anim.SetLayerWeight(1, _spineAimAmount);
+            _player.anim.SetLayerWeight(2, _spineAimAmount);
+
             var camPos = _cam.transform.position;
             camPos += Vector3.up * 0.2f;
             camPos += _cam.transform.right * 0.2f;
             camPos += _cam.transform.forward * 2f;
 
-            var spine = _player.characterVisual.head.parent.parent.parent;
+            var spine = _player.characterVisual.head.parent.parent;
             var localDir = spine.InverseTransformDirection(_cam.transform.forward);
             var delta = Quaternion.FromToRotation(Vector3.forward, localDir);
             var finalRot = spine.localRotation * delta;

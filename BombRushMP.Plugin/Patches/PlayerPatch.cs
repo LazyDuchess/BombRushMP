@@ -56,6 +56,19 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.UpdateSprayCanShake))]
+        private static bool UpdateSprayCanShake_Prefix(Player __instance)
+        {
+            var propDisguiseController = PropDisguiseController.Instance;
+            if (propDisguiseController.InPropHunt)
+            {
+                __instance.SetSpraycanState(Player.SpraycanState.NONE);
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.FixedUpdatePlayer))]
         private static bool FixedUpdatePlayer_Prefix(Player __instance)
         {
