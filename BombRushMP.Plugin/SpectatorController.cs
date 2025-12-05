@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.Common;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -142,7 +143,26 @@ namespace BombRushMP.Plugin
 
         private void CachePlayers()
         {
-            _players = _clientController.Players.Keys.ToList();
+            _players.Clear();
+            var myLobby = _clientController.ClientLobbyManager.CurrentLobby;
+            LobbyPlayer myLobbyPlayer = null;
+            if (myLobby != null)
+            {
+                myLobbyPlayer = myLobby.LobbyState.Players[_clientController.LocalID];
+            }
+            foreach(var pl in _clientController.Players)
+            {
+                if (pl.Value.Player == null) continue;
+                if (!pl.Value.ShouldIgnore()) continue;
+                if (myLobby != null && myLobby.InGame && myLobby.CurrentGamemode != null)
+                {
+                    if (!myLobby.LobbyState.Players.TryGetValue(pl.Key, out var lobbyPlayer))
+                        continue;
+                    if (myLobby.CurrentGamemode.TeamBased && lobbyPlayer.Team != myLobbyPlayer.Team)
+                        continue;
+                }
+                _players.Add(pl.Key);
+            }
             _players.Add(_clientController.LocalID);
         }
 
