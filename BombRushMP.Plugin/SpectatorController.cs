@@ -16,7 +16,7 @@ namespace BombRushMP.Plugin
         public ushort CurrentSpectatingClient = 0;
         public static SpectatorController Instance { get; private set; }
         private ClientController _clientController = null;
-        private List<ushort> _players = null;
+        private List<ushort> _players = new();
         private Player _currentSpectatingPlayer = null;
         private GameplayCamera _gameplayCamera = null;
         private WorldHandler _worldHandler = null;
