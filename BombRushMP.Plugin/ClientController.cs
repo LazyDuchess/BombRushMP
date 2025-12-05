@@ -415,6 +415,7 @@ namespace BombRushMP.Plugin
             {
                 case GenericEvents.Spray:
                     if (player.Player == null) break;
+                    if (player.ShouldIgnore()) break;
                     player.Player.characterVisual.SetSpraycan(true, player.Player.character);
                     player.Player.SetSpraycanState(Player.SpraycanState.SPRAY);
                     break;
@@ -436,6 +437,7 @@ namespace BombRushMP.Plugin
 
                 case GenericEvents.Land:
                     if (player.Player == null) break;
+                    if (player.ShouldIgnore()) break;
                     player.Player.AudioManager.PlaySfxGameplay(player.Player.moveStyle, AudioClipID.land, player.Player.playerOneShotAudioSource);
                     player.Player.CreateCircleDustEffect(-player.Player.transform.up);
                     break;
