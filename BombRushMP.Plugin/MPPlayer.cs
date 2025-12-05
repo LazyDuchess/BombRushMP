@@ -269,7 +269,9 @@ namespace BombRushMP.Plugin
             }
             else if (!ShouldIgnore() && !Player.gameObject.activeSelf)
             {
-                Player.gameObject.SetActive(true);
+                GameObject.Destroy(Player);
+                UpdateClientStateVisuals();
+                //Player.gameObject.SetActive(true);
             }
             var mpSettings = MPSettings.Instance;
             if (_interactable != null)
@@ -490,7 +492,7 @@ namespace BombRushMP.Plugin
                 }
             }
 
-            if (PlayerComponent?.StreamedCharacter != null && !useStreamedCharacter)
+            if (PlayerComponent?.StreamedCharacter != null && !useStreamedCharacter && Player != null)
             {
                 // Force refresh
                 Player.character = Characters.NONE;
@@ -636,7 +638,7 @@ namespace BombRushMP.Plugin
 
                 if (NamePlate != null && mpSettings.ShowNamePlates)
                 {
-                    if (ClientVisualState.Disguised)
+                    if (ClientVisualState.Disguised || ShouldIgnore())
                         NamePlate.gameObject.SetActive(false);
                     else
                         NamePlate.gameObject.SetActive(true);
@@ -705,7 +707,7 @@ namespace BombRushMP.Plugin
                 MakeMapPin();
             _mapPin.SetLocation();
 
-            if (ClientVisualState.Disguised)
+            if (ClientVisualState.Disguised || ShouldIgnore())
                 _mapPin.gameObject.SetActive(false);
             else
                 _mapPin.gameObject.SetActive(true);
