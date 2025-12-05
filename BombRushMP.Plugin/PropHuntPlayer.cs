@@ -32,6 +32,21 @@ namespace BombRushMP.Plugin
             return WorldHandler.instance.GetCurrentPlayer().GetComponent<PropHuntPlayer>();
         }
 
+        private bool IsAimingBackwards()
+        {
+            var camForwardFlat = _cam.transform.forward;
+            camForwardFlat.y = 0f;
+            camForwardFlat = camForwardFlat.normalized;
+
+            var playerForwardFlat = _player.transform.forward;
+            playerForwardFlat.y = 0f;
+            playerForwardFlat = playerForwardFlat.normalized;
+
+            if (Vector3.Dot(camForwardFlat, playerForwardFlat) < 0) return true;
+
+            return false;
+        }
+
         private void LateUpdate()
         {
             _aiming = false;
@@ -45,10 +60,10 @@ namespace BombRushMP.Plugin
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 0f, _cameraAimSpeed * Time.deltaTime);
             }
 
-            if (_player.sprayButtonHeld && _player.ability == null)
+            if (_player.sprayButtonHeld && _player.ability == null && !IsAimingBackwards())
             {
                 _spineAimAmount = Mathf.Lerp(_spineAimAmount, 1f, _spineAimSpeed * Time.deltaTime);
-                _player.anim.Play(_player.canSprayHash, 1, 0f);
+                _player.anim.Play(_player.canSprayHash, 1, 0.5f);
             }
             else
             {
