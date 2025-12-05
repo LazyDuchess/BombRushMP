@@ -358,7 +358,8 @@ namespace BombRushMP.Plugin
 
                 if (lobby != null && lobby.InGame)
                 {
-                    StopAFK();
+                    if (!_afkForced)
+                        StopAFK();
                 }
                 else
                 {
