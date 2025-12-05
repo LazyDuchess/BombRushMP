@@ -269,9 +269,9 @@ namespace BombRushMP.Plugin
             }
             else if (!ShouldIgnore() && !Player.gameObject.activeSelf)
             {
-                GameObject.Destroy(Player);
+                DeletePlayer();
                 UpdateClientStateVisuals();
-                //Player.gameObject.SetActive(true);
+                RefreshCharacterVisuals();
             }
             var mpSettings = MPSettings.Instance;
             if (_interactable != null)
@@ -284,7 +284,7 @@ namespace BombRushMP.Plugin
 
             if (ClientState == null || ClientVisualState == null) return;
 
-            if (ClientVisualState.Disguised)
+            if (ClientVisualState.Disguised || ShouldIgnore())
             {
                 if (Player.visualTf.gameObject.activeSelf)
                     Player.visualTf.gameObject.SetActive(false);
@@ -609,97 +609,101 @@ namespace BombRushMP.Plugin
                 return;
             }
 
-            if (_targetHidden)
+            if (!ClientVisualState.Disguised && !ShouldIgnore())
             {
-                if (mpSettings.OptimizeOnePlayerAtATime)
+                if (_targetHidden)
                 {
-                    if (Player.characterVisual.gameObject.activeSelf)
+                    if (mpSettings.OptimizeOnePlayerAtATime)
                     {
-                        ClearOptimizationActions();
-                        OptimizationActions.Add(Hide);
+                        if (Player.characterVisual.gameObject.activeSelf)
+                        {
+                            ClearOptimizationActions();
+                            OptimizationActions.Add(Hide);
+                        }
                     }
-                }
-                else
-                    Hide();
-                Player.characterVisual.SetSpraycan(false);
-            }
-            else
-            {
-                if (mpSettings.OptimizeOnePlayerAtATime)
-                {
-                    if (!Player.characterVisual.gameObject.activeSelf || _targetLod != PlayerComponent.LOD)
-                    {
-                        ClearOptimizationActions();
-                        OptimizationActions.Add(Unhide);
-                    }
-                }
-                else
-                    Unhide();
-
-                if (NamePlate != null && mpSettings.ShowNamePlates)
-                {
-                    if (ClientVisualState.Disguised || ShouldIgnore())
-                        NamePlate.gameObject.SetActive(false);
                     else
-                        NamePlate.gameObject.SetActive(true);
+                        Hide();
+                    Player.characterVisual.SetSpraycan(false);
                 }
-                else if (NamePlate != null && !mpSettings.ShowNamePlates)
+                else
                 {
-                    NamePlate.gameObject.SetActive(false);
+                    if (mpSettings.OptimizeOnePlayerAtATime)
+                    {
+                        if (!Player.characterVisual.gameObject.activeSelf || _targetLod != PlayerComponent.LOD)
+                        {
+                            ClearOptimizationActions();
+                            OptimizationActions.Add(Unhide);
+                        }
+                    }
+                    else
+                        Unhide();
                 }
+            }
+            if (NamePlate != null && mpSettings.ShowNamePlates)
+            {
+                if (ClientVisualState.Disguised || ShouldIgnore())
+                    NamePlate.gameObject.SetActive(false);
+                else
+                    NamePlate.gameObject.SetActive(true);
+            }
+            else if (NamePlate != null && !mpSettings.ShowNamePlates)
+            {
+                NamePlate.gameObject.SetActive(false);
             }
 
             var snapAnim = false;
 
-            if (ClientVisualState.Chibi != PlayerComponent.Chibi)
+            if (!ShouldIgnore())
             {
-                UpdateClientStateVisuals();
-                RefreshCharacterVisuals();
-            }
-
-            PlayerComponent.AFK = ClientVisualState.AFK;
-            PlayerComponent.Chibi = ClientVisualState.Chibi;
-
-            if (ClientVisualState.State == PlayerStates.Toilet)
-            {
-                Player.characterVisual.feetIK = false;
-            }
-
-            var targetAnim = ClientVisualState.CurrentAnimation;
-            if (ClientVisualState.BoEAnimation)
-            {
-                if (BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(targetAnim, out var gameAnim))
-                    targetAnim = gameAnim;
-                else
-                    targetAnim = ClientConstants.MissingAnimationHash;
-            }    
-            if (Player.curAnim != targetAnim)
-            {
-                if (Player.curAnim != _lastAnimation)
-                    _timeSpentInWrongAnimation = 0f;
-                _timeSpentInWrongAnimation += ClientController.DeltaTime;
-            }
-            else
-                _timeSpentInWrongAnimation = 0f;
-            _lastAnimation = Player.curAnim;
-
-            if (_timeSpentInWrongAnimation >= MaxTimeSpentInWrongAnimation)
-                snapAnim = true;
-
-            if (snapAnim)
-            {
-                if (ClientVisualState.CurrentAnimation != 0)
+                if (ClientVisualState.Chibi != PlayerComponent.Chibi)
                 {
+                    UpdateClientStateVisuals();
+                    RefreshCharacterVisuals();
+                }
+
+                PlayerComponent.AFK = ClientVisualState.AFK;
+                PlayerComponent.Chibi = ClientVisualState.Chibi;
+
+                if (ClientVisualState.State == PlayerStates.Toilet)
+                {
+                    Player.characterVisual.feetIK = false;
+                }
+
+                var targetAnim = ClientVisualState.CurrentAnimation;
+                if (ClientVisualState.BoEAnimation)
+                {
+                    if (BunchOfEmotesSupport.TryGetGameAnimationForCustomAnimationHash(targetAnim, out var gameAnim))
+                        targetAnim = gameAnim;
+                    else
+                        targetAnim = ClientConstants.MissingAnimationHash;
+                }
+                if (Player.curAnim != targetAnim)
+                {
+                    if (Player.curAnim != _lastAnimation)
+                        _timeSpentInWrongAnimation = 0f;
+                    _timeSpentInWrongAnimation += ClientController.DeltaTime;
+                }
+                else
                     _timeSpentInWrongAnimation = 0f;
-                    Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
+                _lastAnimation = Player.curAnim;
+
+                if (_timeSpentInWrongAnimation >= MaxTimeSpentInWrongAnimation)
+                    snapAnim = true;
+
+                if (snapAnim)
+                {
+                    if (ClientVisualState.CurrentAnimation != 0)
+                    {
+                        _timeSpentInWrongAnimation = 0f;
+                        Player.StartCoroutine(ApplyCurrentAnimationToPlayerDelayed(Player));
+                    }
+                }
+
+                if (Player.moveStyleEquipped != (MoveStyle)ClientVisualState.MoveStyle || Player.usingEquippedMovestyle != ClientVisualState.MoveStyleEquipped)
+                {
+                    Player.StartCoroutine(UpdateMoveStyleDelayed());
                 }
             }
-
-            if (Player.moveStyleEquipped != (MoveStyle)ClientVisualState.MoveStyle || Player.usingEquippedMovestyle != ClientVisualState.MoveStyleEquipped)
-            {
-                Player.StartCoroutine(UpdateMoveStyleDelayed());
-            }
-
             var inTeamLobby = InOurTeamLobby(out var rival);
 
             TickUpdateNameplate();
