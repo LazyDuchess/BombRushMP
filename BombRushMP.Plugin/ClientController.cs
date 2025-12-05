@@ -254,7 +254,9 @@ namespace BombRushMP.Plugin
             }
             if (packet.Disguised)
             {
+                packet.VisualPosition = playerComp.DisguiseGameObject.transform.localPosition.ToSystemVector3();
                 packet.VisualRotation = playerComp.DisguiseGameObject.transform.localRotation.ToSystemQuaternion();
+                packet.DisguiseScale = playerComp.DisguiseGameObject.transform.localScale.ToSystemVector3();
             }
             return packet;
         }

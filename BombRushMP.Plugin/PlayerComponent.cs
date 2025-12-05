@@ -115,6 +115,8 @@ namespace BombRushMP.Plugin
             disguise.transform.SetLocalPositionAndRotation(Vector2.zero, Quaternion.identity);
             if (isJunk)
                 disguise.transform.rotation = prop.transform.rotation;
+            disguise.transform.localScale = prop.transform.localScale;
+
             if (Local)
             {
                 disguise.gameObject.layer = Layers.Player;

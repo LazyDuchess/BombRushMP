@@ -816,7 +816,8 @@ namespace BombRushMP.Plugin
 
             if (PlayerComponent.HasPropDisguise)
             {
-                PlayerComponent.DisguiseGameObject.transform.SetLocalPositionAndRotation(Vector3.zero, ClientVisualState.VisualRotation.ToUnityQuaternion());
+                PlayerComponent.DisguiseGameObject.transform.SetLocalPositionAndRotation(ClientVisualState.VisualPosition.ToUnityVector3(), ClientVisualState.VisualRotation.ToUnityQuaternion());
+                PlayerComponent.DisguiseGameObject.transform.localScale = ClientVisualState.DisguiseScale.ToUnityVector3();
             }
 
             _previousState = ClientVisualState.State;

@@ -69,6 +69,7 @@ namespace BombRushMP.Common.Packets
         public bool BoEAnimation = false;
         public bool Disguised = false;
         public int DisguiseId = 0;
+        public Vector3 DisguiseScale = Vector3.One;
 
         public override void Write(BinaryWriter writer)
         {
@@ -132,6 +133,9 @@ namespace BombRushMP.Common.Packets
             writer.Write(MPMoveStyleSkin);
 
             writer.Write(DisguiseId);
+            writer.Write(DisguiseScale.X);
+            writer.Write(DisguiseScale.Y);
+            writer.Write(DisguiseScale.Z);
         }
 
         public override void Read(BinaryReader reader)
@@ -198,6 +202,10 @@ namespace BombRushMP.Common.Packets
             MPMoveStyleSkin = reader.ReadInt32();
 
             DisguiseId = reader.ReadInt32();
+            var dx = reader.ReadSingle();
+            var dy = reader.ReadSingle();
+            var dz = reader.ReadSingle();
+            DisguiseScale = new Vector3(dx, dy, dz);
         }
     }
 }
