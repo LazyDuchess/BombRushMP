@@ -14,7 +14,7 @@ namespace BombRushMP.Plugin
         public ushort CurrentSpectatingClient = 0;
         public static SpectatorController Instance { get; private set; }
         private ClientController _clientController = null;
-        private List<MPPlayer> _players = null;
+        private List<ushort> _players = null;
         private Player _currentSpectatingPlayer = null;
         private GameplayCamera _gameplayCamera = null;
         private WorldHandler _worldHandler = null;
@@ -56,16 +56,16 @@ namespace BombRushMP.Plugin
                 EndSpectating();
                 return;
             }
-            CurrentSpectatingClient = _players[0].ClientId;
+            CurrentSpectatingClient = _players[0];
             SpectatorUI.Instance.Activate();
         }
         
         public void SpectatePlayer(MPPlayer player)
         {
-            var index = _players.IndexOf(player);
+            var index = _players.IndexOf(player.ClientId);
             if (index < 0)
                 return;
-            CurrentSpectatingClient = _players[index].ClientId;
+            CurrentSpectatingClient = _players[index];
         }
 
         public bool CanTeleportToCurrentPlayer()
@@ -88,7 +88,10 @@ namespace BombRushMP.Plugin
                 EndSpectating();
                 return;
             }
-            var targetPlayer = _players[GetCurrentSpectatingIndex()].Player;
+            var playerId = _players[GetCurrentSpectatingIndex()];
+            var targetPlayer = _worldHandler.GetCurrentPlayer();
+            if (playerId != ClientController.Instance.LocalID)
+                targetPlayer = ClientController.Instance.Players[playerId].Player;
             if (_currentSpectatingPlayer != targetPlayer)
             {
                 if (_currentSpectatingPlayer != null)
@@ -125,7 +128,7 @@ namespace BombRushMP.Plugin
             currentIndex++;
             if (currentIndex >= _players.Count)
                 currentIndex = 0;
-            CurrentSpectatingClient = _players[currentIndex].ClientId;
+            CurrentSpectatingClient = _players[currentIndex];
         }
 
         private void Previous()
@@ -134,12 +137,13 @@ namespace BombRushMP.Plugin
             currentIndex--;
             if (currentIndex < 0)
                 currentIndex = _players.Count - 1;
-            CurrentSpectatingClient = _players[currentIndex].ClientId;
+            CurrentSpectatingClient = _players[currentIndex];
         }
 
         private void CachePlayers()
         {
-            _players = _clientController.Players.Values.Where((x) => x.Player != null).ToList();
+            _players = _clientController.Players.Keys.ToList();
+            _players.Add(_clientController.LocalID);
         }
 
         private int GetCurrentSpectatingIndex()
@@ -147,7 +151,7 @@ namespace BombRushMP.Plugin
             for(var i = 0; i < _players.Count; i++)
             {
                 var player = _players[i];
-                if (player.ClientId == CurrentSpectatingClient)
+                if (player == CurrentSpectatingClient)
                     return i;
             }
             return 0;
