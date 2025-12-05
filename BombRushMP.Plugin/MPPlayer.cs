@@ -4,6 +4,7 @@ using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.Gamemodes;
 using BombRushMP.Plugin.Patches;
+using BombRushMP.Plugin.Phone;
 using CommonAPI;
 using Reptile;
 using System;
@@ -55,6 +56,16 @@ namespace BombRushMP.Plugin
             ClientVisualState = newVisualState;
             if (ClientVisualState.MoveStyle >= (int)MoveStyle.MAX || ClientVisualState.MoveStyle < 0)
                 ClientVisualState.MoveStyle = Mathf.Clamp(ClientVisualState.MoveStyle, 0, (int)MoveStyle.MAX - 1);
+        }
+
+        public bool ShouldIgnore()
+        {
+            var localLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
+            if (localLobby != null && localLobby.InGame && GamemodeFactory.IsExclusive(localLobby.LobbyState.Gamemode) && _lobby != localLobby)
+                return true;
+            if (_lobby != null && _lobby.InGame && GamemodeFactory.IsExclusive(_lobby.LobbyState.Gamemode) && _lobby != localLobby)
+                return true;
+            return false;
         }
 
         private void MakeMapPin()
@@ -251,6 +262,15 @@ namespace BombRushMP.Plugin
 
         public void FrameUpdate(bool hidden, bool lod)
         {
+            if (Player == null) return;
+            if (ShouldIgnore() && Player.gameObject.activeSelf)
+            {
+                Player.gameObject.SetActive(false);
+            }
+            else if (!ShouldIgnore() && !Player.gameObject.activeSelf)
+            {
+                Player.gameObject.SetActive(true);
+            }
             var mpSettings = MPSettings.Instance;
             if (_interactable != null)
             {
@@ -261,8 +281,6 @@ namespace BombRushMP.Plugin
             }
 
             if (ClientState == null || ClientVisualState == null) return;
-
-            if (Player == null) return;
 
             if (ClientVisualState.Disguised)
             {

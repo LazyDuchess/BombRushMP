@@ -47,6 +47,13 @@ namespace BombRushMP.Plugin.Gamemodes
             {GamemodeIDs.PropHunt, "Prop Hunt" }
         };
 
+        public static bool IsExclusive(GamemodeIDs gamemodeId)
+        {
+            if (gamemodeId == GamemodeIDs.PropHunt)
+                return true;
+            return false;
+        }
+
         public static Team[] GetTeams(GamemodeIDs gamemodeId)
         {
             if (gamemodeId == GamemodeIDs.PropHunt)
