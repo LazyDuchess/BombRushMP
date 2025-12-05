@@ -76,6 +76,14 @@ namespace BombRushMP.Plugin
             _player.visualTf.gameObject.SetActive(true);
         }
 
+        private void OnEnable()
+        {
+            if (HasPropDisguise)
+            {
+                ApplyPropDisguise(DisguiseID);
+            }
+        }
+
         public void ApplyPropDisguise(int disguiseId)
         {
             var disguiseController = PropDisguiseController.Instance;
