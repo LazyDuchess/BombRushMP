@@ -82,7 +82,7 @@ namespace BombRushMP.Plugin
             if (HasPropDisguise)
             {
                 var disguiseController = PropDisguiseController.Instance;
-                if (!disguiseController.Props.TryGetValue(DisguiseID, out var prop)) return;
+                if (!disguiseController.PropByIndex.TryGetValue(DisguiseID, out var prop)) return;
                 var ped = prop.GetComponent<StreetLife>();
                 if (ped == null) return;
                 var disguiseAnimator = DisguiseGameObject.GetComponent<Animator>();
@@ -94,7 +94,7 @@ namespace BombRushMP.Plugin
         public void ApplyPropDisguise(int disguiseId)
         {
             var disguiseController = PropDisguiseController.Instance;
-            if (!disguiseController.Props.TryGetValue(disguiseId, out var prop))
+            if (!disguiseController.PropByIndex.TryGetValue(disguiseId, out var prop))
                 return;
             DisguiseID = disguiseId;
             if (HasPropDisguise)

@@ -105,7 +105,7 @@ public class AppMultiplayerDebug : CustomApp
             var nearestDist = Mathf.Infinity;
             var nearest = 0;
             var nearestSet = false;
-            foreach(var prop in propController.Props)
+            foreach(var prop in propController.PropByIndex)
             {
                 var dist = Vector3.Distance(player.transform.position, prop.Value.transform.position);
                 if (!nearestSet)

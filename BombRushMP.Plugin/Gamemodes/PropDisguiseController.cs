@@ -11,7 +11,8 @@ namespace BombRushMP.Plugin.Gamemodes
     public class PropDisguiseController : MonoBehaviour
     {
         public static PropDisguiseController Instance { get; private set; }
-        public Dictionary<int, GameObject> Props = new();
+        public Dictionary<int, GameObject> PropByIndex = new();
+        public Dictionary<GameObject, int> IndexByProp = new();
         public bool FrozenProps = false;
         public bool InPropHunt = false;
         public bool InSetupPhase = false;
@@ -73,7 +74,9 @@ namespace BombRushMP.Plugin.Gamemodes
                 var stageChunk = j.GetComponentInParent<StageChunk>();
                 var junkStageHandler = j.GetComponentInParent<JunkStageHandler>();
                 if (stageChunk == null && junkStageHandler == null) continue;
-                Props[MPUtility.GenerateGameObjectID(j.gameObject)] = j.gameObject;
+                var id = MPUtility.GenerateGameObjectID(j.gameObject);
+                PropByIndex[id] = j.gameObject;
+                IndexByProp[j.gameObject] = id;
             }
 
             foreach (var ped in streetlife)
@@ -82,7 +85,9 @@ namespace BombRushMP.Plugin.Gamemodes
                 if (stageChunk == null) continue;
                 var moveAlong = ped.GetComponent<MoveAlongPoints>();
                 if (moveAlong != null) continue;
-                Props[MPUtility.GenerateGameObjectID(ped.gameObject)] = ped.gameObject;
+                var id = MPUtility.GenerateGameObjectID(ped.gameObject);
+                PropByIndex[id] = ped.gameObject;
+                IndexByProp[ped.gameObject] = id;
             }
         }
     }
