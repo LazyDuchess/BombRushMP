@@ -34,6 +34,7 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.FreezeProps();
             propDisguiseController.InPropHunt = true;
             propDisguiseController.InSetupPhase = true;
+            propDisguiseController.LocalPropHuntTeam = (PropHuntTeams)Lobby.LobbyState.Players[ClientController.LocalID].Team;
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.gameObject.AddComponent<PropHuntPlayer>();
         }

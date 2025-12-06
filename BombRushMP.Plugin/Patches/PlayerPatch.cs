@@ -69,6 +69,20 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.ActivateAbility))]
+        private static bool ActivateAbility_Prefix(Ability a, Player __instance)
+        {
+            /*
+            if (__instance.isAI) return true;
+            var propDisguiseController = PropDisguiseController.Instance;
+            if (propDisguiseController.InPropHunt)
+            {
+                if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props) return false;
+            }*/
+            return true;
+        }
+
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.FixedUpdatePlayer))]
         private static bool FixedUpdatePlayer_Prefix(Player __instance)
         {
