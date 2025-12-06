@@ -75,6 +75,8 @@ namespace BombRushMP.Plugin.Gamemodes
             go.AddComponent<PropDisguiseController>();
         }
 
+        private float _oldLodBias = 0f;
+
         public void FreezeProps()
         {
             if (FrozenProps) return;
@@ -101,12 +103,15 @@ namespace BombRushMP.Plugin.Gamemodes
                     JunkBehaviour.RestoreSingle(junkBehaviour, junk);
                 }
             }
+            _oldLodBias = QualitySettings.lodBias;
+            QualitySettings.lodBias *= 3f;
         }
 
         public void UnfreezeProps()
         {
             if (!FrozenProps) return;
             FrozenProps = false;
+            QualitySettings.lodBias *= _oldLodBias;
         }
 
         private void Awake()

@@ -33,6 +33,8 @@ namespace BombRushMP.Plugin
 
         private int _layerMask = (1 << Layers.Default) | (1 << Layers.Junk) | (1 << Layers.CameraIgnore) | (1 << Layers.NonStableSurface) | (1 << Layers.Player) | (1 << Layers.StreetLife);
 
+        private GameObject _target = null;
+
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -164,6 +166,7 @@ namespace BombRushMP.Plugin
         
         private void LateUpdate()
         {
+            _target = null;
             AnimUpdate();
             var aimingBackwards = IsAimingBackwards(_player.transform.forward, _backwardsThreshold);
             var canTurnToAIm = CanTurnToAim();
@@ -235,9 +238,9 @@ namespace BombRushMP.Plugin
             {
                 if (_canShoot)
                 {
-                    var target = CalculateTarget();
-                    if (target != null && propDisguiseController.IndexByProp.TryGetValue(target, out var propIndex))
-                        propDisguiseController.OutlineGameObject(target);
+                    _target = CalculateTarget();
+                    if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex))
+                        propDisguiseController.OutlineGameObject(_target);
                     else
                         propDisguiseController.OutlineGameObject(null);
                 }
@@ -254,6 +257,26 @@ namespace BombRushMP.Plugin
                 ui.CurrentMode = XHairUI.Modes.On;
                 if (!_canShoot)
                     ui.CurrentMode = XHairUI.Modes.Cross;
+            }
+
+            if (_canShoot && _player.switchStyleButtonNew)
+            {
+                if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
+                {
+                    if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex))
+                    {
+                        PlayerComponent.GetLocal().ApplyPropDisguise(propIndex);
+                    }
+                }
+            }
+
+            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
+            {
+                _player.boostCharge = _player.maxBoostCharge;
+            }
+            else
+            {
+                _player.boostCharge = 0f;
             }
         }
     }
