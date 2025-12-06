@@ -60,7 +60,7 @@ namespace BombRushMP.Plugin
 
         private bool CanTurnToAim()
         {
-            return (!_player.usingEquippedMovestyle && _player.ability == null && _player.GetTotalSpeed() <= 0.5f && !PressingMovementKeys());
+            return (_player.ability == null && _player.GetTotalSpeed() <= 0.5f && !PressingMovementKeys());
         }
 
         private void FixedUpdate()
@@ -76,8 +76,40 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private Vector3 GetMaxTurnRotation()
+        {
+            var flatCurrentForward = _player.transform.forward;
+            flatCurrentForward.y = 0f;
+            flatCurrentForward = flatCurrentForward.normalized;
+
+            var flatCamForward = _cam.transform.forward;
+            flatCamForward.y = 0f;
+            flatCamForward = flatCamForward.normalized;
+
+
+            var yawDelta = Vector3.SignedAngle(flatCurrentForward, _targetFacing, Vector3.up);
+
+            var finalFw = Quaternion.Euler(0f, _player.transform.rotation.eulerAngles.y + Mathf.Sign(yawDelta)*90f, 0f) * Vector3.forward;
+            finalFw.y = _cam.transform.forward.y;
+            return finalFw.normalized;
+        }
+
+        private void AnimUpdate()
+        {
+            if (_spineAimAmount > 0f)
+            {
+                _player.anim.speed = 0f;
+                _player.anim.SetFloat(_player.phoneDirectionXHash, -_player.phoneDirBone.localRotation.x * 2.5f + _player.customPhoneHandValue.x);
+                _player.anim.SetFloat(_player.phoneDirectionYHash, -_player.phoneDirBone.localRotation.y * 2.5f + _player.customPhoneHandValue.y);
+                _player.anim.Update(Time.deltaTime);
+                _player.anim.speed = 1f;
+            }
+        }
+        
         private void LateUpdate()
         {
+            AnimUpdate();
+            var aimingBackwards = IsAimingBackwards(_player.transform.forward, _backwardsThreshold);
             var canTurnToAIm = CanTurnToAim();
             _aiming = _player.sprayButtonHeld;
             if (_aiming)
@@ -89,7 +121,7 @@ namespace BombRushMP.Plugin
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 0f, _cameraAimSpeed * Time.deltaTime);
             }
 
-            if (_aiming && _player.ability == null && (!IsAimingBackwards(_player.transform.forward, _backwardsThreshold) || canTurnToAIm))
+            if (_aiming && _player.ability == null && (!aimingBackwards || canTurnToAIm))
             {
                 _spineAimAmount = Mathf.Lerp(_spineAimAmount, 1f, _spineAimSpeed * Time.deltaTime);
                 _player.anim.Play(_player.canSprayHash, 1, 0.5f);
@@ -116,8 +148,13 @@ namespace BombRushMP.Plugin
             camPos += _cam.transform.right * 0.5f;
             camPos -= _cam.transform.forward * 1f;
 
+            var targetSpineDir = _cam.transform.forward;
+            if (aimingBackwards)
+            {
+                targetSpineDir = GetMaxTurnRotation();
+            }
             var spine = _player.characterVisual.head.parent.parent;
-            var localDir = spine.InverseTransformDirection(_cam.transform.forward);
+            var localDir = spine.InverseTransformDirection(targetSpineDir);
             var delta = Quaternion.FromToRotation(Vector3.forward, localDir);
             var finalRot = spine.localRotation * delta;
 
