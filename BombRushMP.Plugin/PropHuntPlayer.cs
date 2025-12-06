@@ -20,6 +20,7 @@ namespace BombRushMP.Plugin
         private float _spineAimSpeed = 10f;
 
         private bool _aiming = false;
+        private bool _canShoot = false;
 
         private float _turnSpeed = 1000f;
         private Vector3 _targetFacing = Vector3.zero;
@@ -114,7 +115,6 @@ namespace BombRushMP.Plugin
         private bool CanPlayerAim()
         {
             if (_player.ability == null) return true;
-            if (_player.ability is GrindAbility) return true;
             if (_player.ability is BoostAbility) return true;
             if (_player.ability is AirDashAbility) return true;
             if (_player.ability is SlideAbility && _player.usingEquippedMovestyle) return true;
@@ -127,6 +127,7 @@ namespace BombRushMP.Plugin
             var aimingBackwards = IsAimingBackwards(_player.transform.forward, _backwardsThreshold);
             var canTurnToAIm = CanTurnToAim();
             _aiming = _player.sprayButtonHeld;
+            _canShoot = false;
             if (_aiming)
             {
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 1f, _cameraAimSpeed * Time.deltaTime);
@@ -138,6 +139,7 @@ namespace BombRushMP.Plugin
 
             if (_aiming && CanPlayerAim() && (!aimingBackwards || canTurnToAIm))
             {
+                _canShoot = true;
                 _spineAimAmount = Mathf.Lerp(_spineAimAmount, 1f, _spineAimSpeed * Time.deltaTime);
                 _player.anim.Play(_player.canSprayHash, 1, 0.5f);
             }
