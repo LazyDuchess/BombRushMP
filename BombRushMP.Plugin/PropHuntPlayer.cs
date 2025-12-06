@@ -105,6 +105,21 @@ namespace BombRushMP.Plugin
                 _player.anim.speed = 1f;
             }
         }
+
+        private void OnDestroy()
+        {
+            _player.switchToEquippedMovestyleLocked = false;
+        }
+
+        private bool CanPlayerAim()
+        {
+            if (_player.ability == null) return true;
+            if (_player.ability is GrindAbility) return true;
+            if (_player.ability is BoostAbility) return true;
+            if (_player.ability is AirDashAbility) return true;
+            if (_player.ability is SlideAbility && _player.usingEquippedMovestyle) return true;
+            return false;
+        }
         
         private void LateUpdate()
         {
@@ -121,7 +136,7 @@ namespace BombRushMP.Plugin
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 0f, _cameraAimSpeed * Time.deltaTime);
             }
 
-            if (_aiming && _player.ability == null && (!aimingBackwards || canTurnToAIm))
+            if (_aiming && CanPlayerAim() && (!aimingBackwards || canTurnToAIm))
             {
                 _spineAimAmount = Mathf.Lerp(_spineAimAmount, 1f, _spineAimSpeed * Time.deltaTime);
                 _player.anim.Play(_player.canSprayHash, 1, 0.5f);
@@ -169,6 +184,8 @@ namespace BombRushMP.Plugin
                 _targetFacing.y = 0f;
                 _targetFacing = _targetFacing.normalized;
             }
+
+            _player.switchToEquippedMovestyleLocked = _aiming;
         }
     }
 }
