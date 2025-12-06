@@ -21,6 +21,7 @@ namespace BombRushMP.Plugin.Patches
             if (player == null) return true;
             var playerComponent = PlayerComponent.Get(player);
             if (playerComponent == null) return true;
+            if (playerComponent.HasPropDisguise) return false;
             if (playerComponent.StreamedCharacter != null)
             {
                 var lib = playerComponent.StreamedCharacter.Handle.AudioLibrary;

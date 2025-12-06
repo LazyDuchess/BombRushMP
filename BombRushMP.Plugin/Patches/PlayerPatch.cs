@@ -101,16 +101,19 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.PlayVoice))]
-        private static void PlayVoice_Prefix(Player __instance, AudioClipID audioClipID, VoicePriority voicePriority)
+        private static bool PlayVoice_Prefix(Player __instance, AudioClipID audioClipID, VoicePriority voicePriority)
         {
-            if (__instance.isAI) return;
+            if (__instance.isAI) return true;
+            var playerComp = PlayerComponent.Get(__instance);
+            if (playerComp != null && playerComp.HasPropDisguise) return false;
             var clientController = ClientController.Instance;
-            if (clientController == null) return;
-            if (!clientController.Connected) return;
+            if (clientController == null) return true;
+            if (!clientController.Connected) return true;
             var packet = new PlayerVoice();
             packet.AudioClipId = (int)audioClipID;
             packet.VoicePriority = (int)voicePriority;
             clientController.SendPacket(packet, IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
+            return true;
         }
 
         [HarmonyPrefix]
@@ -118,6 +121,8 @@ namespace BombRushMP.Plugin.Patches
         private static void Jump_Prefix(Player __instance)
         {
             if (__instance.isAI) return;
+            var playerComp = PlayerComponent.Get(__instance);
+            if (playerComp != null && playerComp.HasPropDisguise) return;
             var clientController = ClientController.Instance;
             if (clientController == null) return;
             if (!clientController.Connected) return;
