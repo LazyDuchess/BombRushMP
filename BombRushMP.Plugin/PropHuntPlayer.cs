@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Reptile;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -30,7 +31,7 @@ namespace BombRushMP.Plugin
 
         private float _targetDistance = 10f;
 
-        private int _layerMask = (1 << Layers.Default) | (1 << Layers.Junk) | (1 << Layers.CameraIgnore) | (1 << Layers.NonStableSurface) | (1 << Layers.Player);
+        private int _layerMask = (1 << Layers.Default) | (1 << Layers.Junk) | (1 << Layers.CameraIgnore) | (1 << Layers.NonStableSurface) | (1 << Layers.Player) | (1 << Layers.StreetLife);
 
         private void Awake()
         {
@@ -147,6 +148,8 @@ namespace BombRushMP.Plugin
 
         private void OnDestroy()
         {
+            var propDisguiseController = PropDisguiseController.Instance;
+            propDisguiseController.OutlineGameObject(null);
             _player.switchToEquippedMovestyleLocked = false;
         }
 
@@ -226,6 +229,23 @@ namespace BombRushMP.Plugin
             }
 
             _player.switchToEquippedMovestyleLocked = _aiming;
+
+            var propDisguiseController = PropDisguiseController.Instance;
+            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
+            {
+                if (_canShoot)
+                {
+                    var target = CalculateTarget();
+                    if (propDisguiseController.IndexByProp.TryGetValue(target, out var propIndex))
+                        propDisguiseController.OutlineGameObject(target);
+                    else
+                        propDisguiseController.OutlineGameObject(null);
+                }
+                else
+                    propDisguiseController.OutlineGameObject(null);
+            }
+            else
+                propDisguiseController.OutlineGameObject(null);
         }
     }
 }

@@ -7,9 +7,9 @@ Shader "All City Network/Aim Outline Shader"
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
-        Cull Front
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 100
+        Blend SrcAlpha OneMinusSrcAlpha
 
         Pass
         {

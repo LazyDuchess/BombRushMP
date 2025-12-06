@@ -17,6 +17,57 @@ namespace BombRushMP.Plugin.Gamemodes
         public bool InPropHunt = false;
         public bool InSetupPhase = false;
         public PropHuntTeams LocalPropHuntTeam = PropHuntTeams.None;
+        private GameObject _currentlyOutlinedGameObject = null;
+        private GameObject _outlineGameObject = null;
+
+        public void OutlineGameObject(GameObject obj)
+        {
+            if (obj == _currentlyOutlinedGameObject) return;
+            if (_outlineGameObject != null)
+            {
+                Destroy(_outlineGameObject);
+                _outlineGameObject = null;
+            }
+            _currentlyOutlinedGameObject = obj;
+            if (obj == null) return;
+
+            _outlineGameObject = Instantiate(obj);
+            
+
+            var colliders = _outlineGameObject.GetComponentsInChildren<Collider>();
+            var rbs = _outlineGameObject.GetComponentsInChildren<Rigidbody>();
+            var renderers = _outlineGameObject.GetComponentsInChildren<Renderer>();
+            var filters = _outlineGameObject.GetComponentsInChildren<MeshFilter>();
+            var streetLife = _outlineGameObject.GetComponentInChildren<StreetLife>();
+            var anim = _outlineGameObject.GetComponentInChildren<Animator>();
+
+            if (streetLife != null && anim != null)
+            {
+                anim.Play(Animator.StringToHash(streetLife.idleAnimation.ToString()), 0);
+            }
+
+            if (anim != null)
+                Destroy(anim);
+
+            foreach(var collider in colliders)
+            {
+                Destroy(collider);
+            }
+
+            foreach(var rb in rbs)
+            {
+                Destroy(rb);
+            }
+
+            foreach(var renderer in renderers)
+            {
+                renderer.sharedMaterial = MPAssets.Instance.AimOutlineMaterial;
+            }
+
+            _outlineGameObject.transform.position = obj.transform.position;
+            _outlineGameObject.transform.rotation = obj.transform.rotation;
+            _outlineGameObject.transform.localScale = obj.transform.localScale;
+        }
 
         public static void Create()
         {
