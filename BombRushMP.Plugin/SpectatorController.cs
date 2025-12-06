@@ -74,9 +74,9 @@ namespace BombRushMP.Plugin
         {
             if (_clientController == null) return false;
             var user = _clientController.GetLocalUser();
-            if (user?.IsModerator == true) return true;
             if (_clientController.ClientLobbyManager.CurrentLobby != null && _clientController.ClientLobbyManager.CurrentLobby.InGame)
                 return false;
+            if (user?.IsModerator == true) return true;
             return (_clientController.Players[CurrentSpectatingClient].ClientState.AllowTeleports);
         }
 
