@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin
         public TMP_SpriteAsset Sprites;
         public Emojis Emojis;
         public Material LODMaterial;
+        public Material AimOutlineMaterial;
         public AudioClip[] DeathMusic;
 
         public MPAssets(string path)
@@ -25,6 +26,7 @@ namespace BombRushMP.Plugin
             LODMaterial = Bundle.LoadAsset<Material>("LODMaterial");
             Emojis = new Emojis();
             DeathMusic = [Bundle.LoadAsset<AudioClip>("badfinger"), Bundle.LoadAsset<AudioClip>("drs")];
+            AimOutlineMaterial = Bundle.LoadAsset<Material>("Aim Outline Material");
         }
     }
 }
