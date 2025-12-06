@@ -19,7 +19,7 @@ namespace BombRushMP.Plugin.Patches
         private static void JumpOut_Prefix(GrindAbility __instance)
         {
             if (__instance.p.isAI) return;
-            var playerComp = PlayerComponent.Get(__instance);
+            var playerComp = PlayerComponent.Get(__instance.p);
             if (playerComp != null && playerComp.HasPropDisguise) return;
             var clientController = ClientController.Instance;
             if (clientController == null) return;

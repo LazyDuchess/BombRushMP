@@ -107,7 +107,8 @@ namespace BombRushMP.Plugin
 
         private void FixedUpdate()
         {
-            if (_aiming && CanTurnToAim())
+            var playerComp = PlayerComponent.GetLocal();
+            if (_aiming && CanTurnToAim() && !playerComp.HasPropDisguise)
             {
                 var flatCurrentForward = _player.transform.forward;
                 flatCurrentForward.y = 0f;
