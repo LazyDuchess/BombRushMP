@@ -29,6 +29,7 @@ namespace BombRushMP.Plugin
         public bool Local => _player == WorldHandler.instance.GetCurrentPlayer();
         private ParticleSystem _afkParticles = null;
         private Player _player = null;
+        public Player Player => _player;
         private float _afkWeight = 0f;
         private float _afkTimer = 0f;
         private bool _afkForced = false;

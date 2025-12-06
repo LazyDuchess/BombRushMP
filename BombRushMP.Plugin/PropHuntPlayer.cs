@@ -28,6 +28,10 @@ namespace BombRushMP.Plugin
         private float _backwardsThreshold = -0.1f;
         private float _turnThreshold = 0.2f;
 
+        private float _targetDistance = 10f;
+
+        private int _layerMask = (1 << Layers.Default) | (1 << Layers.Junk) | (1 << Layers.CameraIgnore) | (1 << Layers.NonStableSurface) | (1 << Layers.Player);
+
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -62,6 +66,40 @@ namespace BombRushMP.Plugin
         private bool CanTurnToAim()
         {
             return (_player.ability == null && _player.GetTotalSpeed() <= 0.5f && !PressingMovementKeys());
+        }
+
+        private GameObject CalculateTarget()
+        {
+            var ray = new Ray(_cam.transform.position, _cam.transform.forward);
+            var hits = Physics.RaycastAll(ray, _targetDistance, _layerMask, QueryTriggerInteraction.Collide);
+            
+            GameObject closestHit = null;
+            var closestHitDistance = Mathf.Infinity;
+            foreach(var hit in hits)
+            {
+                var playa = hit.collider.gameObject.GetComponentInParent<PlayerComponent>();
+                if (playa != null)
+                {
+                    if (playa.Player == _player) continue;
+                    if (playa.HasPropDisguise && hit.collider.gameObject.layer == Layers.Player) continue;
+                }
+                var dist = Vector3.Distance(_cam.transform.position, hit.point);
+                if (closestHit == null)
+                {
+                    closestHit = hit.collider.gameObject;
+                    closestHitDistance = dist;
+                }
+                else
+                {
+                    if (dist < closestHitDistance)
+                    {
+                        closestHit = hit.collider.gameObject;
+                        closestHitDistance = dist;
+                    }
+                }
+            }
+
+            return closestHit;
         }
 
         private void FixedUpdate()
