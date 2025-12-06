@@ -10,6 +10,16 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class PropHunt : Gamemode
     {
+        private static int SettingSetupDurationID = Animator.StringToHash("SetupDuration");
+        private const int DefaultSetupDuration = 1;
+        private const int MinSetupDuration = 1;
+        private const int MaxSetupDuration = 10;
+
+        private static int SettingMatchDurationID = Animator.StringToHash("MatchDuration");
+        private const int DefaultMatchDuration = 5;
+        private const int MinMatchDuration = 1;
+        private const int MaxMatchDuration = 20;
+
         public PropHunt() : base()
         {
             TeamBased = true;
@@ -40,6 +50,14 @@ namespace BombRushMP.Plugin.Gamemodes
             var localPropHuntPlayer = PropHuntPlayer.GetLocal();
             if (localPropHuntPlayer != null)
                 GameObject.Destroy(localPropHuntPlayer);
+        }
+
+        public override GamemodeSettings GetDefaultSettings()
+        {
+            var settings = base.GetDefaultSettings();
+            settings.SettingByID[SettingSetupDurationID] = new GamemodeSetting("Setup Duration (Minutes)", DefaultSetupDuration, MinSetupDuration, MaxSetupDuration);
+            settings.SettingByID[SettingMatchDurationID] = new GamemodeSetting("Match Duration (Minutes)", DefaultMatchDuration, MinMatchDuration, MaxMatchDuration);
+            return settings;
         }
     }
 }
