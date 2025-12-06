@@ -105,6 +105,13 @@ namespace BombRushMP.Plugin.Gamemodes
                     JunkBehaviour.RestoreSingle(junkBehaviour, junk);
                 }
             }
+
+            var breakables = FindObjectsOfType<BreakableObject>();
+            foreach(var breakable in breakables)
+            {
+                breakable.gameObject.SetActive(false);
+            }
+
             _oldLodBias = QualitySettings.lodBias;
             QualitySettings.lodBias *= 3f;
         }
