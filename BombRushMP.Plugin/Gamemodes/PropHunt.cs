@@ -1,4 +1,6 @@
-﻿using Reptile;
+﻿using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,13 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public class PropHunt : Gamemode
     {
+        public enum States
+        {
+            Setup,
+            Main,
+            Finished
+        }
+
         private static int SettingSetupDurationID = Animator.StringToHash("SetupDuration");
         private const int DefaultSetupDuration = 1;
         private const int MinSetupDuration = 1;
@@ -25,6 +34,16 @@ namespace BombRushMP.Plugin.Gamemodes
         private const int MinPingInterval = 10;
         private const int MaxPingInterval = 60;
 
+        private static int SettingBecomeHunterOnKillID = Animator.StringToHash("BecomeHunterOnKill");
+
+        public int SetupDuration => Settings.SettingByID[SettingSetupDurationID].Value;
+        public int MatchDuration => Settings.SettingByID[SettingMatchDurationID].Value;
+        public int PingInterval => Settings.SettingByID[SettingPingIntervalID].Value;
+        public bool BecomeHunterOnKill => (Settings.SettingByID[SettingBecomeHunterOnKillID] as ToggleGamemodeSetting).IsOn;
+
+        private States _state = States.Setup;
+        private float _stateTimer = 0f;
+
         public PropHunt() : base()
         {
             TeamBased = true;
@@ -35,6 +54,8 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnStart()
         {
             base.OnStart();
+            var timerUI = TimerUI.Instance;
+            timerUI.Activate();
             var propDisguiseController = PropDisguiseController.Instance;
             propDisguiseController.FreezeProps();
             propDisguiseController.InPropHunt = true;
@@ -43,6 +64,70 @@ namespace BombRushMP.Plugin.Gamemodes
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.gameObject.AddComponent<PropHuntPlayer>();
             XHairUI.Create();
+            if (ClientController.LocalID == Lobby.LobbyState.HostId)
+                OnStart_Host();
+            else
+                OnStart_Client();
+        }
+
+        private void OnStart_Client()
+        {
+            var stageHashPacket = new ClientPropHuntStageHash(PropDisguiseController.Instance.StageHash);
+            ClientController.SendPacket(stageHashPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+        }
+
+        private void OnStart_Host()
+        {
+            var propHuntPacket = new ClientPropHuntSettings((float)SetupDuration * 60f, (float)MatchDuration * 60f, (float)PingInterval, PropDisguiseController.Instance.StageHash);
+            ClientController.SendPacket(propHuntPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+        }
+
+        public override void OnPacketReceived_InGame(Packets packetId, Packet packet)
+        {
+            switch (packetId)
+            {
+                case Packets.ServerPropHuntBegin:
+                    SetState(States.Main);
+                    break;
+            }
+        }
+
+        private void SetState(States newState)
+        {
+            if (newState == _state) return;
+            if (newState != States.Setup)
+            {
+                var propDisguiseController = PropDisguiseController.Instance;
+                propDisguiseController.InSetupPhase = false;
+            }
+            _state = newState;
+            _stateTimer = 0f;
+        }
+
+        public override void OnUpdate_InGame()
+        {
+            var timerUI = TimerUI.Instance;
+            switch (_state)
+            {
+                case States.Setup:
+                    {
+                        var diff = (SetupDuration * 60f) - _stateTimer;
+                        if (diff <= 0f)
+                            diff = 0f;
+                        timerUI.SetText($"Setup: {timerUI.GetTimeString(diff)}");
+                    }
+                    break;
+
+                case States.Main:
+                    {
+                        var diff = (MatchDuration * 60f) - _stateTimer;
+                        if (diff <= 0f)
+                            diff = 0f;
+                        timerUI.SetTime(diff);
+                    }
+                    break;
+            }
+            _stateTimer += Time.deltaTime;
         }
 
         public override void OnEnd(bool cancelled)
@@ -65,6 +150,9 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 GameObject.Destroy(XHairUI.Instance.gameObject);
             }
+            var timerUI = TimerUI.Instance;
+            if (timerUI != null)
+                timerUI.DeactivateDelayed();
         }
 
         public override GamemodeSettings GetDefaultSettings()
@@ -72,7 +160,8 @@ namespace BombRushMP.Plugin.Gamemodes
             var settings = base.GetDefaultSettings();
             settings.SettingByID[SettingSetupDurationID] = new GamemodeSetting("Setup Duration (Minutes)", DefaultSetupDuration, MinSetupDuration, MaxSetupDuration);
             settings.SettingByID[SettingMatchDurationID] = new GamemodeSetting("Match Duration (Minutes)", DefaultMatchDuration, MinMatchDuration, MaxMatchDuration);
-            settings.SettingByID[SettingPingIntervalID] = new GamemodeSetting("Ping Interval (Seconds)", DefaultPingInterval, MinPingInterval, MaxPingInterval);
+            settings.SettingByID[SettingPingIntervalID] = new GamemodeSetting("Ping Interval (Seconds)", DefaultPingInterval, MinPingInterval, MaxPingInterval, 10);
+            settings.SettingByID[SettingBecomeHunterOnKillID] = new ToggleGamemodeSetting("Become Hunter on Kill", true);
             return settings;
         }
     }

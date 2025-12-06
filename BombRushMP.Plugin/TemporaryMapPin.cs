@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            _pin.SetLocation();
             _timer -= Time.deltaTime;
             if (_timer <= 0f)
                 Remove();

@@ -61,6 +61,9 @@ namespace BombRushMP.Common.Packets
         ServerServerStateUpdate,
         ServerTeleportPlayer,
         ServerDamage,
-        ServerSetProp
+        ServerSetProp,
+        ClientPropHuntSettings,
+        ServerPropHuntBegin,
+        ClientPropHuntStageHash
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Reptile;
+using BombRushMP.Common;
 
 namespace BombRushMP.Plugin.Gamemodes
 {
@@ -17,6 +18,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public bool InPropHunt = false;
         public bool InSetupPhase = false;
         public PropHuntTeams LocalPropHuntTeam = PropHuntTeams.None;
+        public int StageHash { get; private set; }
         private GameObject _currentlyOutlinedGameObject = null;
         private GameObject _outlineGameObject = null;
 
@@ -145,6 +147,13 @@ namespace BombRushMP.Plugin.Gamemodes
                 PropByIndex[id] = ped.gameObject;
                 IndexByProp[ped.gameObject] = id;
             }
+
+            var stageHashStr = "";
+            foreach(var index in PropByIndex.Keys)
+            {
+                stageHashStr += index.ToString() + "|";
+            }
+            StageHash = Compression.HashString(stageHashStr);
         }
     }
 }
