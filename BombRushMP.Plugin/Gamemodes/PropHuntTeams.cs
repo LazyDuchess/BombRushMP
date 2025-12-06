@@ -8,8 +8,8 @@ namespace BombRushMP.Plugin.Gamemodes
 {
     public enum PropHuntTeams
     {
-        None,
         Hunters,
-        Props
+        Props,
+        None
     }
 }
