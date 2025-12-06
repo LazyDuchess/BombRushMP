@@ -314,5 +314,25 @@ namespace BombRushMP.Plugin
 
             return null;
         }
+
+        public static void PingInMap(GameObject go, float duration)
+        {
+            var mapController = Mapcontroller.Instance;
+            var pin = mapController.CreatePin(MapPin.PinType.StoryObjectivePin);
+
+            pin.AssignGameplayEvent(go);
+            pin.InitMapPin(MapPin.PinType.StoryObjectivePin);
+            pin.OnPinEnable();
+
+            // THX SLOPCREW! For code below.
+            var pinInObj = pin.transform.Find("InViewVisualization").gameObject;
+            var meshRender = pinInObj.GetComponentInChildren<MeshRenderer>();
+            GameObject.Destroy(meshRender);
+
+            pin.SetLocation();
+
+            var temp = pin.gameObject.AddComponent<TemporaryMapPin>();
+            temp.Initialize(duration, pin);
+        }
     }
 }

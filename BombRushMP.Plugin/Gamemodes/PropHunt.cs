@@ -20,6 +20,11 @@ namespace BombRushMP.Plugin.Gamemodes
         private const int MinMatchDuration = 1;
         private const int MaxMatchDuration = 20;
 
+        private static int SettingPingIntervalID = Animator.StringToHash("PingInterval");
+        private const int DefaultPingInterval = 30;
+        private const int MinPingInterval = 10;
+        private const int MaxPingInterval = 60;
+
         public PropHunt() : base()
         {
             TeamBased = true;
@@ -67,6 +72,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var settings = base.GetDefaultSettings();
             settings.SettingByID[SettingSetupDurationID] = new GamemodeSetting("Setup Duration (Minutes)", DefaultSetupDuration, MinSetupDuration, MaxSetupDuration);
             settings.SettingByID[SettingMatchDurationID] = new GamemodeSetting("Match Duration (Minutes)", DefaultMatchDuration, MinMatchDuration, MaxMatchDuration);
+            settings.SettingByID[SettingPingIntervalID] = new GamemodeSetting("Ping Interval (Seconds)", DefaultPingInterval, MinPingInterval, MaxPingInterval);
             return settings;
         }
     }

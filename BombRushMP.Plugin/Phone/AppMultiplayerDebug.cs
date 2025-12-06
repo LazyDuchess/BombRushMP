@@ -142,5 +142,13 @@ public class AppMultiplayerDebug : CustomApp
             player.ChangeHP(99999);
         };
         ScrollView.AddButton(button);
+
+        button = PhoneUIUtility.CreateSimpleButton("Test Map Ping");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            MPUtility.PingInMap(player.gameObject, 2f);
+        };
+        ScrollView.AddButton(button);
     }
 }
