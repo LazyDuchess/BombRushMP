@@ -48,7 +48,7 @@ namespace BombRushMP.Plugin
             return WorldHandler.instance.GetCurrentPlayer().GetComponent<PropHuntPlayer>();
         }
 
-        private void Freeze()
+        public void Freeze()
         {
             if (_frozen) return;
             _frozen = true;
@@ -57,7 +57,7 @@ namespace BombRushMP.Plugin
             _player.motor._rigidbody.rotation = Quaternion.identity;
         }
 
-        private void Unfreeze()
+        public void Unfreeze()
         {
             if (!_frozen) return;
             _frozen = false;
@@ -305,6 +305,7 @@ namespace BombRushMP.Plugin
             else
             {
                 _player.boostCharge = 0f;
+                _player.recoverDamageTimer = 0f;
             }
         }
     }

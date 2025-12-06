@@ -72,13 +72,16 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.ActivateAbility))]
         private static bool ActivateAbility_Prefix(Ability a, Player __instance)
         {
-            /*
             if (__instance.isAI) return true;
             var propDisguiseController = PropDisguiseController.Instance;
             if (propDisguiseController.InPropHunt)
             {
-                if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props) return false;
-            }*/
+                if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
+                {
+                    if (a is WallrunLineAbility || a is BoostAbility)
+                        return false;
+                }
+            }
             return true;
         }
 
@@ -114,6 +117,17 @@ namespace BombRushMP.Plugin.Patches
             packet.VoicePriority = (int)voicePriority;
             clientController.SendPacket(packet, IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
             return true;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.ChangeHP))]
+        private static void ChangeHP_Prefix(Player __instance, int dmg)
+        {
+            if (__instance.isAI) return;
+            if (dmg <= 0) return;
+            var propHuntPlayer = __instance.GetComponent<PropHuntPlayer>();
+            if (propHuntPlayer != null)
+                propHuntPlayer.Unfreeze();
         }
 
         [HarmonyPrefix]
