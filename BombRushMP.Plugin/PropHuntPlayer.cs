@@ -35,6 +35,8 @@ namespace BombRushMP.Plugin
 
         private GameObject _target = null;
 
+        private bool _frozen = false;
+
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -44,6 +46,22 @@ namespace BombRushMP.Plugin
         public static PropHuntPlayer GetLocal()
         {
             return WorldHandler.instance.GetCurrentPlayer().GetComponent<PropHuntPlayer>();
+        }
+
+        private void Freeze()
+        {
+            if (_frozen) return;
+            _frozen = true;
+            _player.motor._rigidbody.isKinematic = true;
+            _player.motor._rigidbody.velocity = Vector3.zero;
+            _player.motor._rigidbody.rotation = Quaternion.identity;
+        }
+
+        private void Unfreeze()
+        {
+            if (!_frozen) return;
+            _frozen = false;
+            _player.motor._rigidbody.isKinematic = false;
         }
 
         private bool IsAimingBackwards(Vector3 forward, float thresh)
@@ -154,6 +172,7 @@ namespace BombRushMP.Plugin
             var propDisguiseController = PropDisguiseController.Instance;
             propDisguiseController.OutlineGameObject(null);
             _player.switchToEquippedMovestyleLocked = false;
+            Unfreeze();
         }
 
         private bool CanPlayerAim()
@@ -247,6 +266,14 @@ namespace BombRushMP.Plugin
                 }
                 else
                     propDisguiseController.OutlineGameObject(null);
+
+                if (_player.boostButtonNew)
+                {
+                    if (!_frozen)
+                        Freeze();
+                    else
+                        Unfreeze();
+                }
             }
             else
                 propDisguiseController.OutlineGameObject(null);
