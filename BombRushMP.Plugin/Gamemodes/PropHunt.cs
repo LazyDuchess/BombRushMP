@@ -62,6 +62,8 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.InSetupPhase = true;
             propDisguiseController.LocalPropHuntTeam = (PropHuntTeams)Lobby.LobbyState.Players[ClientController.LocalID].Team;
             var player = WorldHandler.instance.GetCurrentPlayer();
+            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
+                player.userInputEnabled = false;
             player.gameObject.AddComponent<PropHuntPlayer>();
             XHairUI.Create();
             if (ClientController.LocalID == Lobby.LobbyState.HostId)
@@ -89,6 +91,12 @@ namespace BombRushMP.Plugin.Gamemodes
                 case Packets.ServerPropHuntBegin:
                     SetState(States.Main);
                     break;
+
+                case Packets.ServerPropHuntSpawn:
+                    var spawnPacket = packet as ServerPropHuntSpawn;
+                    MPUtility.PlaceCurrentPlayer(spawnPacket.Position.ToUnityVector3(), spawnPacket.Rotation.ToUnityQuaternion());
+                    SetSpawnLocation();
+                    break;
             }
         }
 
@@ -99,6 +107,8 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 var propDisguiseController = PropDisguiseController.Instance;
                 propDisguiseController.InSetupPhase = false;
+                var player = WorldHandler.instance.GetCurrentPlayer();
+                player.userInputEnabled = true;
             }
             _state = newState;
             _stateTimer = 0f;

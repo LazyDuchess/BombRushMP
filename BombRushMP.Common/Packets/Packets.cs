@@ -64,6 +64,7 @@ namespace BombRushMP.Common.Packets
         ServerSetProp,
         ClientPropHuntSettings,
         ServerPropHuntBegin,
-        ClientPropHuntStageHash
+        ClientPropHuntStageHash,
+        ServerPropHuntSpawn
     }
 }
