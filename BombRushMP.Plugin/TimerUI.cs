@@ -46,13 +46,18 @@ namespace BombRushMP.Plugin
             Deactivate();
         }
 
-        public void SetTime(float time)
+        public string GetTimeString(float time)
         {
             var str = time.ToString(CultureInfo.CurrentCulture);
             var startIndex = ((int)time).ToString().Length + 3;
             if (str.Length > startIndex) str = str.Remove(startIndex);
             if (time == 0.0) str = "0.00";
-            SetText(str);
+            return str;
+        }
+
+        public void SetTime(float time)
+        {
+            SetText(GetTimeString(time));
         }
 
         public void SetText(string text)
