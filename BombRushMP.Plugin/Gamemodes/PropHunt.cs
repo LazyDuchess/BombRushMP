@@ -37,6 +37,7 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.LocalPropHuntTeam = (PropHuntTeams)Lobby.LobbyState.Players[ClientController.LocalID].Team;
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.gameObject.AddComponent<PropHuntPlayer>();
+            XHairUI.Create();
         }
 
         public override void OnEnd(bool cancelled)
@@ -51,6 +52,10 @@ namespace BombRushMP.Plugin.Gamemodes
             var localPropHuntPlayer = PropHuntPlayer.GetLocal();
             if (localPropHuntPlayer != null)
                 GameObject.Destroy(localPropHuntPlayer);
+            if (XHairUI.Instance != null)
+            {
+                GameObject.Destroy(XHairUI.Instance.gameObject);
+            }
         }
 
         public override GamemodeSettings GetDefaultSettings()

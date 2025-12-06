@@ -29,7 +29,7 @@ namespace BombRushMP.Plugin
         private float _backwardsThreshold = -0.1f;
         private float _turnThreshold = 0.2f;
 
-        private float _targetDistance = 10f;
+        private float _targetDistance = 20f;
 
         private int _layerMask = (1 << Layers.Default) | (1 << Layers.Junk) | (1 << Layers.CameraIgnore) | (1 << Layers.NonStableSurface) | (1 << Layers.Player) | (1 << Layers.StreetLife);
 
@@ -236,7 +236,7 @@ namespace BombRushMP.Plugin
                 if (_canShoot)
                 {
                     var target = CalculateTarget();
-                    if (propDisguiseController.IndexByProp.TryGetValue(target, out var propIndex))
+                    if (target != null && propDisguiseController.IndexByProp.TryGetValue(target, out var propIndex))
                         propDisguiseController.OutlineGameObject(target);
                     else
                         propDisguiseController.OutlineGameObject(null);
@@ -246,6 +246,15 @@ namespace BombRushMP.Plugin
             }
             else
                 propDisguiseController.OutlineGameObject(null);
+
+            var ui = XHairUI.Instance;
+            ui.CurrentMode = XHairUI.Modes.Off;
+            if (_aiming)
+            {
+                ui.CurrentMode = XHairUI.Modes.On;
+                if (!_canShoot)
+                    ui.CurrentMode = XHairUI.Modes.Cross;
+            }
         }
     }
 }
