@@ -191,6 +191,7 @@ namespace BombRushMP.Plugin
             packet.Chibi = playerComp.Chibi;
             packet.Disguised = playerComp.HasPropDisguise;
             packet.DisguiseId = playerComp.DisguiseID;
+            packet.Ignore = playerComp.LocalIgnore;
             var charData = MPSaveData.Instance.GetCharacterData(player.character);
             if (charData != null)
                 packet.MPMoveStyleSkin = charData.MPMoveStyleSkin;

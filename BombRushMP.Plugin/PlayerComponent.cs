@@ -50,6 +50,8 @@ namespace BombRushMP.Plugin
         public GameObject DisguiseGameObject = null;
         public int DisguiseID = 0;
 
+        public bool LocalIgnore = false;
+
         public void RefreshSkin()
         {
             if (MovestyleSkin != null)

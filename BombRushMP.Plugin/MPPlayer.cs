@@ -60,6 +60,7 @@ namespace BombRushMP.Plugin
 
         public bool ShouldIgnore()
         {
+            if (ClientVisualState != null && ClientVisualState.Ignore) return true;
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby != null && localLobby.InGame && GamemodeFactory.IsExclusive(localLobby.LobbyState.Gamemode) && _lobby != localLobby)

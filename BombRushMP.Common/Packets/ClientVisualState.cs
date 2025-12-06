@@ -29,6 +29,7 @@ namespace BombRushMP.Common.Packets
             Chibi,
             BoEAnimation,
             Disguised,
+            Ignore,
             MAX
         }
         public override Packets PacketId => Packets.ClientVisualState;
@@ -69,6 +70,7 @@ namespace BombRushMP.Common.Packets
         public bool BoEAnimation = false;
         public bool Disguised = false;
         public int DisguiseId = 0;
+        public bool Ignore = false;
         public Vector3 DisguiseScale = Vector3.One;
 
         public override void Write(BinaryWriter writer)
@@ -107,6 +109,7 @@ namespace BombRushMP.Common.Packets
             bitField[BooleanMask.Chibi] = Chibi;
             bitField[BooleanMask.BoEAnimation] = BoEAnimation;
             bitField[BooleanMask.Disguised] = Disguised;
+            bitField[BooleanMask.Ignore] = Ignore;
 
             bitField.WriteShort(writer);
 
@@ -174,6 +177,7 @@ namespace BombRushMP.Common.Packets
             Chibi = bitField[BooleanMask.Chibi];
             BoEAnimation = bitField[BooleanMask.BoEAnimation];
             Disguised = bitField[BooleanMask.Disguised];
+            Ignore = bitField[BooleanMask.Ignore];
 
             MoveStyle = reader.ReadInt32();
 

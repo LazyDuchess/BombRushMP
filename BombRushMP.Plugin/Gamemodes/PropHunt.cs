@@ -50,7 +50,9 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.InPropHunt = false;
             propDisguiseController.InSetupPhase = false;
             propDisguiseController.LocalPropHuntTeam = PropHuntTeams.None;
-            PlayerComponent.GetLocal().RemovePropDisguise();
+            var playerComp = PlayerComponent.GetLocal();
+            playerComp.LocalIgnore = false;
+            playerComp.RemovePropDisguise();
             var localPropHuntPlayer = PropHuntPlayer.GetLocal();
             if (localPropHuntPlayer != null)
                 GameObject.Destroy(localPropHuntPlayer);
