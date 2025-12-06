@@ -43,6 +43,8 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnEnd(bool cancelled)
         {
             base.OnEnd(cancelled);
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            player.ResetHP();
             var propDisguiseController = PropDisguiseController.Instance;
             propDisguiseController.UnfreezeProps();
             propDisguiseController.InPropHunt = false;
