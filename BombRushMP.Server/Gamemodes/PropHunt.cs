@@ -57,7 +57,7 @@ namespace BombRushMP.Server.Gamemodes
                     {
                         SetState(States.Main);
                     }
-                    //CheckForSetupCancellation();
+                    CheckForSetupCancellation();
                     break;
 
                 case States.Main:
@@ -72,7 +72,7 @@ namespace BombRushMP.Server.Gamemodes
                         SetState(States.Finished);
                     }
                     _pingTimer += deltaTime;
-                    //CheckWinConditions();
+                    CheckWinConditions();
                     UpdatePlayerRespawn(deltaTime);
                     break;
             }
