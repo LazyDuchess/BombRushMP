@@ -41,7 +41,7 @@ namespace BombRushMP.Plugin
         private void Update()
         {
             if (_lobbyPlayer == null) return;
-            var player = _clientController.Players[_lobbyPlayer.Id];
+            if (!_clientController.Players.TryGetValue(_lobbyPlayer.Id, out var player)) return;
             var playerVisualState = player.ClientVisualState;
             if (playerVisualState == null) return;
             _afkSprite.SetActive(playerVisualState.AFK);
@@ -104,7 +104,7 @@ namespace BombRushMP.Plugin
                 _teamBg.color = new Color(team.Color.r * TeamPlayerDarkening, team.Color.g * TeamPlayerDarkening, team.Color.b * TeamPlayerDarkening, _teamBg.color.a);
             }
 
-            var lobby = _clientController.ClientLobbyManager.Lobbies[player.LobbyId];
+            if (!_clientController.ClientLobbyManager.Lobbies.TryGetValue(player.LobbyId, out var lobby)) return;
             _lobby = lobby;
 
             var playername = MPUtility.GetPlayerDisplayName(_clientController.Players[player.Id].ClientState);

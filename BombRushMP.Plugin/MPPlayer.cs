@@ -849,6 +849,7 @@ namespace BombRushMP.Plugin
 
         private void UpdateMoveStyle()
         {
+            if (Player == null) return;
             PlayerPatch.PlayAnimPatchEnabled = false;
             try
             {
