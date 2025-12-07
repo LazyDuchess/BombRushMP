@@ -173,7 +173,8 @@ namespace BombRushMP.Plugin
                 }
                 _players.Add(pl.Key);
             }
-            _players.Add(_clientController.LocalID);
+            if (_players.Count <= 0)
+                _players.Add(_clientController.LocalID);
         }
 
         private int GetCurrentSpectatingIndex()
