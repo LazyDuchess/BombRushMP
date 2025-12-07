@@ -330,6 +330,7 @@ namespace BombRushMP.Plugin
 
         private void LateUpdate()
         {
+            if (ClientController.Instance == null) return;
             UpdateChibi();
             var mpSettings = MPSettings.Instance;
             if (!Local && ChallengeIndicatorVisible && _player.characterVisual.gameObject.activeSelf)
