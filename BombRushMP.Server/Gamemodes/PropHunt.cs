@@ -25,8 +25,12 @@ namespace BombRushMP.Server.Gamemodes
         private float _pingInterval = 99999f;
         private int _stageHash = 0;
         private bool _validatedHashes = false;
+        private bool _becomeHunterOnKill = false;
+        private bool _respawnOnKill = false;
+        private float _respawnTime = 5f;
 
         private Dictionary<ushort, int> _stageHashes = new();
+        private HashSet<ushort> _deadPlayers = new();
 
         public PropHunt() : base()
         {
@@ -51,9 +55,9 @@ namespace BombRushMP.Server.Gamemodes
                     }
                     if (_stateTimer >= _setupTime)
                     {
-                        ServerLobbyManager.SendPacketToLobby(new ServerPropHuntBegin(), Common.Networking.IMessage.SendModes.Reliable, Lobby.LobbyState.Id, Common.Networking.NetChannels.Gamemodes);
                         SetState(States.Main);
                     }
+                    //CheckForSetupCancellation();
                     break;
 
                 case States.Main:
@@ -68,9 +72,39 @@ namespace BombRushMP.Server.Gamemodes
                         SetState(States.Finished);
                     }
                     _pingTimer += deltaTime;
+                    //CheckWinConditions();
+                    UpdatePlayerRespawn(deltaTime);
                     break;
             }
             _stateTimer += deltaTime;
+        }
+
+        private void CheckWinConditions()
+        {
+            var hunters = 0;
+            var props = 0;
+            foreach (var player in Lobby.LobbyState.Players)
+            {
+                if (_deadPlayers.Contains(player.Key)) continue;
+                if (player.Value.Team == 0)
+                {
+                    hunters++;
+                }
+                else if (player.Value.Team == 1)
+                {
+                    props++;
+                }
+            }
+            if (props == 0)
+            {
+                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                SendSystemMessage("Hunters win!");
+            }
+            else if (hunters == 0)
+            {
+                ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
+                SendSystemMessage("Props win!");
+            }
         }
 
         private void ValidateStageHashes()
@@ -125,6 +159,26 @@ namespace BombRushMP.Server.Gamemodes
             }
         }
 
+        private List<Tuple<float, ushort>> _playersToRespawn = new();
+
+        void UpdatePlayerRespawn(float deltaTime)
+        {
+            var newPlayersToRespawn = new List<Tuple<float, ushort>>();
+            foreach(var player in _playersToRespawn)
+            {
+                var newTime = player.Item1 - deltaTime;
+                if (newTime <= 0f)
+                {
+                    Server.SendPacketToClient(new ServerPropHuntRespawn(), Common.Networking.IMessage.SendModes.Reliable, Server.Players[player.Item2].Client, Common.Networking.NetChannels.Gamemodes);
+                }
+                else
+                {
+                    newPlayersToRespawn.Add(new(newTime, player.Item2));
+                }
+            }
+            _playersToRespawn = newPlayersToRespawn;
+        }
+
         public override void OnPacketFromLobbyReceived(Packets packetId, Packet packet, ushort playerId)
         {
             switch (packetId)
@@ -137,6 +191,9 @@ namespace BombRushMP.Server.Gamemodes
                         _matchTime = settingsPacket.MatchLength;
                         _pingInterval = settingsPacket.PingInterval;
                         _stageHash = settingsPacket.StageHash;
+                        _becomeHunterOnKill = settingsPacket.PropsBecomeHuntersOnDeath;
+                        _respawnOnKill = settingsPacket.HuntersRespawnOnDeath;
+                        _respawnTime = settingsPacket.RespawnTime;
                     }
                     break;
 
@@ -146,12 +203,54 @@ namespace BombRushMP.Server.Gamemodes
                         _stageHashes[playerId] = hashPacket.StageHash;
                     }
                     break;
+
+                case Packets.ClientPropHuntDeath:
+                    {
+                        var team = Lobby.LobbyState.Players[playerId].Team;
+                        if (team == 0)
+                        {
+                            SendPlayerMessage(playerId, "{0} has perished.");
+                            if (_respawnOnKill)
+                            {
+                                _playersToRespawn.Add(new(_respawnTime, playerId));
+                            }
+                            else
+                            {
+                                _deadPlayers.Add(playerId);
+                            }
+                        }
+                        else
+                        {
+                            SendPlayerMessage(playerId, "{0} was hunted!");
+                            if (_becomeHunterOnKill)
+                            {
+                                Lobby.LobbyState.Players[playerId].Team = 0;
+                                ServerLobbyManager.QueueStageUpdate(Lobby.LobbyState.Stage);
+                                _playersToRespawn.Add(new(_respawnTime, playerId));
+                            }
+                            else
+                            {
+                                _deadPlayers.Add(playerId);
+                            }
+                        }
+                    }
+                    break;
+
+                case Packets.ClientPropHuntShoot:
+                    {
+                        var pack = packet as ClientPropHuntShoot;
+                        pack.Attacker = playerId;
+                        Server.SendPacketToClient(pack, Common.Networking.IMessage.SendModes.Reliable, Server.Players[pack.Target].Client, Common.Networking.NetChannels.Gamemodes);
+                    }
+                    break;
             }
         }
 
-        private void SetState(States newState)
+        public void SetState(States newState)
         {
             if (_state == newState) return;
+            if (newState == States.Main)
+                ServerLobbyManager.SendPacketToLobby(new ServerPropHuntBegin(), Common.Networking.IMessage.SendModes.Reliable, Lobby.LobbyState.Id, Common.Networking.NetChannels.Gamemodes);
             _state = newState;
             _stateTimer = 0f;
         }

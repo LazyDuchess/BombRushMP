@@ -422,7 +422,7 @@ namespace BombRushMP.Server
             _server.SendPacketToClient(lobbies, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);
         }
 
-        private void QueueStageUpdate(int stage)
+        public void QueueStageUpdate(int stage)
         {
             _queuedStageUpdates.Add(stage);
         }

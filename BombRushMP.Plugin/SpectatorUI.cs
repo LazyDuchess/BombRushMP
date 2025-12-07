@@ -18,6 +18,7 @@ namespace BombRushMP.Plugin
         private TextMeshProUGUI _tpLabel;
         private TextMeshProUGUI _tpGlyph;
         private TextMeshProUGUI _idLabel;
+        private TextMeshProUGUI _backGlyph;
 
         private void Update()
         {
@@ -50,9 +51,15 @@ namespace BombRushMP.Plugin
                 _tpGlyph.gameObject.SetActive(false);
             }
             if (spec.Forced)
+            {
                 _backLabel.gameObject.SetActive(false);
+                _backGlyph.gameObject.SetActive(false);
+            }
             else
+            {
                 _backLabel.gameObject.SetActive(true);
+                _backGlyph.gameObject.SetActive(true);
+            }
         }
 
         static TextMeshProUGUI MakeLabel(TextMeshProUGUI reference, string name)
@@ -158,12 +165,12 @@ namespace BombRushMP.Plugin
             _backLabel.rectTransform.anchoredPosition = new Vector2(labelLeft + glyphOffset, labelBegin + (labelSeparation * 3));
             _backLabel.rectTransform.SetParent(rectParent, false);
 
-            glyph = MakeGlyph(referenceText, 3);
-            glyph.rectTransform.anchorMin = new Vector2(0.0f, 0f);
-            glyph.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
-            glyph.rectTransform.pivot = new Vector2(0f, 1f);
-            glyph.rectTransform.anchoredPosition = new Vector2(labelLeft, labelBegin + (labelSeparation * 3));
-            glyph.rectTransform.SetParent(rectParent, false);
+            _backGlyph = MakeGlyph(referenceText, 3);
+            _backGlyph.rectTransform.anchorMin = new Vector2(0.0f, 0f);
+            _backGlyph.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            _backGlyph.rectTransform.pivot = new Vector2(0f, 1f);
+            _backGlyph.rectTransform.anchoredPosition = new Vector2(labelLeft, labelBegin + (labelSeparation * 3));
+            _backGlyph.rectTransform.SetParent(rectParent, false);
 
             _tpLabel = MakeLabel(referenceText, "TPLabel");
             _tpLabel.text = "Teleport to Player";

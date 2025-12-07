@@ -68,11 +68,20 @@ namespace BombRushMP.Plugin.Patches
             return true;
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.InitAbilities))]
+        private static void InitAbilities_Postfix(Player __instance)
+        {
+            if (__instance.isAI) return;
+            PlayerComponent.Get(__instance).InitAbilities();
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.ActivateAbility))]
         private static bool ActivateAbility_Prefix(Ability a, Player __instance)
         {
             if (__instance.isAI) return true;
+            if (__instance.ability is PseudoDieAbility) return false;
             var propDisguiseController = PropDisguiseController.Instance;
             if (propDisguiseController.InPropHunt)
             {
@@ -80,6 +89,16 @@ namespace BombRushMP.Plugin.Patches
                 {
                     if (a is WallrunLineAbility || a is BoostAbility)
                         return false;
+                }
+                if (a is DieAbility)
+                {
+                    var playerComp = PlayerComponent.GetLocal();
+                    if (playerComp.HasPropDisguise)
+                        playerComp.RemovePropDisguise();
+                    __instance.ActivateAbility(playerComp.PseudoDieAbility);
+                    var gamemode = ClientController.Instance.ClientLobbyManager.CurrentLobby.CurrentGamemode as PropHunt;
+                    gamemode.OnDie();
+                    return false;
                 }
             }
             return true;

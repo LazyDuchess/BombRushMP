@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.Security.Policy;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
+using BombRushMP.Server.Gamemodes;
 
 namespace BombRushMP.Server
 {
@@ -359,7 +360,7 @@ namespace BombRushMP.Server
                 case "help":
                     var cmdChar = Constants.CommandChar;
                     var helpStr = "\nAvailable commands:\n";
-                    helpStr += $"{cmdChar}chibi - Turn into a chibi\n{cmdChar}emojis - Shows available chat emojis\n{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n{cmdChar}clear - Clear chat\n";
+                    helpStr += $"{cmdChar}ph_skipsetup - Skips setup in a prop hunt lobby.\n{cmdChar}ph_makeprops - Makes everyone into a prop in a prop hunt lobby.\n{cmdChar}cancel - Cancels current gamemode if lobby host.\n{cmdChar}chibi - Turn into a chibi\n{cmdChar}emojis - Shows available chat emojis\n{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n{cmdChar}clear - Clear chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
                         helpStr += $"{cmdChar}prop (id) - Copies your current prop hunt disguise to another player.\n{cmdChar}damage (id) (amount) - Damages a player.\n{cmdChar}parent (id) - Parents yourself to a player. 0 to reset.\n{cmdChar}tp (id) - Teleports player to you\n{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}makeforkliftcertified (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n{cmdChar}clearall - Clears everyones chats\n";
@@ -492,6 +493,43 @@ namespace BombRushMP.Server
                     if (player.ClientState.User.IsModerator)
                     {
                         SendPacketToClient(new ServerBanList(JsonConvert.SerializeObject(_database.BannedUsers, Formatting.Indented)), IMessage.SendModes.ReliableUnordered, player.Client, NetChannels.Default);
+                    }
+                    break;
+
+                case "cancel":
+                    {
+                        var lobby = ServerLobbyManager.GetLobbyPlayerIsIn(player.Client.Id);
+                        if (lobby == null) break;
+                        if (lobby.LobbyState.HostId == player.Client.Id && lobby.LobbyState.InGame)
+                        {
+                            ServerLobbyManager.EndGame(lobby.LobbyState.Id, true);
+                        }
+                    }
+                    break;
+
+                case "ph_skipsetup":
+                    {
+                        var lobby = ServerLobbyManager.GetLobbyPlayerIsIn(player.Client.Id);
+                        if (lobby == null) break;
+                        if (lobby.LobbyState.HostId == player.Client.Id && lobby.LobbyState.InGame)
+                        {
+                            var propHunt = lobby.CurrentGamemode as PropHunt;
+                            if (propHunt == null) break;
+                            propHunt.SetState(PropHunt.States.Main);
+                        }
+                    }
+                    break;
+
+                case "ph_makeprops":
+                    {
+                        var lobby = ServerLobbyManager.GetLobbyPlayerIsIn(player.Client.Id);
+                        if (lobby == null) break;
+                        if (lobby.LobbyState.HostId != player.Client.Id) break;
+                        foreach(var pl in lobby.LobbyState.Players)
+                        {
+                            pl.Value.Team = 1;
+                        }
+                        ServerLobbyManager.QueueStageUpdate(lobby.LobbyState.Stage);
                     }
                     break;
             }

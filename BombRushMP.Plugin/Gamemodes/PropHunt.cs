@@ -35,11 +35,13 @@ namespace BombRushMP.Plugin.Gamemodes
         private const int MaxPingInterval = 60;
 
         private static int SettingBecomeHunterOnKillID = Animator.StringToHash("BecomeHunterOnKill");
+        private static int SettingRespawnOnKillID = Animator.StringToHash("RespawnOnKill");
 
         public int SetupDuration => Settings.SettingByID[SettingSetupDurationID].Value;
         public int MatchDuration => Settings.SettingByID[SettingMatchDurationID].Value;
         public int PingInterval => Settings.SettingByID[SettingPingIntervalID].Value;
         public bool BecomeHunterOnKill => (Settings.SettingByID[SettingBecomeHunterOnKillID] as ToggleGamemodeSetting).IsOn;
+        public bool RespawnOnKill => (Settings.SettingByID[SettingRespawnOnKillID] as ToggleGamemodeSetting).IsOn;
 
         private States _state = States.Setup;
         private float _stateTimer = 0f;
@@ -80,7 +82,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         private void OnStart_Host()
         {
-            var propHuntPacket = new ClientPropHuntSettings((float)SetupDuration * 60f, (float)MatchDuration * 60f, (float)PingInterval, PropDisguiseController.Instance.StageHash);
+            var propHuntPacket = new ClientPropHuntSettings((float)SetupDuration * 60f, (float)MatchDuration * 60f, (float)PingInterval, PropDisguiseController.Instance.StageHash, BecomeHunterOnKill, RespawnOnKill, 5f);
             ClientController.SendPacket(propHuntPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
         }
 
@@ -101,7 +103,37 @@ namespace BombRushMP.Plugin.Gamemodes
                 case Packets.ServerPropHuntPing:
                     PingProps();
                     break;
+
+                case Packets.ClientPropHuntShoot:
+                    var player = WorldHandler.instance.GetCurrentPlayer();
+                    player.ChangeHP(2);
+                    break;
+
+                case Packets.ServerPropHuntRespawn:
+                    Respawn();
+                    break;
             }
+        }
+
+        public void OnDie()
+        {
+            var diePacket = new ClientPropHuntDeath();
+            ClientController.SendPacket(diePacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+            SpectatorController.StartSpectating(true);
+            PlayerComponent.GetLocal().LocalIgnore = true;
+        }
+
+        private void Respawn()
+        {
+            var spec = SpectatorController.Instance;
+            if (spec != null)
+            {
+                spec.EndSpectating();
+            }
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            player.ResetHP();
+            MPUtility.PlaceCurrentPlayer(SpawnPos, SpawnRot);
+            PlayerComponent.GetLocal().LocalIgnore = false;
         }
 
         private void PingProps()
@@ -137,6 +169,8 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnUpdate_InGame()
         {
+            var propDisguiseController = PropDisguiseController.Instance;
+            propDisguiseController.LocalPropHuntTeam = (PropHuntTeams)Lobby.LobbyState.Players[ClientController.LocalID].Team;
             var timerUI = TimerUI.Instance;
             switch (_state)
             {
@@ -163,9 +197,10 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnEnd(bool cancelled)
         {
-            base.OnEnd(cancelled);
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.ResetHP();
+            MPUtility.PlaceCurrentPlayer(player.transform.position, player.transform.rotation);
+            base.OnEnd(cancelled);
             if (_state == States.Setup)
             {
                 player.userInputEnabled = true;
@@ -196,7 +231,8 @@ namespace BombRushMP.Plugin.Gamemodes
             settings.SettingByID[SettingSetupDurationID] = new GamemodeSetting("Setup Duration (Minutes)", DefaultSetupDuration, MinSetupDuration, MaxSetupDuration);
             settings.SettingByID[SettingMatchDurationID] = new GamemodeSetting("Match Duration (Minutes)", DefaultMatchDuration, MinMatchDuration, MaxMatchDuration);
             settings.SettingByID[SettingPingIntervalID] = new GamemodeSetting("Ping Interval (Seconds)", DefaultPingInterval, MinPingInterval, MaxPingInterval, 10);
-            settings.SettingByID[SettingBecomeHunterOnKillID] = new ToggleGamemodeSetting("Become Hunter on Kill", true);
+            settings.SettingByID[SettingBecomeHunterOnKillID] = new ToggleGamemodeSetting("Props Become Hunters on Death", true);
+            settings.SettingByID[SettingRespawnOnKillID] = new ToggleGamemodeSetting("Hunters Respawn on Death", true);
             return settings;
         }
     }

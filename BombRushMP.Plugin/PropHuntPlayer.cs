@@ -1,11 +1,13 @@
-﻿using System;
+﻿using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
+using BombRushMP.Plugin.Gamemodes;
+using Reptile;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using Reptile;
-using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -36,6 +38,9 @@ namespace BombRushMP.Plugin
         private GameObject _target = null;
 
         private bool _frozen = false;
+
+        private float _fireRate = 0.4f;
+        private float _fireTimer = 0f;
 
         private void Awake()
         {
@@ -91,6 +96,7 @@ namespace BombRushMP.Plugin
 
         private GameObject CalculateTarget()
         {
+            var propDisguiseController = PropDisguiseController.Instance;
             var ray = new Ray(_cam.transform.position, _cam.transform.forward);
             var hits = Physics.RaycastAll(ray, _targetDistance, _layerMask, QueryTriggerInteraction.Collide);
             
@@ -102,8 +108,16 @@ namespace BombRushMP.Plugin
                 if (playa != null)
                 {
                     if (playa.Player == _player) continue;
-                    if (playa.HasPropDisguise && hit.collider.gameObject.layer == Layers.Player) continue;
+                    if (playa.HasPropDisguise && hit.collider.gameObject.layer == Layers.Player)
+                    {
+                        if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props) continue;
+                        var disguiseStreetLife = playa.DisguiseGameObject.GetComponentInChildren<StreetLife>();
+                        if (disguiseStreetLife == null) continue;
+                    }
                 }
+
+                if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters && hit.collider.gameObject.layer == Layers.StreetLife && playa == null) continue;
+
                 var dist = Vector3.Distance(_cam.transform.position, hit.point);
                 if (closestHit == null)
                 {
@@ -287,7 +301,7 @@ namespace BombRushMP.Plugin
                     ui.CurrentMode = XHairUI.Modes.Cross;
             }
 
-            if (_canShoot && _player.switchStyleButtonNew)
+            if (_canShoot && _player.switchStyleButtonNew && _fireTimer <= 0f)
             {
                 if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
                 {
@@ -296,6 +310,53 @@ namespace BombRushMP.Plugin
                         PlayerComponent.GetLocal().ApplyPropDisguise(propIndex);
                     }
                 }
+                if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters && !propDisguiseController.InSetupPhase)
+                {
+                    _player.AudioManager.PlaySfxGameplay(SfxCollectionID.CombatSfx, AudioClipID.PistolShot, 0.05f);
+                    var dmg = 1;
+                    if (_target != null)
+                    {
+                        var playerTarget = _target.GetComponentInParent<Player>();
+                        if (playerTarget != null)
+                        {
+                            var mpPlayer = MPUtility.GetMuliplayerPlayer(playerTarget);
+                            if (mpPlayer != null)
+                            {
+                                var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
+                                if (currentLobby.LobbyState.Players.TryGetValue(mpPlayer.ClientId, out var lobbyPlayer))
+                                {
+                                    if (lobbyPlayer.Team == (byte)PropHuntTeams.Props)
+                                    {
+                                        ui.HitMarkerTime = 0.5f;
+                                        var dmgPacket = new ClientPropHuntShoot(mpPlayer.ClientId);
+                                        ClientController.Instance.SendPacket(dmgPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+                                    }
+                                    else
+                                    {
+                                        _player.ChangeHP(dmg);
+                                    }
+                                }
+                                else
+                                {
+                                    _player.ChangeHP(dmg);
+                                }
+                            }
+                            else
+                            {
+                                _player.ChangeHP(dmg);
+                            }
+                        }
+                        else
+                        {
+                            _player.ChangeHP(dmg);
+                        }
+                    }
+                    else
+                    {
+                        _player.ChangeHP(dmg);
+                    }
+                }
+                _fireTimer = _fireRate;
             }
 
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
@@ -307,6 +368,14 @@ namespace BombRushMP.Plugin
                 _player.boostCharge = 0f;
                 _player.recoverDamageTimer = 0f;
             }
+
+            if (propDisguiseController.InSetupPhase)
+            {
+                _player.ResetHP();
+            }
+            _fireTimer -= Time.deltaTime;
+            if (_fireTimer <= 0f)
+                _fireTimer = 0f;
         }
     }
 }

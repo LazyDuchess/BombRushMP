@@ -52,6 +52,8 @@ namespace BombRushMP.Plugin
 
         public bool LocalIgnore = false;
 
+        public PseudoDieAbility PseudoDieAbility = null;
+
         public void RefreshSkin()
         {
             if (MovestyleSkin != null)
@@ -275,11 +277,17 @@ namespace BombRushMP.Plugin
             var afkParticlesPrefab = MPAssets.Instance.Bundle.LoadAsset<GameObject>("AFK Particles");
             var indicatorPrefab = MPAssets.Instance.Bundle.LoadAsset<GameObject>("Challenge Indicator");
             _challengeIndicator = Instantiate(indicatorPrefab);
+
             _challengeIndicator.transform.SetParent(transform);
             _challengeIndicator.transform.SetLocalPositionAndRotation(Vector3.up * 2.5f, Quaternion.identity);
             _challengeIndicator.SetActive(false);
             _afkParticles = Instantiate(afkParticlesPrefab).GetComponent<ParticleSystem>();
             _afkParticles.transform.SetParent(transform);
+        }
+
+        public void InitAbilities()
+        {
+            PseudoDieAbility = new PseudoDieAbility(_player);
         }
 
         public void StopAFK()

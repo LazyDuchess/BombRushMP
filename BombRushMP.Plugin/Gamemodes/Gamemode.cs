@@ -28,8 +28,8 @@ namespace BombRushMP.Plugin.Gamemodes
         protected ClientController ClientController;
         protected ClientLobbyManager ClientLobbyManager;
         protected GamemodeIDs GamemodeId => Lobby.LobbyState.Gamemode;
-        private Vector3 _spawnPos = Vector3.zero;
-        private Quaternion _spawnRot = Quaternion.identity;
+        protected Vector3 SpawnPos = Vector3.zero;
+        protected Quaternion SpawnRot = Quaternion.identity;
 
         public Gamemode()
         {
@@ -40,8 +40,8 @@ namespace BombRushMP.Plugin.Gamemodes
         protected void SetSpawnLocation()
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
-            _spawnPos = player.transform.position;
-            _spawnRot = player.transform.rotation;
+            SpawnPos = player.transform.position;
+            SpawnRot = player.transform.rotation;
             player.saveLocation = player.GenerateSafeLocation();
         }
 
@@ -141,7 +141,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.cancel);
             }
             if (TeleportToSpawnOnEnd)
-                MPUtility.PlaceCurrentPlayer(_spawnPos, _spawnRot);
+                MPUtility.PlaceCurrentPlayer(SpawnPos, SpawnRot);
         }
 
         private bool AmIElite()
