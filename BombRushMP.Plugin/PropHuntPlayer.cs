@@ -268,11 +268,12 @@ namespace BombRushMP.Plugin
             _player.switchToEquippedMovestyleLocked = _aiming;
 
             var propDisguiseController = PropDisguiseController.Instance;
+            if (_canShoot)
+                _target = CalculateTarget();
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
             {
                 if (_canShoot)
                 {
-                    _target = CalculateTarget();
                     if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex))
                         propDisguiseController.OutlineGameObject(_target);
                     else

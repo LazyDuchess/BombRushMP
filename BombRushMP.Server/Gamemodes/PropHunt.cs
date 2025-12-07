@@ -49,7 +49,7 @@ namespace BombRushMP.Server.Gamemodes
             switch (_state)
             {
                 case States.Setup:
-                    if (_stateTimer >= 5f && !_validatedHashes)
+                    if (_stateTimer >= 10f && !_validatedHashes)
                     {
                         ValidateStageHashes();
                     }
@@ -68,6 +68,7 @@ namespace BombRushMP.Server.Gamemodes
                     }
                     if (_stateTimer >= _matchTime)
                     {
+                        SendSystemMessage("Props win!");
                         ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
                         SetState(States.Finished);
                     }
