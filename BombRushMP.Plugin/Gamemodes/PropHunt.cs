@@ -97,6 +97,27 @@ namespace BombRushMP.Plugin.Gamemodes
                     MPUtility.PlaceCurrentPlayer(spawnPacket.Position.ToUnityVector3(), spawnPacket.Rotation.ToUnityQuaternion());
                     SetSpawnLocation();
                     break;
+
+                case Packets.ServerPropHuntPing:
+                    PingProps();
+                    break;
+            }
+        }
+
+        private void PingProps()
+        {
+            foreach(var player in Lobby.LobbyState.Players)
+            {
+                if (player.Value.Team != (byte)PropHuntTeams.Props) continue;
+                var go = WorldHandler.instance.GetCurrentPlayer().gameObject;
+                if (player.Key != ClientController.LocalID)
+                {
+                    var ply = ClientController.Players[player.Key];
+                    if (ply.ClientVisualState != null && ply.ClientVisualState.Ignore) continue;
+                    if (ply.Player == null) continue;
+                    go = ply.Player.gameObject;
+                }
+                MPUtility.PingInMap(go, 2f);
             }
         }
 
@@ -145,6 +166,10 @@ namespace BombRushMP.Plugin.Gamemodes
             base.OnEnd(cancelled);
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.ResetHP();
+            if (_state == States.Setup)
+            {
+                player.userInputEnabled = true;
+            }
             var propDisguiseController = PropDisguiseController.Instance;
             propDisguiseController.UnfreezeProps();
             propDisguiseController.InPropHunt = false;

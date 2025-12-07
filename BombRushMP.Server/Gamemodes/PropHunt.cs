@@ -18,6 +18,7 @@ namespace BombRushMP.Server.Gamemodes
         }
         private States _state = States.Setup;
         private float _stateTimer = 0f;
+        private float _pingTimer = 0f;
 
         private float _setupTime = 9999f;
         private float _matchTime = 9999f;
@@ -56,11 +57,17 @@ namespace BombRushMP.Server.Gamemodes
                     break;
 
                 case States.Main:
+                    if (_pingTimer >= _pingInterval)
+                    {
+                        _pingTimer = 0f;
+                        ServerLobbyManager.SendPacketToLobby(new ServerPropHuntPing(), Common.Networking.IMessage.SendModes.ReliableUnordered, Lobby.LobbyState.Id, Common.Networking.NetChannels.Gamemodes);
+                    }
                     if (_stateTimer >= _matchTime)
                     {
                         ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
                         SetState(States.Finished);
                     }
+                    _pingTimer += deltaTime;
                     break;
             }
             _stateTimer += deltaTime;
