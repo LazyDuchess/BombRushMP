@@ -56,6 +56,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public override void OnStart()
         {
             base.OnStart();
+            PropHuntUI.Instance.Activate();
             var timerUI = TimerUI.Instance;
             timerUI.Activate();
             var propDisguiseController = PropDisguiseController.Instance;
@@ -197,6 +198,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnEnd(bool cancelled)
         {
+            PropHuntUI.Instance.Deactivate();
             var player = WorldHandler.instance.GetCurrentPlayer();
             player.ResetHP();
             MPUtility.PlaceCurrentPlayer(player.transform.position, player.transform.rotation);

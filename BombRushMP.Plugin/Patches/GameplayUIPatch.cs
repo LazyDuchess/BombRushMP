@@ -16,6 +16,7 @@ namespace BombRushMP.Plugin.Patches
         private static void Init_Postfix(GameplayUI __instance)
         {
             SpectatorUI.InitializeUI(__instance);
+            PropHuntUI.InitializeUI(__instance);
         }
     }
 }

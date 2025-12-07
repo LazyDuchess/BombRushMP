@@ -42,6 +42,9 @@ namespace BombRushMP.Plugin
         private float _fireRate = 0.4f;
         private float _fireTimer = 0f;
 
+        public bool Frozen => _frozen;
+        public bool Aiming => _aiming;
+
         private void Awake()
         {
             _player = GetComponent<Player>();
