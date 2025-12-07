@@ -100,6 +100,7 @@ namespace BombRushMP.Plugin
         {
             if (_player == null) return;
             SpectatorController.StartSpectating(false);
+            if (SpectatorController.Instance == null) return;
             SpectatorController.Instance.SpectatePlayer(_player);
         }
 

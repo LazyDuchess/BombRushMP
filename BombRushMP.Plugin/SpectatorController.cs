@@ -1,4 +1,5 @@
 ﻿using BombRushMP.Common;
+using BombRushMP.Plugin.Gamemodes;
 using Reptile;
 using System;
 using System.Collections.Generic;
@@ -159,8 +160,16 @@ namespace BombRushMP.Plugin
                 {
                     if (!myLobby.LobbyState.Players.TryGetValue(pl.Key, out var lobbyPlayer))
                         continue;
-                    if (myLobby.CurrentGamemode.TeamBased && lobbyPlayer.Team != myLobbyPlayer.Team)
-                        continue;
+                    if (myLobby.CurrentGamemode is PropHunt)
+                    {
+                        if (lobbyPlayer.Team != 0)
+                            continue;
+                    }
+                    else
+                    {
+                        if (myLobby.CurrentGamemode.TeamBased && lobbyPlayer.Team != myLobbyPlayer.Team)
+                            continue;
+                    }
                 }
                 _players.Add(pl.Key);
             }
@@ -204,6 +213,8 @@ namespace BombRushMP.Plugin
 
         public static void StartSpectating(bool forced)
         {
+            var currentPlayer = WorldHandler.instance.GetCurrentPlayer();
+            if (!currentPlayer.userInputEnabled) return;
             if (Instance != null)
             {
                 if (forced)
