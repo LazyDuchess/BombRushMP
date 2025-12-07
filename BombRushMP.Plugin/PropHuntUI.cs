@@ -40,6 +40,8 @@ namespace BombRushMP.Plugin
             _freezeLabel.gameObject.SetActive(false);
             _freezeGlyph.gameObject.SetActive(false);
 
+            _unfreezeLabel.gameObject.SetActive(false);
+
             if (SpectatorUI.Instance != null && SpectatorUI.Instance.gameObject.activeSelf) return;
 
             var propHuntPlayer = PropHuntPlayer.GetLocal();
