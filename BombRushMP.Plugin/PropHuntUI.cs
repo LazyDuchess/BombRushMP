@@ -42,6 +42,13 @@ namespace BombRushMP.Plugin
 
             _unfreezeLabel.gameObject.SetActive(false);
 
+            if (Core.Instance.BaseModule.IsInGamePaused) return;
+
+            var player = WorldHandler.instance.GetCurrentPlayer();
+
+            if (player.phone.state != Reptile.Phone.Phone.PhoneState.OFF && player.phone.state != Reptile.Phone.Phone.PhoneState.SHUTTINGDOWN)
+                return;
+
             if (SpectatorUI.Instance != null && SpectatorUI.Instance.gameObject.activeSelf) return;
 
             var propHuntPlayer = PropHuntPlayer.GetLocal();
