@@ -91,6 +91,8 @@ namespace BombRushMP.Plugin.Phone
                         var gamemodeValues = Enum.GetValues(typeof(GamemodeIDs));
                         var gamemode = (int)currentLobby.LobbyState.Gamemode;
                         gamemode++;
+                        if (gamemode == (int)GamemodeIDs.PropHunt && clientController.ServerState.Tags.Contains(Constants.PropHuntLockedTag))
+                            gamemode++;
                         if (gamemode >= gamemodeValues.Length)
                             gamemode = 0;
                         var settings = GamemodeFactory.GetGamemodeSettings((GamemodeIDs)gamemode);

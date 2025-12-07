@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.Common.Networking;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -252,6 +253,17 @@ namespace BombRushMP.Plugin
                     if (args.Length > 1)
                         play = ushort.Parse(args[1]);
                     ClientController.Instance.AttachToPlayerID(play);
+                    break;
+
+                case "prophunt":
+                    if (ClientController.Instance.GetLocalUser().IsModerator)
+                    {
+                        var settings = GamemodeFactory.GetGamemodeSettings(GamemodeIDs.PropHunt);
+                        var savedSettings = MPSaveData.Instance.GetSavedSettings(GamemodeIDs.PropHunt);
+                        if (savedSettings != null)
+                            settings.ApplySaved(savedSettings);
+                        ClientController.Instance.ClientLobbyManager.SetGamemode(GamemodeIDs.PropHunt, settings);
+                    }
                     break;
             }
                 
