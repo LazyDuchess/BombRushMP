@@ -149,7 +149,7 @@ namespace BombRushMP.Plugin.Gamemodes
                     if (ply.Player == null) continue;
                     go = ply.Player.gameObject;
                 }
-                MPUtility.PingInMap(go, 2f);
+                MPUtility.PingInMap(go, 3f);
             }
         }
 
