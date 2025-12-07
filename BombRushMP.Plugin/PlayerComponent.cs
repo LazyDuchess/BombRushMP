@@ -95,6 +95,44 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private void AutoAdjustProp()
+        {
+            if (!HasPropDisguise) return;
+
+            var firstRenderer = DisguiseGameObject.GetComponentInChildren<Renderer>();
+
+            if (firstRenderer == null) return;
+            var firstRendererBB = firstRenderer.localBounds;
+
+            var verts = new Vector3[]
+            {
+                new(firstRendererBB.min.x, firstRendererBB.min.y, firstRendererBB.min.z),
+                new(firstRendererBB.min.x, firstRendererBB.min.y, firstRendererBB.max.z),
+                new(firstRendererBB.min.x, firstRendererBB.max.y, firstRendererBB.max.z),
+                new(firstRendererBB.min.x, firstRendererBB.max.y, firstRendererBB.min.z),
+                new(firstRendererBB.max.x, firstRendererBB.max.y, firstRendererBB.max.z),
+                new(firstRendererBB.max.x, firstRendererBB.max.y, firstRendererBB.min.z),
+                new(firstRendererBB.max.x, firstRendererBB.min.y, firstRendererBB.min.z),
+                new(firstRendererBB.max.x, firstRendererBB.min.y, firstRendererBB.max.z)
+            };
+
+            var center = Vector3.zero;
+            var lowestPoint = Mathf.Infinity;
+
+            for (var i = 0; i < verts.Length; i++)
+            {
+                var v = _player.transform.InverseTransformPoint(firstRenderer.transform.TransformPoint(verts[i]));
+                center += v;
+                if (v.y < lowestPoint)
+                    lowestPoint = v.y;
+            }
+
+            center /= verts.Length;
+            center.y = lowestPoint;
+
+            DisguiseGameObject.transform.localPosition = -center;
+        }
+
         public void ApplyPropDisguise(int disguiseId)
         {
             var disguiseController = PropDisguiseController.Instance;
@@ -138,6 +176,8 @@ namespace BombRushMP.Plugin
 
             if (Local)
             {
+                if (ped == null)
+                    AutoAdjustProp();
                 disguise.gameObject.layer = Layers.Player;
                 var colliders = disguise.GetComponents<Collider>();
                 foreach(var collider in colliders)
