@@ -122,6 +122,15 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.PickupVisualization))]
+        private static bool PickupVisualization_Prefix(Player __instance)
+        {
+            if (__instance.cam == null) return false;
+            if (__instance.cam.cam == null) return false;
+            return true;
+        }
+
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.PlayVoice))]
         private static bool PlayVoice_Prefix(Player __instance, AudioClipID audioClipID, VoicePriority voicePriority)
         {
