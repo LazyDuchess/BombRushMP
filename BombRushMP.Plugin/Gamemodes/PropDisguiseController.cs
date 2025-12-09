@@ -29,6 +29,7 @@ namespace BombRushMP.Plugin.Gamemodes
         private string _hSpeedTag = "ph_hspeed=";
         private string _vSpeedTag = "ph_vspeed=";
         private string _damageTag = "ph_damage=";
+        private string _versionIdentifier = "VERSION1";
 
         public void LoadTestSettings()
         {
@@ -188,6 +189,8 @@ namespace BombRushMP.Plugin.Gamemodes
             {
                 stageHashStr += index.ToString() + "|";
             }
+            stageHashStr += _versionIdentifier;
+
             StageHash = Compression.HashString(stageHashStr);
         }
     }
