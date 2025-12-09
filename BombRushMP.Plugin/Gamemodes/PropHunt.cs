@@ -60,6 +60,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var timerUI = TimerUI.Instance;
             timerUI.Activate();
             var propDisguiseController = PropDisguiseController.Instance;
+            propDisguiseController.LoadTestSettings();
             propDisguiseController.FreezeProps();
             propDisguiseController.InPropHunt = true;
             propDisguiseController.InSetupPhase = true;
@@ -89,6 +90,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public override void OnPacketReceived_InGame(Packets packetId, Packet packet)
         {
+            var propDisguiseController = PropDisguiseController.Instance;
             switch (packetId)
             {
                 case Packets.ServerPropHuntBegin:
@@ -107,7 +109,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
                 case Packets.ClientPropHuntShoot:
                     var player = WorldHandler.instance.GetCurrentPlayer();
-                    player.ChangeHP(3);
+                    player.ChangeHP(propDisguiseController.PropDamage);
                     break;
 
                 case Packets.ServerPropHuntRespawn:

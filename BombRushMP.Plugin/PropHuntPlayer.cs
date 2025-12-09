@@ -45,11 +45,10 @@ namespace BombRushMP.Plugin
         public bool Frozen => _frozen;
         public bool Aiming => _aiming;
 
-        private float _propMaxVerticalSpeed = 10f;
-        private float _propMaxHorizontalSpeed = 10f;
-
         private void FixedUpdate_Prop()
         {
+            var propDisguiseController = PropDisguiseController.Instance;
+
             var playerMotor = _player.motor;
             var playerSpeed = _player.motor.velocity;
 
@@ -60,11 +59,11 @@ namespace BombRushMP.Plugin
             vSpeed.x = 0f;
             vSpeed.z = 0f;
 
-            if (hSpeed.magnitude >= _propMaxHorizontalSpeed)
-                hSpeed = _propMaxHorizontalSpeed * hSpeed.normalized;
+            if (hSpeed.magnitude >= propDisguiseController.PropHorizontalSpeed)
+                hSpeed = propDisguiseController.PropHorizontalSpeed * hSpeed.normalized;
 
-            if (vSpeed.magnitude >= _propMaxVerticalSpeed)
-                vSpeed = _propMaxVerticalSpeed * vSpeed.normalized;
+            if (vSpeed.magnitude >= propDisguiseController.PropVerticalSpeed)
+                vSpeed = propDisguiseController.PropVerticalSpeed * vSpeed.normalized;
 
             _player.motor.velocity = hSpeed + vSpeed;
         }

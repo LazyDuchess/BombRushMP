@@ -22,6 +22,34 @@ namespace BombRushMP.Plugin.Gamemodes
         private GameObject _currentlyOutlinedGameObject = null;
         private GameObject _outlineGameObject = null;
 
+        public float PropVerticalSpeed;
+        public float PropHorizontalSpeed;
+        public int PropDamage;
+
+        private string _hSpeedTag = "ph_hspeed=";
+        private string _vSpeedTag = "ph_vspeed=";
+        private string _damageTag = "ph_damage=";
+
+        public void LoadTestSettings()
+        {
+            PropVerticalSpeed = 10f;
+            PropHorizontalSpeed = 10f;
+            PropDamage = 3;
+
+            foreach(var tag in ClientController.Instance.ServerState.Tags)
+            {
+
+                if (tag.StartsWith(_hSpeedTag))
+                    PropHorizontalSpeed = float.Parse(tag.Substring(_hSpeedTag.Length));
+
+                if (tag.StartsWith(_vSpeedTag))
+                    PropVerticalSpeed = float.Parse(tag.Substring(_vSpeedTag.Length));
+
+                if (tag.StartsWith(_damageTag))
+                    PropDamage = int.Parse(tag.Substring(_damageTag.Length));
+            }
+        }
+
         public void OutlineGameObject(GameObject obj)
         {
             if (obj == _currentlyOutlinedGameObject) return;
