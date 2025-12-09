@@ -66,8 +66,16 @@ namespace BombRushMP.Plugin.Gamemodes
             propDisguiseController.InSetupPhase = true;
             propDisguiseController.LocalPropHuntTeam = (PropHuntTeams)Lobby.LobbyState.Players[ClientController.LocalID].Team;
             var player = WorldHandler.instance.GetCurrentPlayer();
+            var chatUI = ChatUI.Instance;
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
+            {
                 player.userInputEnabled = false;
+                chatUI.AddMessage("<color=yellow>You're a Hunter! Wait for the Setup phase to end before hunting the Props!\nAim and fire at suspicious props. Be careful; you will lose health if you miss.</color>");
+            }
+            else
+            {
+                chatUI.AddMessage("<color=yellow>You're a Prop! Use the Setup time to find a good place to hide.\nAim at props and turn into them when they're highlighted.</color>");
+            }
             player.gameObject.AddComponent<PropHuntPlayer>();
             XHairUI.Create();
             if (ClientController.LocalID == Lobby.LobbyState.HostId)
