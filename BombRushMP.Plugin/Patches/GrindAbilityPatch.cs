@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Common;
 using BombRushMP.Common.Networking;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin.Patches
 {
@@ -32,13 +33,16 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(GrindAbility.SetToLine))]
-        private static void SetToLine_Postfix(GrindAbility __instance)
+        private static bool SetToLine_Postfix(GrindAbility __instance)
         {
-            if (__instance.p.isAI) return;
+            if (__instance.p.isAI) return true;
+            var propDisguiseController = PropDisguiseController.Instance;
+            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props && propDisguiseController.InPropHunt) return false;
             var clientController = ClientController.Instance;
-            if (clientController == null) return;
-            if (!clientController.Connected) return;
+            if (clientController == null) return true;
+            if (!clientController.Connected) return true;
             clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
+            return true;
         }
 
         [HarmonyPostfix]
