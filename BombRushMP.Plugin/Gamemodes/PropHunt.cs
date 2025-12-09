@@ -107,7 +107,7 @@ namespace BombRushMP.Plugin.Gamemodes
 
                 case Packets.ClientPropHuntShoot:
                     var player = WorldHandler.instance.GetCurrentPlayer();
-                    player.ChangeHP(2);
+                    player.ChangeHP(3);
                     break;
 
                 case Packets.ServerPropHuntRespawn:

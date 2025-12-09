@@ -45,6 +45,30 @@ namespace BombRushMP.Plugin
         public bool Frozen => _frozen;
         public bool Aiming => _aiming;
 
+        private float _propMaxVerticalSpeed = 10f;
+        private float _propMaxHorizontalSpeed = 10f;
+
+        private void FixedUpdate_Prop()
+        {
+            var playerMotor = _player.motor;
+            var playerSpeed = _player.motor.velocity;
+
+            var hSpeed = playerSpeed;
+            hSpeed.y = 0f;
+
+            var vSpeed = playerSpeed;
+            vSpeed.x = 0f;
+            vSpeed.z = 0f;
+
+            if (hSpeed.magnitude >= _propMaxHorizontalSpeed)
+                hSpeed = _propMaxHorizontalSpeed * hSpeed.normalized;
+
+            if (vSpeed.magnitude >= _propMaxVerticalSpeed)
+                vSpeed = _propMaxVerticalSpeed * vSpeed.normalized;
+
+            _player.motor.velocity = hSpeed + vSpeed;
+        }
+
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -100,8 +124,13 @@ namespace BombRushMP.Plugin
         private GameObject CalculateTarget()
         {
             var propDisguiseController = PropDisguiseController.Instance;
+
+            var targetDistance = _targetDistance;
+            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
+                targetDistance = Mathf.Infinity;
+
             var ray = new Ray(_cam.transform.position, _cam.transform.forward);
-            var hits = Physics.RaycastAll(ray, _targetDistance, _layerMask, QueryTriggerInteraction.Collide);
+            var hits = Physics.RaycastAll(ray, targetDistance, _layerMask, QueryTriggerInteraction.Collide);
             
             GameObject closestHit = null;
             var closestHitDistance = Mathf.Infinity;
@@ -142,7 +171,9 @@ namespace BombRushMP.Plugin
 
         private void FixedUpdate()
         {
+            var propDisguiseController = PropDisguiseController.Instance;
             var playerComp = PlayerComponent.GetLocal();
+            
             if (_aiming && CanTurnToAim() && !playerComp.HasPropDisguise)
             {
                 var flatCurrentForward = _player.transform.forward;
@@ -152,6 +183,9 @@ namespace BombRushMP.Plugin
                 var yawDelta = Vector3.SignedAngle(flatCurrentForward, _targetFacing, Vector3.up);
                 _player.SetRotation(_player.transform.rotation * Quaternion.Euler(0f, Mathf.Clamp(yawDelta, -_turnSpeed * Time.deltaTime, _turnSpeed * Time.deltaTime), 0f));
             }
+
+            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
+                FixedUpdate_Prop();
         }
 
         private Vector3 GetMaxTurnRotation()
