@@ -49,23 +49,26 @@ namespace BombRushMP.Plugin
         {
             var propDisguiseController = PropDisguiseController.Instance;
 
-            var playerMotor = _player.motor;
-            var playerSpeed = _player.motor.velocity;
+            if (!propDisguiseController.InSetupPhase)
+            {
+                var playerMotor = _player.motor;
+                var playerSpeed = _player.motor.velocity;
 
-            var hSpeed = playerSpeed;
-            hSpeed.y = 0f;
+                var hSpeed = playerSpeed;
+                hSpeed.y = 0f;
 
-            var vSpeed = playerSpeed;
-            vSpeed.x = 0f;
-            vSpeed.z = 0f;
+                var vSpeed = playerSpeed;
+                vSpeed.x = 0f;
+                vSpeed.z = 0f;
 
-            if (hSpeed.magnitude >= propDisguiseController.PropHorizontalSpeed)
-                hSpeed = propDisguiseController.PropHorizontalSpeed * hSpeed.normalized;
+                if (hSpeed.magnitude >= propDisguiseController.PropHorizontalSpeed)
+                    hSpeed = propDisguiseController.PropHorizontalSpeed * hSpeed.normalized;
 
-            if (vSpeed.magnitude >= propDisguiseController.PropVerticalSpeed)
-                vSpeed = propDisguiseController.PropVerticalSpeed * vSpeed.normalized;
+                if (vSpeed.magnitude >= propDisguiseController.PropVerticalSpeed)
+                    vSpeed = propDisguiseController.PropVerticalSpeed * vSpeed.normalized;
 
-            _player.motor.velocity = hSpeed + vSpeed;
+                _player.motor.velocity = hSpeed + vSpeed;
+            }
         }
 
         private void Awake()
