@@ -13,6 +13,7 @@ namespace BombRushMP.Common
         MaleCop,
         SpecialPlayer,
         SeanKingston,
-        Forklift
+        Forklift,
+        Jill
     }
 }

@@ -265,6 +265,14 @@ namespace BombRushMP.Plugin
                         ClientController.Instance.ClientLobbyManager.SetGamemode(GamemodeIDs.PropHunt, settings);
                     }
                     break;
+
+                case "jill":
+                    if (ClientController.Instance.GetLocalUser().IsModerator)
+                    {
+                        var player = WorldHandler.instance.GetCurrentPlayer();
+                        SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.Jill);
+                    }
+                    break;
             }
                 
         }
