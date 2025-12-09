@@ -31,9 +31,9 @@ namespace BombRushMP.Plugin.Patches
             clientController.SendPacket(voicePacket, IMessage.SendModes.ReliableUnordered, NetChannels.VisualUpdates);
         }
 
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(GrindAbility.SetToLine))]
-        private static bool SetToLine_Postfix(GrindAbility __instance)
+        private static bool SetToLine_Prefix(GrindAbility __instance)
         {
             if (__instance.p.isAI) return true;
             var propDisguiseController = PropDisguiseController.Instance;
