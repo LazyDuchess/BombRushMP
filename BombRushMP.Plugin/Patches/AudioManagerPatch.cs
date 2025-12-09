@@ -18,9 +18,9 @@ namespace BombRushMP.Plugin.Patches
         private static bool PlayVoice_Prefix(AudioManager __instance, ref VoicePriority currentPriority, Characters character, AudioClipID audioClipID, AudioSource audioSource, VoicePriority playbackPriority)
         {
             var player = audioSource.GetComponentInParent<Player>();
-            if (player == null) return true;
+            if (player == null) return CheckShouldContinue();
             var playerComponent = PlayerComponent.Get(player);
-            if (playerComponent == null) return true;
+            if (playerComponent == null) return CheckShouldContinue();
             if (playerComponent.HasPropDisguise) return false;
             if (playerComponent.StreamedCharacter != null)
             {
@@ -34,7 +34,7 @@ namespace BombRushMP.Plugin.Patches
                 }
                 return false;
             }
-            if (playerComponent.SpecialSkin == SpecialSkins.None) return true;
+            if (playerComponent.SpecialSkin == SpecialSkins.None) return CheckShouldContinue();
             var library = SpecialSkinManager.Instance.GetAudioLibrary(playerComponent.SpecialSkin);
             if (library == null) return false;
             if (playbackPriority > currentPriority || !audioSource.isPlaying)
@@ -45,6 +45,13 @@ namespace BombRushMP.Plugin.Patches
                 currentPriority = playbackPriority;
             }
             return false;
+
+            bool CheckShouldContinue()
+            {
+                if ((int)character < 0) return false;
+                if (__instance.characterToVoiceCollection.Length >= (int)character) return false;
+                return true;
+            }
         }
     }
 }
