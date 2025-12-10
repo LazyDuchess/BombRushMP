@@ -42,7 +42,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             PropVerticalSpeed = 10f;
             PropHorizontalSpeed = 10f;
-            PropDamage = 3;
+            PropDamage = 2;
             PropMinimumSize = 0.1f;
             HunterReticleSize = 0.5f;
             HunterPelletAmount = 8;
