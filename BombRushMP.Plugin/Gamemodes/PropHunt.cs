@@ -190,7 +190,7 @@ namespace BombRushMP.Plugin.Gamemodes
                         var diff = (SetupDuration * 60f) - _stateTimer;
                         if (diff <= 0f)
                             diff = 0f;
-                        timerUI.SetText($"Setup: {timerUI.GetTimeString(diff)}");
+                        timerUI.SetText($"Setup: {TimerUI.GetTimeString(diff)}");
                     }
                     break;
 

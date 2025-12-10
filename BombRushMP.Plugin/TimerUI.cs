@@ -46,7 +46,7 @@ namespace BombRushMP.Plugin
             Deactivate();
         }
 
-        public string GetTimeString(float time)
+        public static string GetTimeString(float time)
         {
             var str = time.ToString(CultureInfo.CurrentCulture);
             var startIndex = ((int)time).ToString().Length + 3;
