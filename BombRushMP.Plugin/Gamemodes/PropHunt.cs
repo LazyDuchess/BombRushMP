@@ -121,6 +121,9 @@ namespace BombRushMP.Plugin.Gamemodes
                     if (propDisguiseController.LocalPropHuntTeam != PropHuntTeams.Props) break;
                     var player = WorldHandler.instance.GetCurrentPlayer();
                     player.ChangeHP(propDisguiseController.PropDamage);
+                    var propHuntPlayer = player.GetComponent<PropHuntPlayer>();
+                    if (propHuntPlayer != null)
+                        propHuntPlayer.HitLock();
                     break;
 
                 case Packets.ServerPropHuntRespawn:

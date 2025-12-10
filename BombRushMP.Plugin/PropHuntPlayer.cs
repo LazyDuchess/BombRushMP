@@ -39,11 +39,20 @@ namespace BombRushMP.Plugin
 
         private bool _frozen = false;
 
-        private float _fireRate = 0.4f;
+        private float _propFireRate = 1.0f;
+        private float _hunterFireRate = 0.4f;
         private float _fireTimer = 0f;
 
         public bool Frozen => _frozen;
         public bool Aiming => _aiming;
+
+        private float _timeToLockOnHit = 3f;
+        private float _lockedTimer = 0f;
+
+        public void HitLock()
+        {
+            _lockedTimer = _timeToLockOnHit;
+        }
 
         private void FixedUpdate_Prop()
         {
@@ -245,6 +254,14 @@ namespace BombRushMP.Plugin
             var canTurnToAIm = CanTurnToAim();
             _aiming = _player.sprayButtonHeld;
             _canShoot = false;
+            var freezeButton = _player.boostButtonNew;
+
+            if (_lockedTimer > 0f)
+            {
+                _aiming = false;
+                freezeButton = false;
+            }
+
             if (_aiming)
             {
                 _cameraAimAmount = Mathf.Lerp(_cameraAimAmount, 1f, _cameraAimSpeed * Time.deltaTime);
@@ -321,7 +338,7 @@ namespace BombRushMP.Plugin
                 else
                     propDisguiseController.OutlineGameObject(null);
 
-                if (_player.boostButtonNew)
+                if (freezeButton)
                 {
                     if (!_frozen)
                         Freeze();
@@ -396,7 +413,7 @@ namespace BombRushMP.Plugin
                         _player.ChangeHP(dmg);
                     }
                 }
-                _fireTimer = _fireRate;
+                _fireTimer = propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters ? _hunterFireRate : _propFireRate;
             }
 
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
@@ -416,6 +433,10 @@ namespace BombRushMP.Plugin
             _fireTimer -= Time.deltaTime;
             if (_fireTimer <= 0f)
                 _fireTimer = 0f;
+            _lockedTimer -= Time.deltaTime;
+
+            if (_lockedTimer <= 0f)
+                _lockedTimer = 0f;
         }
     }
 }
