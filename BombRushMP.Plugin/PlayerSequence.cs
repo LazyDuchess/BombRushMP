@@ -340,7 +340,13 @@ namespace BombRushMP.Plugin
                         audioManager.PlayNonloopingSfx(audioManager.audioSources[5], clip, audioManager.mixerGroups[5], 0f);
                 }
                 else
-                    audioManager.PlayVoice(_interactable.Player.Player.character, AudioClipID.VoiceTalk);
+                {
+                    try
+                    {
+                        audioManager.PlayVoice(_interactable.Player.Player.character, AudioClipID.VoiceTalk);
+                    }
+                    catch (Exception) { }
+                }
                 StartDialogue(introDialogue);
                 SaidYes = true;
             }

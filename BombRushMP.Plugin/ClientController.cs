@@ -622,7 +622,13 @@ namespace BombRushMP.Plugin
                             if (Players.TryGetValue(playerPacket.ClientId, out var player))
                             {
                                 if (player.Player != null && !player.ShouldIgnore())
-                                    player.Player.PlayVoice((AudioClipID)playerPacket.AudioClipId, (VoicePriority)playerPacket.VoicePriority, true);
+                                {
+                                    try
+                                    {
+                                        player.Player.PlayVoice((AudioClipID)playerPacket.AudioClipId, (VoicePriority)playerPacket.VoicePriority, true);
+                                    }
+                                    catch (Exception) { }
+                                }
                             }
                         }
                     }

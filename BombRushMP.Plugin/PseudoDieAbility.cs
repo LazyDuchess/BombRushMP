@@ -29,7 +29,11 @@ namespace BombRushMP.Plugin
         {
             p.SwitchToEquippedMovestyle(false, false, true, true);
             p.StartScreenShake(ScreenShakeType.MEDIUM, 0.6f, false);
-            p.PlayVoice(AudioClipID.VoiceDie, VoicePriority.DIE, true);
+            try
+            {
+                p.PlayVoice(AudioClipID.VoiceDie, VoicePriority.DIE, true);
+            }
+            catch(Exception) { }
             p.PlayAnim(dieHash, false, false, -1f);
             p.RemoveAllCuffs(null);
         }

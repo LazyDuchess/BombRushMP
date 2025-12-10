@@ -308,7 +308,11 @@ namespace BombRushMP.Plugin
             var saveData = MPSaveData.Instance;
             saveData.Stats.TimesSaidHello++;
             Core.Instance.SaveManager.SaveCurrentSaveSlot();
-            _player.PlayVoice(AudioClipID.VoiceTalk, VoicePriority.COMBAT);
+            try
+            {
+                _player.PlayVoice(AudioClipID.VoiceTalk, VoicePriority.COMBAT);
+            }
+            catch (Exception) { }
         }
 
         private void Awake()

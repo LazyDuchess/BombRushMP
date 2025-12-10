@@ -168,7 +168,13 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             yield return new WaitForSeconds(UnityEngine.Random.Range(0.5f,1f));
             if (player != null && !player.IsDead() && !player.IsBusyWithSequence())
-                player.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.COMBAT, true);
+            {
+                try
+                {
+                    player.PlayVoice(AudioClipID.VoiceBoostTrick, VoicePriority.COMBAT, true);
+                }
+                catch(Exception) { }
+            }
         }
 
         public override void OnPacketReceived_InGame(Packets packetId, Packet packet)
