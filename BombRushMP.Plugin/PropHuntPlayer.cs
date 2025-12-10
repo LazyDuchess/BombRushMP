@@ -141,7 +141,72 @@ namespace BombRushMP.Plugin
             return (_player.ability == null && _player.GetTotalSpeed() <= 0.5f && !PressingMovementKeys());
         }
 
-        private GameObject CalculateTarget()
+        private bool DoHunterShoot()
+        {
+            var debugDraw = false;
+            var debugDrawLen = 50f;
+
+            var propDisguiseController = PropDisguiseController.Instance;
+            var pelletCount = propDisguiseController.HunterPelletAmount;
+            var pelletSize = propDisguiseController.HunterReticleSize;
+
+            var pelletSeparation = pelletSize / pelletCount;
+
+            var reticleHalf = pelletSize * 0.5f;
+
+            var hitAnyone = false;
+
+            var alreadyDamaged = new HashSet<ushort>();
+
+            var ui = XHairUI.Instance;
+
+            for (var i = 0; i < pelletCount; i++)
+            {
+                var xOff = -reticleHalf + (pelletSeparation * i);
+                for (var j = 0; j < pelletCount; j++)
+                {
+                    var yOff = -reticleHalf + (pelletSeparation * j);
+                    var tg = CalculateTarget(xOff, yOff);
+
+                    if (tg != null)
+                    {
+                        var play = tg.GetComponentInParent<Player>();
+                        if (play != null && play.isAI)
+                        {
+                            var mpPlayer = MPUtility.GetMuliplayerPlayer(play);
+                            if (mpPlayer != null && !alreadyDamaged.Contains(mpPlayer.ClientId))
+                            {
+                                if (ClientController.Instance.ClientLobbyManager.CurrentLobby.LobbyState.Players.TryGetValue(mpPlayer.ClientId, out var lobbyPlayer) && lobbyPlayer.Team == (int)PropHuntTeams.Props)
+                                {
+                                    alreadyDamaged.Add(mpPlayer.ClientId);
+                                    hitAnyone = true;
+                                    ui.HitMarkerTime = 0.5f;
+                                    var dmgPacket = new ClientPropHuntShoot(mpPlayer.ClientId);
+                                    ClientController.Instance.SendPacket(dmgPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
+                                }
+                            }
+                        }
+                    }
+
+                    if (debugDraw)
+                    {
+                        var orig = _cam.transform.position;
+                        orig += xOff * _cam.transform.right;
+                        orig += yOff * _cam.transform.up;
+
+                        var debugBox = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                        debugBox.transform.localScale = new Vector3(0.01f, 0.01f, debugDrawLen);
+                        debugBox.transform.position = orig + (_cam.transform.forward * (debugDrawLen * 0.5f));
+                        debugBox.transform.rotation = _cam.transform.rotation;
+                        Destroy(debugBox.GetComponent<Collider>());
+                    }
+                }
+            }
+
+            return hitAnyone;
+        }
+
+        private GameObject CalculateTarget(float xOffset, float yOffset)
         {
             var propDisguiseController = PropDisguiseController.Instance;
 
@@ -149,7 +214,11 @@ namespace BombRushMP.Plugin
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
                 targetDistance = Mathf.Infinity;
 
-            var ray = new Ray(_cam.transform.position, _cam.transform.forward);
+            var orig = _cam.transform.position;
+            orig += xOffset * _cam.transform.right;
+            orig += yOffset * _cam.transform.up;
+
+            var ray = new Ray(orig, _cam.transform.forward);
             var hits = Physics.RaycastAll(ray, targetDistance, _layerMask, QueryTriggerInteraction.Collide);
             
             GameObject closestHit = null;
@@ -334,7 +403,7 @@ namespace BombRushMP.Plugin
 
             var propDisguiseController = PropDisguiseController.Instance;
             if (_canShoot)
-                _target = CalculateTarget();
+                _target = CalculateTarget(0f, 0f);
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
             {
                 if (_canShoot)
@@ -394,47 +463,9 @@ namespace BombRushMP.Plugin
                 if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters && !propDisguiseController.InSetupPhase)
                 {
                     _player.AudioManager.PlaySfxGameplay(SfxCollectionID.CombatSfx, AudioClipID.PistolShot, 0.05f);
-                    var dmg = 1;
-                    if (_target != null)
+                    if (!DoHunterShoot())
                     {
-                        var playerTarget = _target.GetComponentInParent<Player>();
-                        if (playerTarget != null)
-                        {
-                            var mpPlayer = MPUtility.GetMuliplayerPlayer(playerTarget);
-                            if (mpPlayer != null)
-                            {
-                                var currentLobby = ClientController.Instance.ClientLobbyManager.CurrentLobby;
-                                if (currentLobby.LobbyState.Players.TryGetValue(mpPlayer.ClientId, out var lobbyPlayer))
-                                {
-                                    if (lobbyPlayer.Team == (byte)PropHuntTeams.Props)
-                                    {
-                                        ui.HitMarkerTime = 0.5f;
-                                        var dmgPacket = new ClientPropHuntShoot(mpPlayer.ClientId);
-                                        ClientController.Instance.SendPacket(dmgPacket, IMessage.SendModes.Reliable, NetChannels.Gamemodes);
-                                    }
-                                    else
-                                    {
-                                        _player.ChangeHP(dmg);
-                                    }
-                                }
-                                else
-                                {
-                                    _player.ChangeHP(dmg);
-                                }
-                            }
-                            else
-                            {
-                                _player.ChangeHP(dmg);
-                            }
-                        }
-                        else
-                        {
-                            _player.ChangeHP(dmg);
-                        }
-                    }
-                    else
-                    {
-                        _player.ChangeHP(dmg);
+                        _player.ChangeHP(1);
                     }
                 }
                 _fireTimer = propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters ? _hunterFireRate : _propFireRate;
