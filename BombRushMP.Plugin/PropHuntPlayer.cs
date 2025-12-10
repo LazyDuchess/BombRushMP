@@ -50,7 +50,7 @@ namespace BombRushMP.Plugin
         private float _timeToLockOnHit = 3f;
         private float _lockedTimer = 0f;
 
-        private float _maxFreezeClearance = 4f;
+        private float _maxFreezeClearance = 8f;
 
         public void HitLock()
         {
@@ -60,7 +60,7 @@ namespace BombRushMP.Plugin
         private bool CanFreeze()
         {
             var ray = new Ray(_player.transform.position, Vector3.down);
-            return Physics.Raycast(ray, _maxFreezeClearance, (1 << Layers.Default), QueryTriggerInteraction.Ignore);
+            return Physics.Raycast(ray, _maxFreezeClearance, (1 << Layers.Default) | (1 << Layers.NonStableSurface), QueryTriggerInteraction.Ignore);
         }
 
         private void FixedUpdate_Prop()
