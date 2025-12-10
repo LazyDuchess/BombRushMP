@@ -32,12 +32,23 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPrefix]
+        [HarmonyPatch(nameof(GrindAbility.CanSetToLine))]
+        private static bool CanSetToLine_Prefix(GrindAbility __instance, ref bool __result)
+        {
+            var propDisguiseController = PropDisguiseController.Instance;
+            if (propDisguiseController != null && propDisguiseController.InPropHunt && propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
+            {
+                __result = false;
+                return false;
+            }
+            return true;
+        }
+
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(GrindAbility.SetToLine))]
         private static bool SetToLine_Prefix(GrindAbility __instance)
         {
             if (__instance.p.isAI) return true;
-            var propDisguiseController = PropDisguiseController.Instance;
-            if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props && propDisguiseController.InPropHunt) return false;
             var clientController = ClientController.Instance;
             if (clientController == null) return true;
             if (!clientController.Connected) return true;
