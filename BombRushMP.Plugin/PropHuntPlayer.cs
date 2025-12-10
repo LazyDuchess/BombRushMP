@@ -50,9 +50,17 @@ namespace BombRushMP.Plugin
         private float _timeToLockOnHit = 3f;
         private float _lockedTimer = 0f;
 
+        private float _maxFreezeClearance = 4f;
+
         public void HitLock()
         {
             _lockedTimer = _timeToLockOnHit;
+        }
+
+        private bool CanFreeze()
+        {
+            var ray = new Ray(_player.transform.position, Vector3.down);
+            return Physics.Raycast(ray, _maxFreezeClearance, (1 << Layers.Default), QueryTriggerInteraction.Ignore);
         }
 
         private void FixedUpdate_Prop()
@@ -342,7 +350,16 @@ namespace BombRushMP.Plugin
                 if (freezeButton)
                 {
                     if (!_frozen)
-                        Freeze();
+                    {
+                        if (CanFreeze())
+                        {
+                            Freeze();
+                        }
+                        else
+                        {
+                            ChatUI.Instance.AddMessage("<color=yellow>You're too far off the ground to freeze.</color>");
+                        }
+                    }
                     else
                         Unfreeze();
                 }
