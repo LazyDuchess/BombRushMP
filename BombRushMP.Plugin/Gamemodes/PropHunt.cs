@@ -241,6 +241,12 @@ namespace BombRushMP.Plugin.Gamemodes
             var timerUI = TimerUI.Instance;
             if (timerUI != null)
                 timerUI.DeactivateDelayed();
+            if (!cancelled)
+            {
+                var saveData = MPSaveData.Instance;
+                saveData.PropHuntPlaytester = true;
+                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+            }
         }
 
         public override GamemodeSettings GetDefaultSettings()

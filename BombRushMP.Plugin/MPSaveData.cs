@@ -14,13 +14,14 @@ namespace BombRushMP.Plugin
 {
     public class MPSaveData : CustomSaveData
     {
-        private const byte Version = 2;
+        private const byte Version = 3;
         public static MPSaveData Instance { get; private set; }
         public Dictionary<Characters, MPCharacterData> CharacterData = new();
         public Dictionary<string, MPCharacterData> CrewBoomCharacterData = new();
         public Dictionary<GamemodeIDs, SavedGamemodeSettings> GamemodeSettings = new();
         public MPStats Stats = new();
         public bool UnlockedGoonieBoard = false;
+        public bool PropHuntPlaytester = false;
         public MPSaveData() : base("BRCMP", "saveSlot{0}.sav", SaveLocations.LocalAppData)
         {
             Instance = this;
@@ -33,6 +34,7 @@ namespace BombRushMP.Plugin
             GamemodeSettings = new();
             Stats = new();
             UnlockedGoonieBoard = false;
+            PropHuntPlaytester = false;
         }
 
         public SavedGamemodeSettings GetSavedSettings(GamemodeIDs gamemode)
@@ -85,6 +87,9 @@ namespace BombRushMP.Plugin
             {
                 Stats.Read(reader);
             }
+            if (version > 2) {
+                PropHuntPlaytester = reader.ReadBoolean();
+            }
         }
 
         public override void Write(BinaryWriter writer)
@@ -110,6 +115,7 @@ namespace BombRushMP.Plugin
                 savedSettings.Value.Write(writer);
             }
             Stats.Write(writer);
+            writer.Write(PropHuntPlaytester);
         }
 
         public MPCharacterData GetCharacterData(Characters character)
