@@ -116,6 +116,9 @@ namespace BombRushMP.Plugin.Gamemodes
                     break;
 
                 case Packets.ClientPropHuntShoot:
+                    if (propDisguiseController.InSetupPhase) break;
+                    if (!propDisguiseController.InPropHunt) break;
+                    if (propDisguiseController.LocalPropHuntTeam != PropHuntTeams.Props) break;
                     var player = WorldHandler.instance.GetCurrentPlayer();
                     player.ChangeHP(propDisguiseController.PropDamage);
                     break;
