@@ -14,6 +14,7 @@ namespace BombRushMP.Plugin.Gamemodes
         public static PropDisguiseController Instance { get; private set; }
         public Dictionary<int, GameObject> PropByIndex = new();
         public Dictionary<GameObject, int> IndexByProp = new();
+        public Dictionary<int, float> SizeByIndex = new();
         public bool FrozenProps = false;
         public bool InPropHunt = false;
         public bool InSetupPhase = false;
@@ -25,10 +26,12 @@ namespace BombRushMP.Plugin.Gamemodes
         public float PropVerticalSpeed;
         public float PropHorizontalSpeed;
         public int PropDamage;
+        public float PropMinimumSize;
 
         private string _hSpeedTag = "ph_hspeed=";
         private string _vSpeedTag = "ph_vspeed=";
         private string _damageTag = "ph_damage=";
+        private string _sizeTag = "ph_size=";
         private string _versionIdentifier = "VERSION2";
 
         public void LoadTestSettings()
@@ -36,6 +39,7 @@ namespace BombRushMP.Plugin.Gamemodes
             PropVerticalSpeed = 10f;
             PropHorizontalSpeed = 10f;
             PropDamage = 3;
+            PropMinimumSize = 0.5f;
 
             foreach(var tag in ClientController.Instance.ServerState.Tags)
             {
@@ -48,6 +52,9 @@ namespace BombRushMP.Plugin.Gamemodes
 
                 if (tag.StartsWith(_damageTag))
                     PropDamage = int.Parse(tag.Substring(_damageTag.Length));
+
+                if (tag.StartsWith(_sizeTag))
+                    PropMinimumSize = float.Parse(tag.Substring(_sizeTag.Length));
             }
         }
 
@@ -171,6 +178,15 @@ namespace BombRushMP.Plugin.Gamemodes
                 var id = MPUtility.GenerateGameObjectID(j.gameObject);
                 PropByIndex[id] = j.gameObject;
                 IndexByProp[j.gameObject] = id;
+                var renderer = j.GetComponentInChildren<Renderer>();
+                if (renderer == null)
+                {
+                    SizeByIndex[id] = 0f;
+                }
+                else
+                {
+                    SizeByIndex[id] = Mathf.Min(renderer.bounds.size.x, renderer.bounds.size.y, renderer.bounds.size.z);
+                }
             }
 
             foreach (var ped in streetlife)
@@ -182,6 +198,15 @@ namespace BombRushMP.Plugin.Gamemodes
                 var id = MPUtility.GenerateGameObjectID(ped.gameObject);
                 PropByIndex[id] = ped.gameObject;
                 IndexByProp[ped.gameObject] = id;
+                var renderer = ped.GetComponentInChildren<Renderer>();
+                if (renderer == null)
+                {
+                    SizeByIndex[id] = 0f;
+                }
+                else
+                {
+                    SizeByIndex[id] = Mathf.Min(renderer.bounds.size.x, renderer.bounds.size.y, renderer.bounds.size.z);
+                }
             }
 
             var stageHashStr = "";

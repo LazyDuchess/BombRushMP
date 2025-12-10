@@ -39,7 +39,7 @@ namespace BombRushMP.Plugin
 
         private bool _frozen = false;
 
-        private float _propFireRate = 1.0f;
+        private float _propFireRate = 0.6f;
         private float _hunterFireRate = 0.4f;
         private float _fireTimer = 0f;
 
@@ -339,13 +339,19 @@ namespace BombRushMP.Plugin
             {
                 if (_canShoot)
                 {
-                    if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex))
+                    if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex) && propDisguiseController.SizeByIndex[propIndex] >= propDisguiseController.PropMinimumSize)
+                    {
                         propDisguiseController.OutlineGameObject(_target);
+                    }
                     else
+                    {
                         propDisguiseController.OutlineGameObject(null);
+                    }
                 }
                 else
+                {
                     propDisguiseController.OutlineGameObject(null);
+                }
 
                 if (freezeButton)
                 {
@@ -380,7 +386,7 @@ namespace BombRushMP.Plugin
             {
                 if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Props)
                 {
-                    if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex))
+                    if (_target != null && propDisguiseController.IndexByProp.TryGetValue(_target, out var propIndex) && propDisguiseController.SizeByIndex[propIndex] >= propDisguiseController.PropMinimumSize)
                     {
                         PlayerComponent.GetLocal().ApplyPropDisguise(propIndex);
                     }
