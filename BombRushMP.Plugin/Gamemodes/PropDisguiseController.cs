@@ -27,11 +27,15 @@ namespace BombRushMP.Plugin.Gamemodes
         public float PropHorizontalSpeed;
         public int PropDamage;
         public float PropMinimumSize;
+        public float HunterReticleSize;
+        public int HunterPelletAmount;
 
         private string _hSpeedTag = "ph_hspeed=";
         private string _vSpeedTag = "ph_vspeed=";
         private string _damageTag = "ph_damage=";
         private string _sizeTag = "ph_size=";
+        private string _reticleTag = "ph_reticle=";
+        pritave string _pelletTag = "ph_pellet=";
         private string _versionIdentifier = "VERSION2";
 
         public void LoadTestSettings()
@@ -40,6 +44,8 @@ namespace BombRushMP.Plugin.Gamemodes
             PropHorizontalSpeed = 10f;
             PropDamage = 3;
             PropMinimumSize = 0.5f;
+            HunterReticleSize = 0.5f;
+            HunterPelletAmount = 5;
 
             foreach(var tag in ClientController.Instance.ServerState.Tags)
             {
@@ -55,6 +61,12 @@ namespace BombRushMP.Plugin.Gamemodes
 
                 if (tag.StartsWith(_sizeTag))
                     PropMinimumSize = float.Parse(tag.Substring(_sizeTag.Length));
+
+                if (tag.StartsWith(_reticleTag))
+                    HunterReticleSize = float.Parse(tag.Substring(_reticleTag.Length));
+
+                if (tag.StartsWith(_pelletTag))
+                    HunterPelletAmount = int.Parse(tag.Substring(_pelletTag.Length));
             }
         }
 
