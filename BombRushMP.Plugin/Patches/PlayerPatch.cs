@@ -526,6 +526,8 @@ namespace BombRushMP.Plugin.Patches
         private static void OnLanded_Postfix(Player __instance)
         {
             if (__instance.isAI) return;
+            var playerComp = PlayerComponent.Get(__instance);
+            if (playerComp != null && playerComp.HasPropDisguise) return;
             ClientController.Instance.SendGenericEvent(GenericEvents.Land, IMessage.SendModes.ReliableUnordered);
         }
 
