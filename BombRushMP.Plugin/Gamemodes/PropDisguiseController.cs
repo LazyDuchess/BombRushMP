@@ -135,7 +135,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 }
             }
 
-            var breakables = FindObjectsOfType<BreakableObject>();
+            var breakables = FindObjectsOfType<BreakableObject>(true);
             foreach(var breakable in breakables)
             {
                 breakable.gameObject.SetActive(false);
