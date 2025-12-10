@@ -45,6 +45,7 @@ namespace BombRushMP.Plugin
 
         public bool Frozen => _frozen;
         public bool Aiming => _aiming;
+        public float LockedTimer => _lockedTimer;
 
         private float _timeToLockOnHit = 3f;
         private float _lockedTimer = 0f;

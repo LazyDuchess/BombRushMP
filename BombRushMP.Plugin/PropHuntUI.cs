@@ -27,6 +27,8 @@ namespace BombRushMP.Plugin
 
         private TextMeshProUGUI _unfreezeLabel;
 
+        private TextMeshProUGUI _lockedControlsLabel;
+
         private void Update()
         {
             _aimLabel.gameObject.SetActive(false);
@@ -42,6 +44,8 @@ namespace BombRushMP.Plugin
 
             _unfreezeLabel.gameObject.SetActive(false);
 
+            _lockedControlsLabel.gameObject.SetActive(false);
+
             if (Core.Instance.BaseModule.IsInGamePaused) return;
 
             var player = WorldHandler.instance.GetCurrentPlayer();
@@ -54,6 +58,13 @@ namespace BombRushMP.Plugin
             var propHuntPlayer = PropHuntPlayer.GetLocal();
 
             if (propHuntPlayer == null) return;
+
+            if (propHuntPlayer.LockedTimer > 0f)
+            {
+                _lockedControlsLabel.gameObject.SetActive(true);
+                _lockedControlsLabel.text = $"Locked: {TimerUI.GetTimeString(propHuntPlayer.LockedTimer)}";
+                return;
+            }
 
             var team = PropDisguiseController.Instance.LocalPropHuntTeam;
 
@@ -206,6 +217,14 @@ namespace BombRushMP.Plugin
             _unfreezeLabel.rectTransform.pivot = new Vector2(0f, 1f);
             _unfreezeLabel.rectTransform.anchoredPosition = new Vector2(labelLeft + glyphOffset, labelBegin + (labelSeparation * 3));
             _unfreezeLabel.rectTransform.SetParent(rectParent, false);
+
+            _lockedControlsLabel = MakeLabel(referenceText, "Locked");
+            _lockedControlsLabel.text = "Locked";
+            _lockedControlsLabel.rectTransform.anchorMin = new Vector2(0.0f, 0f);
+            _lockedControlsLabel.rectTransform.anchorMax = new Vector2(1.0f, 1.0f);
+            _lockedControlsLabel.rectTransform.pivot = new Vector2(0f, 1f);
+            _lockedControlsLabel.rectTransform.anchoredPosition = new Vector2(labelLeft + glyphOffset, labelBegin + (labelSeparation * 4));
+            _lockedControlsLabel.rectTransform.SetParent(rectParent, false);
         }
 
         public void Activate()
