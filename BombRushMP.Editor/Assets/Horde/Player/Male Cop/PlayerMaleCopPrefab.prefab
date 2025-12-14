@@ -837,7 +837,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4145210433970630457}
   - component: {fileID: 4264138940582188047}
-  - component: {fileID: 6682310120284906242}
+  - component: {fileID: 1791925950681696596}
   m_Layer: 0
   m_Name: PlayerMaleCopPrefab
   m_TagString: Untagged
@@ -888,7 +888,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &6682310120284906242
+--- !u!114 &1791925950681696596
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -897,9 +897,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3660703301713769859}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 512625436, guid: a6b459c6b0e5b44478adadd3d418e062, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e8c6524097b2c147bff5be475ddc964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanBlink: 0
   MainRendererName: mesh
   Variants:
   - {fileID: 2100000, guid: 85f0de720836a7643906cd09cf1fbcfe, type: 2}
@@ -920,7 +921,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c165ff77ce0a5c14da73c739376e4e36, type: 3}
   Combo: []
   BoostTrick: []
-  Talk: []
+  Talk:
+  - {fileID: 8300000, guid: d167adf396602384ca86e011e62491fb, type: 3}
+  - {fileID: 8300000, guid: 6596af8892fb4a744a9c82cc9e1d4435, type: 3}
+  - {fileID: 8300000, guid: aa4e30666a5852e4ca02de971eef2004, type: 3}
 --- !u!1 &3857424276041655391
 GameObject:
   m_ObjectHideFlags: 0

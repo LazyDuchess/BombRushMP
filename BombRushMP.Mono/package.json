@@ -1,0 +1,20 @@
+{
+  "name": "com.lazyduchess.bombrushmp.mono",
+  "version": "1.0.0",
+  "displayName": "BombRushMP Mono Code",
+  "description": "MonoBehaviours for BRCMP",
+  "unity": "2021.3",
+  "unityRelease": "45f2",
+  "author": {
+    "name": "Lazy Duchess"
+  },
+  "files": [
+    "*",
+    "!bin~",
+    "!obj~"
+  ],
+  "volta": {
+    "extends": "../package.json"
+  },
+  "hideInEditor": false
+}

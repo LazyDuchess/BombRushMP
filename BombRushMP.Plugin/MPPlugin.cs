@@ -106,6 +106,8 @@ namespace BombRushMP.Plugin
                     CrewBoomStreamer.ReloadCharacters();
             }
             PropDisguiseController.Create();
+            if (MPUtility.IsChristmas())
+                XmasController.Create();
         }
 
         private void Update()

@@ -969,7 +969,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4544081225661496642}
   - component: {fileID: 7633598173263357752}
-  - component: {fileID: 2056368347929115350}
+  - component: {fileID: 6055364499527393276}
   m_Layer: 0
   m_Name: SpecialPlayerPrefab
   m_TagString: Untagged
@@ -1020,7 +1020,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2056368347929115350
+--- !u!114 &6055364499527393276
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1029,26 +1029,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 3766136700429101048}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 512625436, guid: a6b459c6b0e5b44478adadd3d418e062, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e8c6524097b2c147bff5be475ddc964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanBlink: 0
   MainRendererName: mesh
   Variants:
   - {fileID: 2100000, guid: f19a9604a0a619449997a01e67b88307, type: 2}
   Jump: []
-  GetHit:
-  - {fileID: 8300000, guid: 42924a3e1d7da144699289a5143c223e, type: 3}
-  - {fileID: 8300000, guid: 6bc758034c875d446abfb66846496b70, type: 3}
-  - {fileID: 8300000, guid: 7690b21ffb6270b459821baa5d0c8bfc, type: 3}
-  - {fileID: 8300000, guid: 1ff5b6a0fc53d124187346e8849d2812, type: 3}
-  - {fileID: 8300000, guid: 545a54c9618706f4caf78095820efce4, type: 3}
-  - {fileID: 8300000, guid: c03eeebd31ec4ed43bf11e78d00a0bd0, type: 3}
-  - {fileID: 8300000, guid: b589199741cc58042a124cb7d4179334, type: 3}
-  - {fileID: 8300000, guid: 0441dd667cc25634b93183adc9667c6c, type: 3}
-  Die:
-  - {fileID: 8300000, guid: 05c36d8109dbe81489ad9bfa17ac6b2e, type: 3}
-  DieFall:
-  - {fileID: 8300000, guid: 4714b16fa26612542bb6c2639fa60c60, type: 3}
+  GetHit: []
+  Die: []
+  DieFall: []
   Combo: []
   BoostTrick: []
   Talk: []

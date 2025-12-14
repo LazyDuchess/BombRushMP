@@ -17,6 +17,8 @@ namespace BombRushMP.Plugin
         public Material LODMaterial;
         public Material AimOutlineMaterial;
         public AudioClip[] DeathMusic;
+        public GameObject XmasHideoutPrefab;
+        public Texture2D XmasSky;
 
         public MPAssets(string path)
         {
@@ -27,6 +29,8 @@ namespace BombRushMP.Plugin
             Emojis = new Emojis();
             DeathMusic = [Bundle.LoadAsset<AudioClip>("badfinger"), Bundle.LoadAsset<AudioClip>("drs")];
             AimOutlineMaterial = Bundle.LoadAsset<Material>("Aim Outline Material");
+            XmasHideoutPrefab = Bundle.LoadAsset<GameObject>("XmasHideout");
+            XmasSky = Bundle.LoadAsset<Texture2D>("NightSky");
         }
     }
 }

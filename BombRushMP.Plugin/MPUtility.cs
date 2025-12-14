@@ -315,6 +315,11 @@ namespace BombRushMP.Plugin
             return null;
         }
 
+        public static bool IsChristmas()
+        {
+            return true;
+        }
+
         public static void PingInMap(GameObject go, float duration)
         {
             var mapController = Mapcontroller.Instance;

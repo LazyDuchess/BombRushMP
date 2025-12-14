@@ -1834,31 +1834,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 6825829386577063411}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 512625436, guid: a6b459c6b0e5b44478adadd3d418e062, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e8c6524097b2c147bff5be475ddc964, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CanBlink: 0
-  MainRendererName: mesh
+  MainRendererName: forklift
   Variants:
   - {fileID: 2100000, guid: 0342cc0f32a83c1478bc103906889ca9, type: 2}
   Jump:
-  - {fileID: 8300000, guid: f15635c0180659046aec15a6a05e541a, type: 3}
   - {fileID: 8300000, guid: 18d7bf7add6902a4da1d857a3430dbe0, type: 3}
+  - {fileID: 8300000, guid: f15635c0180659046aec15a6a05e541a, type: 3}
   GetHit:
   - {fileID: 8300000, guid: e0c21fc4f4dc810498fe37383f947b77, type: 3}
+  - {fileID: 8300000, guid: 4b64570d9151b924482d3ee39185e828, type: 3}
   Die:
   - {fileID: 8300000, guid: a6311f179399079449792d7fea1411ac, type: 3}
   DieFall:
-  - {fileID: 8300000, guid: a6311f179399079449792d7fea1411ac, type: 3}
+  - {fileID: 8300000, guid: e0c21fc4f4dc810498fe37383f947b77, type: 3}
   Combo:
-  - {fileID: 8300000, guid: 4b64570d9151b924482d3ee39185e828, type: 3}
-  - {fileID: 8300000, guid: ebb07e2cb94ee404fbf1cafde80fea7b, type: 3}
-  - {fileID: 8300000, guid: 4a54a18debce17a448ae5a70d02055de, type: 3}
   - {fileID: 8300000, guid: 8f58e6319cbe27b4bbcc83ab62f92c53, type: 3}
-  BoostTrick:
-  - {fileID: 8300000, guid: 4b64570d9151b924482d3ee39185e828, type: 3}
-  - {fileID: 8300000, guid: ebb07e2cb94ee404fbf1cafde80fea7b, type: 3}
   - {fileID: 8300000, guid: 4a54a18debce17a448ae5a70d02055de, type: 3}
+  - {fileID: 8300000, guid: ebb07e2cb94ee404fbf1cafde80fea7b, type: 3}
+  BoostTrick:
+  - {fileID: 8300000, guid: 4a54a18debce17a448ae5a70d02055de, type: 3}
+  - {fileID: 8300000, guid: ebb07e2cb94ee404fbf1cafde80fea7b, type: 3}
   - {fileID: 8300000, guid: 8f58e6319cbe27b4bbcc83ab62f92c53, type: 3}
   Talk:
   - {fileID: 8300000, guid: f04c0fa9296167d409cefdd58e6ad6df, type: 3}

@@ -5,19 +5,47 @@
     <LangVersion>latest</LangVersion>
     <Configurations>Debug;Release;Developer Debug</Configurations>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManagedPath>$(BRCPath)/Bomb Rush Cyberfunk_Data/Managed</ManagedPath>
+    <RootNamespace>BombRushMP.Mono</RootNamespace>
+    <DefineConstants>$(DefineConstants);PLUGIN</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BaseOutputPath>bin~</BaseOutputPath>
+    <BaseIntermediateOutputPath>obj~</BaseIntermediateOutputPath>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <Compile Remove="bin~\**" />
+    <Compile Remove="obj~\**" />
+    <EmbeddedResource Remove="bin~\**" />
+    <EmbeddedResource Remove="obj~\**" />
+    <None Remove="bin~\**" />
+    <None Remove="obj~\**" />
+
+    <Compile Remove="**/*.asmdef" />
+    <Compile Remove="**/*.meta" />
+    <Compile Remove="**/*.json" />
+    <EmbeddedResource Remove="**/*.asmdef" />
+    <EmbeddedResource Remove="**/*.meta" />
+    <EmbeddedResource Remove="**/*.json" />
+    <None Remove="**/*.asmdef" />
+    <None Remove="**/*.meta" />
+    <None Remove="**/*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.Core" Version="5.*" />
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.27" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Unity.Analyzers" Version="1.18.0" PrivateAssets="all" />
   </ItemGroup>
-  <ItemGroup>
-    <None Update="BombRushMP.Mono.dll.meta">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-	<Target Name="CopyDLLToUnityProject" AfterTargets="AfterBuild">
-		<Message Text="Copying assembly and GUID to Unity Project" Importance="high" />
-		<Copy SourceFiles="$(TargetDir)$(TargetFileName)" DestinationFolder="$(ProjectDir)..\BombRushMP.Editor\Assets\Scripts" />
-		<Copy SourceFiles="$(TargetDir)$(TargetFileName).meta" DestinationFolder="$(ProjectDir)..\BombRushMP.Editor\Assets\Scripts" />
-	</Target>
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp">
+      <HintPath>$(ManagedPath)/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+      <Publicize>true</Publicize>
+    </Reference>
+	</ItemGroup>
 </Project>
