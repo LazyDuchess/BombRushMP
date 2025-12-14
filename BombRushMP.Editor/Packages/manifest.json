@@ -1,5 +1,7 @@
 {
   "dependencies": {
+	"com.brcmapstation.common": "file:../../libs/MapStation/MapStation.Common",
+    "com.brcmapstation.tools": "file:../../libs/MapStation/MapStation.Tools",
 	"com.lazyduchess.bombrushmp.mono": "file:../../BombRushMP.Mono",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.collab-proxy": "2.5.2",

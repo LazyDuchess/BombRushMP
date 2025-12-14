@@ -1,3 +1,6 @@
 [submodule "libs/BRC-CommonAPI"]
 	path = libs/BRC-CommonAPI
 	url = https://github.com/LazyDuchess/BRC-CommonAPI
+[submodule "libs/MapStation"]
+	path = libs/MapStation
+	url = https://github.com/BRCMapStation/MapStation
