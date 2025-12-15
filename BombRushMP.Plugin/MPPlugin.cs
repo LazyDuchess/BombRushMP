@@ -18,6 +18,7 @@ using System;
 using BombRushMP.BunchOfEmotes;
 using BombRushMP.NetRadio;
 using BombRushMP.Plugin.Gamemodes;
+using CommonAPI;
 
 namespace BombRushMP.Plugin
 {
@@ -90,7 +91,14 @@ namespace BombRushMP.Plugin
             StageManager.OnStageInitialized += StageManager_OnStageInitialized;
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
             ReflectionController.Initialize();
+            StageAPI.OnStagePreInitialization += OnStagePreInitialization;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private void OnStagePreInitialization(Stage newStage, Stage previousStage)
+        {
+            if (MPUtility.IsChristmas())
+                XmasController.Create();
         }
 
         private void StageManager_OnStageInitialized()
@@ -106,8 +114,6 @@ namespace BombRushMP.Plugin
                     CrewBoomStreamer.ReloadCharacters();
             }
             PropDisguiseController.Create();
-            if (MPUtility.IsChristmas())
-                XmasController.Create();
         }
 
         private void Update()

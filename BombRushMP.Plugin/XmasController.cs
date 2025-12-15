@@ -17,15 +17,39 @@ namespace BombRushMP.Plugin
             Instance = this;
             _mpAssets = MPAssets.Instance;
             if (gameObject.scene.name == "hideout")
-                DoHideoutChanges();
+                DoHideoutAwake();
         }
 
-        private void DoHideoutChanges()
+        private void Start()
+        {
+            if (gameObject.scene.name == "hideout")
+                DoHideoutStart();
+        }
+
+        private void DoHideoutStart()
         {
             LightmapSettings.lightmaps = new LightmapData[] { };
             QualitySettings.shadowDistance = 150f;
             RenderSettings.skybox.mainTexture = _mpAssets.XmasSky;
-            Instantiate(_mpAssets.XmasHideoutPrefab);
+        }
+
+        private void DoHideoutAwake()
+        {
+            var hideout = Instantiate(_mpAssets.XmasHideoutPrefab);
+            var chunkParent = hideout.transform.Find("Chunk");
+            if (chunkParent == null) return;
+            var stageChunks = FindObjectsOfType<StageChunk>();
+            StageChunk stageChunk = null;
+            foreach (var chunk in stageChunks)
+            {
+                if (chunk.name == "Hideout_Props")
+                {
+                    stageChunk = chunk;
+                    break;
+                }
+            }
+            if (stageChunk == null) return;
+            chunkParent.transform.SetParent(stageChunk.transform, true);
         }
 
         public static void Create()
