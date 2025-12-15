@@ -342,7 +342,7 @@ namespace BombRushMP.Plugin
 
         public static void BreakAllBreakables()
         {
-            var breakables = FindObjectsOfType<BreakableObject>(true);
+            var breakables = GameObject.FindObjectsOfType<BreakableObject>(true);
             foreach (var breakable in breakables)
             {
                 breakable.gameObject.SetActive(false);
