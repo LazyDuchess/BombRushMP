@@ -12,6 +12,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: hyperfunk
+    second: {fileID: 2100000, guid: c73c2c7c6f71dff43bf59560c6c2d787, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: metalHead
     second: {fileID: 2100000, guid: 094fad6c8d7f0f949a25d3484d733d74, type: 2}
   materials:
