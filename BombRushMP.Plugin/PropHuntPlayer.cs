@@ -59,7 +59,7 @@ namespace BombRushMP.Plugin
 
         private bool CanFreeze()
         {
-            var ray = new Ray(_player.transform.position, Vector3.down);
+            var ray = new Ray(_player.transform.position + (Vector3.up * 0.1f), Vector3.down);
             return Physics.Raycast(ray, _maxFreezeClearance, (1 << Layers.Default) | (1 << Layers.NonStableSurface), QueryTriggerInteraction.Ignore);
         }
 
