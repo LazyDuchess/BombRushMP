@@ -339,5 +339,14 @@ namespace BombRushMP.Plugin
             var temp = pin.gameObject.AddComponent<TemporaryMapPin>();
             temp.Initialize(duration, pin);
         }
+
+        public static void BreakAllBreakables()
+        {
+            var breakables = FindObjectsOfType<BreakableObject>(true);
+            foreach (var breakable in breakables)
+            {
+                breakable.gameObject.SetActive(false);
+            }
+        }
     }
 }
