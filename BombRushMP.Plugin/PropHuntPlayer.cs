@@ -260,6 +260,13 @@ namespace BombRushMP.Plugin
 
         private void FixedUpdate()
         {
+            if (_frozen)
+            {
+                _player.motor._rigidbody.isKinematic = true;
+                _player.motor._rigidbody.velocity = Vector3.zero;
+                _player.motor._rigidbody.rotation = Quaternion.identity;
+            }
+
             var propDisguiseController = PropDisguiseController.Instance;
             var playerComp = PlayerComponent.GetLocal();
             
