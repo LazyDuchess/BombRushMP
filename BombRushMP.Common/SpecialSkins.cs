@@ -14,6 +14,8 @@ namespace BombRushMP.Common
         SpecialPlayer,
         SeanKingston,
         Forklift,
-        Jill
+        Jill,
+        Steve,
+        RedMinecraft
     }
 }

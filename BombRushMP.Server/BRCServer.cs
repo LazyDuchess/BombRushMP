@@ -246,6 +246,36 @@ namespace BombRushMP.Server
                         }
                     }
                     break;
+                case "makesteve":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                            {
+                                if (Players.TryGetValue(result, out var playa))
+                                {
+                                    SendPacketToClient(new ServerSetSpecialSkin(SpecialSkins.Steve), IMessage.SendModes.ReliableUnordered, playa.Client, NetChannels.Default);
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "makeredxmas":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                            {
+                                if (Players.TryGetValue(result, out var playa))
+                                {
+                                    SendPacketToClient(new ServerSetSpecialSkin(SpecialSkins.RedMinecraft), IMessage.SendModes.ReliableUnordered, playa.Client, NetChannels.Default);
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case "makeforkliftcertified":
                     if (player.ClientState.User.IsModerator)
                     {
@@ -363,7 +393,7 @@ namespace BombRushMP.Server
                     helpStr += $"{cmdChar}ph_skipsetup - Skips setup in a prop hunt lobby.\n{cmdChar}ph_makeprops - Makes everyone into a prop in a prop hunt lobby.\n{cmdChar}cancel - Cancels current gamemode if lobby host.\n{cmdChar}chibi - Turn into a chibi\n{cmdChar}emojis - Shows available chat emojis\n{cmdChar}hide - Hide chat\n{cmdChar}show - Show chat\n{cmdChar}clear - Clear chat\n";
                     if (player.ClientState.User.IsModerator)
                     {
-                        helpStr += $"{cmdChar}prophunt - Switch current lobby to prop hunt.\n{cmdChar}prop (id) - Copies your current prop hunt disguise to another player.\n{cmdChar}damage (id) (amount) - Damages a player.\n{cmdChar}parent (id) - Parents yourself to a player. 0 to reset.\n{cmdChar}tp (id) - Teleports player to you\n{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}makeforkliftcertified (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n{cmdChar}clearall - Clears everyones chats\n";
+                        helpStr += $"{cmdChar}makeredxmas (id) - Turn player into Xmas Red.\n{cmdChar}makesteve (id) - Turn player into Steve.\n{cmdChar}prophunt - Switch current lobby to prop hunt.\n{cmdChar}prop (id) - Copies your current prop hunt disguise to another player.\n{cmdChar}damage (id) (amount) - Damages a player.\n{cmdChar}parent (id) - Parents yourself to a player. 0 to reset.\n{cmdChar}tp (id) - Teleports player to you\n{cmdChar}banlist - Downloads the ban list from the server\n{cmdChar}banaddress (ip) (reason) - Bans player by IP\n{cmdChar}banid (id) (reason) - Bans player by ID\n{cmdChar}unban (ip) - Unbans player by IP\n{cmdChar}getids - Gets IDs of players in current stage\n{cmdChar}getaddresses - Gets IP addresses of players in current stage\n{cmdChar}help\n{cmdChar}stats - Shows global player and lobby stats\n{cmdChar}makechibi (id)\n{cmdChar}makeseankingston (id)\n{cmdChar}makeforkliftcertified (id)\n{cmdChar}setservertag (tag)\n{cmdChar}removeservertag (tag)\n{cmdChar}getservertags\n{cmdChar}clearall - Clears everyones chats\n";
                     }
                     if (player.ClientState.User.IsAdmin)
                     {
