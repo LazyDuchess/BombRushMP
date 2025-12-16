@@ -1,0 +1,340 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 3
+  m_Shader: {fileID: 4800000, guid: dfc61cd2a05d2134087605e14a30ab5c, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _DETAILTEXTUREUV_UV0
+  - _EMISSIONMASKUV_UV0
+  - _EMISSIONUV_UV0
+  - _MAINTEXUV_UV0
+  - _NORMALMAPUV_UV0
+  - _OUTLINEBLENDBASETEXTURE_ON
+  - _OUTLINEMASKUV_UV0
+  - _OVERLAYMASKUV_UV0
+  - _OVERLAYMODE_MIX
+  - _OVERLAYTEXUV_UV0
+  - _RIMLIGHTBLENDBASETEXTURE_ON
+  - _SCROLLTOGGLE_ON
+  - _SPECULARMASKUV_UV0
+  - _TRANSPARENCY_OPAQUE
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - AuraTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - AuraTexture1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - OutlineTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - RotationMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CubemapTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Emission:
+        m_Texture: {fileID: 2800000, guid: 92dbbff85aaaa7f41b20cf4384af393c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlipBookMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlipBookTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _GlowMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: c426fc9e5c0417f448783e8b0a258768, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OutlineMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlayMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlayTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ScrollMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ScrollTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ShadowTexture:
+        m_Texture: {fileID: 2800000, guid: 7c85cdf8bf61609428ead1844adb609b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecularMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - cubemapmask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClipping: 0.5
+    - _BaseRotationSpeed: 0
+    - _BlendDst: 0
+    - _BlendSrc: 1
+    - _BumpScale: 1
+    - _CubemapBlend: 1
+    - _CubemapColorize: 1
+    - _CubemapFresnelBias: 0.5
+    - _CubemapFresnelPower: 1
+    - _CubemapFresnelScale: 0
+    - _CubemapToggle: 0
+    - _Cull: 0
+    - _CustomLightingColorToggle: 0
+    - _CustomShadowColorToggle: 0
+    - _CutOut: 0.1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DetailTextureBlend: 1
+    - _DetailTextureToggle: 0
+    - _DetailTextureUV: 0
+    - _DstBlend: 0
+    - _EmissionEmit: 1
+    - _EmissionHue: 0
+    - _EmissionMaskScroll: 0
+    - _EmissionMaskUSpeed: 0
+    - _EmissionMaskUV: 0
+    - _EmissionMaskVSpeed: 0
+    - _EmissionScroll: 0
+    - _EmissionUSpeed: 0
+    - _EmissionUV: 0
+    - _EmissionVSpeed: 0
+    - _ExtraLightBlend: 2
+    - _ExtraLightOffset: -0.6
+    - _ExtraLightSoftness: 0.01
+    - _ExtraLightToggle: 0
+    - _FlipbookColumns: 8
+    - _FlipbookEmit: 1
+    - _FlipbookRows: 8
+    - _FlipbookSpeed: 1
+    - _FlipbookToggle: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0
+    - _GlossyReflections: 1
+    - _GlowCycle: 0
+    - _GlowEmit: 1
+    - _GlowSpeed: 10
+    - _GlowToggle: 0
+    - _HalftoneShadowScale: 200
+    - _HalftoneShadowSoftness: 0.5
+    - _HalftoneShadowToggle: 0
+    - _MainTexScroll: 0
+    - _MainTexUSpeed: 0
+    - _MainTexUV: 0
+    - _MainTexVSpeed: 0
+    - _MaxOutlineSize: 0.008
+    - _Metallic: 0
+    - _MinOutlineSize: 0.002
+    - _Mode: 0
+    - _NormalMapIntensity: 1
+    - _NormalMapUV: 0
+    - _OcclusionStrength: 1
+    - _Outline: 0
+    - _OutlineBlendBaseTexture: 1
+    - _OutlineMaskScroll: 0
+    - _OutlineMaskUSpeed: 0
+    - _OutlineMaskUV: 0
+    - _OutlineMaskVSpeed: 0
+    - _OutlineMaxSize: 0.004
+    - _OutlineMinSize: 0.002
+    - _OutlineMultiplier: 0.008
+    - _OutlineTextureToggle: 0
+    - _OverlayMaskScroll: 0
+    - _OverlayMaskUSpeed: 0
+    - _OverlayMaskUV: 0
+    - _OverlayMaskVSpeed: 0
+    - _OverlayMode: 0
+    - _OverlayTexScroll: 0
+    - _OverlayTexUSpeed: 0
+    - _OverlayTexUV: 0
+    - _OverlayTexVSpeed: 0
+    - _Parallax: 0.02
+    - _RimLightBlend: 25
+    - _RimLightBlendBaseTexture: 1
+    - _RimLightOffset: 0.65
+    - _RimLightPower: 0.01
+    - _RimLightShadowToggle: 0
+    - _RimShadowOffset: 0.65
+    - _RimShadowOpacity: 0.6676344
+    - _RimShadowPower: 10
+    - _ScrollEmit: 0
+    - _ScrollHue: 0
+    - _ScrollRotation: 0
+    - _ScrollToggle: 1
+    - _ShadeCel: 1
+    - _ShadeEnvLight: 1
+    - _ShadeEnvShadow: 1
+    - _ShadeShadowOffset: 0
+    - _ShadeSunLight: 1
+    - _ShadowIntensity: 0
+    - _ShadowOffset: 0
+    - _ShadowSoftness: 1
+    - _ShadowTextureBlend: 1
+    - _ShadowTextureToggle: 0
+    - _SilhouetteMaxSize: 0.015
+    - _SilhouetteMinSize: 0.005
+    - _SilhouetteMultiplier: 0.01
+    - _SilhouetteOverlay: 0
+    - _SilhouetteOverlayOpacity: 0
+    - _SilhouetteRimLightBlend: 25
+    - _SilhouetteRimLightOffset: 0.65
+    - _SilhouetteRimLightPower: 0.7925499
+    - _SilhouetteRimLightToggle: 0
+    - _SilhouetteTextureToggle: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecularBrightness: 1
+    - _SpecularCustomColorToggle: 0
+    - _SpecularHighlights: 1
+    - _SpecularMaskUV: 0
+    - _SpecularOffset: 0
+    - _SpecularSoftness: 0.01
+    - _SpecularToggle: 0
+    - _SrcBlend: 1
+    - _Transparency: 0
+    - _UVSec: 0
+    - _VertexColorsOpacity: 1
+    - _VertexColorsToggle: 0
+    - _ZWrite: 1
+    - footer_github: 0
+    - footer_kofi: 0
+    - m_end_BaseTexture: 0
+    - m_end_CubemapOptions: 0
+    - m_end_CustomLighting: 0
+    - m_end_DetailTexture: 0
+    - m_end_EmissionTexture: 0
+    - m_end_MuppoFlipbookOptions: 0
+    - m_end_MuppoGlowOptions: 0
+    - m_end_MuppoScrollOptions: 0
+    - m_end_NormalMap: 0
+    - m_end_OutlineOptions: 0
+    - m_end_RimLight: 0
+    - m_end_SilhouetteOutlineOptions: 0
+    - m_start_BaseTexture: 1
+    - m_start_CubemapOptions: 0
+    - m_start_CustomLighting: 1
+    - m_start_DetailTexture: 0
+    - m_start_EmissionTexture: 0
+    - m_start_MuppoFlipbookOptions: 0
+    - m_start_MuppoGlowOptions: 0
+    - m_start_MuppoScrollOptions: 0
+    - m_start_NormalMap: 0
+    - m_start_OutlineOptions: 1
+    - m_start_RimLight: 0
+    - m_start_SilhouetteOutlineOptions: 0
+    - shader_is_using_thry_editor: 69
+    - shader_master_label: 0
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 0}
+    - _BaseRotationCenter: {r: 0, g: 0, b: 0, a: 0}
+    - _BaseScrollSpeed: {r: 0, g: 0, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _CustomLightingColor: {r: 1, g: 1, b: 1, a: 0}
+    - _CustomShadowColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionMaskScrollSpeed: {r: 0, g: 0, b: 0, a: 0}
+    - _FlipbookOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _FlipbookTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _GlowColor: {r: 1, g: 0, b: 0, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OutlineTextureScroll: {r: 0, g: 0, b: 0, a: 0}
+    - _OutlineTextureTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _RimLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ScrollOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _ScrollSize: {r: 1, g: 1, b: 0, a: 0}
+    - _ScrollSpeed: {r: 0, g: 1, b: 0, a: 0}
+    - _ShadeLightTint: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadeShadowTint: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowTextureTiling: {r: 8, g: 8, b: 0, a: 0}
+    - _SilhouetteColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SilhouetteTextureScroll: {r: 0, g: 0, b: 0, a: 0}
+    - _SilhouetteTextureTiling: {r: 1, g: 1, b: 0, a: 0}
+    - _SpecularCustomColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BuildTextureStacks: []
