@@ -40,11 +40,11 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public void LoadTestSettings()
         {
-            PropVerticalSpeed = 10f;
-            PropHorizontalSpeed = 10f;
+            PropVerticalSpeed = 15f;
+            PropHorizontalSpeed = 15f;
             PropDamage = 2;
             PropMinimumSize = 0.1f;
-            HunterReticleSize = 0.5f;
+            HunterReticleSize = 1f;
             HunterPelletAmount = 8;
 
             foreach(var tag in ClientController.Instance.ServerState.Tags)
