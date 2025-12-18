@@ -9,6 +9,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: BlockAtlas
     second: {fileID: 2100000, guid: 683c2db74c90ddb4aba926af1d30d877, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlockAtlasTransparent
+    second: {fileID: 2100000, guid: ccc2cb640d68ee648887b476df6e4c45, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
