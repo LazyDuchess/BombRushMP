@@ -138,19 +138,15 @@ namespace BombRushMP.Mono.Runtime
         private void UpdateDetection()
         {
             _player = null;
-            var overlaps = Physics.OverlapSphere(transform.position + (transform.up * HeadHeight), DetectionRange, (1 << Layers.Player));
-            foreach(var overlap in overlaps)
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var distToPlayer = Vector3.Distance(transform.position + (transform.up * HeadHeight), player.transform.position);
+            if (distToPlayer <= DetectionRange && !player.IsDead())
             {
-                var player = overlap.GetComponentInParent<Player>();
-                if (player == null) continue;
-                if (player.isAI) continue;
-                if (player.IsDead()) continue;
                 if (CalculateVisibility(player.transform.position + (player.transform.up * 0.25f)) ||
                     CalculateVisibility(player.transform.position + (player.transform.up * 0.8f)) ||
                     CalculateVisibility(player.transform.position + (player.transform.up * 1.3f)))
                 {
                     _player = player;
-                    break;
                 }
             }
         }
@@ -383,15 +379,15 @@ namespace BombRushMP.Mono.Runtime
             explosionGFX.transform.position = transform.position;
             var explosionClip = ExplosionSFX[UnityEngine.Random.Range(0, ExplosionSFX.Length)];
             OneShotAudio.Create(explosionClip, transform.position, 1.0f, 10f, 15f);
-            var colls = Physics.OverlapSphere(transform.position, ExplosionRadius, (1 << Layers.Player), QueryTriggerInteraction.Ignore);
-            foreach (var coll in colls)
+
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            var distToPlayer = Vector3.Distance(transform.position, player.transform.position);
+            if (distToPlayer <= ExplosionRadius && !player.IsDead())
             {
-                var player = coll.GetComponentInParent<Player>();
-                if (player == null) continue;
-                if (player.isAI) continue;
                 player.GetHit(ExplosionDamage, (transform.position - player.transform.position).normalized, KnockbackAbility.KnockbackType.BIG);
                 GameplayCamera.StartScreenShake(ScreenShakeType.HEAVY, 0.3f, false);
             }
+
             _primeTimer = 0f;
             Kill();
         }
