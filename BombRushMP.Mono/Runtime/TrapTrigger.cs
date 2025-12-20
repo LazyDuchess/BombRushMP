@@ -12,11 +12,21 @@ namespace BombRushMP.Mono.Runtime
 {
     public class TrapTrigger : MonoBehaviour
     {
+        public Dispenser Target;
         public AudioSource ClickSFX;
         public float PushInDistance = 0.1f;
         private GameObject _plateMesh;
         private float _triggerTimer = 0f;
         private Vector3 _initialPos;
+
+        private void OnDrawGizmos()
+        {
+            if (Target != null)
+            {
+                Gizmos.color = new Color(0f, 1f, 0f, 1.0f);
+                Gizmos.DrawLine(transform.position, Target.transform.position);
+            }
+        }
 
 #if PLUGIN
         private void Awake()
@@ -55,6 +65,8 @@ namespace BombRushMP.Mono.Runtime
         private void Fire()
         {
             ClickSFX.Play();
+            if (Target != null)
+                Target.Trigger();
         }
 #endif
     }
