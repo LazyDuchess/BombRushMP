@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: 8362248726619128171, guid: 8f805bb29fb2cb542811b2743906c37d, type: 3}
-  ForwardForce: 1
-  UpForce: 0.5
+  ForwardForce: 1.5
+  UpForce: 0

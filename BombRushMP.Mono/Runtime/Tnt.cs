@@ -12,6 +12,7 @@ namespace BombRushMP.Mono.Runtime
 {
     public class Tnt : MonoBehaviour
     {
+        public GameObject ExplosionEffect;
         public Material FlashMaterial;
         public float ExplosionTime = 1.0f;
         public float ExplosionRadius = 2f;
@@ -79,6 +80,8 @@ namespace BombRushMP.Mono.Runtime
 
         private void Explode()
         {
+            var explosionGFX = Instantiate(ExplosionEffect);
+            explosionGFX.transform.position = transform.position;
             var explosionClip = ExplosionSounds[UnityEngine.Random.Range(0, ExplosionSounds.Length)];
             OneShotAudio.Create(explosionClip, transform.position, 1.5f, 10f, 15f);
             var colls = Physics.OverlapSphere(transform.position, ExplosionRadius, (1 << Layers.Player), QueryTriggerInteraction.Ignore);
