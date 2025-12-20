@@ -204,6 +204,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edbec8de1b841ff44b98fe47d0ca0636, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AnimationSpeed: 5
+  AnimationDegrees: 30
+  Knockback: 4
+  KnockbackUp: 5
+  KnockbackTime: 0.5
   PrimeAudioSource: {fileID: 1866615925940084321}
   FlashMaterial: {fileID: 2100000, guid: ef69fc54797ae114aa20d9529c99b277, type: 2}
   DetectionRange: 30
@@ -221,8 +226,8 @@ MonoBehaviour:
   ExplosionRadius: 5
   PrimeRadius: 3
   TurnSpeed: 200
-  TopSpeed: 5
-  Acceleration: 2
+  TopSpeed: 4
+  Acceleration: 5
   PrimeGrace: 0.8
   PrimeGraceRadius: 4
   GrowTime: 1.2

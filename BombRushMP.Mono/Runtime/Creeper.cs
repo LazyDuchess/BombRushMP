@@ -12,6 +12,15 @@ namespace BombRushMP.Mono.Runtime
 {
     public class Creeper : MonoBehaviour
     {
+        public float AnimationSpeed = 5f;
+        public float AnimationDegrees = 30f;
+
+        public float Knockback = 1f;
+        public float KnockbackUp = 1f;
+        public float KnockbackTime = 0.5f;
+
+        private float _knockbackTimer = 0f;
+
         public AudioSource PrimeAudioSource;
 
         public Material FlashMaterial;
@@ -77,9 +86,15 @@ namespace BombRushMP.Mono.Runtime
         private float _primeTimer = 0f;
         private float _flashTimer = 0f;
 
+        private Transform _frontLLeg;
+        private Transform _frontRLeg;
+        private Transform _backLLeg;
+        private Transform _backRLeg;
+
         private Vector3 _movementVector = Vector3.zero;
 
         private static States[] WanderStates = { States.Wander, States.LookAround };
+        private static List<Creeper> Creepers = new();
 
         private void Awake()
         {
@@ -90,6 +105,34 @@ namespace BombRushMP.Mono.Runtime
             _rb = GetComponent<Rigidbody>();
             _renderer = GetComponentInChildren<Renderer>();
             _originalMaterial = _renderer.sharedMaterial;
+
+            var root = transform.FindRecursive("root");
+
+            _frontLLeg = root.Find("footf.L");
+            _frontRLeg = root.Find("footf.R");
+
+            _backLLeg = root.Find("footb.L");
+            _backRLeg = root.Find("footb.R");
+
+            Creepers.Add(this);
+        }
+
+        private void UpdateAnimation()
+        {
+            var flatVelocity = _rb.velocity;
+            flatVelocity.y = 0f;
+
+            var flatSpeed = flatVelocity.magnitude;
+
+            var animMultiplier = Mathf.Min(1f, flatSpeed / TopSpeed);
+
+            var sine = Mathf.Sin(Time.timeSinceLevelLoad * AnimationSpeed) * AnimationDegrees;
+
+            _frontLLeg.transform.localRotation = Quaternion.Euler(147.323f + (sine * animMultiplier), 0f, 0f);
+            _frontRLeg.transform.localRotation = Quaternion.Euler(147.323f - (sine * animMultiplier), 0f, 0f);
+
+            _backRLeg.transform.localRotation = Quaternion.Euler(-146.254f + (sine * animMultiplier), 0f, 0f);
+            _backLLeg.transform.localRotation = Quaternion.Euler(-146.254f - (sine * animMultiplier), 0f, 0f);
         }
 
         private void UpdateDetection()
@@ -174,13 +217,18 @@ namespace BombRushMP.Mono.Runtime
 
         private void MovementUpdate()
         {
+            if (_knockbackTimer > 0f)
+                return;
             var flatVelocity = _rb.velocity;
             var yVelocity = flatVelocity.y;
             flatVelocity.y = 0f;
             var flatVelocityMagnitude = flatVelocity.magnitude;
 
+            var movementVector = _movementVector;
+
             if (_movementVector.magnitude <= 0f)
             {
+                movementVector = flatVelocity.normalized;
                 if (flatVelocityMagnitude > 0f)
                 {
                     flatVelocityMagnitude = Mathf.Max(0f, flatVelocityMagnitude - Acceleration * Time.deltaTime);
@@ -190,7 +238,7 @@ namespace BombRushMP.Mono.Runtime
             {
                 flatVelocityMagnitude = Mathf.Min(TopSpeed, flatVelocityMagnitude + Acceleration * Time.deltaTime);
             }
-            var newVel = flatVelocityMagnitude * _movementVector;
+            var newVel = flatVelocityMagnitude * movementVector;
             newVel.y = yVelocity;
             _rb.velocity = newVel;
         }
@@ -232,6 +280,22 @@ namespace BombRushMP.Mono.Runtime
             return !Physics.Raycast(ray, dist, (1 << Layers.Default), QueryTriggerInteraction.Ignore);
         }
 
+        private void CalculateCreeperCollision()
+        {
+            foreach(var creeper in Creepers)
+            {
+                if (creeper == this) continue;
+                var otherPos = creeper.transform.position;
+                otherPos.y = transform.position.y;
+                var dist = Vector3.Distance(otherPos, transform.position);
+                if (dist <= 1f)
+                {
+                    var headingToOther = (otherPos - transform.position).normalized;
+                    transform.position -= headingToOther * (1f - dist);
+                }
+            }
+        }
+
         private void FixedUpdate()
         {
             UpdateDetection();
@@ -239,8 +303,35 @@ namespace BombRushMP.Mono.Runtime
             StateUpdate();
             MovementUpdate();
             LookUpdate();
+            CalculateCreeperCollision();
             if (transform.localPosition.y <= KillPlaneY)
                 Kill();
+            _knockbackTimer -= Time.deltaTime;
+            if (_knockbackTimer < 0f)
+                _knockbackTimer = 0f;
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (_knockbackTimer > 0f) return;
+            if (other.gameObject.layer != Layers.PlayerHitbox) return;
+            var player = other.gameObject.GetComponentInParent<Player>();
+            if (player == null) return;
+            if (player.isAI) return;
+            if (player.IsDead()) return;
+            GetKnockBack(player.transform.position);
+        }
+
+        private void GetKnockBack(Vector3 from)
+        {
+            if (_knockbackTimer > 0f)
+                return;
+            var head = (from - transform.position).normalized;
+            head.y = 0f;
+            head = head.normalized;
+            _rb.velocity = -head * Knockback;
+            _rb.velocity += Vector3.up * KnockbackUp;
+            _knockbackTimer = KnockbackTime;
         }
 
         private void Prime()
@@ -308,10 +399,12 @@ namespace BombRushMP.Mono.Runtime
         private void LateUpdate()
         {
             UpdatePrime();
+            UpdateAnimation();
         }
 
         private void Kill()
         {
+            Creepers.Remove(this);
             Destroy(gameObject);
         }
 #endif
