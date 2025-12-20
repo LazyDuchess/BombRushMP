@@ -261,6 +261,21 @@ namespace BombRushMP.Server
                         }
                     }
                     break;
+                case "makeminecraft":
+                    if (player.ClientState.User.IsModerator)
+                    {
+                        if (args.Length > 1)
+                        {
+                            if (ushort.TryParse(args[1], out var result))
+                            {
+                                if (Players.TryGetValue(result, out var playa))
+                                {
+                                    SendPacketToClient(new ServerSetSpecialSkin(SpecialSkins.Minecraft), IMessage.SendModes.ReliableUnordered, playa.Client, NetChannels.Default);
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case "makeredxmas":
                     if (player.ClientState.User.IsModerator)
                     {

@@ -23,7 +23,8 @@ namespace BombRushMP.Plugin
             {SpecialSkins.Forklift, "ForkliftPrefab" },
             {SpecialSkins.Jill, "JillPrefab" },
             {SpecialSkins.Steve, "StevePrefab" },
-            {SpecialSkins.RedMinecraft, "XmasRedPrefab" }
+            {SpecialSkins.RedMinecraft, "XmasRedPrefab" },
+            {SpecialSkins.Minecraft, "MinecraftPrefab" }
         };
         private Dictionary<SpecialSkins, GameObject> _specialSkinVisuals = new();
         private Dictionary<SpecialSkins, AudioLibrary> _specialSkinAudio = new();

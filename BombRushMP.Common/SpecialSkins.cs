@@ -16,6 +16,7 @@ namespace BombRushMP.Common
         Forklift,
         Jill,
         Steve,
-        RedMinecraft
+        RedMinecraft,
+        Minecraft
     }
 }
