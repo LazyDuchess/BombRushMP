@@ -83,7 +83,7 @@ namespace BombRushMP.Mono.Runtime
             var explosionGFX = Instantiate(ExplosionEffect);
             explosionGFX.transform.position = transform.position;
             var explosionClip = ExplosionSounds[UnityEngine.Random.Range(0, ExplosionSounds.Length)];
-            OneShotAudio.Create(explosionClip, transform.position, 1.5f, 10f, 15f);
+            OneShotAudio.Create(explosionClip, transform.position, 1.0f, 10f, 15f);
             var colls = Physics.OverlapSphere(transform.position, ExplosionRadius, (1 << Layers.Player), QueryTriggerInteraction.Ignore);
             foreach(var coll in colls)
             {
