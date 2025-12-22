@@ -77,7 +77,7 @@ namespace BombRushMP.Mono.Runtime
             _diag4 = new CustomDialogue(DJName, "I suspect it has created an alternate reality. One where <color=yellow>Minecraft</color> is real. Part of your mind is stuck in there right now.");
             _diag5 = new CustomDialogue(DJName, "We can't bring your memories back, much less defeat Faux and go All City if we don't get your mind out of that reality.");
             _diag6 = new CustomDialogue(DJName, "Please, jump in. Find a way out of there, and make it quick. It all depends on it.");
-            _diag7 = new CustomDialogue(RedName, "Alright, let's find a way out.");
+            _diag7 = new CustomDialogue(RedName, "This shit is stupid.");
 
             _diag1.OnDialogueEnd += () =>
             {
@@ -104,7 +104,7 @@ namespace BombRushMP.Mono.Runtime
                 _redGetInGameObject.SetActive(true);
                 SharedUtils.SetLocalSpecialSkin(SpecialSkins.Minecraft);
                 PlaceAtMinecraft();
-                StartDialogue(_diag7, 10f);
+                StartDialogue(_diag7, 4f);
                 SetCamera(_getInCamera);
             };
 
@@ -112,6 +112,7 @@ namespace BombRushMP.Mono.Runtime
             _diag7.OnDialogueBegin += () =>
             {
                 SetCamera(_minecraftCamera);
+                PlaceAtMinecraft();
             };
         }
 
