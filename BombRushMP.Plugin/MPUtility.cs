@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
+using BombRushMP.Mono.Runtime;
 using BombRushMP.Plugin.Patches;
 using Reptile;
 using System;
@@ -225,6 +226,10 @@ namespace BombRushMP.Plugin
 
         public static void SetUpPlayerForGameStateUpdate()
         {
+            if (MinecraftPlayer.Instance != null)
+            {
+                MinecraftPlayer.Instance.Kill();
+            }
             CloseMenusAndSpectator();
             var uiManager = Core.Instance.UIManager;
             if (uiManager.menuNavigationController.IsMenuPartOfMenuStack(uiManager.pauseMenu))
@@ -276,6 +281,10 @@ namespace BombRushMP.Plugin
 
         public static void Revive()
         {
+            if (MinecraftPlayer.Instance != null)
+            {
+                MinecraftPlayer.Instance.Kill();
+            }
             var deathSequence = DeathSequenceController.Instance;
             if (deathSequence != null)
             {

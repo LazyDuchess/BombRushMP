@@ -46,6 +46,7 @@ namespace BombRushMP.Mono.Runtime
             SharedUtils.SetLocalSpecialSkin(SpecialSkins.Minecraft);
             PlaceAtMinecraft();
             _redGetInGameObject.SetActive(false);
+            MinecraftPlayer.Create();
         }
 
         private void PlaceAtMinecraft()
