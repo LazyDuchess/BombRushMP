@@ -19,12 +19,21 @@ namespace BombRushMP.Mono.Runtime
     {
         public GameObject DialogueCamera;
         public GameObject NoteCamera;
+
+        public GameObject Note;
+        public Animator DjAnimator;
+        public Animator VehicleAnimator;
+
+        public Transform MinecraftSpawnPoint;
+        public GameObject RedGetIn;
+        public GameObject GetInCamera;
+        public GameObject MinecraftCamera;
 #if PLUGIN
         private CustomSequence _dialogueSequence;
         private CustomSequence _minecraftIntroSequence;
         private void Awake()
         {
-            _minecraftIntroSequence = new MinecraftIntroSequence(DialogueCamera, NoteCamera);
+            _minecraftIntroSequence = new MinecraftIntroSequence(DialogueCamera, NoteCamera, DjAnimator, Note, VehicleAnimator, MinecraftSpawnPoint, RedGetIn, GetInCamera, MinecraftCamera); ;
             _dialogueSequence = new CyberStartDialogue(DialogueCamera, _minecraftIntroSequence);
             PlacePlayerAtSnapPosition = true;
         }
