@@ -153,6 +153,7 @@ namespace BombRushMP.Plugin
 
         public void SendPacket(Packet packet, IMessage.SendModes sendMode, NetChannels channel)
         {
+            if (_client == null) return;
             var message = PacketFactory.MessageFromPacket(packet, sendMode, channel);
             _client.Send(message);
         }

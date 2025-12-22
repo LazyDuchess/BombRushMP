@@ -47,6 +47,14 @@
       <Private>False</Private>
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
     </ProjectReference>
+	  <ProjectReference Include="..\BombRushMP.PluginCommon\BombRushMP.PluginCommon.csproj">
+		  <Private>False</Private>
+		  <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+	  </ProjectReference>
+	  <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj">
+		  <Private>False</Private>
+		  <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+	  </ProjectReference>
   </ItemGroup>
 	<ItemGroup>
 		<Reference Include="Assembly-CSharp">

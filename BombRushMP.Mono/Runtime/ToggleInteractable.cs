@@ -28,6 +28,7 @@ namespace BombRushMP.Mono
         private void Awake()
         {
             PlacePlayerAtSnapPosition = false;
+            LookAt = false;
             _isOn = StartsOn;
             UpdateState();
         }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2c14ebd969345eb41a75836b269323c8
+guid: 348aeef9faec2644fb18c695e63ae026
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -19,7 +19,10 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'GetIn' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t's2' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -31,7 +34,162 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: GetIn
+      takeName: GetIn
+      internalID: 7825648497923473047
+      firstFrame: 0
+      lastFrame: 63
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: mesh
+        weight: 0
+      - path: root
+        weight: 1
+      - path: root/chain1
+        weight: 0
+      - path: root/chain1/chain2
+        weight: 0
+      - path: root/chain1/chain2/chain3
+        weight: 0
+      - path: root/chain1/chain2/chain3/Bone004
+        weight: 0
+      - path: root/leg1l
+        weight: 1
+      - path: root/leg1l/leg2l
+        weight: 1
+      - path: root/leg1l/leg2l/footl
+        weight: 1
+      - path: root/leg1l/leg2l/footl/toesl
+        weight: 1
+      - path: root/leg1r
+        weight: 1
+      - path: root/leg1r/leg2r
+        weight: 1
+      - path: root/leg1r/leg2r/footr
+        weight: 1
+      - path: root/leg1r/leg2r/footr/toesr
+        weight: 1
+      - path: root/s1
+        weight: 1
+      - path: root/s1/s2
+        weight: 1
+      - path: root/s1/s2/jetpackPos
+        weight: 1
+      - path: root/s1/s2/jetpackPos/jetpack
+        weight: 1
+      - path: root/s1/s2/jetpackPos/jetpack/boostPos
+        weight: 1
+      - path: root/s1/s2/jetpackPos/jetpack/boostPos/boost
+        weight: 1
+      - path: root/s1/s2/neck
+        weight: 1
+      - path: root/s1/s2/neck/head
+        weight: 1
+      - path: root/s1/s2/shldl
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f1l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f1l/f2l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f1l/f2l/f3l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f4l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f4l/f5l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f4l/f5l/f6l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f7l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f7l/f8l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f7l/f8l/f9l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f10l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f10l/f11l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/f10l/f11l/f12l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/propl
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/thumb1l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/thumb1l/thumb2l
+        weight: 1
+      - path: root/s1/s2/shldl/arm1l/arm2l/handl/thumb1l/thumb2l/thumb3l
+        weight: 1
+      - path: root/s1/s2/shldr
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f1r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f1r/f2r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f1r/f2r/f3r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f4r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f4r/f5r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f4r/f5r/f6r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f7r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f7r/f8r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f7r/f8r/f9r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f10r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f10r/f11r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/f10r/f11r/f12r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/propr
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/thumb1r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/thumb1r/thumb2r
+        weight: 1
+      - path: root/s1/s2/shldr/arm1r/arm2r/handr/thumb1r/thumb2r/thumb3r
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -569,11 +727,11 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
-  autoGenerateAvatarMappingIfUnspecified: 0
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 2c14ebd969345eb41a75836b269323c8, type: 3}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 1
+  avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0

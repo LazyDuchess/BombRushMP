@@ -248,8 +248,15 @@
 </Reference>
   </ItemGroup>
   <ItemGroup>
+ <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj">
+  <Private>False</Private>
+  <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+ </ProjectReference>
+</ItemGroup>
+  <ItemGroup>
     <Compile Include="AudioCollection.cs" />
     <Compile Include="AudioLibrary.cs" />
+	<Compile Include="SharedUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

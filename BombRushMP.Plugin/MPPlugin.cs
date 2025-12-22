@@ -19,6 +19,7 @@ using BombRushMP.BunchOfEmotes;
 using BombRushMP.NetRadio;
 using BombRushMP.Plugin.Gamemodes;
 using CommonAPI;
+using BombRushMP.PluginCommon;
 
 namespace BombRushMP.Plugin
 {
@@ -92,8 +93,27 @@ namespace BombRushMP.Plugin
             StageManager.OnStagePostInitialization += StageManager_OnStagePostInitialization;
             ReflectionController.Initialize();
             StageAPI.OnStagePreInitialization += OnStagePreInitialization;
+            InitShared();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
+
+        private void InitShared()
+        {
+            SharedUtils.SetLocalCharacter += (Characters ch) => {
+                var save = Core.Instance.SaveManager.CurrentSaveSlot;
+                var outfit = save.GetCharacterProgress(ch).outfit;
+                var ply = WorldHandler.instance.GetCurrentPlayer();
+                SpecialSkinManager.Instance.RemoveSpecialSkinFromPlayer(ply);
+                ply.SetCharacter(ch, outfit);
+                ply.InitVisual();
+                Core.Instance.SaveManager.SaveCurrentSaveSlot();
+            };
+
+            SharedUtils.SetLocalSpecialSkin += (SpecialSkins skin) => {
+                SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(WorldHandler.instance.GetCurrentPlayer(), skin);
+            };
+        }
+
 
         private void OnStagePreInitialization(Stage newStage, Stage previousStage)
         {
