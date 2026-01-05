@@ -46,6 +46,27 @@ public class AppMultiplayerDebug : CustomApp
             SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.SeanKingston);
         };
         ScrollView.AddButton(button);
+        button = PhoneUIUtility.CreateSimpleButton("Steve Skin");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.Steve);
+        };
+        ScrollView.AddButton(button);
+        button = PhoneUIUtility.CreateSimpleButton("Minecraft Skin");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.Minecraft);
+        };
+        ScrollView.AddButton(button);
+        button = PhoneUIUtility.CreateSimpleButton("Red Minecraft Skin");
+        button.OnConfirm += () =>
+        {
+            var player = WorldHandler.instance.GetCurrentPlayer();
+            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.RedMinecraft);
+        };
+        ScrollView.AddButton(button);
         button = PhoneUIUtility.CreateSimpleButton("Cop Skin Test");
         button.OnConfirm += () =>
         {
