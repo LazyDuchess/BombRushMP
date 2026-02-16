@@ -752,7 +752,7 @@ namespace BombRushMP.Plugin
         {
             var authKey = AuthKey;
             var clientState = CreateClientState();
-            var authPacket = new ClientAuth(authKey, clientState);
+            var authPacket = new ClientAuth(authKey, clientState, SystemGuid.Value(), MPUtility.GetOrCreateSystemGUID());
             authPacket.Invisible = MPSettings.Instance.Invisible;
             SendPacket(authPacket, IMessage.SendModes.Reliable, NetChannels.Default);
         }

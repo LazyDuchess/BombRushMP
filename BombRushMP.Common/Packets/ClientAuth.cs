@@ -13,16 +13,20 @@ namespace BombRushMP.Common.Packets
         public string AuthKey = "";
         public bool Invisible = false;
         public ClientState State;
+        public string HWID = "";
+        public string GUID = "";
 
         public ClientAuth()
         {
 
         }
 
-        public ClientAuth(string authKey, ClientState state)
+        public ClientAuth(string authKey, ClientState state, string hWID, string gUID)
         {
             AuthKey = authKey;
             State = state;
+            HWID = hWID;
+            GUID = gUID;
         }
 
         public override void Read(BinaryReader reader)
@@ -32,6 +36,8 @@ namespace BombRushMP.Common.Packets
                 throw new IncompatibleProtocolException();
             AuthKey = reader.ReadString();
             Invisible = reader.ReadBoolean();
+            HWID = reader.ReadString();
+            GUID = reader.ReadString();
             State = new ClientState();
             State.Read(reader);
         }
@@ -41,6 +47,8 @@ namespace BombRushMP.Common.Packets
             writer.Write(Constants.ProtocolVersion);
             writer.Write(AuthKey);
             writer.Write(Invisible);
+            writer.Write(HWID);
+            writer.Write(GUID);
             State.Write(writer);
         }
     }

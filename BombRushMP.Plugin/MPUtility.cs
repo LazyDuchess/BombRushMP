@@ -12,11 +12,36 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.IO;
 
 namespace BombRushMP.Plugin
 {
     public static class MPUtility
     {
+        public static string GetOrCreateSystemGUID()
+        {
+            var guidDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "NetworkInformation");
+            Directory.CreateDirectory(guidDir);
+            var guidPath = Path.Combine(guidDir, "cryptokey.dat");
+            var guid = "";
+            if (File.Exists(guidPath))
+            {
+                try
+                {
+                    guid = File.ReadAllText(guidPath);
+                    if (!guid.IsNullOrWhiteSpace() && Guid.TryParse(guid, out _))
+                        return guid;
+                }
+                catch
+                {
+                    
+                }
+            }
+            guid = Guid.NewGuid().ToString();
+            File.WriteAllText(guidPath, guid);
+            return guid;
+        }
+
         public static string GetHierarchyPath(GameObject go)
         {
             var path = go.name;
