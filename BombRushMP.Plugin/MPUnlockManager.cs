@@ -38,6 +38,7 @@ namespace BombRushMP.Plugin
             RegisterUnlock(new MPSkateboardSkin("Goonie (Real)", "By: Keziah_L", Animator.StringToHash("realgoonie"), true, GetTextureFromAssets("goonietex"), GetMeshFromAssets("realgoonieboard")));
             RegisterUnlock(new MPSkateboardSkin("Goonie (Chibi)", "By: Keziah_L", Animator.StringToHash("gooniechibi"), true, GetTextureFromAssets("goonietex"), GetMeshFromAssets("gooniechibi")));
             RegisterUnlock(new MPSkateboardSkin("Thunder Kick", "By: Thunder Kick", Animator.StringToHash("thunderkickdeck"), true, GetTextureFromAssets("thunderkickdeck")));
+            RegisterUnlock(new MPSkateboardSkin("Junkyard Dog", "By: Yurok and Keziah_L", Animator.StringToHash("yurokBoard"), true, GetTextureFromAssets("yurokBoardTex"), GetMeshFromAssets("yurokBoard")));
         }
 
         private Material GetMaterialFromAssets(string name)
