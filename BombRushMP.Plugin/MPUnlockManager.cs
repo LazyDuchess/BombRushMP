@@ -14,7 +14,7 @@ namespace BombRushMP.Plugin
             RegisterUnlock(new MPSkateboardSkin("Dreamcast", "By: Pupsi", Animator.StringToHash("dreamcastskateboard"), true, GetTextureFromAssets("DreamcastSkateboardTex")));
             RegisterUnlock(new MPSkateboardSkin("Knuckles", "By: Pupsi", Animator.StringToHash("knucklesskateboard"), true, GetTextureFromAssets("KnucklesSkateboardTex")));
             RegisterUnlock(new MPSkateboardSkin("Moe Shop", "By: Pupsi", Animator.StringToHash("moeshopskateboard"), true, GetTextureFromAssets("MoeShopSkateboardTex")));
-            RegisterUnlock(new MPSkateboardSkin("Glassboard", "By: Woodztock", Animator.StringToHash("glassboardskateboard"), true, GetTextureFromAssets("DreamcastSkateboardTex"), GetMeshFromAssets("GlassboardMesh")));
+            RegisterUnlock(new MPSkateboardSkin("Glassboard", "By: Woodztock", Animator.StringToHash("glassboardskateboard"), true, GetTextureFromAssets("cottoncandy"), GetMeshFromAssets("GlassboardMesh")));
             RegisterUnlock(new MPSkateboardSkin("Iced Board", "By: Stony", Animator.StringToHash("icedboardskateboard"), true, GetMaterialFromAssets("IcedBoardMat"), GetMeshFromAssets("IcedBoard")));
             RegisterUnlock(new MPSkateboardSkin("Crystal Board", "By: Woodztock", Animator.StringToHash("crystalboardskateboard"), true, GetMaterialFromAssets("CrystalBoardMat"), GetMeshFromAssets("CrystalBoardMesh")));
             RegisterUnlock(new MPSkateboardSkin("Goonie", "By: Pupsi", Animator.StringToHash("goonieskateboard"), true, [
