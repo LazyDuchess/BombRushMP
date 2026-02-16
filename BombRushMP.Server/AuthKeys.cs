@@ -22,12 +22,15 @@ namespace BombRushMP.Server
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public AuthUser GetUser(string key)
+        public AuthUser GetUser(string key, string challenge)
         {
-            if (Users.TryGetValue(key, out var result))
+            foreach(var us in Users)
+            {
+                var otherHashed = AuthUser.HashPassword(us.Key, challenge);
+                if (otherHashed == key) return us.Value;
+            }
+            if (Users.TryGetValue("Default", out var result))
                 return result;
-            else if (Users.TryGetValue("Default", out var result2))
-                return result2;
             return _defaultUser;
         }
     }

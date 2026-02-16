@@ -10,6 +10,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -456,6 +458,12 @@ namespace BombRushMP.Plugin
             PacketReceived?.Invoke(packetId, packet);
             switch (packetId)
             {
+                case Packets.ServerChallenge:
+                    {
+                        SendAuth((packet as ServerChallenge).Challenge);
+                    }
+                    break;
+
                 case Packets.ServerServerStateUpdate:
                     {
                         var statePacket = packet as ServerServerStateUpdate;
@@ -748,11 +756,13 @@ namespace BombRushMP.Plugin
             StartCoroutine(AttemptReconnect());
         }
 
-        public void SendAuth()
+        public void SendAuth(string challenge)
         {
+            if (string.IsNullOrWhiteSpace(challenge) || challenge.Length < 10) return;
+            ClientLogger.Log("Challenge received, sending auth...");
             var authKey = AuthKey;
             var clientState = CreateClientState();
-            var authPacket = new ClientAuth(authKey, clientState, SystemGuid.Value(), MPUtility.GetOrCreateSystemGUID());
+            var authPacket = new ClientAuth(AuthUser.HashPassword(authKey, challenge), clientState, SystemGuid.Value(), MPUtility.GetOrCreateSystemGUID());
             authPacket.Invisible = MPSettings.Instance.Invisible;
             SendPacket(authPacket, IMessage.SendModes.Reliable, NetChannels.Default);
         }
@@ -795,8 +805,7 @@ namespace BombRushMP.Plugin
 
         private void OnConnected(object sender, EventArgs e)
         {
-            ClientLogger.Log("Connected! Sending Auth request...");
-            SendAuth();
+            ClientLogger.Log("Connected!");
         }
 
         private void OnDestroy()

@@ -1,11 +1,12 @@
 ﻿using BombRushMP.Common;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.IO;
 
 namespace BombRushMP.Common
 {
@@ -91,6 +92,20 @@ namespace BombRushMP.Common
             {
                 Badges[i] = reader.ReadInt32();
             }
+        }
+
+        public static string HashPassword(string password, string salt)
+        {
+            var saltBytes = Encoding.UTF8.GetBytes(salt);
+
+            using var pbkdf2 = new Rfc2898DeriveBytes(
+                password,
+                saltBytes,
+                100_000
+            );
+
+            var hash = pbkdf2.GetBytes(32);
+            return Convert.ToBase64String(hash);
         }
     }
 }

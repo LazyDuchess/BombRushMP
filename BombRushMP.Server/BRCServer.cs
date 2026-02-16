@@ -184,7 +184,7 @@ namespace BombRushMP.Server
         {
             foreach(var player in Players)
             {
-                player.Value.ClientState.User = _database.AuthKeys.GetUser(player.Value.Auth.AuthKey);
+                player.Value.ClientState.User = _database.AuthKeys.GetUser(player.Value.Auth.AuthKey, player.Value.Challenge);
             }
             var activeStages = GetActiveStages();
             foreach(var activeStage in activeStages)
@@ -631,7 +631,7 @@ namespace BombRushMP.Server
                                 Server.DisconnectClient(client.Id);
                                 return;
                             }
-                            var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
+                            var user = _database.AuthKeys.GetUser(clientAuth.AuthKey, player.Challenge);
                             clientState.User = user;
                             if (user.CanLurk)
                             {
@@ -852,6 +852,7 @@ namespace BombRushMP.Server
             var player = new Player();
             player.Client = e.Client;
             player.Server = this;
+            player.Challenge = Guid.NewGuid().ToString();
             Players[e.Client.Id] = player;
             e.Client.CanQualityDisconnect = false;
             if (_database.BannedUsers.IsBanned(e.Client.Address))
@@ -859,6 +860,7 @@ namespace BombRushMP.Server
                 Server.DisconnectClient(e.Client.Id);
                 return;
             }
+            SendPacketToClient(new ServerChallenge(player.Challenge), IMessage.SendModes.Reliable, player.Client, NetChannels.Default);
         }
 
         private void OnClientDisconnected(object sender, ServerDisconnectedEventArgs e)

@@ -21,6 +21,7 @@ namespace BombRushMP.Server
         public INetConnection Client;
         public DateTime LastChatTime = DateTime.UtcNow;
         public bool Invisible = false;
+        public string Challenge = "";
 
         public void Tick(float deltaTime)
         {
