@@ -51,7 +51,8 @@ namespace BombRushMP.Plugin
             { ":konatathink:", 95 },
             { ":wata:", 96 },
             { ":guh:", 67 },
-            { ":grilla:", 98 }
+            { ":grilla:", 98 },
+            { ":bear:", 99 }
         };
     }
 }
