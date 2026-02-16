@@ -50,7 +50,7 @@ namespace BombRushMP.Plugin
             { ":zario:", 94 },
             { ":konatathink:", 95 },
             { ":wata:", 96 },
-            { ":guh:", 67 },
+            { ":guh:", 97 },
             { ":grilla:", 98 },
             { ":bear:", 99 }
         };
