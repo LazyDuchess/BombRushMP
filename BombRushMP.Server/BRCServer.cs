@@ -665,11 +665,11 @@ namespace BombRushMP.Server
 
                         if (LogMessagesToFile)
                         {
-                            var logText = $"Player Connected: {clientState.Name}/{TMPFilter.RemoveAllTags(clientState.Name)} ({client.Address})";
+                            var logText = $"Player Connected: {clientState.Name}/{TMPFilter.RemoveAllTags(clientState.Name)} ({client.Address}) (HWID: {player.Auth.HWID}), (GUID: {player.Auth.GUID})";
                             _database.LogChatMessage($"[{DateTime.Now.ToShortTimeString()}] {logText}", clientState.Stage);
                         }
 
-                        ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage}.");
+                        ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage} (HWID: {player.Auth.HWID}), (GUID: {player.Auth.GUID})");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState, MOTD = MOTD, AlwaysShowMOTD = AlwaysShowMOTD }, IMessage.SendModes.Reliable, client, NetChannels.Default);
 
                         var currentClientStates = CreateClientStatesPacket(clientState.Stage);
