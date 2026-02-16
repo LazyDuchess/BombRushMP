@@ -96,15 +96,12 @@ namespace BombRushMP.Common
 
         public static string HashPassword(string password, string salt)
         {
-            var saltBytes = Encoding.UTF8.GetBytes(salt);
+            var keyBytes = Encoding.UTF8.GetBytes(salt);
+            var messageBytes = Encoding.UTF8.GetBytes(password);
 
-            using var pbkdf2 = new Rfc2898DeriveBytes(
-                password,
-                saltBytes,
-                100_000
-            );
+            using var hmac = new HMACSHA256(keyBytes);
+            var hash = hmac.ComputeHash(messageBytes);
 
-            var hash = pbkdf2.GetBytes(32);
             return Convert.ToBase64String(hash);
         }
     }
