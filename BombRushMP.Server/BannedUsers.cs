@@ -20,9 +20,21 @@ namespace BombRushMP.Server
             return Users.ContainsKey(address);
         }
 
-        public void Ban(string address, string name = "None", string reason = "None")
+        public bool IsBannedByHWID(string hwid)
         {
-            Users[address] = new BannedUser() { NameAtTimeOfBan = name, Reason = reason };
+            if (string.IsNullOrWhiteSpace(hwid)) return false;
+            return Users.Values.Any(x => x.HWID == hwid);
+        }
+
+        public bool IsBannedByGUID(string guid)
+        {
+            if (string.IsNullOrWhiteSpace(guid) || !Guid.TryParse(guid, out _)) return false;
+            return Users.Values.Any(x => x.GUID == guid);
+        }
+
+        public void Ban(string address, string hwid = "", string guid = "",  string name = "None", string reason = "None")
+        {
+            Users[address] = new BannedUser() { NameAtTimeOfBan = name, Reason = reason, HWID = hwid, GUID = guid };
         }
 
         public void Unban(string address)

@@ -626,6 +626,11 @@ namespace BombRushMP.Server
                         }
                         if (clientAuth != null)
                         {
+                            if (_database.BannedUsers.IsBannedByGUID(clientAuth.GUID) || _database.BannedUsers.IsBannedByHWID(clientAuth.HWID))
+                            {
+                                Server.DisconnectClient(client.Id);
+                                return;
+                            }
                             var user = _database.AuthKeys.GetUser(clientAuth.AuthKey);
                             clientState.User = user;
                             if (user.CanLurk)
@@ -792,7 +797,7 @@ namespace BombRushMP.Server
         {
             if (Players.TryGetValue(id, out var result))
             {
-                return BanPlayerByAddress(result.Client.Address);
+                return BanPlayerByAddress(result.Client.Address, reason);
             }
             return false;
         }
@@ -810,6 +815,8 @@ namespace BombRushMP.Server
         public bool BanPlayerByAddress(string address, string reason = "None")
         {
             _database.Load();
+            var guid = "";
+            var hwid = "";
             var playerName = "None";
             ushort playerId = 0;
             foreach(var player in Players)
@@ -818,11 +825,19 @@ namespace BombRushMP.Server
                 {
                     playerName = player.Value.ClientState.Name;
                     playerId = player.Key;
+                    hwid = player.Value.Auth.HWID;
+                    guid = player.Value.Auth.GUID;
+
+                    if (string.IsNullOrWhiteSpace(hwid) || !Guid.TryParse(hwid, out _))
+                        hwid = "";
+
+                    if (string.IsNullOrWhiteSpace(guid))
+                        guid = "";
                     break;
                 }
             }
             _database.BannedUsers.Ban(address, playerName, reason);
-            var log = $"Banned IP {address}, player name: {playerName}, reason: {reason}";
+            var log = $"Banned IP {address}, player name: {playerName}, reason: {reason}, HWID: {hwid}, GUID: {guid}";
             ServerLogger.Log(log);
             if (playerId != 0)
                 Server.DisconnectClient(playerId);

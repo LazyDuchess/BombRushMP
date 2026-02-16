@@ -10,5 +10,7 @@ namespace BombRushMP.Server
     {
         public string NameAtTimeOfBan = "";
         public string Reason = "";
+        public string HWID = "";
+        public string GUID = "";
     }
 }
