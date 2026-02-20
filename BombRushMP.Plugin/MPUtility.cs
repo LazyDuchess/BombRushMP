@@ -351,7 +351,7 @@ namespace BombRushMP.Plugin
 
         public static bool IsChristmas()
         {
-            return true;
+            return false;
         }
 
         public static void PingInMap(GameObject go, float duration)
