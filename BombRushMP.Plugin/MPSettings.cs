@@ -650,6 +650,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool ShowBadges
+        {
+            get
+            {
+                return _showBadges.Value;
+            }
+
+            set
+            {
+                _showBadges.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -709,6 +722,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _allowTeleports;
         private ConfigEntry<float> _chatFontSize;
         private ConfigEntry<bool> _deathSequence;
+        private ConfigEntry<bool> _showBadges;
 
         private string _savePath;
         private ConfigFile _configFile;
@@ -742,6 +756,12 @@ namespace BombRushMP.Plugin
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
             _playerName = configFile.Bind(General, "Player Name", DefaultName, "Your player name.");
             _playerName.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                clientController.InfrequentClientStateUpdateQueued = true;
+            };
+            _showBadges = configFile.Bind(General, "Show Badges", true, "Whether to display your badges before your name, if you have any.");
+            _showBadges.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;

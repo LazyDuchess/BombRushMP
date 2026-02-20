@@ -138,7 +138,7 @@ namespace BombRushMP.Server.Gamemodes
         private void SendPlayerMessage(ushort playerId, string txt)
         {
             var playerName = Server.Players[playerId].ClientState.Name;
-            var chat = new ServerChat(TMPFilter.CloseAllTags(playerName), $"<color=yellow>{txt}</color>", Server.Players[playerId].ClientState.User.Badges, Common.ChatMessageTypes.System);
+            var chat = new ServerChat(TMPFilter.CloseAllTags(playerName), $"<color=yellow>{txt}</color>", Server.Players[playerId].ClientState.ShowBadges ? Server.Players[playerId].ClientState.User.Badges : null, Common.ChatMessageTypes.System);
             ServerLobbyManager.SendPacketToLobby(chat, Common.Networking.IMessage.SendModes.ReliableUnordered, Lobby.LobbyState.Id, Common.Networking.NetChannels.Chat);
         }
 

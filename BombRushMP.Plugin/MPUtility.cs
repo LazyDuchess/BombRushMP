@@ -139,9 +139,12 @@ namespace BombRushMP.Plugin
             {
                 name = $"<sprite={AprilClient.GetBadgeForName(clientState.Name)}> {name}";
             }
-            foreach (var badge in user.Badges)
+            if (clientState.ShowBadges)
             {
-                name = $"<sprite={badge}> {name}";
+                foreach (var badge in user.Badges)
+                {
+                    name = $"<sprite={badge}> {name}";
+                }
             }
             return name;
         }
@@ -155,9 +158,12 @@ namespace BombRushMP.Plugin
             {
                 name = $"<sprite={AprilClient.GetBadgeForName(clientState.Name)}> {name}";
             }
-            foreach (var badge in user.Badges)
+            if (clientState.ShowBadges)
             {
-                name = $"<sprite={badge}> {name}";
+                foreach (var badge in user.Badges)
+                {
+                    name = $"<sprite={badge}> {name}";
+                }
             }
             return name;
         }
