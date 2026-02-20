@@ -836,7 +836,7 @@ namespace BombRushMP.Server
                     break;
                 }
             }
-            _database.BannedUsers.Ban(address, playerName, reason);
+            _database.BannedUsers.Ban(address, hwid, guid, playerName, reason);
             var log = $"Banned IP {address}, player name: {playerName}, reason: {reason}, HWID: {hwid}, GUID: {guid}";
             ServerLogger.Log(log);
             if (playerId != 0)
