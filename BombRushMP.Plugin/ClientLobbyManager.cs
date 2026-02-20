@@ -120,6 +120,11 @@ namespace BombRushMP.Plugin
             _clientController.SendPacket(new ClientLobbyStart(), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
         }
 
+        public void ResetWins()
+        {
+            _clientController.SendPacket(new ClientLobbyResetWins(), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
+        }
+
         public void EndGame()
         {
             _clientController.SendPacket(new ClientLobbyEnd(), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);

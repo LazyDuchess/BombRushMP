@@ -70,6 +70,7 @@ namespace BombRushMP.Common.Packets
         ClientPropHuntDeath,
         ClientPropHuntShoot,
         ServerPropHuntRespawn,
-        ServerChallenge
+        ServerChallenge,
+        ClientLobbyResetWins
     }
 }

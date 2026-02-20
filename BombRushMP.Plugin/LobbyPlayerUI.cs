@@ -9,6 +9,7 @@ using BombRushMP.Common;
 using Reptile;
 using System.Globalization;
 using UnityEngine.UI;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -117,6 +118,11 @@ namespace BombRushMP.Plugin
             _lobbyPlayer = player;
             _playerName.text = playername;
             _score.text = FormatScore(_lobbyPlayer.Score);
+
+            if (!lobby.LobbyState.InGame && GamemodeFactory.HasWins(lobby.LobbyState.Gamemode))
+            {
+                _score.text += $" ({player.Wins})";
+            }
             if (Position != -1 && team == null)
             {
                 _playerName.text = $"{Position + 1}. {playername}";

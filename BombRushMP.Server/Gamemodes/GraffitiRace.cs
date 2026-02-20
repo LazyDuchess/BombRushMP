@@ -101,6 +101,7 @@ namespace BombRushMP.Server.Gamemodes
                     {
                         var scorePacket = (ClientGamemodeScore)packet;
                         ServerLobbyManager.SetPlayerScore(playerId, scorePacket.Score);
+                        ServerLobbyManager.AddPlayerWin(playerId);
                         if (scorePacket.Score >= _maxScore)
                         {
                             ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);

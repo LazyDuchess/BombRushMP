@@ -14,6 +14,7 @@ namespace BombRushMP.Common
         public float Score = 0;
         public bool Ready = false;
         public byte Team = 0;
+        public int Wins = 0;
 
         public LobbyPlayer()
         {
@@ -33,6 +34,7 @@ namespace BombRushMP.Common
             writer.Write(Score);
             writer.Write(Ready);
             writer.Write(Team);
+            writer.Write(Wins);
         }
 
         public void Read(BinaryReader reader)
@@ -41,6 +43,7 @@ namespace BombRushMP.Common
             Score = reader.ReadSingle();
             Ready = reader.ReadBoolean();
             Team = reader.ReadByte();
+            Wins = reader.ReadInt32();
         }
     }
 }

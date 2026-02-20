@@ -70,6 +70,22 @@ namespace BombRushMP.Server
             SendLobbySoftUpdate(existingLobby, clientId, score);
         }
 
+        public void AddPlayerWin(ushort clientId)
+        {
+            var existingLobby = GetLobbyPlayerIsIn(clientId);
+            existingLobby.LobbyState.Players[clientId].Wins += 1;
+        }
+
+        public void ResetPlayerWins(uint lobbyId)
+        {
+            var lobby = Lobbies[lobbyId];
+            foreach(var ply in lobby.LobbyState.Players)
+            {
+                ply.Value.Wins = 0;
+            }
+            SendLobbiesToStage(lobby.LobbyState.Stage);
+        }
+
         public Lobby GetLobbyPlayerIsIn(ushort clientId)
         {
             foreach(var lobby in Lobbies)
@@ -222,6 +238,24 @@ namespace BombRushMP.Server
 
             switch (packetId)
             {
+                case Packets.ClientLobbyResetWins:
+                    {
+                        if (existingLobby == null)
+                            break;
+
+                        if (existingLobby.LobbyState.HostId != playerId)
+                            break;
+
+                        if (existingLobby.LobbyState.InGame)
+                            break;
+
+                        if (existingLobby.CurrentGamemode != null)
+                            break;
+
+                        ResetPlayerWins(existingLobby.LobbyState.Id);
+                    }
+                    break;
+
                 case Packets.ClientLobbySetGamemode:
                     {
                         if (existingLobby == null)

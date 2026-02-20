@@ -123,7 +123,15 @@ namespace BombRushMP.Plugin
         {
             var lobby = _lobbyManager.CurrentLobby;
             if (lobby == null) return;
-            var players = lobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToArray();
+            Common.LobbyPlayer[] players;
+            if (!lobby.LobbyState.InGame && GamemodeFactory.HasWins(lobby.LobbyState.Gamemode))
+            {
+                players = lobby.LobbyState.Players.Values.OrderByDescending(p => p.Wins).ToArray();
+            }
+            else
+            {
+                players = lobby.LobbyState.Players.Values.OrderByDescending(p => p.Score).ToArray();
+            }
             var gamemode = lobby.GetOrCreateGamemode();
             var teams = GamemodeFactory.GetTeams(lobby.LobbyState.Gamemode);
             if (gamemode.TeamBased)

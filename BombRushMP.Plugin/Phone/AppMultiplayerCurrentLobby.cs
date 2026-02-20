@@ -85,6 +85,16 @@ namespace BombRushMP.Plugin.Phone
                     };
                     ScrollView.AddButton(button);
 
+                    button = PhoneUIUtility.CreateSimpleButton("Reset Wins");
+                    button.OnConfirm += () =>
+                    {
+                        if (!currentLobby.InGame)
+                        {
+                            lobbyManager.ResetWins();
+                        }
+                    };
+                    ScrollView.AddButton(button);
+
                     button = PhoneUIUtility.CreateSimpleButton("Change Gamemode");
                     button.OnConfirm += () =>
                     {

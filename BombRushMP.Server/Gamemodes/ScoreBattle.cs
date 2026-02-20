@@ -52,6 +52,9 @@ namespace BombRushMP.Server.Gamemodes
                     {
                         if (_timeLeft <= 0f)
                         {
+                            var winner = GetHighestScoringPlayer();
+                            if (winner != 0)
+                                ServerLobbyManager.AddPlayerWin(winner);
                             ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
                             _state = States.Finished;
                         }
@@ -60,6 +63,9 @@ namespace BombRushMP.Server.Gamemodes
                     {
                         if (EveryoneFinishedComboing() && _timeLeft <= 0f)
                         {
+                            var winner = GetHighestScoringPlayer();
+                            if (winner != 0)
+                                ServerLobbyManager.AddPlayerWin(winner);
                             ServerLobbyManager.EndGame(Lobby.LobbyState.Id, false);
                             _state = States.Finished;
                         }
@@ -67,6 +73,26 @@ namespace BombRushMP.Server.Gamemodes
                     break;
             }
             _stateTimer += deltaTime;
+        }
+
+        private ushort GetHighestScoringPlayer()
+        {
+            ushort lastPly = 0;
+            var lastScore = 0f;
+            foreach(var ply in Lobby.LobbyState.Players)
+            {
+                if (lastPly == 0)
+                {
+                    lastPly = ply.Key;
+                    lastScore = ply.Value.Score;
+                }
+                else if (ply.Value.Score > lastScore)
+                {
+                    lastPly = ply.Key;
+                    lastScore = ply.Value.Score;
+                }
+            }
+            return lastPly;
         }
 
         private bool EveryoneFinishedComboing()
