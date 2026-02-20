@@ -120,6 +120,7 @@ namespace BombRushMP.Plugin.Gamemodes
                     {
                         _state = States.Main;
                         player.userInputEnabled = true;
+                        _countdownTimer = 0f;
                     }
                     break;
 
@@ -166,7 +167,7 @@ namespace BombRushMP.Plugin.Gamemodes
                     {
                         score = (int)Lobby.LobbyState.GetScoreForTeam(Lobby.LobbyState.Players[ClientController.LocalID].Team);
                     }
-                    timerUI.SetText($"{score}/{_originalProgress.Count}");
+                    timerUI.SetText($"{score}/{_originalProgress.Count}\n{TimerUI.GetTimeString(_countdownTimer)}");
                     break;
             }
             _countdownTimer += Time.deltaTime;
