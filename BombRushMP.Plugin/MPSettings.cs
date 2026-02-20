@@ -778,7 +778,7 @@ namespace BombRushMP.Plugin
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;
             };
-            _chatFontSize = configFile.Bind(ChatSettings, "Chat Font Size", 20f, "Size of the chat font.");
+            _chatFontSize = configFile.Bind(ChatSettings, "Chat Font Size", 25f, "Size of the chat font.");
             _chatFontSize.SettingChanged += (sender, args) =>
             {
                 var chatUI = ChatUI.Instance;
