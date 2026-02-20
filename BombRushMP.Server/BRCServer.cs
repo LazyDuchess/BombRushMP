@@ -46,6 +46,8 @@ namespace BombRushMP.Server
 
         public ServerState ServerState = new();
 
+        private double _nextTick = 0D;
+
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
             Instance = this;
@@ -53,8 +55,7 @@ namespace BombRushMP.Server
             _tickRate = tickRate;
             NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
             ServerLobbyManager = new ServerLobbyManager();
-            _tickStopWatch = new Stopwatch();
-            _tickStopWatch.Start();
+            _tickStopWatch = Stopwatch.StartNew();
             Server = NetworkingInterface.CreateServer();
             Server.TimeoutTime = 10000;
             Server.ClientConnected += OnClientConnected;
@@ -71,11 +72,20 @@ namespace BombRushMP.Server
 
         public void Update()
         {
-            var deltaTime = _tickStopWatch.Elapsed.TotalSeconds;
-            if (deltaTime >= _tickRate)
+            var now = _tickStopWatch.Elapsed.TotalSeconds;
+
+            if (now >= _nextTick)
             {
-                Tick((float)deltaTime);
-                _tickStopWatch.Restart();
+                Tick(_tickRate);
+                _nextTick += _tickRate;
+            }
+            else
+            {
+                var cleepTime = (_nextTick - now) * 1000.0;
+                if (cleepTime > 1)
+                {
+                    Thread.Sleep((int)cleepTime);
+                }
             }
         }
 
