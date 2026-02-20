@@ -12,7 +12,7 @@ namespace BombRushMP.Plugin
         {
             { ":car:", 25 },
             { ":akkowot:", 24 },
-            { ":krehs:", 26 },
+            { ":krehs:", 109 },
             { ":ben:", 38 },
             { ":skull:", 34 },
             { ":pensive:", 46 },
@@ -52,7 +52,17 @@ namespace BombRushMP.Plugin
             { ":wata:", 96 },
             { ":guh:", 97 },
             { ":grilla:", 98 },
-            { ":bear:", 99 }
+            { ":mokethink:", 72 },
+            { ":benmoke:", 99 },
+            { ":dojasob:", 100 },
+            { ":autoleft:", 101 },
+            { ":autoright:", 102 },
+            { ":itsfumover:", 103 },
+            { ":steamhappy:", 104 },
+            { ":happysprite:", 106 },
+            { ":tails:", 110 },
+            { ":onmaria:", 113 },
+            { ":pride2:", 115 }
         };
     }
 }
