@@ -218,7 +218,7 @@ namespace BombRushMP.Plugin
                 case "emojis":
                     var emojiStr = "Available emojis:\n";
                     var emojis = MPAssets.Instance.Emojis.Sprites.OrderBy(x => x.Key[1].ToString(), StringComparer.InvariantCultureIgnoreCase).ToArray();
-                    foreach (var emoji in )
+                    foreach (var emoji in emojis)
                     {
                         emojiStr += $"{emoji.Key} - <sprite={emoji.Value}>\n";
                     }
