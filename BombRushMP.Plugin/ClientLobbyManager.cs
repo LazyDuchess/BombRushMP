@@ -72,7 +72,7 @@ namespace BombRushMP.Plugin
             {
                 CurrentLobby.CurrentGamemode.OnUpdate_InGame();
             }
-            if (QueuedLobby != 0 && Lobbies.TryGetValue(QueuedLobby, out var lobby) && !lobby.InGame && CanJoinLobby())
+            if (QueuedLobby != 0 && Lobbies.TryGetValue(QueuedLobby, out var lobby) && !lobby.LobbyState.InGame && CanJoinLobby())
             {
                 JoinLobby(QueuedLobby);
             }
