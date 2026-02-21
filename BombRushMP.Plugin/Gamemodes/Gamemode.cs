@@ -56,6 +56,7 @@ namespace BombRushMP.Plugin.Gamemodes
             InGame = true;
             MPUtility.SetUpPlayerForGameStateUpdate();
             MPUtility.BreakAllBreakables();
+            MPUtility.ResetProps();
             Settings = GamemodeFactory.ParseGamemodeSettings(Lobby.LobbyState.Gamemode, Lobby.LobbyState.GamemodeSettings);
             LobbyUI.Instance.UpdateUI();
             Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);

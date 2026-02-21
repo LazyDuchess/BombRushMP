@@ -131,28 +131,7 @@ namespace BombRushMP.Plugin.Gamemodes
         {
             if (FrozenProps) return;
             FrozenProps = true;
-            WorldHandler.instance.SceneObjectsRegister.stageChunks.ForEach(chunk =>
-            {
-                var junkBehaviour = chunk.junkBehaviour;
-                junkBehaviour.kickedJunkIndex = 0;
-                junkBehaviour.nonupdatingJunkIndex = 0;
-                foreach(var junk in junkBehaviour.totalJunk)
-                {
-                    JunkBehaviour.RestoreSingle(junkBehaviour, junk);
-                }
-            });
-
-            var junkStageHandlers = FindObjectsOfType<JunkStageHandler>();
-            foreach(var junkStageHandler in junkStageHandlers)
-            {
-                var junkBehaviour = junkStageHandler.junkBehaviour;
-                junkBehaviour.kickedJunkIndex = 0;
-                junkBehaviour.nonupdatingJunkIndex = 0;
-                foreach (var junk in junkBehaviour.totalJunk)
-                {
-                    JunkBehaviour.RestoreSingle(junkBehaviour, junk);
-                }
-            }
+            MPUtility.ResetProps();
             _oldLodBias = QualitySettings.lodBias;
             QualitySettings.lodBias *= 3f;
         }
