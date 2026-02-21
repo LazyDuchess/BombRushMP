@@ -31,6 +31,12 @@ namespace BombRushMP.Plugin.Gamemodes
         protected Vector3 SpawnPos = Vector3.zero;
         protected Quaternion SpawnRot = Quaternion.identity;
 
+        public enum PlayerSort
+        {
+            Score,
+            Wins
+        }
+
         public Gamemode()
         {
             ClientController = ClientController.Instance;

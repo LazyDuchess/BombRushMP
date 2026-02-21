@@ -10,6 +10,7 @@ using BombRushMP.Common;
 using BombRushMP.NetworkInterfaceProvider;
 using BombRushMP.Common.Networking;
 using Reptile;
+using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -663,6 +664,30 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool GraceTimer
+        {
+            get
+            {
+                return _graceTimer.Value;
+            }
+            set
+            {
+                _graceTimer.Value = value;
+            }
+        }
+
+        public Gamemode.PlayerSort GamemodePlayerSort
+        {
+            get
+            {
+                return _gamemodePlayerSort.Value;
+            }
+            set
+            {
+                _gamemodePlayerSort.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -723,6 +748,9 @@ namespace BombRushMP.Plugin
         private ConfigEntry<float> _chatFontSize;
         private ConfigEntry<bool> _deathSequence;
         private ConfigEntry<bool> _showBadges;
+
+        private ConfigEntry<Gamemode.PlayerSort> _gamemodePlayerSort;
+        private ConfigEntry<bool> _graceTimer;
 
         private string _savePath;
         private ConfigFile _configFile;
@@ -804,6 +832,8 @@ namespace BombRushMP.Plugin
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
             _dontAutoScrollChatIfFocused = configFile.Bind(ChatSettings, "No auto scroll chat if focused", false, "If true, will not scroll to the bottom when messages are received if the chat window is open for typing/scrolling.");
             _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeC, "Balance UI theme.");
+            _gamemodePlayerSort = configFile.Bind(Visuals, "Lobby Player List Sort", Gamemode.PlayerSort.Wins, "Whether to sort the lobby player list by last score or by total wins.");
+            _graceTimer = configFile.Bind(Visuals, "Graffiti Race Timer", true, "If true, will display a timer during Graffiti Races.");
 #if DEBUG
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
