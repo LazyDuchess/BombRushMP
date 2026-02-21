@@ -24,6 +24,13 @@ namespace BombRushMP.Plugin
         private ClientController _clientController;
         private WorldHandler _worldHandler;
 
+        public uint QueuedLobby = 0;
+
+        public void QueueJoinLobby(uint lobbyId)
+        {
+            QueuedLobby = lobbyId;
+        }
+
         public ClientLobbyManager()
         {
             _clientController = ClientController.Instance;
@@ -64,6 +71,10 @@ namespace BombRushMP.Plugin
             if (CurrentLobby != null && CurrentLobby.InGame)
             {
                 CurrentLobby.CurrentGamemode.OnUpdate_InGame();
+            }
+            if (QueuedLobby != 0 && Lobbies.TryGetValue(QueuedLobby, out var lobby) && !lobby.InGame && CanJoinLobby())
+            {
+                JoinLobby(QueuedLobby);
             }
         }
 
@@ -106,6 +117,7 @@ namespace BombRushMP.Plugin
         public void JoinLobby(uint lobbyId)
         {
             if (!CanJoinLobby()) return;
+            QueueJoinLobby(0);
             _clientController.SendPacket(new ClientLobbyJoin(lobbyId), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
             NotificationController.Instance.RemoveNotificationForLobby(lobbyId);
         }
@@ -280,6 +292,8 @@ namespace BombRushMP.Plugin
 
         private void OnLobbyDeleted(Lobby lobby)
         {
+            if (QueuedLobby != 0 && lobby.LobbyState.Id == QueuedLobby)
+                QueueJoinLobby(0);
             if (lobby == CurrentLobby)
             {
                 CurrentLobby = null;

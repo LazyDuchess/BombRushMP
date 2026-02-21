@@ -2,6 +2,7 @@
 using BombRushMP.Plugin.Gamemodes;
 using CommonAPI.Phone;
 using System.ComponentModel;
+using System.Linq;
 
 public class AppMultiplayerPublicLobbies : CustomApp
 {
@@ -29,18 +30,27 @@ public class AppMultiplayerPublicLobbies : CustomApp
         ScrollView.RemoveAllButtons();
         var clientController = ClientController.Instance;
         var lobbyManager = clientController.ClientLobbyManager;
-        var lobbies = lobbyManager.Lobbies;
+        var lobbies = lobbyManager.Lobbies.OrderBy(p => p.Value.InGame ? 1 : 0);
         foreach (var lobby in lobbies)
         {
             if (!lobby.Value.LobbyState.Challenge) continue;
-            if (lobby.Value.LobbyState.InGame) continue;
+            var buttonName = $"({lobby.Value.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(lobby.Key)} - {MPUtility.GetPlayerDisplayName(clientController.Players[lobby.Value.LobbyState.HostId].ClientState)}";
+            if (lobby.Value.LobbyState.InGame)
+            {
+                buttonName += " (In Progress)";
+            }
             var host = clientController.Players[lobby.Value.LobbyState.HostId];
-            var button = PhoneUIUtility.CreateSimpleButton($"({lobby.Value.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(lobby.Key)} - {MPUtility.GetPlayerDisplayName(clientController.Players[lobby.Value.LobbyState.HostId].ClientState)}");
+            var button = PhoneUIUtility.CreateSimpleButton(buttonName);
             button.Label.spriteAsset = MPAssets.Instance.Sprites;
             button.OnConfirm += () =>
             {
                 if (!lobby.Value.LobbyState.Challenge) return;
-                if (lobby.Value.LobbyState.InGame) return;
+                if (lobby.Value.LobbyState.InGame)
+                {
+                    clientController.ClientLobbyManager.QueueJoinLobby(lobby.Key);
+                    ChatUI.Instance.AddMessage($"<color=yellow>Lobby is currently in-game. You will join when the game ends.</color>");
+                    return;
+                }
                 clientController.ClientLobbyManager.JoinLobby(lobby.Key);
             };
             ScrollView.AddButton(button);
