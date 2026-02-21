@@ -248,6 +248,7 @@ namespace BombRushMP.Plugin
 
         private void OnDisconnect()
         {
+            QueueJoinLobby(0);
             Lobbies.Clear();
             OnLobbiesUpdated();
         }
