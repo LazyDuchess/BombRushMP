@@ -33,6 +33,7 @@ public class AppMultiplayerPublicLobbies : CustomApp
         var lobbies = lobbyManager.Lobbies.OrderBy(p => p.Value.InGame ? 1 : 0);
         foreach (var lobby in lobbies)
         {
+            if (lobbyManager.CurrentLobby != null && lobbyManager.CurrentLobby.LobbyState.Id == lobby.Key) continue;
             if (!lobby.Value.LobbyState.Challenge) continue;
             var buttonName = $"({lobby.Value.LobbyState.Players.Count}) {lobbyManager.GetLobbyName(lobby.Key)} - {MPUtility.GetPlayerDisplayName(clientController.Players[lobby.Value.LobbyState.HostId].ClientState)}";
             if (lobby.Value.LobbyState.InGame)
