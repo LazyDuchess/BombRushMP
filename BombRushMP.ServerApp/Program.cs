@@ -62,6 +62,8 @@ namespace BombRushMP.ServerApp
                     server.ServerState.Tags.Add(tag);
                 }
             }
+            var webServer = new WebServer(server);
+            webServer.Start();
             while(true)
             {
                 server.Update();

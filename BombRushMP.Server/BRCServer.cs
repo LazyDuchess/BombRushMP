@@ -1,20 +1,22 @@
-﻿using System;
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
+using BombRushMP.Server.Gamemodes;
+using Newtonsoft.Json;
+using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using BombRushMP.Common.Packets;
-using BombRushMP.Common;
-using BombRushMP.Common.Networking;
-using System.Diagnostics;
-using System.Security.Policy;
-using System.Security.Cryptography;
-using Newtonsoft.Json;
-using BombRushMP.Server.Gamemodes;
 
 namespace BombRushMP.Server
 {
@@ -47,6 +49,33 @@ namespace BombRushMP.Server
         public ServerState ServerState = new();
 
         private double _nextTick = 0D;
+
+        private readonly ConcurrentQueue<Action> _commandQueue = new();
+
+        public Task<T> RunOnMainThreadAsync<T>(Func<T> func)
+        {
+            var tcs = new TaskCompletionSource<T>();
+
+            _commandQueue.Enqueue(() =>
+            {
+                try
+                {
+                    var result = func();
+                    tcs.SetResult(result);
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex);
+                }
+            });
+
+            return tcs.Task;
+        }
+
+        public void RunOnMainThread(Action action)
+        {
+            _commandQueue.Enqueue(action);
+        }
 
         public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
         {
@@ -102,6 +131,10 @@ namespace BombRushMP.Server
                 TickStage(stage);
             }
             TickPlayerCount(deltaTime);
+            while (_commandQueue.TryDequeue(out var action))
+            {
+                action();
+            }
             OnTick?.Invoke(deltaTime);
         }
 
