@@ -120,17 +120,29 @@ namespace BombRushMP.Plugin
 
         public MPCharacterData GetCharacterData(Characters character)
         {
+            return GetCharacterData(character, out _);
+        }
+
+        public MPCharacterData GetCharacterData(Characters character, out bool justCreated)
+        {
+            justCreated = false;
             if (character >= Characters.MAX)
             {
                 var guid = CrewBoomSupport.GetGuidForCharacter(character);
                 if (!CrewBoomCharacterData.ContainsKey(guid.ToString()))
+                {
+                    justCreated = true;
                     CrewBoomCharacterData[guid.ToString()] = new MPCharacterData();
+                }
                 return CrewBoomCharacterData[guid.ToString()];
             }
             else
             {
                 if (!CharacterData.ContainsKey(character))
+                {
+                    justCreated = true;
                     CharacterData[character] = new MPCharacterData();
+                }
                 return CharacterData[character];
             }
         }

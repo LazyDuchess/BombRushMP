@@ -40,6 +40,7 @@ namespace BombRushMP.Plugin
             RegisterUnlock(new MPSkateboardSkin("Thunder Kick", "By: Thunder Kick", Animator.StringToHash("thunderkickdeck"), true, GetTextureFromAssets("thunderkickdeck")));
             RegisterUnlock(new MPSkateboardSkin("Junkyard Dog", "By: Yurok and Keziah_L", Animator.StringToHash("yurokBoard"), true, GetTextureFromAssets("yurokBoardTex"), GetMeshFromAssets("yurokBoard")));
             RegisterUnlock(new MPSkateboardSkin("Shadow SA2", "By: Lance", Animator.StringToHash("shadowsa2"), true, GetMaterialFromAssets("ShadowSA2Mat")));
+            RegisterUnlock(new MPBuiltInSkin(Reptile.MoveStyle.INLINE, MPBuiltInSkin.InlineBuiltinId));
         }
 
         private Material GetMaterialFromAssets(string name)

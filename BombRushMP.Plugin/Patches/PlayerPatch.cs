@@ -278,9 +278,19 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.SetCharacter))]
         private static void SetCharacter_Postfix(Characters setChar, Player __instance)
         {
+            var playerComponent = PlayerComponent.Get(__instance);
+            playerComponent.CacheNewSkin();
             if (!__instance.isAI)
             {
-                var saveData = MPSaveData.Instance.GetCharacterData(setChar);
+                var saveData = MPSaveData.Instance.GetCharacterData(setChar, out var justCreated);
+                if (justCreated)
+                {
+                    var prg = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(setChar);
+                    if (playerComponent.HasCustomInlines && prg.moveStyle == MoveStyle.INLINE)
+                    {
+                        saveData.MPMoveStyleSkin = MPBuiltInSkin.InlineBuiltinId;
+                    }
+                }
                 if (saveData.MPMoveStyleSkin != -1)
                 {
                     var mpUnlockManager = MPUnlockManager.Instance;
@@ -292,7 +302,6 @@ namespace BombRushMP.Plugin.Patches
                     }
                 }
             }
-            var playerComponent = PlayerComponent.Get(__instance);
             playerComponent.Chibi = false;
             playerComponent.SpecialSkin = SpecialSkins.None;
             playerComponent.UnloadStreamedCharacter();

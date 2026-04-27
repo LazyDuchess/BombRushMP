@@ -54,6 +54,17 @@ namespace BombRushMP.Plugin
 
         public PseudoDieAbility PseudoDieAbility = null;
 
+        private GameObject _customInlines = null;
+        public bool HasCustomInlines => _customInlines != null;
+
+        public void CacheNewSkin()
+        {
+            _customInlines = null;
+            var inlineTf = _player.characterVisual.transform.FindRecursive(MPBuiltInSkin.InlineTransformName);
+            if (inlineTf != null)
+                _customInlines = inlineTf.gameObject;
+        }
+
         public void RefreshSkin()
         {
             if (MovestyleSkin != null)
@@ -238,7 +249,13 @@ namespace BombRushMP.Plugin
         {
             var moveStyleProps = _player.characterVisual.moveStyleProps;
             var deckMesh = _player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
+            var skateLMesh = _player.MoveStylePropsPrefabs.skateL.GetComponent<MeshFilter>().sharedMesh;
+            var skateRMesh = _player.MoveStylePropsPrefabs.skateR.GetComponent<MeshFilter>().sharedMesh;
+
             moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = deckMesh;
+            moveStyleProps.skateL.GetComponent<MeshFilter>().sharedMesh = skateLMesh;
+            moveStyleProps.skateR.GetComponent<MeshFilter>().sharedMesh = skateRMesh;
+
             if (SkateboardMaterial == null)
             {
                 SkateboardMaterial = new Material(moveStyleProps.skateboard.GetComponentInChildren<MeshRenderer>().sharedMaterial);
@@ -374,6 +391,17 @@ namespace BombRushMP.Plugin
 
         private void LateUpdate()
         {
+            if (MovestyleSkin != null && MovestyleSkin.MoveStyle == MoveStyle.INLINE && MovestyleSkin is MPBuiltInSkin && _customInlines != null)
+            {
+                if (_player.moveStyle == MoveStyle.INLINE)
+                    _customInlines.SetActive(true);
+                else
+                    _customInlines.SetActive(false);
+            }
+            else if (_customInlines != null)
+            {
+                _customInlines.SetActive(false);
+            }
             if (ClientController.Instance == null) return;
             UpdateChibi();
             var mpSettings = MPSettings.Instance;
@@ -593,6 +621,7 @@ namespace BombRushMP.Plugin
             _player.SetCurrentMoveStyleEquipped(_player.moveStyleEquipped, true, true);
             _player.InitVisual();
             RefreshSkin();
+            CacheNewSkin();
             if (!wasMovestyleEquipped)
                 _player.SetMoveStyle(MoveStyle.ON_FOOT, true, true);
             if (!_player.isAI)

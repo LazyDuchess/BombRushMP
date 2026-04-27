@@ -77,7 +77,8 @@ namespace BombRushMP.Plugin.Phone
                 var valid = false;
                 if (mpUnlockable.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlockID) && !saveData.ShouldDisplayGoonieBoard()) continue;
                 if (mpUnlockable.Value is not MPMoveStyleSkin) continue;
-                if (mpUnlockable.Value is MPSkateboardSkin && moveStyle == MoveStyle.SKATEBOARD) valid = true;
+                if ((mpUnlockable.Value as MPMoveStyleSkin).MoveStyle == moveStyle) valid = true;
+                if ((mpUnlockable.Value as MPMoveStyleSkin).MoveStyle == MoveStyle.INLINE && mpUnlockable.Value is MPBuiltInSkin && !PlayerComponent.GetLocal().HasCustomInlines) continue;
                 if (!valid) continue;
                 var button = PhoneUIUtility.CreateSimpleButton((mpUnlockable.Value as MPMoveStyleSkin).Title);
                 button.OnConfirm += () =>

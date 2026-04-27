@@ -101,6 +101,7 @@ namespace BombRushMP.Plugin.Patches
                 var skin = unlock.Value as MPMoveStyleSkin;
                 if (skin == null) continue;
                 if (skin.MoveStyle != __instance.moveStyleType) continue;
+                if (skin is MPBuiltInSkin && skin.MoveStyle == MoveStyle.INLINE && !PlayerComponent.GetLocal().HasCustomInlines) continue;
                 if (unlock.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlockID) && !saveData.ShouldDisplayGoonieBoard()) continue;
                 ExtraButtonSkins.Add(skin);
             }
@@ -236,7 +237,7 @@ namespace BombRushMP.Plugin.Patches
 
             if (!string.IsNullOrEmpty(skin.HowToUnlock))
             {
-                _descriptionText.AssignAndUpdateText($"To unlock: {skin.HowToUnlock}", GroupOptions.Text);
+                _descriptionText.AssignAndUpdateText(skin.HowToUnlock, GroupOptions.Text);
             }
             else
                 _descriptionText.AssignAndUpdateText("MOVESTYLE_DESCRIPTION", GroupOptions.Text);
