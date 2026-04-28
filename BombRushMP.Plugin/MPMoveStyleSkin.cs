@@ -27,8 +27,8 @@ namespace BombRushMP.Plugin
         public virtual void ApplyToPlayer(Player player)
         {
             var playerComp = PlayerComponent.Get(player);
-            playerComp.MovestyleSkin = this;
             playerComp.ApplyMoveStyleSkin(0);
+            playerComp.MovestyleSkin = this;
             if (Materials != null)
             {
                 playerComp.ApplyMoveStyleMaterial(Materials);

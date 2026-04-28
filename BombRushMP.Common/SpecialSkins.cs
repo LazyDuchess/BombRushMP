@@ -17,6 +17,7 @@ namespace BombRushMP.Common
         Jill,
         Steve,
         RedMinecraft,
-        Minecraft
+        Minecraft,
+        LowTierGod
     }
 }

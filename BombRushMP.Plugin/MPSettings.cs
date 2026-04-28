@@ -832,7 +832,7 @@ namespace BombRushMP.Plugin
             _showChat = configFile.Bind(ChatSettings, "Show Chat", true, "Whether to display the chat.");
             _dontAutoScrollChatIfFocused = configFile.Bind(ChatSettings, "No auto scroll chat if focused", false, "If true, will not scroll to the bottom when messages are received if the chat window is open for typing/scrolling.");
             _balanceUIType = configFile.Bind(Visuals, "Balance UI", BalanceUI.Types.TypeC, "Balance UI theme.");
-            _gamemodePlayerSort = configFile.Bind(Visuals, "Lobby Player List Sort", Gamemode.PlayerSort.Wins, "Whether to sort the lobby player list by last score or by total wins.");
+            _gamemodePlayerSort = configFile.Bind(Visuals, "Lobby Player List Sort", Gamemode.PlayerSort.Score, "Whether to sort the lobby player list by last score or by total wins.");
             _graceTimer = configFile.Bind(Visuals, "Graffiti Race Timer", true, "If true, will display a timer during Graffiti Races.");
 #if DEBUG
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");

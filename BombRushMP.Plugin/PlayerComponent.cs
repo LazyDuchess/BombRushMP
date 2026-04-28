@@ -247,6 +247,8 @@ namespace BombRushMP.Plugin
 
         public void ApplyMoveStyleSkin(int skinIndex)
         {
+            MovestyleSkin = null;
+
             var moveStyleProps = _player.characterVisual.moveStyleProps;
             var deckMesh = _player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
             var skateLMesh = _player.MoveStylePropsPrefabs.skateL.GetComponent<MeshFilter>().sharedMesh;
@@ -393,10 +395,7 @@ namespace BombRushMP.Plugin
         {
             if (MovestyleSkin != null && MovestyleSkin.MoveStyle == MoveStyle.INLINE && MovestyleSkin is MPBuiltInSkin && _customInlines != null)
             {
-                if (_player.moveStyle == MoveStyle.INLINE)
-                    _customInlines.SetActive(true);
-                else
-                    _customInlines.SetActive(false);
+                _customInlines.SetActive(_player.characterVisual.moveStyleProps.skateL.activeInHierarchy);
             }
             else if (_customInlines != null)
             {
