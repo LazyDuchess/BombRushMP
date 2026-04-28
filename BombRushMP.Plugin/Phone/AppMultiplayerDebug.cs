@@ -32,11 +32,11 @@ public class AppMultiplayerDebug : CustomApp
             MyPhone.OpenApp(typeof(AppJoinLobbyDebug));
         };
         ScrollView.AddButton(button);
-        button = PhoneUIUtility.CreateSimpleButton("Forklift Skin");
+        button = PhoneUIUtility.CreateSimpleButton("LowTierGod Skin");
         button.OnConfirm += () =>
         {
             var player = WorldHandler.instance.GetCurrentPlayer();
-            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.Forklift);
+            SpecialSkinManager.Instance.ApplySpecialSkinToPlayer(player, SpecialSkins.LowTierGod);
         };
         ScrollView.AddButton(button);
         button = PhoneUIUtility.CreateSimpleButton("Sean Kingston Skin");
