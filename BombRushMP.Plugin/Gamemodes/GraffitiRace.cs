@@ -416,6 +416,9 @@ namespace BombRushMP.Plugin.Gamemodes
                             spawnForward.y = 0f;
                             spawnForward = spawnForward.normalized;
                             spawnRotation = Quaternion.LookRotation(spawnForward, Vector3.up);
+                            var hx = Physics.OverlapSphere(hit.point + Vector3.up * 1f, 1f, 1 << Layers.Grinding, QueryTriggerInteraction.Collide);
+                            if (hx.Length > 0)
+                                continue;
                             break;
                         }
                     }
