@@ -69,6 +69,7 @@ namespace BombRushMP.Plugin.Gamemodes
             var chatUI = ChatUI.Instance;
             if (propDisguiseController.LocalPropHuntTeam == PropHuntTeams.Hunters)
             {
+                MPUtility.MakePlayerDance(player);
                 player.userInputEnabled = false;
                 chatUI.AddMessage("<color=yellow>You're a Hunter! Wait for the Setup phase to end before hunting the Props!\nAim and fire at suspicious props. Be careful; you will lose health if you miss.</color>");
             }

@@ -272,6 +272,7 @@ namespace BombRushMP.Plugin.Gamemodes
                 spawnRot = player.transform.rotation;
             }
             MPUtility.PlaceCurrentPlayer(spawnPos, spawnRot);
+            MPUtility.MakePlayerDance(player);
             SetSpawnLocation();
         }
 

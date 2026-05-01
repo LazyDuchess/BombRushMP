@@ -380,6 +380,11 @@ namespace BombRushMP.Plugin
             temp.Initialize(duration, pin);
         }
 
+        public static void MakePlayerDance(Player ply)
+        {
+            ply.PlayAnim(ply.characterVisual.bounceAnimHash, true, true);
+        }
+
         public static void BreakAllBreakables()
         {
             var breakables = GameObject.FindObjectsOfType<BreakableObject>(true);
