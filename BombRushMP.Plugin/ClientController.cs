@@ -67,6 +67,16 @@ namespace BombRushMP.Plugin
         private Vector3 AttachedPosition;
         private Vector3 AttachedHeading;
 
+        public static void RegisterCustomPacketHandler(string customPacketId, Action<ushort, byte[]> handler)
+        {
+            RegisterCustomPacketHandler(Compression.HashString(customPacketId), handler);
+        }
+
+        public static void UnregisterCustomPacketHandler(string customPacketId)
+        {
+            UnregisterCustomPacketHandler(Compression.HashString(customPacketId));
+        }
+
         public static void RegisterCustomPacketHandler(int customPacketId, Action<ushort, byte[]> handler)
         {
             _customPacketHandlers[customPacketId] = handler;
@@ -75,6 +85,11 @@ namespace BombRushMP.Plugin
         public static void UnregisterCustomPacketHandler(int customPacketId)
         {
             _customPacketHandlers.Remove(customPacketId);
+        }
+
+        public void BroadcastCustomPacket(byte[] data, string customPacketId, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            BroadcastCustomPacket(data, Compression.HashString(customPacketId), sendMode);
         }
 
         public void BroadcastCustomPacket(byte[] data, int customPacketId, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
@@ -89,6 +104,11 @@ namespace BombRushMP.Plugin
             SendPacket(customPacket, sendMode, NetChannels.Custom);
         }
 
+        public void BroadcastCustomPacketToCurrentLobby(byte[] data, string customPacketId, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            BroadcastCustomPacketToCurrentLobby(data, Compression.HashString(customPacketId), sendMode);
+        }
+
         public void BroadcastCustomPacketToCurrentLobby(byte[] data, int customPacketId, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
         {
             var customPacket = new ClientCustomPacket()
@@ -99,6 +119,11 @@ namespace BombRushMP.Plugin
                 TargetMode = ClientCustomPacket.SendTargets.Lobby
             };
             SendPacket(customPacket, sendMode, NetChannels.Custom);
+        }
+
+        public void SendCustomPacketToPlayer(byte[] data, string customPacketId, ushort targetPlayer, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            SendCustomPacketToPlayer(data, Compression.HashString(customPacketId), targetPlayer, sendMode);
         }
 
         public void SendCustomPacketToPlayer(byte[] data, int customPacketId, ushort targetPlayer, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
