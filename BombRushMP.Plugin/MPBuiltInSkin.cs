@@ -22,7 +22,7 @@ namespace BombRushMP.Plugin
         public override MoveStyle MoveStyle => _moveStyle;
         private MoveStyle _moveStyle;
 
-        public MPBuiltInSkin(MoveStyle moveStyle, int id) : base("Signature", "Use the character's unique gear.", InlineBuiltinId, true, null, null)
+        public MPBuiltInSkin(MoveStyle moveStyle, int id) : base("Signature", "Use the character's unique gear.", id, true, null, null)
         {
             _moveStyle = moveStyle;
         }
