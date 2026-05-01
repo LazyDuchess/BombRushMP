@@ -128,13 +128,23 @@ namespace BombRushMP.Plugin
 
         public void SendCustomPacketToPlayer(byte[] data, int customPacketId, ushort targetPlayer, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
         {
+            SendCustomPacketToPlayers(data, customPacketId, [targetPlayer], sendMode);
+        }
+
+        public void SendCustomPacketToPlayers(byte[] data, string customPacketId, ushort[] targetPlayers, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            SendCustomPacketToPlayers(data, Compression.HashString(customPacketId), targetPlayers, sendMode);
+        }
+
+        public void SendCustomPacketToPlayers(byte[] data, int customPacketId, ushort[] targetPlayers, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
             var customPacket = new ClientCustomPacket()
             {
                 CustomPacketId = customPacketId,
                 Data = data,
                 SendMode = sendMode,
-                TargetMode = ClientCustomPacket.SendTargets.Player,
-                Target = targetPlayer
+                TargetMode = ClientCustomPacket.SendTargets.Players,
+                Targets = targetPlayers
             };
             SendPacket(customPacket, sendMode, NetChannels.Custom);
         }

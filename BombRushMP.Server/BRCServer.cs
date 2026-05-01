@@ -776,9 +776,13 @@ namespace BombRushMP.Server
                                 ServerLobbyManager.SendPacketToLobby(customPacket, customPacket.SendMode, lobby.LobbyState.Id, NetChannels.Custom);
                                 break;
 
-                            case ClientCustomPacket.SendTargets.Player:
-                                if (Players.TryGetValue(customPacket.Target, out var receiver)) {
-                                    SendPacketToClient(customPacket, customPacket.SendMode, receiver.Client, NetChannels.Custom);
+                            case ClientCustomPacket.SendTargets.Players:
+                                foreach(var target in customPacket.Targets)
+                                {
+                                    if (Players.TryGetValue(target, out var receiver))
+                                    {
+                                        SendPacketToClient(customPacket, customPacket.SendMode, receiver.Client, NetChannels.Custom);
+                                    }
                                 }
                                 break;
                         }
