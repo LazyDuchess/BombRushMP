@@ -759,6 +759,32 @@ namespace BombRushMP.Server
                     }
                     break;
 
+                case Packets.ClientCustomPacket:
+                    {
+                        var customPacket = (ClientCustomPacket)packet;
+                        customPacket.Sender = player.Client.Id;
+                        if (player.ClientState == null) return;
+                        switch (customPacket.TargetMode)
+                        {
+                            case ClientCustomPacket.SendTargets.Broadcast:
+                                SendPacketToStage(customPacket, customPacket.SendMode, player.ClientState.Stage, NetChannels.Custom);
+                                break;
+
+                            case ClientCustomPacket.SendTargets.Lobby:
+                                var lobby = ServerLobbyManager.GetLobbyPlayerIsIn(player.Client.Id);
+                                if (lobby == null) return;
+                                ServerLobbyManager.SendPacketToLobby(customPacket, customPacket.SendMode, lobby.LobbyState.Id, NetChannels.Custom);
+                                break;
+
+                            case ClientCustomPacket.SendTargets.Player:
+                                if (Players.TryGetValue(customPacket.Target, out var receiver)) {
+                                    SendPacketToClient(customPacket, customPacket.SendMode, receiver.Client, NetChannels.Custom);
+                                }
+                                break;
+                        }
+                    }
+                    break;
+
                 case Packets.ClientChat:
                     {
                         var chatPacket = (ClientChat)packet;
