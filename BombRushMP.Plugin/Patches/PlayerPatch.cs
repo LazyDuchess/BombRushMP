@@ -290,6 +290,14 @@ namespace BombRushMP.Plugin.Patches
                     {
                         saveData.MPMoveStyleSkin = MPBuiltInSkin.InlineBuiltinId;
                     }
+                    else if (playerComponent.HasCustomBmx && prg.moveStyle == MoveStyle.BMX)
+                    {
+                        saveData.MPMoveStyleSkin = MPBuiltInSkin.BikeBuiltinId;
+                    }
+                    else if (playerComponent.HasCustomSkateboard && prg.moveStyle == MoveStyle.SKATEBOARD)
+                    {
+                        saveData.MPMoveStyleSkin = MPBuiltInSkin.SkateBuiltinId;
+                    }
                 }
                 if (saveData.MPMoveStyleSkin != -1)
                 {

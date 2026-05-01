@@ -102,6 +102,8 @@ namespace BombRushMP.Plugin.Patches
                 if (skin == null) continue;
                 if (skin.MoveStyle != __instance.moveStyleType) continue;
                 if (skin is MPBuiltInSkin && skin.MoveStyle == MoveStyle.INLINE && !PlayerComponent.GetLocal().HasCustomInlines) continue;
+                if (skin is MPBuiltInSkin && skin.MoveStyle == MoveStyle.SKATEBOARD && !PlayerComponent.GetLocal().HasCustomSkateboard) continue;
+                if (skin is MPBuiltInSkin && skin.MoveStyle == MoveStyle.BMX && !PlayerComponent.GetLocal().HasCustomBmx) continue;
                 if (unlock.Key == Animator.StringToHash(SpecialPlayerUtils.SpecialPlayerUnlockID) && !saveData.ShouldDisplayGoonieBoard()) continue;
                 ExtraButtonSkins.Add(skin);
             }

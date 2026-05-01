@@ -55,7 +55,11 @@ namespace BombRushMP.Plugin
         public PseudoDieAbility PseudoDieAbility = null;
 
         private GameObject _customInlines = null;
+        private GameObject _customSkateboard = null;
+        private GameObject _customBmx = null;
         public bool HasCustomInlines => _customInlines != null;
+        public bool HasCustomSkateboard => _customSkateboard != null;
+        public bool HasCustomBmx => _customBmx != null;
 
         public void CacheNewSkin()
         {
@@ -63,6 +67,15 @@ namespace BombRushMP.Plugin
             var inlineTf = _player.characterVisual.transform.FindRecursive(MPBuiltInSkin.InlineTransformName);
             if (inlineTf != null)
                 _customInlines = inlineTf.gameObject;
+
+            var skateTf = _player.characterVisual.transform.FindRecursive(MPBuiltInSkin.SkateTransformName);
+            if (skateTf != null)
+                _customSkateboard = skateTf.gameObject;
+
+            var bmxTf = _player.characterVisual.transform.FindRecursive(MPBuiltInSkin.BikeBuiltinTransformName);
+            if (bmxTf != null)
+                _customBmx = bmxTf.gameObject;
+
             if (MovestyleSkin != null)
                 MovestyleSkin.ApplyToPlayer(_player);
         }
@@ -246,11 +259,30 @@ namespace BombRushMP.Plugin
             MovestyleSkin = null;
 
             var moveStyleProps = _player.characterVisual.moveStyleProps;
+
+            var frameMesh = _player.MoveStylePropsPrefabs.bmxFrame.GetComponent<MeshFilter>().sharedMesh;
+            var gearMesh = _player.MoveStylePropsPrefabs.bmxGear.GetComponent<MeshFilter>().sharedMesh;
+            var handlebarsMesh = _player.MoveStylePropsPrefabs.bmxHandlebars.GetComponent<MeshFilter>().sharedMesh;
+            var pedalLMesh = _player.MoveStylePropsPrefabs.bmxPedalL.GetComponent<MeshFilter>().sharedMesh;
+            var pedalRMesh = _player.MoveStylePropsPrefabs.bmxPedalR.GetComponent<MeshFilter>().sharedMesh;
+            var wheelFMesh = _player.MoveStylePropsPrefabs.bmxWheelF.GetComponent<MeshFilter>().sharedMesh;
+            var wheelRMesh = _player.MoveStylePropsPrefabs.bmxWheelR.GetComponent<MeshFilter>().sharedMesh;
+
             var deckMesh = _player.MoveStylePropsPrefabs.skateboard.GetComponent<MeshFilter>().sharedMesh;
+
             var skateLMesh = _player.MoveStylePropsPrefabs.skateL.GetComponent<MeshFilter>().sharedMesh;
             var skateRMesh = _player.MoveStylePropsPrefabs.skateR.GetComponent<MeshFilter>().sharedMesh;
 
+            moveStyleProps.bmxFrame.GetComponent<MeshFilter>().sharedMesh = frameMesh;
+            moveStyleProps.bmxGear.GetComponent<MeshFilter>().sharedMesh = gearMesh;
+            moveStyleProps.bmxHandlebars.GetComponent<MeshFilter>().sharedMesh = handlebarsMesh;
+            moveStyleProps.bmxPedalL.GetComponent<MeshFilter>().sharedMesh = pedalLMesh;
+            moveStyleProps.bmxPedalR.GetComponent<MeshFilter>().sharedMesh = pedalRMesh;
+            moveStyleProps.bmxWheelF.GetComponent<MeshFilter>().sharedMesh = wheelFMesh;
+            moveStyleProps.bmxWheelR.GetComponent<MeshFilter>().sharedMesh = wheelRMesh;
+
             moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = deckMesh;
+
             moveStyleProps.skateL.GetComponent<MeshFilter>().sharedMesh = skateLMesh;
             moveStyleProps.skateR.GetComponent<MeshFilter>().sharedMesh = skateRMesh;
 
@@ -397,6 +429,25 @@ namespace BombRushMP.Plugin
             {
                 _customInlines.SetActive(false);
             }
+
+            if (MovestyleSkin != null && MovestyleSkin.MoveStyle == MoveStyle.SKATEBOARD && MovestyleSkin is MPBuiltInSkin && _customSkateboard != null)
+            {
+                _customSkateboard.SetActive(_player.characterVisual.moveStyleProps.skateboard.activeInHierarchy);
+            }
+            else if (_customSkateboard != null)
+            {
+                _customSkateboard.SetActive(false);
+            }
+
+            if (MovestyleSkin != null && MovestyleSkin.MoveStyle == MoveStyle.BMX && MovestyleSkin is MPBuiltInSkin && _customBmx != null)
+            {
+                _customBmx.SetActive(_player.characterVisual.moveStyleProps.bmxFrame.activeInHierarchy);
+            }
+            else if (_customBmx != null)
+            {
+                _customBmx.SetActive(false);
+            }
+
             if (ClientController.Instance == null) return;
             UpdateChibi();
             var mpSettings = MPSettings.Instance;

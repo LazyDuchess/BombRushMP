@@ -13,6 +13,12 @@ namespace BombRushMP.Plugin
     {
         public const int InlineBuiltinId = 6969420;
         public const string InlineTransformName = "builtin_inlines";
+
+        public const int BikeBuiltinId = 6767420;
+        public const string BikeBuiltinTransformName = "builtin_bmx";
+
+        public const int SkateBuiltinId = 5318008;
+        public const string SkateTransformName = "builtin_skate";
         public override MoveStyle MoveStyle => _moveStyle;
         private MoveStyle _moveStyle;
 
@@ -24,8 +30,28 @@ namespace BombRushMP.Plugin
         public override void ApplyToPlayer(Player player)
         {
             base.ApplyToPlayer(player);
-            player.characterVisual.moveStyleProps.skateL.GetComponent<MeshFilter>().sharedMesh = null;
-            player.characterVisual.moveStyleProps.skateR.GetComponent<MeshFilter>().sharedMesh = null;
+
+            switch (_moveStyle)
+            {
+                case MoveStyle.INLINE:
+                    player.characterVisual.moveStyleProps.skateL.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.skateR.GetComponent<MeshFilter>().sharedMesh = null;
+                    break;
+
+                case MoveStyle.SKATEBOARD:
+                    player.characterVisual.moveStyleProps.skateboard.GetComponent<MeshFilter>().sharedMesh = null;
+                    break;
+
+                case MoveStyle.BMX:
+                    player.characterVisual.moveStyleProps.bmxFrame.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.bmxGear.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.bmxHandlebars.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.bmxPedalL.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.bmxPedalR.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.bmxWheelF.GetComponent<MeshFilter>().sharedMesh = null;
+                    player.characterVisual.moveStyleProps.bmxWheelR.GetComponent<MeshFilter>().sharedMesh = null;
+                    break;
+            }
         }
     }
 }
