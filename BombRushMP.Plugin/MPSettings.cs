@@ -769,6 +769,21 @@ namespace BombRushMP.Plugin
 
         private const string MainServerAddress = "free.soulisall.city";
         public const string DefaultName = "Goofiest Gooner";
+        private static string[] NewPlayerNames =
+            [
+            "Goofiest Gooner",
+            "Billboard Edger",
+            "Hideout Pole Lover",
+            "Police Station Gracer",
+            "Buttslap Master",
+            "Forged in Slamworks",
+            "Versum Hill Tomb Water Drinker",
+            "#1 Pro Skater Score Battler",
+            "Rail Goon Tech Labber",
+            "MovementPlus 3.0 TOMORROW",
+            "Chris-Chan.cbb",
+            "RIP Forklift"
+        ];
 
         public MPSettings(ConfigFile configFile, string dir, string configPath)
         {
@@ -782,7 +797,7 @@ namespace BombRushMP.Plugin
             else
                 _authKey = TMPFilter.Sanitize(File.ReadAllText(authFilePath));
             _reflectionQuality = configFile.Bind(Settings, "Reflection Quality", ReflectionQualities.High, "Quality of reflections on reflective surfaces.");
-            _playerName = configFile.Bind(General, "Player Name", DefaultName, "Your player name.");
+            _playerName = configFile.Bind(General, "Player Name", NewPlayerNames[UnityEngine.Random.Range(0, NewPlayerNames.Length)], "Your player name.");
             _playerName.SettingChanged += (sender, args) =>
             {
                 var clientController = ClientController.Instance;
