@@ -283,9 +283,9 @@ namespace BombRushMP.Plugin.Patches
             if (!__instance.isAI)
             {
                 var saveData = MPSaveData.Instance.GetCharacterData(__instance.character, out var justCreated);
+                var prg = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(__instance.character);
                 if (justCreated)
                 {
-                    var prg = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(__instance.character);
                     if (playerComponent.HasCustomInlines && prg.moveStyle == MoveStyle.INLINE)
                     {
                         saveData.MPMoveStyleSkin = MPBuiltInSkin.InlineBuiltinId;
@@ -308,6 +308,10 @@ namespace BombRushMP.Plugin.Patches
                         if (skin != null)
                             skin.ApplyToPlayer(__instance);
                     }
+                }
+                else
+                {
+                    playerComponent.ApplyMoveStyleSkin(prg.moveStyleSkin);
                 }
             }
         }
