@@ -165,8 +165,6 @@ namespace BombRushMP.Plugin
             var wasMovestyleEquipped = player.usingEquippedMovestyle;
             player.SetCurrentMoveStyleEquipped(player.moveStyleEquipped, true, true);
             player.InitVisual();
-            PlayerComponent.Get(player).RefreshSkin();
-            PlayerComponent.Get(player).CacheNewSkin();
             if (!wasMovestyleEquipped)
                 player.SetMoveStyle(MoveStyle.ON_FOOT, true, true);
             if (!player.isAI)

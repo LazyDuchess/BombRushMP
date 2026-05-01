@@ -275,17 +275,17 @@ namespace BombRushMP.Plugin.Patches
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(nameof(Player.SetCharacter))]
-        private static void SetCharacter_Postfix(Characters setChar, Player __instance)
+        [HarmonyPatch(nameof(Player.InitVisual))]
+        private static void InitVisual_Postfix(Player __instance)
         {
             var playerComponent = PlayerComponent.Get(__instance);
             playerComponent.CacheNewSkin();
             if (!__instance.isAI)
             {
-                var saveData = MPSaveData.Instance.GetCharacterData(setChar, out var justCreated);
+                var saveData = MPSaveData.Instance.GetCharacterData(__instance.character, out var justCreated);
                 if (justCreated)
                 {
-                    var prg = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(setChar);
+                    var prg = Core.Instance.SaveManager.CurrentSaveSlot.GetCharacterProgress(__instance.character);
                     if (playerComponent.HasCustomInlines && prg.moveStyle == MoveStyle.INLINE)
                     {
                         saveData.MPMoveStyleSkin = MPBuiltInSkin.InlineBuiltinId;
@@ -302,6 +302,13 @@ namespace BombRushMP.Plugin.Patches
                     }
                 }
             }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Player.SetCharacter))]
+        private static void SetCharacter_Postfix(Characters setChar, Player __instance)
+        {
+            var playerComponent = PlayerComponent.Get(__instance);
             playerComponent.Chibi = false;
             playerComponent.SpecialSkin = SpecialSkins.None;
             playerComponent.UnloadStreamedCharacter();

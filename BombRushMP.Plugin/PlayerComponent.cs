@@ -63,10 +63,6 @@ namespace BombRushMP.Plugin
             var inlineTf = _player.characterVisual.transform.FindRecursive(MPBuiltInSkin.InlineTransformName);
             if (inlineTf != null)
                 _customInlines = inlineTf.gameObject;
-        }
-
-        public void RefreshSkin()
-        {
             if (MovestyleSkin != null)
                 MovestyleSkin.ApplyToPlayer(_player);
         }
@@ -619,8 +615,6 @@ namespace BombRushMP.Plugin
             var wasMovestyleEquipped = _player.usingEquippedMovestyle;
             _player.SetCurrentMoveStyleEquipped(_player.moveStyleEquipped, true, true);
             _player.InitVisual();
-            RefreshSkin();
-            CacheNewSkin();
             if (!wasMovestyleEquipped)
                 _player.SetMoveStyle(MoveStyle.ON_FOOT, true, true);
             if (!_player.isAI)
