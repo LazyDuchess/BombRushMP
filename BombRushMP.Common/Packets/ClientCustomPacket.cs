@@ -22,9 +22,11 @@ namespace BombRushMP.Common.Packets
         public ushort Sender = 0;
         public ushort Target = 0;
         public byte[] Data;
+        public int CustomPacketId = 0;
 
         public override void Read(BinaryReader reader)
         {
+            CustomPacketId = reader.ReadInt32();
             Sender = reader.ReadUInt16();
             Target = reader.ReadUInt16();
             SendMode = (IMessage.SendModes)reader.ReadInt32();
@@ -35,6 +37,7 @@ namespace BombRushMP.Common.Packets
 
         public override void Write(BinaryWriter writer)
         {
+            writer.Write(CustomPacketId);
             writer.Write(Sender);
             writer.Write(Target);
             writer.Write((int)SendMode);
