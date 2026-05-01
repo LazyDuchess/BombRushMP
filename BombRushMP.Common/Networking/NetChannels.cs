@@ -14,6 +14,7 @@ namespace BombRushMP.Common.Networking
         VisualUpdates,
         Chat,
         Animation,
+        Custom,
         MAX
     }
 }
