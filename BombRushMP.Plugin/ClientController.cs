@@ -53,6 +53,7 @@ namespace BombRushMP.Plugin
                 return _cachedPlayerComponent;
             }
         }
+        private static Dictionary<int, Action<ushort, byte[]>> _customPacketHandlers = new();
         private PlayerComponent _cachedPlayerComponent = null;
         private INetClient _client;
         private float _tickTimer = 0f;
@@ -65,6 +66,53 @@ namespace BombRushMP.Plugin
         public Player PlayerAttached;
         private Vector3 AttachedPosition;
         private Vector3 AttachedHeading;
+
+        public static void RegisterCustomPacketHandler(int customPacketId, Action<ushort, byte[]> handler)
+        {
+            _customPacketHandlers[customPacketId] = handler;
+        }
+
+        public static void UnregisterCustomPacketHandler(int customPacketId)
+        {
+            _customPacketHandlers.Remove(customPacketId);
+        }
+
+        public void BroadcastCustomPacket(byte[] data, int customPacketId, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            var customPacket = new ClientCustomPacket()
+            {
+                CustomPacketId = customPacketId,
+                Data = data,
+                SendMode = sendMode,
+                TargetMode = ClientCustomPacket.SendTargets.Broadcast
+            };
+            SendPacket(customPacket, sendMode, NetChannels.Custom);
+        }
+
+        public void BroadcastCustomPacketToCurrentLobby(byte[] data, int customPacketId, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            var customPacket = new ClientCustomPacket()
+            {
+                CustomPacketId = customPacketId,
+                Data = data,
+                SendMode = sendMode,
+                TargetMode = ClientCustomPacket.SendTargets.Lobby
+            };
+            SendPacket(customPacket, sendMode, NetChannels.Custom);
+        }
+
+        public void SendCustomPacketToPlayer(byte[] data, int customPacketId, ushort targetPlayer, IMessage.SendModes sendMode = IMessage.SendModes.ReliableUnordered)
+        {
+            var customPacket = new ClientCustomPacket()
+            {
+                CustomPacketId = customPacketId,
+                Data = data,
+                SendMode = sendMode,
+                TargetMode = ClientCustomPacket.SendTargets.Player,
+                Target = targetPlayer
+            };
+            SendPacket(customPacket, sendMode, NetChannels.Custom);
+        }
 
         public void AttachToPlayerID(ushort playerId)
         {
@@ -728,6 +776,16 @@ namespace BombRushMP.Plugin
                     {
                         var tpPacket = (ServerTeleportPlayer)packet;
                         MPUtility.PlaceCurrentPlayer(tpPacket.Position.ToUnityVector3(), tpPacket.Rotation.ToUnityQuaternion());
+                    }
+                    break;
+
+                case Packets.ClientCustomPacket:
+                    {
+                        var customPacket = (ClientCustomPacket)packet;
+                        if (_customPacketHandlers.TryGetValue(customPacket.CustomPacketId, out var handler))
+                        {
+                            handler?.Invoke(customPacket.Sender, customPacket.Data);
+                        }
                     }
                     break;
             }
