@@ -39,6 +39,7 @@ namespace BombRushMP.ServerApp
         public float ChatCooldown = 0.5f;
         public string MOTD = "<color=yellow>Welcome to All City Network!";
         public bool AlwaysShowMOTD = false;
+        public bool WebServer = true;
         [JsonIgnore]
         public IMessage.SendModes ClientAnimationSendMode
         {
