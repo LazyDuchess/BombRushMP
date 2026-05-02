@@ -20,8 +20,8 @@ namespace BombRushMP.Common.Packets
         public IMessage.SendModes SendMode = IMessage.SendModes.ReliableUnordered;
         public SendTargets TargetMode = SendTargets.Broadcast;
         public ushort Sender = 0;
-        public ushort[] Targets;
-        public byte[] Data;
+        public ushort[] Targets = { };
+        public byte[] Data = { };
         public int CustomPacketId = 0;
 
         public override void Read(BinaryReader reader)
