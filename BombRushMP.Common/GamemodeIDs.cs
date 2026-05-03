@@ -14,6 +14,7 @@ namespace BombRushMP.Common
         ProSkaterScoreBattle,
         TeamScoreBattle,
         TeamProSkaterScoreBattle,
-        PropHunt
+        PropHunt,
+        Custom
     }
 }
