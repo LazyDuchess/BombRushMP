@@ -1,35 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <AssemblyName>BombRushMP.Plugin</AssemblyName>
     <Description>My first plugin</Description>
-    <Version>0.21.2</Version>
+    <Version>0.22.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
     <Configurations>Debug;Release;Developer Debug</Configurations>
   </PropertyGroup>
-  
   <PropertyGroup>
     <ManagedPath>$(BRCPath)/Bomb Rush Cyberfunk_Data/Managed</ManagedPath>
   </PropertyGroup>
-  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Developer Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
   </PropertyGroup>
-  
   <ItemGroup>
     <None Remove="res\badwords.txt" />
     <None Remove="res\profanity.txt" />
     <None Remove="res\safewords.txt" />
   </ItemGroup>
-  
   <ItemGroup>
     <EmbeddedResource Include="res\badwords.txt" />
     <EmbeddedResource Include="res\profanity.txt" />
     <EmbeddedResource Include="res\safewords.txt" />
   </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1">
@@ -40,7 +34,6 @@
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
     <PackageReference Include="UnityEngine.Modules" Version="2021.3.27" IncludeAssets="compile" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\BombRushMP.BunchOfEmotes\BombRushMP.BunchOfEmotes.csproj" />
     <ProjectReference Include="..\BombRushMP.Common\BombRushMP.Common.csproj" />
@@ -56,7 +49,6 @@
       <CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
     </ProjectReference>
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(ManagedPath)/Assembly-CSharp.dll</HintPath>
@@ -67,7 +59,7 @@
       <HintPath>$(ManagedPath)/Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
     </Reference>
-	<Reference Include="Unity.Timeline">
+    <Reference Include="Unity.Timeline">
       <HintPath>$(ManagedPath)/Unity.Timeline.dll</HintPath>
       <Private>false</Private>
     </Reference>
@@ -79,12 +71,11 @@
       <HintPath>$(ManagedPath)/EasyDecal.Runtime.dll</HintPath>
       <Private>false</Private>
     </Reference>
-  <Reference Include="Rewired_Core">
+    <Reference Include="Rewired_Core">
       <HintPath>$(ManagedPath)/Rewired_Core.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
-  
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
