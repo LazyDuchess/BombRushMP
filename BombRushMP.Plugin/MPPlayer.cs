@@ -51,6 +51,9 @@ namespace BombRushMP.Plugin
         private const float MaxTimeSpentInWrongAnimation = 0.5f;
         private PlayerInteractable _interactable = null;
 
+        public bool CustomVisibility = false;
+        public bool CustomTransform = false;
+
         public void UpdateVisualState(ClientVisualState newVisualState)
         {
             ClientVisualState = newVisualState;
@@ -292,17 +295,26 @@ namespace BombRushMP.Plugin
 
             if (ClientState == null || ClientVisualState == null) return;
 
-            if (ClientVisualState.Disguised || ShouldIgnore())
+            if (!CustomVisibility)
             {
-                if (Player.visualTf.gameObject.activeSelf)
-                    Player.visualTf.gameObject.SetActive(false);
-                hidden = true;
-                lod = false;
+
+                if (ClientVisualState.Disguised || ShouldIgnore())
+                {
+                    if (Player.visualTf.gameObject.activeSelf)
+                        Player.visualTf.gameObject.SetActive(false);
+                    hidden = true;
+                    lod = false;
+                }
+
+                if (hidden || lod)
+                    Player.RemoveGraffitiSlash();
+
             }
-
-            if (hidden || lod)
-                Player.RemoveGraffitiSlash();
-
+            else
+            {
+                lod = false;
+                hidden = true;
+            }
             _targetLod = lod;
             _targetHidden = hidden;
 
@@ -321,45 +333,47 @@ namespace BombRushMP.Plugin
             if (ClientVisualState.State == PlayerStates.Toilet)
                 Teleporting = true;
 
-            var clientVisualStatePosition = ClientVisualState.Position.ToUnityVector3();
-            var clientVisualStateVisualPosition = ClientVisualState.VisualPosition.ToUnityVector3();
-            var clientVisualStateRotation = ClientVisualState.Rotation.ToUnityQuaternion();
-            var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
-            var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
+            if (!CustomTransform)
+            {
+                var clientVisualStatePosition = ClientVisualState.Position.ToUnityVector3();
+                var clientVisualStateVisualPosition = ClientVisualState.VisualPosition.ToUnityVector3();
+                var clientVisualStateRotation = ClientVisualState.Rotation.ToUnityQuaternion();
+                var clientVisualStateVisualRotation = ClientVisualState.VisualRotation.ToUnityQuaternion();
+                var clientVisualStateVelocity = ClientVisualState.Velocity.ToUnityVector3();
 
-            if (Teleporting)
-            {
-                Teleporting = false;
-                Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
-                Player.visualTf.localPosition = clientVisualStateVisualPosition;
-                Player.visualTf.localRotation = clientVisualStateVisualRotation;
-                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, ClientVisualState.GrindDirection);
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, ClientVisualState.PhoneDirectionX);
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, ClientVisualState.PhoneDirectionY);
-                Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, ClientVisualState.TurnDirection1);
-                Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, ClientVisualState.TurnDirection2);
-                Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, ClientVisualState.TurnDirection3);
-                Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, ClientVisualState.TurnDirectionSkateboard);
-            }
-            else
-            {
-                Player.transform.position = Vector3.Lerp(Player.transform.position, clientVisualStatePosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, clientVisualStateRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, clientVisualStateVisualRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, clientVisualStateVisualPosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
-                Player.anim.SetFloat(ClientConstants.GrindDirectionHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.GrindDirectionHash), ClientVisualState.GrindDirection, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionXHash), ClientVisualState.PhoneDirectionX, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionYHash), ClientVisualState.PhoneDirectionY, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection1Hash), ClientVisualState.TurnDirection1, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection2Hash), ClientVisualState.TurnDirection2, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection3Hash), ClientVisualState.TurnDirection3, Time.deltaTime * ClientConstants.PlayerInterpolation));
-                Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash), ClientVisualState.TurnDirectionSkateboard, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                if (Teleporting)
+                {
+                    Teleporting = false;
+                    Player.SetPosAndRotHard(clientVisualStatePosition, clientVisualStateRotation);
+                    Player.visualTf.localPosition = clientVisualStateVisualPosition;
+                    Player.visualTf.localRotation = clientVisualStateVisualRotation;
+                    Player.anim.SetFloat(ClientConstants.GrindDirectionHash, ClientVisualState.GrindDirection);
+                    Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, ClientVisualState.PhoneDirectionX);
+                    Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, ClientVisualState.PhoneDirectionY);
+                    Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, ClientVisualState.TurnDirection1);
+                    Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, ClientVisualState.TurnDirection2);
+                    Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, ClientVisualState.TurnDirection3);
+                    Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, ClientVisualState.TurnDirectionSkateboard);
+                }
+                else
+                {
+                    Player.transform.position = Vector3.Lerp(Player.transform.position, clientVisualStatePosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                    Player.transform.rotation = Quaternion.Lerp(Player.transform.rotation, clientVisualStateRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                    Player.visualTf.localRotation = Quaternion.Lerp(Player.visualTf.localRotation, clientVisualStateVisualRotation, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                    Player.visualTf.localPosition = Vector3.Lerp(Player.visualTf.localPosition, clientVisualStateVisualPosition, Time.deltaTime * ClientConstants.PlayerInterpolation);
+                    Player.anim.SetFloat(ClientConstants.GrindDirectionHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.GrindDirectionHash), ClientVisualState.GrindDirection, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                    Player.anim.SetFloat(ClientConstants.PhoneDirectionXHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionXHash), ClientVisualState.PhoneDirectionX, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                    Player.anim.SetFloat(ClientConstants.PhoneDirectionYHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.PhoneDirectionYHash), ClientVisualState.PhoneDirectionY, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                    Player.anim.SetFloat(ClientConstants.TurnDirection1Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection1Hash), ClientVisualState.TurnDirection1, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                    Player.anim.SetFloat(ClientConstants.TurnDirection2Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection2Hash), ClientVisualState.TurnDirection2, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                    Player.anim.SetFloat(ClientConstants.TurnDirection3Hash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirection3Hash), ClientVisualState.TurnDirection3, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                    Player.anim.SetFloat(ClientConstants.TurnDirectionSkateboardHash, Mathf.Lerp(Player.anim.GetFloat(ClientConstants.TurnDirectionSkateboardHash), ClientVisualState.TurnDirectionSkateboard, Time.deltaTime * ClientConstants.PlayerInterpolation));
+                }
+                Player.motor._rigidbody.velocity = clientVisualStateVelocity;
             }
 
             if (ClientVisualState.State == PlayerStates.Toilet)
                 Teleporting = true;
-
-            Player.motor._rigidbody.velocity = clientVisualStateVelocity;
             UpdateLookAt();
             UpdatePhone();
             UpdateSprayCan();
@@ -617,7 +631,7 @@ namespace BombRushMP.Plugin
                 return;
             }
 
-            if (!ClientVisualState.Disguised && !ShouldIgnore())
+            if (!ClientVisualState.Disguised && !ShouldIgnore() && !CustomVisibility)
             {
                 if (_targetHidden)
                 {
