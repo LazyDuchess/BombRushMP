@@ -1,0 +1,11 @@
+{
+  "name": "All_City_Network",
+  "author": "LazyDuchess",
+  "description": "BETA Multiplayer Mod",
+  "website_url": "https://github.com/LazyDuchess/BombRushMP",
+  "version_number": "0.21.2",
+  "dependencies": [
+    "LazyDuchess-CommonAPI-1.1.0",
+	"SlopBrew-MapStation-0.19.2"
+  ]
+}
