@@ -29,6 +29,8 @@ namespace BombRushMP.Plugin
             Emojis = new Emojis();
             DeathMusic = [Bundle.LoadAsset<AudioClip>("badfinger"), Bundle.LoadAsset<AudioClip>("drs")];
             AimOutlineMaterial = Bundle.LoadAsset<Material>("Aim Outline Material");
+            var badgeMap = new BadgeMap(Sprites);
+            badgeMap.ParseFromDirectory(path + "/badgemap", 4096, 32);
             if (MPUtility.IsChristmas())
             {
                 XmasHideoutPrefab = Bundle.LoadAsset<GameObject>("XmasHideout");
