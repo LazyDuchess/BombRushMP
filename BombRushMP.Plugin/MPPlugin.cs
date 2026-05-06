@@ -56,7 +56,7 @@ namespace BombRushMP.Plugin
             }
             if (_selfHosting)
                 _localServerController = new ServerController(MPSettings.Instance.ServerPort, 1f / MPSettings.Instance.TicksPerSecond, maxPlayers, _offline, new LocalServerDatabase(_localAdminKey));
-            new MPAssets(Path.Combine(Path.GetDirectoryName(Info.Location), "assets"));
+            new MPAssets(Path.GetDirectoryName(Info.Location));
             // Plugin startup logic
             if (Chainloader.PluginInfos.ContainsKey("CrewBoom"))
             {

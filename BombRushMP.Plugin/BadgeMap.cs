@@ -20,7 +20,7 @@ namespace BombRushMP.Plugin
             _spriteAsset = spriteAsset;
         }
 
-        public void ParseFromDirectory(string path, int resolution, int padding)
+        public void ParseFromDirectory(string path, int padding)
         {
             var pngFiles = Directory.GetFiles(path, "*.png");
 
@@ -36,13 +36,22 @@ namespace BombRushMP.Plugin
                 indices.Add(index);
             }
 
-            var atlas = new Texture2D(resolution, resolution);
+            var atlas = new Texture2D(2, 2);
             var rects = atlas.PackTextures(textures.ToArray(), padding);
+            atlas.filterMode = MPSettings.Instance.SmoothSprites ? FilterMode.Bilinear : FilterMode.Point;
+            atlas.wrapMode = TextureWrapMode.Clamp;
 
             _spriteAsset.spriteSheet = atlas;
 
+            var max = indices.Max() + 1;
+
+            var glyphTable = new TMP_SpriteGlyph[max];
+            var charTable = new TMP_SpriteCharacter[max];
+
             _spriteAsset.spriteGlyphTable.Clear();
             _spriteAsset.spriteCharacterTable.Clear();
+            _spriteAsset.spriteGlyphTable.AddRange(glyphTable);
+            _spriteAsset.spriteCharacterTable.AddRange(charTable);
 
             for(var i = 0; i < textures.Count; i++)
             {
@@ -55,15 +64,19 @@ namespace BombRushMP.Plugin
                         (int)(rects[i].width * atlas.width),
                         (int)(rects[i].height * atlas.height)
                     ),
-                    scale = 1.0f
+                    metrics = new GlyphMetrics(rects[i].width * atlas.width, rects[i].height * atlas.height, 0, (rects[i].height * atlas.height) * MPSettings.Instance.SpriteBaseline, rects[i].width * atlas.width),
+                    scale = 1.2f
                 };
 
                 var character = new TMP_SpriteCharacter((uint)indices[i], glyph);
 
-                _spriteAsset.spriteGlyphTable.Add(glyph);
-                _spriteAsset.spriteCharacterTable.Add(character);
+                _spriteAsset.spriteGlyphTable[indices[i]] = glyph;
+                _spriteAsset.spriteCharacterTable[indices[i]] = character;
                 UnityEngine.Object.Destroy(textures[i]);
             }
+
+            _spriteAsset.UpdateLookupTables();
+            _spriteAsset.material.mainTexture = atlas;
         }
     }
 }

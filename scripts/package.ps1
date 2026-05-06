@@ -53,7 +53,7 @@ function CreatePluginZip(){
     $zip = CreateZip $zipPath
 
     Push-Location "Thunderstore"
-    Get-ChildItem -Recurse './' | ForEach-Object {
+    Get-ChildItem -Recurse -File './' | ForEach-Object {
         $path = ($_ | Resolve-Path -Relative).Replace('.\', '')
         AddToZip $zip $_.FullName $path
     }

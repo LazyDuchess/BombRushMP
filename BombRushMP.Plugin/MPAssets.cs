@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace BombRushMP.Plugin
 {
@@ -20,17 +22,17 @@ namespace BombRushMP.Plugin
         public GameObject XmasHideoutPrefab;
         public Texture2D XmasSky;
 
-        public MPAssets(string path)
+        public MPAssets(string rootPath)
         {
             Instance = this;
-            Bundle = AssetBundle.LoadFromFile(path);
+            Bundle = AssetBundle.LoadFromFile(Path.Combine(rootPath, "assets"));
             Sprites = Bundle.LoadAsset<TMP_SpriteAsset>("badges");
             LODMaterial = Bundle.LoadAsset<Material>("LODMaterial");
-            Emojis = new Emojis();
+            Emojis = JsonConvert.DeserializeObject<Emojis>(File.ReadAllText(Path.Combine(rootPath, "emojimap.json")));
             DeathMusic = [Bundle.LoadAsset<AudioClip>("badfinger"), Bundle.LoadAsset<AudioClip>("drs")];
             AimOutlineMaterial = Bundle.LoadAsset<Material>("Aim Outline Material");
             var badgeMap = new BadgeMap(Sprites);
-            badgeMap.ParseFromDirectory(path + "/badgemap", 4096, 32);
+            badgeMap.ParseFromDirectory(Path.Combine(rootPath, "badgemap"), 32);
             if (MPUtility.IsChristmas())
             {
                 XmasHideoutPrefab = Bundle.LoadAsset<GameObject>("XmasHideout");

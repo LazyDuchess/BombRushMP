@@ -688,6 +688,33 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool SmoothSprites {
+            get
+            {
+                return _smoothSprites.Value;
+            }
+            set
+            {
+                _smoothSprites.Value = value;
+            }
+        }
+
+#if DEBUG
+        public float SpriteBaseline
+        {
+            get
+            {
+                return _spriteBaseline.Value;
+            }
+            set
+            {
+                _spriteBaseline.Value = value;
+            }
+        }
+#else
+        public float SpriteBaseline => 0.8f;
+#endif
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -743,6 +770,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateClientController;
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
+        private ConfigEntry<float> _spriteBaseline;
 #endif
         private ConfigEntry<bool> _allowTeleports;
         private ConfigEntry<float> _chatFontSize;
@@ -751,7 +779,8 @@ namespace BombRushMP.Plugin
 
         private ConfigEntry<Gamemode.PlayerSort> _gamemodePlayerSort;
         private ConfigEntry<bool> _graceTimer;
-
+        private ConfigEntry<bool> _smoothSprites;
+        
         private string _savePath;
         private ConfigFile _configFile;
 
@@ -859,6 +888,7 @@ namespace BombRushMP.Plugin
             _updateClientController = configFile.Bind(Debug, "Update Client Controller", true, "FOR STRESS TEST: update client controller");
             _updateLobbyController = configFile.Bind(Debug, "Update Lobby Controller", true, "FOR STRESS TEST: update client lobby controller");
             _updateNetworkClient = configFile.Bind(Debug, "Update Network Client", true, "FOR STRESS TEST: update net interface client");
+            _spriteBaseline = configFile.Bind(Visuals, "Sprite Baseline", 0.8f, "DEBUG visual sprite baseline.");
 #endif
             _networkInterface = configFile.Bind(Advanced, "Network Interface", NetworkInterfaces.LiteNetLib, "Networking library to use. Should match the server.");
             _useNativeSockets = configFile.Bind(Advanced, "Use Native Sockets", true, "Whether the networking library should use native sockets if available. Potentially better performance. Currently only supported via LiteNetLib networking.");
@@ -892,6 +922,11 @@ namespace BombRushMP.Plugin
             _loadCharactersAsync = configFile.Bind(CrewBoom, "Load Characters Async", true, "Loads characters from your ACN CrewBoom folder asynchronously to prevent stutters.");
             _reloadCharactersInLoadingScreens = configFile.Bind(CrewBoom, "Reload Characters", true, "Reloads your CrewBoom folder during loading screens in between stages. Allows you to add new characters at runtime.");
             _deathSequence = configFile.Bind(Misc, "Death Sequence", true, "Whether to play the death sequence when you die.");
+            _smoothSprites = configFile.Bind(Visuals, "Smooth Sprites", true, "Whether to smooth out emojis and badges on render.");
+            _smoothSprites.SettingChanged += (sender, args) =>
+            {
+                MPAssets.Instance.Sprites.spriteSheet.filterMode = SmoothSprites ? FilterMode.Bilinear : FilterMode.Point;
+            };
         }
 
         public void Save()
