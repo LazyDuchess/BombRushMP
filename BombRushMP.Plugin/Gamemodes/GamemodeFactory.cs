@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -72,9 +72,20 @@ namespace BombRushMP.Plugin.Gamemodes
             return _defaultTeams;
         }
 
+        public static bool IsRegistered(GamemodeIDs gameModeID)
+        {
+            return Gamemodes.ContainsKey(gameModeID);
+        }
+
         public static Gamemode GetGamemode(GamemodeIDs gameModeID)
         {
-            var instance = Activator.CreateInstance(Gamemodes[gameModeID]) as Gamemode;
+            if (!Gamemodes.TryGetValue(gameModeID, out var gamemodeType))
+            {
+                Debug.LogWarning($"Unknown gamemode '{gameModeID}', falling back to Score Battle.");
+                gamemodeType = Gamemodes[GamemodeIDs.ScoreBattle];
+            }
+
+            var instance = Activator.CreateInstance(gamemodeType) as Gamemode;
             return instance;
         }
 
@@ -103,7 +114,10 @@ namespace BombRushMP.Plugin.Gamemodes
 
         public static string GetGamemodeName(GamemodeIDs gameModeID)
         {
-            return GamemodeNames[gameModeID];
+            if (!GamemodeNames.TryGetValue(gameModeID, out var gamemodeName))
+                return "Unknown";
+
+            return gamemodeName;
         }
     }
 }
