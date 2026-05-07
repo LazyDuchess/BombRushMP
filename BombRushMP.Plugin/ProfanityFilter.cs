@@ -18,10 +18,10 @@ namespace BombRushMP.Plugin
         public const string CensoredMessage = "I said a naughty word!";
         public const string ProfanityError = "Your message contains banned words.";
 
-        public const string CensoredStatus = "Saying Slurs";
+        public const string CensoredStatus = "I said a naughty word!";
         public const string StatusProfanityError = "Your status contains banned words.";
 
-        public const string CensoredName = "Punished Gooner";
+        public const string CensoredName = "Punished Slopper";
 
         public const string FilteredIndicator = "<sprite=37><color=red>[FILTERED]</color>";
 
