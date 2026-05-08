@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.Mono.Runtime;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace BombRushMP.Plugin
                 dist -= _minDistance;
                 dist /= _maxDistance;
                 dist = Mathf.Clamp(dist, 0f, 1f);
-                rect.sizeDelta = Vector2.Lerp(_originalSize, _originalSize * _distanceSizeMultiplier, dist);
+                rect.sizeDelta = Vector2.Lerp(_originalSize, _originalSize * _distanceSizeMultiplier * Theme.CurrentTheme.RaceReticleSize, dist);
             }
         }
 

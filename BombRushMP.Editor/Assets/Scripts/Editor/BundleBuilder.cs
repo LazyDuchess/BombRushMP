@@ -32,6 +32,6 @@ public class BundleBuilder : MonoBehaviour
             assetBundleName = BundleName,
             assetNames = finalAssets
         };
-        BuildPipeline.BuildAssetBundles(OutputPath, new[] { build }, compressed ? BuildAssetBundleOptions.None : BuildAssetBundleOptions.UncompressedAssetBundle, BuildTarget.StandaloneWindows64);
+        BuildPipeline.BuildAssetBundles(OutputPath, new[] { build }, compressed ? BuildAssetBundleOptions.ChunkBasedCompression : BuildAssetBundleOptions.UncompressedAssetBundle, BuildTarget.StandaloneWindows64);
     }
 }
