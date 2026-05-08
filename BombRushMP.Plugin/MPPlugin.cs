@@ -44,7 +44,7 @@ namespace BombRushMP.Plugin
 
         private void RegisterThemes(string path)
         {
-            var themeDirs = Directory.GetDirectories(path, "", SearchOption.TopDirectoryOnly);
+            var themeDirs = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
             foreach (var dir in themeDirs)
             {
                 var themeName = Path.GetFileName(dir);
@@ -55,7 +55,7 @@ namespace BombRushMP.Plugin
         private Theme LoadTheme(string themePath)
         {
             var theme = new Theme();
-            var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(Path.Combine(themePath, "theme.json"));
+            var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(File.ReadAllText(Path.Combine(themePath, "theme.json")));
             theme.ParseConfig(themeConfig);
             var reticlePath = Path.Combine(themePath, "greticle.png");
             if (File.Exists(reticlePath))
