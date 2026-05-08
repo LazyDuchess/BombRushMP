@@ -10,6 +10,7 @@ using Reptile;
 using System.Globalization;
 using UnityEngine.UI;
 using BombRushMP.Plugin.Gamemodes;
+using BombRushMP.Mono.Runtime;
 
 namespace BombRushMP.Plugin
 {
@@ -84,7 +85,7 @@ namespace BombRushMP.Plugin
             _notReadySprite.SetActive(false);
             _teamBg.gameObject.SetActive(true);
             _afkSprite.gameObject.SetActive(false);
-            _teamBg.color = new Color(team.Color.r, team.Color.g, team.Color.b, _teamBg.color.a);
+            _teamBg.color = new Color(team.Color.r, team.Color.g, team.Color.b, Theme.CurrentTheme.LobbyPlayerTeamBackgroundAlpha);
             _score.text = FormatScore(_lobby.LobbyState.GetScoreForTeam(teamId));
         }
 

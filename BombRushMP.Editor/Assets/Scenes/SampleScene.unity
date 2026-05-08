@@ -722,44 +722,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player List UI
       objectReference: {fileID: 0}
-    - target: {fileID: 1159918571397936378, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1159918571521835685, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1159918571521835685, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1159918571521835685, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -17
-      objectReference: {fileID: 0}
     - target: {fileID: 1159918572418369792, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_SizeDelta.y
-      value: -729.9833
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1159918572418369792, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1159918572665963315, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 20.11
+      value: 0.000061035156
       objectReference: {fileID: 0}
     - target: {fileID: 1159918572729249239, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1159918572729249239, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1159918572729249239, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
-      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1258770062374735020, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
@@ -776,19 +752,19 @@ PrefabInstance:
       objectReference: {fileID: 7897996184153816710}
     - target: {fileID: 6944684047111576637, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6944684047111576637, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6944684047111576637, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 234.87
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6944684047111576637, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -19.3235
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8107621135832481459, guid: 4b503e2cc4d84e843a56f46ecb67a1aa, type: 3}
       propertyPath: m_TargetGraphic
@@ -1205,10 +1181,6 @@ PrefabInstance:
     - target: {fileID: 985228408758068341, guid: dbcb0a0c47dd76949aa501550938c663, type: 3}
       propertyPath: m_Name
       value: Screen Indicators UI
-      objectReference: {fileID: 0}
-    - target: {fileID: 985228408758068341, guid: dbcb0a0c47dd76949aa501550938c663, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6373050378374713191, guid: dbcb0a0c47dd76949aa501550938c663, type: 3}
       propertyPath: m_RootOrder
@@ -1760,7 +1732,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7897996185232694118, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000061035156
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8646635358493668095, guid: 0ff0fe975de7ce64c8478ba44b22aad0, type: 3}
       propertyPath: m_AnchorMax.y

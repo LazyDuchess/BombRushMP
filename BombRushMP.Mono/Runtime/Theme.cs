@@ -46,6 +46,8 @@ namespace BombRushMP.Mono.Runtime
 
         public Texture2D GraffitiReticle;
 
+        public float LobbyPlayerTeamBackgroundAlpha { get; private set; }
+
         public void ParseConfig(ThemeConfig config)
         {
             LobbyNameBackgroundColor = ColorFromHex(config.LobbyNameBackgroundColor);
@@ -78,6 +80,8 @@ namespace BombRushMP.Mono.Runtime
             RaceGraffitiSwirlColor = ColorFromHex(config.RaceGraffitiSwirlColor);
 
             RaceReticleSize = config.RaceReticleSize;
+
+            LobbyPlayerTeamBackgroundAlpha = config.LobbyPlayerTeamBackgroundAlpha;
         }
 
         private Color ColorFromHex(string hex)

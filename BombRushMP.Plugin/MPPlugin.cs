@@ -20,6 +20,10 @@ using BombRushMP.NetRadio;
 using BombRushMP.Plugin.Gamemodes;
 using CommonAPI;
 using BombRushMP.PluginCommon;
+using System.Collections.Generic;
+using BombRushMP.Mono.Runtime;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace BombRushMP.Plugin
 {
@@ -35,9 +39,54 @@ namespace BombRushMP.Plugin
         private bool _selfHosting = false;
         private bool _offline = false;
         private ServerController _localServerController;
+
+        private Dictionary<string, string> _themePaths = new();
+
+        private void RegisterThemes(string path)
+        {
+            var themeDirs = Directory.GetDirectories(path, "", SearchOption.TopDirectoryOnly);
+            foreach (var dir in themeDirs)
+            {
+                var themeName = Path.GetFileName(dir);
+                _themePaths[themeName] = dir;
+            }
+        }
+
+        private Theme LoadTheme(string themePath)
+        {
+            var theme = new Theme();
+            var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(Path.Combine(themePath, "theme.json"));
+            theme.ParseConfig(themeConfig);
+            var reticlePath = Path.Combine(themePath, "greticle.png");
+            if (File.Exists(reticlePath))
+            {
+                var reticleTex = new Texture2D(2, 2);
+                reticleTex.LoadImage(File.ReadAllBytes(reticlePath), true);
+                theme.GraffitiReticle = reticleTex;
+            }
+            return theme;
+        }
+
         private void Awake()
         {
             new MPSettings(Config, Path.GetDirectoryName(Info.Location), Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID));
+
+            var defaultThemePath = Path.Combine(Path.GetDirectoryName(Info.Location), "themes");
+            var customThemePath = Path.Combine(Paths.ConfigPath, PluginInfo.PLUGIN_GUID, "themes");
+
+            Directory.CreateDirectory(defaultThemePath);
+            Directory.CreateDirectory(customThemePath);
+
+            RegisterThemes(defaultThemePath);
+            RegisterThemes(customThemePath);
+
+            var theme = MPSettings.Instance.Theme;
+
+            if (!_themePaths.ContainsKey(theme))
+                theme = "Default";
+
+            Theme.CurrentTheme = LoadTheme(_themePaths[theme]);
+
             NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(MPSettings.Instance.NetworkInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>

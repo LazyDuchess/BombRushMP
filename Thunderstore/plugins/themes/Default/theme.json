@@ -3,6 +3,7 @@
 	"LobbyNameColor": "#FFFFFFFF",
 	
 	"LobbyPlayerBackgroundColor": "#000000CC",
+	"LobbyPlayerTeamBackgroundAlpha": 0.8,
 	"LobbyPlayerNameColor": "#FFFFFFFF",
 	"LobbyPlayerScoreColor": "#FFE900FF",
 	

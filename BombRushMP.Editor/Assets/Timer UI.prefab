@@ -57,6 +57,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: -5
@@ -144,6 +145,7 @@ GameObject:
   - component: {fileID: 1910953073943850620}
   - component: {fileID: 1910953073943850618}
   - component: {fileID: 1910953073943850621}
+  - component: {fileID: 5149102980804796668}
   m_Layer: 5
   m_Name: Timer
   m_TagString: Untagged
@@ -268,3 +270,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5149102980804796668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910953073943850623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a8fd8cb842aa904a8584d7a20870e39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Kind: 4

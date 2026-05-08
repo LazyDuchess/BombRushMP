@@ -699,6 +699,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public string Theme
+        {
+            get
+            {
+                return _theme.Value;
+            }
+
+            set
+            {
+                _theme.Value = value;
+            }
+        }
+
 #if DEBUG
         public float SpriteBaseline
         {
@@ -780,6 +793,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<Gamemode.PlayerSort> _gamemodePlayerSort;
         private ConfigEntry<bool> _graceTimer;
         private ConfigEntry<bool> _smoothSprites;
+        private ConfigEntry<string> _theme;
         
         private string _savePath;
         private ConfigFile _configFile;
@@ -912,6 +926,7 @@ namespace BombRushMP.Plugin
             {
                 MPAssets.Instance.Sprites.spriteSheet.filterMode = SmoothSprites ? FilterMode.Bilinear : FilterMode.Point;
             };
+            _theme = configFile.Bind(Visuals, "Theme", "Default", "Name of the theme to use. Will look in plugin/(plugin)/themes and config/BombRushMP.Plugin/themes");
         }
 
         public void Save()

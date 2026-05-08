@@ -62,5 +62,13 @@
       <Private>false</Private>
       <Publicize>true</Publicize>
     </Reference>
+		<Reference Include="UnityEngine.UI">
+		  <HintPath>$(ManagedPath)/UnityEngine.UI.dll</HintPath>
+		<Private>false</Private>
+		</Reference>
+	<Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)/Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
 	</ItemGroup>
 </Project>
