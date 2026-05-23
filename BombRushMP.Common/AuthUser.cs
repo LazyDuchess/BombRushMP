@@ -13,7 +13,7 @@ namespace BombRushMP.Common
     public class AuthUser
     {
         [JsonProperty("Description")]
-        private string _description = "";
+        public string Description = "";
         [JsonIgnore]
         public bool CanLurk => IsModerator || HasTag(SpecialPlayerUtils.SpecialPlayerTag);
         [JsonIgnore]
@@ -49,7 +49,7 @@ namespace BombRushMP.Common
             Badges = badges;
             if (Badges == null)
                 Badges = [];
-            _description = description;
+            Description = description;
         }
 
         public AuthUser()

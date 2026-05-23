@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Npgsql;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Data;
+using BombRushMP.Common.Networking;
 
 namespace BombRushMP.ServerApp
 {
@@ -102,6 +103,8 @@ namespace BombRushMP.ServerApp
                 await insertCommand.ExecuteNonQueryAsync();
             }
         }
+
+        public record ManageUserRequest(string id, int[] badges, string role);
 
         private string _sqlConnectionString;
 
@@ -240,6 +243,142 @@ namespace BombRushMP.ServerApp
                 return Results.Json(new
                 {
                     token = tokenResult.ToString()
+                });
+            });
+
+            app.MapPost("/api/mod/set-user-manage", async (HttpContext ctx, ManageUserRequest request) =>
+            {
+                if (!(ctx.User.Identity?.IsAuthenticated ?? false))
+                    return Results.Unauthorized();
+
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var selectCmd = new NpgsqlCommand("SELECT role FROM users WHERE discord_id = @id", db);
+
+                selectCmd.Parameters.AddWithValue("id", discordid);
+
+                var selectResult = await selectCmd.ExecuteScalarAsync() as string;
+
+                if (selectResult == "Player")
+                    return Results.Unauthorized();
+
+                await using var searchCmd = new NpgsqlCommand("SELECT role FROM users WHERE discord_id = @id", db);
+                searchCmd.Parameters.AddWithValue("id", request.id);
+
+                var searchResult = await searchCmd.ExecuteScalarAsync() as string;
+
+                if (searchResult != "Player" && selectResult != "Admin")
+                    return Results.Unauthorized();
+
+                var canManageRole = false;
+
+                if (selectResult == "Admin" && request.id != discordid)
+                {
+                    canManageRole = true;
+                }
+
+                var finalRole = request.role;
+
+                if (!canManageRole)
+                    finalRole = searchResult;
+
+                await using var updateCommand = new NpgsqlCommand("UPDATE users SET role = @role, badges = @badges WHERE discord_id = @id", db);
+                updateCommand.Parameters.AddWithValue("id", request.id);
+                updateCommand.Parameters.AddWithValue("badges", request.badges);
+                updateCommand.Parameters.AddWithValue("role", finalRole);
+                await updateCommand.ExecuteNonQueryAsync();
+
+                await _server.RunOnMainThreadAsync<bool>(() =>
+                {
+                    foreach (var ply in _server.Players)
+                    {
+                        if (ply.Value.ClientState == null) continue;
+                        if (ply.Value.ClientState.User.Description != request.id) continue;
+                        ply.Value.ClientState.User = _server.Database.AuthKeys.GetUser(ply.Value.Auth.AuthKey, ply.Value.Challenge);
+                        var newClientState = _server.CreatePlayerClientState(ply.Value);
+                        if (newClientState != null)
+                            _server.SendPacketToStage(newClientState, IMessage.SendModes.Reliable, ply.Value.ClientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                    }
+
+                    return true;
+                });
+
+                return Results.Ok();
+            });
+
+            app.MapGet("/api/mod/get-user-manage", async (HttpContext ctx, string id) =>
+            {
+                if (!(ctx.User.Identity?.IsAuthenticated ?? false))
+                    return Results.Unauthorized();
+
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var selectCmd = new NpgsqlCommand("SELECT role FROM users WHERE discord_id = @id", db);
+
+                selectCmd.Parameters.AddWithValue("id", discordid);
+
+                var selectResult = await selectCmd.ExecuteScalarAsync() as string;
+
+                if (selectResult == "Player")
+                    return Results.Unauthorized();
+
+                await using var searchCmd = new NpgsqlCommand("SELECT discord_username, avatar_url, role, badges FROM users WHERE discord_id = @id", db);
+                searchCmd.Parameters.AddWithValue("id", id);
+
+                using var searchReader = await searchCmd.ExecuteReaderAsync();
+
+                if (await searchReader.ReadAsync())
+                {
+                    var username = searchReader.GetString(0);
+                    var aviUrl = searchReader.GetString(1);
+                    var role = searchReader.GetString(2);
+                    var badges = searchReader.GetFieldValue<int[]>(3);
+
+                    var canManage = false;
+                    var canManageRole = false;
+
+                    if (selectResult == "Admin")
+                    {
+                        canManage = true;
+                        canManageRole = true;
+                    }
+                    else if (selectResult == "Mod" && role == "Player")
+                    {
+                        canManage = true;
+                    }
+
+                    if (id == discordid)
+                    {
+                        canManageRole = false;
+                    }
+
+                    return Results.Json(new
+                    {
+                        found = true,
+                        canManage = canManage,
+                        canManageRole = canManageRole,
+                        username = username,
+                        avatarUrl = aviUrl,
+                        role = role,
+                        badges = badges,
+                        id = id
+                    });
+
+                }
+
+                return Results.Json(new
+                {
+                    found = false
                 });
             });
             app.MapGet("/api/me", async (HttpContext ctx) =>

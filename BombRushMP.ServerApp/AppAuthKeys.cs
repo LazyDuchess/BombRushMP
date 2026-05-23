@@ -89,7 +89,7 @@ namespace BombRushMP.ServerApp
                             badges = badgeList.ToArray();
                         }
 
-                        return new AuthUser(parsedRole, null, badges);
+                        return new AuthUser(parsedRole, null, badges, finalId);
                     }
                 }
             }

@@ -22,6 +22,7 @@ namespace BombRushMP.Server
 {
     public class BRCServer : IDisposable
     {
+        public IServerDatabase Database => _database;
         public static BRCServer Instance { get; private set; }
         public Random RNG = new Random();
         public ServerLobbyManager ServerLobbyManager;
@@ -973,7 +974,7 @@ namespace BombRushMP.Server
             }
         }
 
-        private ServerClientStates CreatePlayerClientState(Player player)
+        public ServerClientStates CreatePlayerClientState(Player player)
         {
             if (player.Invisible) return null;
             if (player.ClientState == null) return null;
