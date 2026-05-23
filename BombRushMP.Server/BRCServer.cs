@@ -561,6 +561,23 @@ namespace BombRushMP.Server
                     }
                     break;
 
+                case "getauth":
+                    {
+                        var parsedArgs = CommandUtility.ParseArgs(message, 1);
+                        if (string.IsNullOrWhiteSpace(parsedArgs[0])) break;
+                        if (ushort.TryParse(parsedArgs[0], out var result))
+                        {
+                            if (Players.TryGetValue(result, out var resultPly))
+                            {
+                                if (resultPly.ClientState != null)
+                                {
+                                    SendMessageToPlayer($"<color=yellow>Auth Description for Player {result}: {resultPly.ClientState.User.Description}", player);
+                                }
+                            }
+                        }
+                    }
+                    break;
+
                 case "reload":
                     if (player.ClientState.User.IsAdmin)
                     {

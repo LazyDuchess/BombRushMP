@@ -17,6 +17,8 @@ namespace BombRushMP.ServerApp
     {
         private const string ServerSettingsPath = "server.json";
         private const string ServerTagsPath = "tags.txt";
+        private static ServerSettings ServerSettings = null;
+        private static BRCServer Server = null;
 
         static void Restart()
         {
@@ -24,52 +26,60 @@ namespace BombRushMP.ServerApp
             Environment.Exit(0);
         }
 
+        static void OnSave()
+        {
+            ServerSettings.MOTD = Server.MOTD;
+            ServerSettings.AlwaysShowMOTD = Server.AlwaysShowMOTD;
+            ServerSettings.AllowNameChanges = Server.AllowNameChanges;
+            File.WriteAllText(ServerSettingsPath, JsonConvert.SerializeObject(ServerSettings, Formatting.Indented));
+        }
+
         static void Main(string[] args)
         {
-            ServerSettings serverSettings = null;
             if (!File.Exists(ServerSettingsPath))
             {
-                serverSettings = new ServerSettings();
+                ServerSettings = new ServerSettings();
             }
             else
             {
-                serverSettings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(ServerSettingsPath));
+                ServerSettings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText(ServerSettingsPath));
             }
-            File.WriteAllText(ServerSettingsPath, JsonConvert.SerializeObject(serverSettings, Formatting.Indented));
-            NetworkingEnvironment.UseNativeSocketsIfAvailable = serverSettings.UseNativeSockets;
-            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(serverSettings.NetworkInterface);
+            File.WriteAllText(ServerSettingsPath, JsonConvert.SerializeObject(ServerSettings, Formatting.Indented));
+            NetworkingEnvironment.UseNativeSocketsIfAvailable = ServerSettings.UseNativeSockets;
+            NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(ServerSettings.NetworkInterface);
             NetworkingEnvironment.LogEventHandler += (log) =>
             {
                 ServerLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");
             };
             PacketFactory.Initialize();
-            var db = new ServerAppDatabase(serverSettings.WebServer, serverSettings.DatabaseConnectionString);
-            var server = new BRCServer(serverSettings.Port, serverSettings.MaxPlayers, 1f/serverSettings.TicksPerSecond, db);
-            PlayerAnimation.ServerSendMode = serverSettings.ServerAnimationSendMode;
-            server.ClientAnimationSendMode = serverSettings.ClientAnimationSendMode;
-            server.LogMessagesToFile = serverSettings.LogChatsToFiles;
-            server.LogMessages = serverSettings.LogChats;
-            server.AllowNameChanges = serverSettings.AllowNameChanges;
-            server.ChatCooldown = serverSettings.ChatCooldown;
-            server.RestartAction = Restart;
-            server.MOTD = serverSettings.MOTD;
-            server.AlwaysShowMOTD = serverSettings.AlwaysShowMOTD;
+            var db = new ServerAppDatabase(ServerSettings.WebServer, ServerSettings.DatabaseConnectionString);
+            Server = new BRCServer(ServerSettings.Port, ServerSettings.MaxPlayers, 1f/ ServerSettings.TicksPerSecond, db);
+            PlayerAnimation.ServerSendMode = ServerSettings.ServerAnimationSendMode;
+            Server.ClientAnimationSendMode = ServerSettings.ClientAnimationSendMode;
+            Server.LogMessagesToFile = ServerSettings.LogChatsToFiles;
+            Server.LogMessages = ServerSettings.LogChats;
+            Server.AllowNameChanges = ServerSettings.AllowNameChanges;
+            Server.ChatCooldown = ServerSettings.ChatCooldown;
+            Server.RestartAction = Restart;
+            Server.MOTD = ServerSettings.MOTD;
+            Server.AlwaysShowMOTD = ServerSettings.AlwaysShowMOTD;
             if (File.Exists(ServerTagsPath))
             {
                 var tags = File.ReadAllLines(ServerTagsPath);
                 foreach(var tag in tags)
                 {
-                    server.ServerState.Tags.Add(tag);
+                    Server.ServerState.Tags.Add(tag);
                 }
             }
-            if (serverSettings.WebServer)
+            if (ServerSettings.WebServer)
             {
-                var webServer = new WebServer(server);
-                webServer.Start(serverSettings.WebServerFrontendURL, serverSettings.DiscordClientId, serverSettings.DiscordClientSecret, serverSettings.DiscordCallback, serverSettings.DatabaseConnectionString);
+                var webServer = new WebServer(Server);
+                webServer.ServerManagedAction += OnSave;
+                webServer.Start(ServerSettings.WebServerFrontendURL, ServerSettings.DiscordClientId, ServerSettings.DiscordClientSecret, ServerSettings.DiscordCallback, ServerSettings.DatabaseConnectionString);
             }
             while(true)
             {
-                server.Update();
+                Server.Update();
             }
         }
     }

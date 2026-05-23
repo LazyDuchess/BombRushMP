@@ -28,6 +28,7 @@ namespace BombRushMP.ServerApp
     public class WebServer
     {
         private BRCServer _server;
+        public Action ServerManagedAction;
 
         public WebServer(BRCServer server)
         {
@@ -105,6 +106,7 @@ namespace BombRushMP.ServerApp
         }
 
         public record ManageUserRequest(string id, int[] badges, string role);
+        public record ManageServerRequest(bool allowNameChanges, string motd, bool alwaysShowMotd);
 
         private string _sqlConnectionString;
 
@@ -309,6 +311,80 @@ namespace BombRushMP.ServerApp
                 });
 
                 return Results.Ok();
+            });
+
+            app.MapPost("/api/admin/set-server-manage", async (HttpContext ctx, ManageServerRequest request) =>
+            {
+                if (!(ctx.User.Identity?.IsAuthenticated ?? false))
+                    return Results.Unauthorized();
+
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var selectCmd = new NpgsqlCommand("SELECT role FROM users WHERE discord_id = @id", db);
+
+                selectCmd.Parameters.AddWithValue("id", discordid);
+
+                var selectResult = await selectCmd.ExecuteScalarAsync() as string;
+
+                if (selectResult != "Admin")
+                    return Results.Unauthorized();
+
+                await _server.RunOnMainThreadAsync<bool>(() =>
+                {
+                    _server.AllowNameChanges = request.allowNameChanges;
+                    _server.MOTD = request.motd;
+                    _server.AlwaysShowMOTD = request.alwaysShowMotd;
+                    ServerManagedAction?.Invoke();
+                    return true;
+                });
+
+                return Results.Ok();
+            });
+
+            app.MapGet("/api/admin/get-server-manage", async (HttpContext ctx) =>
+            {
+                if (!(ctx.User.Identity?.IsAuthenticated ?? false))
+                    return Results.Unauthorized();
+
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var selectCmd = new NpgsqlCommand("SELECT role FROM users WHERE discord_id = @id", db);
+
+                selectCmd.Parameters.AddWithValue("id", discordid);
+
+                var selectResult = await selectCmd.ExecuteScalarAsync() as string;
+
+                if (selectResult != "Admin")
+                    return Results.Unauthorized();
+
+                var allowNameChanges = false;
+                var motd = "";
+                var alwaysShowMotd = false;
+
+                await _server.RunOnMainThreadAsync<bool>(() =>
+                {
+                    allowNameChanges = _server.AllowNameChanges;
+                    motd = _server.MOTD;
+                    alwaysShowMotd = _server.AlwaysShowMOTD;
+                    return true;
+                });
+
+                return Results.Json(new
+                {
+                    allowNameChanges = allowNameChanges,
+                    motd =  motd,
+                    alwaysShowMotd = alwaysShowMotd
+                });
             });
 
             app.MapGet("/api/mod/get-user-manage", async (HttpContext ctx, string id) =>
