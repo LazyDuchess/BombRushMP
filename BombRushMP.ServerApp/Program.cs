@@ -65,7 +65,7 @@ namespace BombRushMP.ServerApp
             if (serverSettings.WebServer)
             {
                 var webServer = new WebServer(server);
-                webServer.Start();
+                webServer.Start(serverSettings.WebServerFrontendURL, serverSettings.DiscordClientId, serverSettings.DiscordClientSecret, serverSettings.DiscordCallback);
             }
             while(true)
             {
