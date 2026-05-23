@@ -22,7 +22,7 @@ namespace BombRushMP.Server
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public AuthUser GetUser(string key, string challenge)
+        public virtual AuthUser GetUser(string key, string challenge)
         {
             foreach(var us in Users)
             {

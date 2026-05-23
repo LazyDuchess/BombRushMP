@@ -43,7 +43,7 @@ namespace BombRushMP.ServerApp
                 ServerLogger.Log($"[{nameof(NetworkingEnvironment)}] {log}");
             };
             PacketFactory.Initialize();
-            var db = new ServerAppDatabase();
+            var db = new ServerAppDatabase(serverSettings.WebServer, serverSettings.DatabaseConnectionString);
             var server = new BRCServer(serverSettings.Port, serverSettings.MaxPlayers, 1f/serverSettings.TicksPerSecond, db);
             PlayerAnimation.ServerSendMode = serverSettings.ServerAnimationSendMode;
             server.ClientAnimationSendMode = serverSettings.ClientAnimationSendMode;
@@ -65,7 +65,7 @@ namespace BombRushMP.ServerApp
             if (serverSettings.WebServer)
             {
                 var webServer = new WebServer(server);
-                webServer.Start(serverSettings.WebServerFrontendURL, serverSettings.DiscordClientId, serverSettings.DiscordClientSecret, serverSettings.DiscordCallback);
+                webServer.Start(serverSettings.WebServerFrontendURL, serverSettings.DiscordClientId, serverSettings.DiscordClientSecret, serverSettings.DiscordCallback, serverSettings.DatabaseConnectionString);
             }
             while(true)
             {

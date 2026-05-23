@@ -18,7 +18,7 @@ namespace BombRushMP.ServerApp
         private const string BannedUsersPath = "banned_users.json";
         private const string AuthKeysPath = "auth_keys.json";
 
-        public ServerAppDatabase()
+        public ServerAppDatabase(bool useDatabase, string sqlConnectionString)
         {
             if (!File.Exists(BannedUsersPath))
             {
@@ -30,11 +30,16 @@ namespace BombRushMP.ServerApp
 
             if (!File.Exists(AuthKeysPath))
             {
-                AuthKeys = new AuthKeys();
+                AuthKeys = new AppAuthKeys();
                 AuthKeys.MakeExample();
             }
             else
-                AuthKeys = JsonConvert.DeserializeObject<AuthKeys>(File.ReadAllText(AuthKeysPath));
+                AuthKeys = JsonConvert.DeserializeObject<AppAuthKeys>(File.ReadAllText(AuthKeysPath));
+
+            if (useDatabase)
+            {
+                (AuthKeys as AppAuthKeys).SetSQLConnection(sqlConnectionString);
+            }
             Save();
         }
 
@@ -50,7 +55,7 @@ namespace BombRushMP.ServerApp
                 BannedUsers = JsonConvert.DeserializeObject<BannedUsers>(File.ReadAllText(BannedUsersPath));
 
             if (File.Exists(AuthKeysPath))
-                AuthKeys = JsonConvert.DeserializeObject<AuthKeys>(File.ReadAllText(AuthKeysPath));
+                AuthKeys = JsonConvert.DeserializeObject<AppAuthKeys>(File.ReadAllText(AuthKeysPath));
         }
 
         public void LogChatMessage(string message, int stage)

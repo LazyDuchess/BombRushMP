@@ -18,6 +18,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using System.Data;
 
 namespace BombRushMP.ServerApp
 {
@@ -60,8 +63,52 @@ namespace BombRushMP.ServerApp
             });
         }
 
-        public void Start(string origin, string discordClientId, string discordClientSecret, string discordCallback)
+        private async Task OnCreatingTicket(OAuthCreatingTicketContext ctx)
         {
+            var id = ctx.Identity?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var username = ctx.Identity?.Name;
+
+            var avatarUrl =
+                ctx.Identity?.FindFirst(
+                    "urn:discord:avatar:url")?.Value;
+
+            if (id == null) return;
+
+            await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+            await db.OpenAsync();
+
+            await using var existsCommand = new NpgsqlCommand("SELECT discord_id FROM users WHERE discord_id = @id", db);
+
+            existsCommand.Parameters.AddWithValue("id", id);
+
+            var existsResult = await existsCommand.ExecuteScalarAsync();
+
+            if (existsResult != null)
+            {
+                await using var updateCommand = new NpgsqlCommand("UPDATE users SET discord_username = @username, avatar_url = @avatarUrl, last_login_at = NOW() WHERE discord_id = @id", db);
+                updateCommand.Parameters.AddWithValue("id", id);
+                updateCommand.Parameters.AddWithValue("username", username ?? "");
+                updateCommand.Parameters.AddWithValue("avatarUrl", avatarUrl ?? "");
+                await updateCommand.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                await using var insertCommand = new NpgsqlCommand("INSERT INTO users (discord_id, discord_username, avatar_url) VALUES (@id, @username, @avatarUrl)", db);
+                insertCommand.Parameters.AddWithValue("id", id);
+                insertCommand.Parameters.AddWithValue("username", username ?? "");
+                insertCommand.Parameters.AddWithValue("avatarUrl", avatarUrl ?? "");
+                await insertCommand.ExecuteNonQueryAsync();
+            }
+        }
+
+        private string _sqlConnectionString;
+
+        public void Start(string origin, string discordClientId, string discordClientSecret, string discordCallback, string sqlConnectionString)
+        {
+            _sqlConnectionString = sqlConnectionString;
+
             var builder = WebApplication.CreateBuilder();
 
             builder.WebHost.UseUrls("http://127.0.0.1:5000");
@@ -78,8 +125,6 @@ namespace BombRushMP.ServerApp
                 });
             });
             builder.Services.AddAuthorization();
-            builder.Configuration.AddEnvironmentVariables();
-            builder.Configuration.AddUserSecrets<Program>();
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -103,6 +148,8 @@ namespace BombRushMP.ServerApp
                         user.GetString("avatar")!.StartsWith("a_") ? "gif" : "png"));
 
                 options.Scope.Add("identify");
+
+                options.Events.OnCreatingTicket = OnCreatingTicket;
 
             }).AddCookie(options =>
             {
@@ -150,20 +197,79 @@ namespace BombRushMP.ServerApp
 
                 return Results.Ok();
             });
-            app.MapGet("/api/me", (HttpContext ctx) =>
+            app.MapGet("/api/game-token", async (HttpContext ctx) =>
             {
                 if (!(ctx.User.Identity?.IsAuthenticated ?? false))
                     return Results.Unauthorized();
 
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var tokenCmd = new NpgsqlCommand("SELECT game_token FROM users WHERE discord_id = @id", db);
+                tokenCmd.Parameters.AddWithValue("id", discordid);
+
+                var tokenResult = (Guid)await tokenCmd.ExecuteScalarAsync();
+
                 return Results.Json(new
                 {
-                    id = ctx.User.FindFirst(
-                        ClaimTypes.NameIdentifier)?.Value,
+                    token = tokenResult.ToString()
+                });
+
+            });
+            app.MapPost("/api/game-token/regenerate", async (HttpContext ctx) =>
+            {
+                if (!(ctx.User.Identity?.IsAuthenticated ?? false))
+                    return Results.Unauthorized();
+
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var tokenCmd = new NpgsqlCommand("UPDATE users SET game_token = gen_random_uuid() WHERE discord_id = @id RETURNING game_token", db);
+                tokenCmd.Parameters.AddWithValue("id", discordid);
+
+                var tokenResult = (Guid)await tokenCmd.ExecuteScalarAsync();
+
+                return Results.Json(new
+                {
+                    token = tokenResult.ToString()
+                });
+            });
+            app.MapGet("/api/me", async (HttpContext ctx) =>
+            {
+                if (!(ctx.User.Identity?.IsAuthenticated ?? false))
+                    return Results.Unauthorized();
+
+                var discordid = ctx.User.FindFirst(
+                        ClaimTypes.NameIdentifier)?.Value;
+
+                await using var db = new NpgsqlConnection(_sqlConnectionString);
+
+                await db.OpenAsync();
+
+                await using var selectCmd = new NpgsqlCommand("SELECT role FROM users WHERE discord_id = @id", db);
+
+                selectCmd.Parameters.AddWithValue("id", discordid);
+
+                var selectResult = await selectCmd.ExecuteScalarAsync() as string;
+
+                return Results.Json(new
+                {
+                    id = discordid,
 
                     name = ctx.User.Identity?.Name,
 
                     avatarUrl = ctx.User.FindFirst(
-                        "urn:discord:avatar:url")?.Value
+                        "urn:discord:avatar:url")?.Value,
+
+                    role = selectResult
                 });
             });
             app.Start();

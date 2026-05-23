@@ -44,6 +44,7 @@ namespace BombRushMP.ServerApp
         public string DiscordClientId = "";
         public string DiscordClientSecret = "";
         public string DiscordCallback = "/api/auth/discord/callback";
+        public string DatabaseConnectionString = "Host=127.0.0.1;Port=5432;Database=acn;Username=admin;Password=pwd";
         [JsonIgnore]
         public IMessage.SendModes ClientAnimationSendMode
         {
