@@ -169,12 +169,29 @@ namespace BombRushMP.ServerApp
             builder.Services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                    ForwardedHeaders.XForwardedFor |
+                    ForwardedHeaders.XForwardedProto;
+
+                options.KnownNetworks.Clear();
+                options.KnownProxies.Clear();
             });
+
+            AppContext.SetSwitch(
+                "Microsoft.AspNetCore.HttpOverrides.IgnoreUnknownProxies",
+                true);
 
             var app = builder.Build();
 
             app.UseForwardedHeaders();
+
+            app.Use((ctx, next) =>
+            {
+                ctx.Request.Scheme = "https";
+                return next();
+            });
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             if (!app.Environment.IsDevelopment())
             {
@@ -183,6 +200,16 @@ namespace BombRushMP.ServerApp
 
             app.UseCors("Frontend");
 
+            app.MapGet("/debug", (HttpContext ctx) =>
+            {
+                return Results.Json(new
+                {
+                    scheme = ctx.Request.Scheme,
+                    host = ctx.Request.Host.ToString(),
+                    forwardedProto =
+                        ctx.Request.Headers["X-Forwarded-Proto"].ToString()
+                });
+            });
             app.MapGet("/api/players", GetPlayers);
             app.MapGet("/api/login", () =>
             {
