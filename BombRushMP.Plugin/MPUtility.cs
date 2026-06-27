@@ -38,7 +38,13 @@ namespace BombRushMP.Plugin
                 }
             }
             guid = Guid.NewGuid().ToString();
-            File.WriteAllText(guidPath, guid);
+            try
+            {
+                File.WriteAllText(guidPath, guid);
+            }
+            catch { 
+
+            }
             return guid;
         }
 
