@@ -102,6 +102,21 @@ namespace BombRushMP.Plugin
         public void CreateLobby(GamemodeIDs gamemode, GamemodeSettings settings)
         {
             if (!CanJoinLobby()) return;
+
+            var flaggedMods = MPUtility.GetMyFlaggedMods(_clientController.BannedMods);
+
+            if (flaggedMods.Count > 0)
+            {
+                var chat = ChatUI.Instance;
+                chat.AddMessage("<color=yellow>Hey you! You can't create a lobby because you have enabled the following mods that you have disallowed in your own lobbies:");
+                foreach (var flaggedMod in flaggedMods)
+                {
+                    chat.AddMessage($"<color=red>{flaggedMod}");
+                }
+                chat.AddMessage("<color=yellow>Disable these mods or remove them from your banned list in your config and try again!");
+                return;
+            }
+
             byte[] settingsData;
             using (var ms = new MemoryStream())
             {
@@ -120,6 +135,7 @@ namespace BombRushMP.Plugin
             QueueJoinLobby(0);
             _clientController.SendPacket(new ClientLobbyJoin(lobbyId), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
             NotificationController.Instance.RemoveNotificationForLobby(lobbyId);
+            _clientController.SendCustomPacketToPlayer([], CustomPacketBannedMods.JoinedLobbyPacketId, Lobbies[lobbyId].LobbyState.HostId);
         }
 
         public void LeaveLobby()

@@ -150,32 +150,29 @@ namespace BombRushMP.Plugin
 
         private void InitBannedModsSystem()
         {
+            ClientController.RegisterCustomPacketHandler(CustomPacketBannedMods.JoinedLobbyPacketId, (id, data) =>
+            {
+                var clientController = ClientController.Instance;
+                var lobbyManager = clientController.ClientLobbyManager;
+
+                if (lobbyManager.CurrentLobby == null) return;
+                if (lobbyManager.CurrentLobby.LobbyState.HostId != clientController.LocalID) return;
+
+                var packet = new CustomPacketBannedMods(clientController.BannedMods);
+                clientController.BroadcastCustomPacketToCurrentLobby(packet.Serialize(), CustomPacketBannedMods.PacketId, IMessage.SendModes.Reliable);
+            });
             ClientController.RegisterCustomPacketHandler(CustomPacketBannedMods.PacketId, (id, data) =>
             {
                 var clientController = ClientController.Instance;
                 var lobbyManager = clientController.ClientLobbyManager;
+
                 if (lobbyManager.CurrentLobby == null) return;
                 if (lobbyManager.CurrentLobby.LobbyState.HostId != id) return;
-                if (lobbyManager.CurrentLobby.LobbyState.HostId == clientController.LocalID) return;
 
                 var bannedMods = new CustomPacketBannedMods();
                 bannedMods.Deserialize(data);
 
-                var myMods = Chainloader.PluginInfos.Keys;
-                var flaggedMods = new List<string>();
-
-                foreach(var mod in myMods)
-                {
-                    var parsedMod = mod.ToLowerInvariant().Trim();
-                    if (parsedMod.IsNullOrWhiteSpace()) continue;
-                    foreach(var bannedMod in bannedMods.BannedMods)
-                    {
-                        if (parsedMod.Contains(bannedMod))
-                        {
-                            flaggedMods.Add(mod);
-                        }
-                    }
-                }
+                var flaggedMods = MPUtility.GetMyFlaggedMods(bannedMods.BannedMods);
 
                 if (flaggedMods.Count > 0)
                 {

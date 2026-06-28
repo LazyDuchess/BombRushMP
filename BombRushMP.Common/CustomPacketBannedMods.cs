@@ -10,6 +10,7 @@ namespace BombRushMP.Common
     public class CustomPacketBannedMods
     {
         public const string PacketId = "ACN-BANNEDMODS";
+        public const string JoinedLobbyPacketId = "ACN-BANNEDMODS-JOINEDLOBBY";
         public string[] BannedMods;
 
         public CustomPacketBannedMods(string[] bannedMods)

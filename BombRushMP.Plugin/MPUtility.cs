@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.Mono.Runtime;
@@ -7,12 +8,12 @@ using Reptile;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UnityEngine;
-using System.IO;
 
 namespace BombRushMP.Plugin
 {
@@ -60,6 +61,27 @@ namespace BombRushMP.Plugin
             }
 
             return path;
+        }
+
+        public static List<string> GetMyFlaggedMods(string[] bannedMods)
+        {
+            var myMods = Chainloader.PluginInfos.Keys;
+            var flaggedMods = new List<string>();
+
+            foreach (var mod in myMods)
+            {
+                var parsedMod = mod.ToLowerInvariant().Trim();
+                if (parsedMod.IsNullOrWhiteSpace()) continue;
+                foreach (var bannedMod in bannedMods)
+                {
+                    if (parsedMod.Contains(bannedMod))
+                    {
+                        flaggedMods.Add(mod);
+                    }
+                }
+            }
+
+            return flaggedMods;
         }
 
         public static int GenerateGameObjectID(GameObject obj)
