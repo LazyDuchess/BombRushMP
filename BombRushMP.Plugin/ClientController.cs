@@ -577,7 +577,17 @@ namespace BombRushMP.Plugin
                     {
                         var dmgPacket = packet as ServerDamage;
                         var player = WorldHandler.instance.GetCurrentPlayer();
-                        player.ChangeHP(dmgPacket.Damage);
+                        if (player.IsDead()) return;
+                        if (dmgPacket.Damage == 0)
+                        {
+                            player.recoverDamageTimer = 0f;
+                            player.HP = 0f;
+                            player.ActivateAbility(player.dieAbility);
+                        }
+                        else
+                        {
+                            player.ChangeHP(dmgPacket.Damage);
+                        }
                     }
                     break;
 
