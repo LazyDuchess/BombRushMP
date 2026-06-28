@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BepInEx.Bootstrap;
 using Reptile;
 using BombRushMP.Plugin.Phone;
 using BombRushMP.Common.Networking;
@@ -25,29 +24,10 @@ namespace BombRushMP.Plugin
         private ClientController _clientController;
         private WorldHandler _worldHandler;
 
-        private static readonly string[] RestrictedGamemodePluginIds =
-        {
-            "TrickGod",
-            "Trick_God",
-            "TeamSleepingForest.TrickGod",
-            "TeamSleepingForest.Trick_God",
-            "BRCPlus",
-            "BRC Plus",
-            "SnailUSB.BRCPlus",
-            "SnailUsbs.BRCPlus"
-        };
-
         public uint QueuedLobby = 0;
 
         public void QueueJoinLobby(uint lobbyId)
         {
-            if (lobbyId != 0 && HasRestrictedGamemodePlugin())
-            {
-                ShowRestrictedGamemodePluginMessage();
-                QueuedLobby = 0;
-                return;
-            }
-            
             QueuedLobby = lobbyId;
         }
 
@@ -105,54 +85,6 @@ namespace BombRushMP.Plugin
             return true;
         }
 
-        // Prevent players from joining gamemodes if they have a banned plugin.
-        private bool CanUseGamemodes()
-        {
-            if (!HasRestrictedGamemodePlugin())
-                return true;
-            ShowRestrictedGamemodePluginMessage(); // Let the player know they have a banned plugin
-            return false;
-        }
-        
-        private void ShowRestrictedGamemodePluginMessage()
-        {
-            ChatUI.Instance?.AddMessage("<color=yellow>Competitive gamemodes are disabled while TrickGod or BRCPlus are installed.</color>");
-        }
-
-        private static bool HasRestrictedGamemodePlugin()
-        {
-            foreach (var plugin in Chainloader.PluginInfos)
-            {
-                if (IsRestrictedGamemodePluginIdentifier(plugin.Key))
-                    return true;
-                if (plugin.Value?.Metadata != null)
-                {
-                    if (IsRestrictedGamemodePluginIdentifier(plugin.Value.Metadata.GUID))
-                        return true;
-                    if (IsRestrictedGamemodePluginIdentifier(plugin.Value.Metadata.Name))
-                        return true;
-                }
-                var instance = plugin.Value?.Instance;
-                if (instance != null && IsRestrictedGamemodePluginIdentifier(instance.GetType().Assembly.GetName().Name))
-                    return true;
-            }
-            return false;
-        }
-
-        private static bool IsRestrictedGamemodePluginIdentifier(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-            foreach (var id in RestrictedGamemodePluginIds)
-            {
-                if (string.Equals(value, id, StringComparison.OrdinalIgnoreCase))
-                    return true;
-                if (value.IndexOf(id, StringComparison.OrdinalIgnoreCase) >= 0)
-                    return true;
-            }
-            return false;
-        }
-
         public void OnTick()
         {
             if (CurrentLobby != null && CurrentLobby.InGame)
@@ -184,11 +116,6 @@ namespace BombRushMP.Plugin
 
         public void JoinLobby(uint lobbyId)
         {
-            if (!CanUseGamemodes()) // Check if they have a banned mod
-            {
-                QueueJoinLobby(0);
-                return;
-            }
             if (!CanJoinLobby()) return;
             QueueJoinLobby(0);
             _clientController.SendPacket(new ClientLobbyJoin(lobbyId), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
@@ -202,7 +129,6 @@ namespace BombRushMP.Plugin
 
         public void StartGame()
         {
-            if (!CanUseGamemodes()) return; // Boot them out in case they somehow are able to get into a lobby with a banned mod when the gamemode starts
             _clientController.SendPacket(new ClientLobbyStart(), IMessage.SendModes.ReliableUnordered, NetChannels.ClientAndLobbyUpdates);
         }
 
@@ -228,8 +154,6 @@ namespace BombRushMP.Plugin
 
         public void SetGamemode(GamemodeIDs gamemode, GamemodeSettings settings)
         {
-            if (!CanUseGamemodes()) return; // Don't let them host lobbies if they're gonna Billy Mitchell them
-            
             byte[] data;
             using (var ms = new MemoryStream())
             {
