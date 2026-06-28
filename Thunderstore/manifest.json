@@ -3,7 +3,7 @@
   "author": "Freesoul",
   "description": "Multiplayer Mod",
   "website_url": "https://github.com/LazyDuchess/BombRushMP",
-  "version_number": "1.0.1",
+  "version_number": "1.1.0",
   "dependencies": [
     "LazyDuchess-CommonAPI-1.1.0",
     "SlopBrew-MapStation-0.19.2"
