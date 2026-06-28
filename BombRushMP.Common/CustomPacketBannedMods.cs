@@ -9,7 +9,18 @@ namespace BombRushMP.Common
 {
     public class CustomPacketBannedMods
     {
+        public const string PacketId = "ACN-BANNEDMODS";
         public string[] BannedMods;
+
+        public CustomPacketBannedMods(string[] bannedMods)
+        {
+            BannedMods = bannedMods;
+        }
+
+        public CustomPacketBannedMods()
+        {
+
+        }
 
         public byte[] Serialize()
         {

@@ -51,6 +51,12 @@ namespace BombRushMP.Plugin.Gamemodes
             player.saveLocation = player.GenerateSafeLocation();
         }
 
+        protected void ShareBannedMods()
+        {
+            var packet = new CustomPacketBannedMods(ClientController.BannedMods);
+            ClientController.BroadcastCustomPacketToCurrentLobby(packet.Serialize(), CustomPacketBannedMods.PacketId, Common.Networking.IMessage.SendModes.Reliable);
+        }
+
         public virtual void OnStart()
         {
             InGame = true;
@@ -61,7 +67,10 @@ namespace BombRushMP.Plugin.Gamemodes
             LobbyUI.Instance.UpdateUI();
             Core.Instance.AudioManager.PlaySfxUI(SfxCollectionID.MenuSfx, AudioClipID.confirm);
             if (Lobby.LobbyState.HostId == ClientController.Instance.LocalID)
+            {
                 ClientController.SendPacket(new ClientGamemodeCountdown((ushort)Countdown), Common.Networking.IMessage.SendModes.Reliable, Common.Networking.NetChannels.Gamemodes);
+                ShareBannedMods();
+            }
             SetSpawnLocation();
         }
         

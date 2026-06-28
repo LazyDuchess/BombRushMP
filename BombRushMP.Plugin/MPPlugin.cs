@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using BombRushMP.Mono.Runtime;
 using Newtonsoft.Json;
 using UnityEngine;
+using System.Linq;
 
 namespace BombRushMP.Plugin
 {
@@ -143,7 +144,51 @@ namespace BombRushMP.Plugin
             ReflectionController.Initialize();
             StageAPI.OnStagePreInitialization += OnStagePreInitialization;
             InitShared();
+            InitBannedModsSystem();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private void InitBannedModsSystem()
+        {
+            ClientController.RegisterCustomPacketHandler(CustomPacketBannedMods.PacketId, (id, data) =>
+            {
+                var clientController = ClientController.Instance;
+                var lobbyManager = clientController.ClientLobbyManager;
+                if (lobbyManager.CurrentLobby == null) return;
+                if (lobbyManager.CurrentLobby.LobbyState.HostId != id) return;
+                if (lobbyManager.CurrentLobby.LobbyState.HostId == clientController.LocalID) return;
+
+                var bannedMods = new CustomPacketBannedMods();
+                bannedMods.Deserialize(data);
+
+                var myMods = Chainloader.PluginInfos.Keys;
+                var flaggedMods = new List<string>();
+
+                foreach(var mod in myMods)
+                {
+                    var parsedMod = mod.ToLowerInvariant().Trim();
+                    if (parsedMod.IsNullOrWhiteSpace()) continue;
+                    foreach(var bannedMod in bannedMods.BannedMods)
+                    {
+                        if (parsedMod.Contains(bannedMod))
+                        {
+                            flaggedMods.Add(mod);
+                        }
+                    }
+                }
+
+                if (flaggedMods.Count > 0)
+                {
+                    lobbyManager.LeaveLobby();
+                    var chat = ChatUI.Instance;
+                    chat.AddMessage("<color=yellow>Hey you! You can't play in this lobby because the host has banned the following mods you have installed:");
+                    foreach(var flaggedMod in flaggedMods)
+                    {
+                        chat.AddMessage($"<color=yellow>- {flaggedMod}");
+                    }
+                    chat.AddMessage("<color=yellow>Disable these mods and try again!");
+                }
+            });
         }
 
         private void InitShared()
