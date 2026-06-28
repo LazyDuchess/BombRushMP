@@ -12,6 +12,7 @@ using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.Common.Networking;
 using BombRushMP.Plugin.Gamemodes;
+using BepInEx.Bootstrap;
 
 namespace BombRushMP.Plugin
 {
@@ -223,6 +224,15 @@ namespace BombRushMP.Plugin
                         emojiStr += $"{emoji.Key} - <sprite={emoji.Value}>\n";
                     }
                     AddMessage(emojiStr);
+                    break;
+                case "mods":
+                    var modStr = "Installed mods:\n";
+                    var mods = Chainloader.PluginInfos.Keys;
+                    foreach (var mod in mods)
+                    {
+                        modStr += $"{mod}\n";
+                    }
+                    AddMessage(modStr);
                     break;
                 case "hide":
                     MPSettings.Instance.ShowChat = false;
