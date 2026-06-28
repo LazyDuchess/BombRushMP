@@ -857,7 +857,7 @@ namespace BombRushMP.Plugin
             {
                 var clientController = ClientController.Instance;
                 clientController.CacheBannedMods();
-            }
+            };
             _crewName = configFile.Bind(General, "Crew Name", "", "Name of your crew.");
             _crewName.SettingChanged += (sender, args) =>
             {
