@@ -4,6 +4,7 @@ using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
 using BombRushMP.Plugin.OfflineInterface;
+using BepInEx.Bootstrap;
 using CommonAPI;
 using Reptile;
 using System;
@@ -41,6 +42,17 @@ namespace BombRushMP.Plugin
         public static Action<ushort> PlayerDisconnected;
         public static Action<Packets, Packet> PacketReceived;
         public static Action ClientStatesUpdate;
+        private static readonly string[] RestrictedPluginIdentifiers =
+        {
+            "TrickGod",
+            "Trick_God",
+            "TeamSleepingForest.TrickGod",
+            "TeamSleepingForest.Trick_God",
+            "BRCPlus",
+            "BRC Plus",
+            "SnailUSB.BRCPlus",
+            "SnailUsbs.BRCPlus"
+        };
         public string AuthKey;
         public bool InfrequentClientStateUpdateQueued = false;
         public ServerState ServerState = new();
@@ -66,6 +78,71 @@ namespace BombRushMP.Plugin
         public Player PlayerAttached;
         private Vector3 AttachedPosition;
         private Vector3 AttachedHeading;
+
+        public static bool HasRestrictedPluginLoaded(out string pluginName)
+        {
+            foreach (var pluginInfo in Chainloader.PluginInfos)
+            {
+                var info = pluginInfo.Value;
+                if (IsRestrictedPluginIdentifier(pluginInfo.Key))
+                {
+                    pluginName = pluginInfo.Key;
+                    return true;
+                }
+                if (info?.Metadata != null)
+                {
+                    if (IsRestrictedPluginIdentifier(info.Metadata.GUID))
+                    {
+                        pluginName = info.Metadata.Name;
+                        return true;
+                    }
+                    if (IsRestrictedPluginIdentifier(info.Metadata.Name))
+                    {
+                        pluginName = info.Metadata.Name;
+                        return true;
+                    }
+                }
+                var assemblyName = info?.Instance?.GetType().Assembly.GetName().Name;
+                if (IsRestrictedPluginIdentifier(assemblyName))
+                {
+                    pluginName = assemblyName;
+                    return true;
+                }
+            }
+            pluginName = null;
+            return false;
+        }
+
+        private static bool IsRestrictedPluginIdentifier(string identifier)
+        {
+            if (string.IsNullOrWhiteSpace(identifier)) return false;
+            var normalizedIdentifier = NormalizePluginIdentifier(identifier);
+            foreach (var restrictedPluginIdentifier in RestrictedPluginIdentifiers)
+            {
+                if (normalizedIdentifier == NormalizePluginIdentifier(restrictedPluginIdentifier))
+                    return true;
+            }
+            return false;
+        }
+
+        private static string NormalizePluginIdentifier(string identifier)
+        {
+            var builder = new StringBuilder(identifier.Length);
+            for (var i = 0; i < identifier.Length; i++)
+            {
+                var c = identifier[i];
+                if (char.IsLetterOrDigit(c))
+                    builder.Append(char.ToLowerInvariant(c));
+            }
+            return builder.ToString();
+        }
+
+        private static void ShowRestrictedPluginMessage(string pluginName)
+        {
+            var message = $"BombRushMP is disabled while {pluginName} is installed.";
+            ClientLogger.Log(message);
+            ChatUI.Instance?.AddMessage(message);
+        }
 
         public static void RegisterCustomPacketHandler(string customPacketId, Action<ushort, byte[]> handler)
         {
@@ -200,6 +277,13 @@ namespace BombRushMP.Plugin
 
         public void Connect()
         {
+            if (HasRestrictedPluginLoaded(out var restrictedPluginName))
+            {
+                ShowRestrictedPluginMessage(restrictedPluginName); // Let the player know they have a banned plugin
+                Disconnect();
+                return;
+            }
+            
             ClientLogger.Log($"Connecting to {Address}:{Port}");
             _client = NetworkingInterface.CreateClient();
             Task.Run(() => { _client.Connect(Address, Port); });
@@ -393,6 +477,13 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            if (Connected && HasRestrictedPluginLoaded(out var restrictedPluginName))
+            {
+                ShowRestrictedPluginMessage(restrictedPluginName);
+                Disconnect();
+                return;
+            }
+            
             var mpSettings = MPSettings.Instance;
 #if DEBUG
             if (!mpSettings.UpdateClientController) return;
@@ -846,6 +937,11 @@ namespace BombRushMP.Plugin
         private void OnConnectionFailed(object sender, ConnectionFailedEventArgs e)
         {
             ClientLogger.Log($"Failed to connect to server. Reason: {e.Reason}");
+            if (HasRestrictedPluginLoaded(out var restrictedPluginName))
+            {
+                ShowRestrictedPluginMessage(restrictedPluginName);
+                return;
+            }
             ClientLogger.Log("Will attempt to re-connect");
             StopAllCoroutines();
             StartCoroutine(AttemptReconnect());
@@ -854,6 +950,11 @@ namespace BombRushMP.Plugin
         private void OnDisconnect(object sender, DisconnectedEventArgs e)
         {
             ClientLogger.Log($"Disconnected! Reason: {e.Reason}");
+            if (HasRestrictedPluginLoaded(out var restrictedPluginName))
+            {
+                ShowRestrictedPluginMessage(restrictedPluginName);
+                return;
+            }
             ClientLogger.Log("Will attempt to re-connect");
             StopAllCoroutines();
             StartCoroutine(AttemptReconnect());
