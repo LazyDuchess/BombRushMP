@@ -184,7 +184,7 @@ namespace BombRushMP.Plugin
                     chat.AddMessage("<color=yellow>Hey you! You can't play in this lobby because the host has banned the following mods you have installed:");
                     foreach(var flaggedMod in flaggedMods)
                     {
-                        chat.AddMessage($"<color=yellow>- {flaggedMod}");
+                        chat.AddMessage($"<color=red>{flaggedMod}");
                     }
                     chat.AddMessage("<color=yellow>Disable these mods and try again!");
                 }
