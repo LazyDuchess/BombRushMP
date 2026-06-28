@@ -712,6 +712,19 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public string BannedMods
+        {
+            get
+            {
+                return _bannedMods.Value;
+            }
+
+            set
+            {
+                _bannedMods.Value = value;
+            }
+        }
+
 #if DEBUG
         public float SpriteBaseline
         {
@@ -794,6 +807,8 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _graceTimer;
         private ConfigEntry<bool> _smoothSprites;
         private ConfigEntry<string> _theme;
+
+        private ConfigEntry<string> _bannedMods;
         
         private string _savePath;
         private ConfigFile _configFile;
@@ -837,6 +852,12 @@ namespace BombRushMP.Plugin
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;
             };
+            _bannedMods = configFile.Bind(General, "Lobby Banned Mods", "TrickGod", "Comma separated list of mods to disallow on your lobbies.");
+            _bannedMods.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                clientController.CacheBannedMods();
+            }
             _crewName = configFile.Bind(General, "Crew Name", "", "Name of your crew.");
             _crewName.SettingChanged += (sender, args) =>
             {

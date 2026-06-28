@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,6 +54,7 @@ namespace BombRushMP.Plugin
                 return _cachedPlayerComponent;
             }
         }
+        public string[] BannedMods = null;
         private static Dictionary<int, Action<ushort, byte[]>> _customPacketHandlers = new();
         private PlayerComponent _cachedPlayerComponent = null;
         private INetClient _client;
@@ -66,6 +68,11 @@ namespace BombRushMP.Plugin
         public Player PlayerAttached;
         private Vector3 AttachedPosition;
         private Vector3 AttachedHeading;
+
+        public void CacheBannedMods()
+        {
+            BannedMods = _mpSettings.BannedMods.Split(',').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x.Trim().ToLowerInvariant()).ToArray();
+        }
 
         public static void RegisterCustomPacketHandler(string customPacketId, Action<ushort, byte[]> handler)
         {
@@ -172,6 +179,7 @@ namespace BombRushMP.Plugin
             ClientLobbyManager = new();
             ClientLobbyManager.LobbiesUpdated += OnLobbiesUpdated;
             MPPlayer.OptimizationActions.Clear();
+            CacheBannedMods();
         }
 
         public int GetPlayerCountForStage(Stage stage)
