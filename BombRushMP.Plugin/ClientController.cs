@@ -3,6 +3,7 @@ using BombRushMP.Common;
 using BombRushMP.Common.Networking;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
+using BombRushMP.MapStation;
 using BombRushMP.Plugin.OfflineInterface;
 using CommonAPI;
 using Reptile;
@@ -652,6 +653,15 @@ namespace BombRushMP.Plugin
                             if (!string.IsNullOrEmpty(connectionResponse.MOTD))
                             {
                                 ChatUI.Instance.AddMessage(connectionResponse.MOTD);
+                            }
+                        }
+                        if (MapStationSupport.Installed)
+                        {
+                            var stage = (int)Utility.SceneNameToStage(SceneManager.GetActiveScene().name);
+                            if (MapStationSupport.StageById.TryGetValue(stage, out var customStage) && customStage != null)
+                            {
+                                var customStagePacket = new ClientCustomStageName(customStage.DisplayName);
+                                SendPacket(customStagePacket, IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
                             }
                         }
                     }

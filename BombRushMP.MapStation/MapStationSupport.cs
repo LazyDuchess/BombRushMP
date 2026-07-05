@@ -16,6 +16,7 @@ namespace BombRushMP.MapStation
     {
         public static bool Installed { get; private set; } = false;
         public static List<MPStage> Stages = new();
+        public static Dictionary<int, MPStage> StageById = new();
         private static Type _apiManagerType;
         public static void Initialize()
         {
@@ -46,6 +47,7 @@ namespace BombRushMP.MapStation
                 var mpStage = new MPStage(displayName, stageId);
 
                 Stages.Add(mpStage);
+                StageById[stageId] = mpStage;
             }
         }
 
