@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BombRushMP.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace BombRushMP.Plugin
                     scale = 1.2f
                 };
 
-                var character = new TMP_SpriteCharacter((uint)indices[i], glyph);
+                var character = new TMP_SpriteCharacter(TMPFilter.PrivateUseAreaBegin + (uint)indices[i], glyph);
 
                 _spriteAsset.spriteGlyphTable[indices[i]] = glyph;
                 _spriteAsset.spriteCharacterTable[indices[i]] = character;

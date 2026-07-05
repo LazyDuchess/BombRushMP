@@ -8,6 +8,9 @@ namespace BombRushMP.Common
 {
     public static class TMPFilter
     {
+        public const uint PrivateUseAreaBegin = 0xE000;
+        public const uint PrivateUseAreaEnd = 0xF8FF;
+
         public class Criteria
         {
             public enum Kinds
@@ -159,7 +162,16 @@ namespace BombRushMP.Common
             text = text.Replace("\n", "");
             text = text.Replace("\t", "");
             text = text.Replace("\r", "");
-            return text;
+            var strBuilder = new StringBuilder(text);
+            for(var i = 0; i < text.Length; i++)
+            {
+                var c = (uint)text[i];
+                if (c >= PrivateUseAreaBegin && c <= PrivateUseAreaEnd)
+                {
+                    strBuilder[i] = ' ';
+                }
+            }
+            return strBuilder.ToString();
         }
 
         public static string CloseAllTags(string text)
