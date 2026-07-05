@@ -53,6 +53,9 @@ namespace BombRushMP.Server
 
         private readonly ConcurrentQueue<Action> _commandQueue = new();
 
+        private Dictionary<int, string> _customStageNames = new();
+        private const int MaxVanillaStageId = 14;
+
         public Task<T> RunOnMainThreadAsync<T>(Func<T> func)
         {
             var tcs = new TaskCompletionSource<T>();
@@ -127,6 +130,7 @@ namespace BombRushMP.Server
                 player.Value.Tick(deltaTime);
             }
             _activeStages = GetActiveStages();
+            PurgeInactiveStageNames();
             foreach(var stage in _activeStages)
             {
                 TickStage(stage);
@@ -137,6 +141,22 @@ namespace BombRushMP.Server
                 action();
             }
             OnTick?.Invoke(deltaTime);
+        }
+
+        private void PurgeInactiveStageNames()
+        {
+            var stagesToRemove = new List<int>();
+            foreach(var stage in _activeStages)
+            {
+                if (!_activeStages.Contains(stage))
+                {
+                    stagesToRemove.Add(stage);
+                }
+            }
+            foreach(var stage in stagesToRemove)
+            {
+                _customStageNames.Remove(stage);
+            }
         }
 
         private void TickPlayerCount(float deltaTime)
@@ -774,6 +794,16 @@ namespace BombRushMP.Server
                                     IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                             }
                         }
+                    }
+                    break;
+
+                case Packets.ClientCustomStageName:
+                    {
+                        var stageNamePacket = (ClientCustomStageName)packet;
+                        if (player.ClientState == null) return;
+                        if (player.ClientState.Stage < MaxVanillaStageId) return;
+                        if (_customStageNames.ContainsKey(player.ClientState.Stage)) return;
+                        _customStageNames[player.ClientState.Stage] = stageNamePacket.Name;
                     }
                     break;
 
