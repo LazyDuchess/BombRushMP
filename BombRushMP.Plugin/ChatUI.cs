@@ -124,7 +124,7 @@ namespace BombRushMP.Plugin
             }
             if (serverMessage.MessageType == ChatMessageTypes.Chat)
             {
-                text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(text, MPSettings.Instance.ChatCriteria));
+                text = TMPFilter.CloseAllTags(TMPFilter.FilterTags(TMPFilter.Sanitize(text), MPSettings.Instance.ChatCriteria));
                 if (ProfanityFilter.TMPContainsProfanity(text))
                 {
                     if (MPSettings.Instance.FilterProfanity)
