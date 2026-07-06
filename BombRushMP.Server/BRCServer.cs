@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -54,7 +55,35 @@ namespace BombRushMP.Server
         private readonly ConcurrentQueue<Action> _commandQueue = new();
 
         private Dictionary<int, string> _customStageNames = new();
-        private const int MaxVanillaStageId = 14;
+
+        private const string UnknownStageName = "Unknown";
+
+        public string GetStageName(int stage)
+        {
+            switch (stage)
+            {
+                case 4:
+                    return "Versum Hill";
+                case 5:
+                    return "Hideout";
+                case 6:
+                    return "Millenium Mall";
+                case 7:
+                    return "Mataan";
+                case 8:
+                    return "Police Station";
+                case 9:
+                    return "Pyramid Island";
+                case 11:
+                    return "Millenium Square";
+                case 12:
+                    return "Brink Terminal";
+            }
+
+            if (_customStageNames.TryGetValue(stage, out var name)) return name;
+
+            return UnknownStageName;
+        }
 
         public Task<T> RunOnMainThreadAsync<T>(Func<T> func)
         {
@@ -801,7 +830,6 @@ namespace BombRushMP.Server
                     {
                         var stageNamePacket = (ClientCustomStageName)packet;
                         if (player.ClientState == null) return;
-                        if (player.ClientState.Stage < MaxVanillaStageId) return;
                         if (_customStageNames.ContainsKey(player.ClientState.Stage)) return;
                         _customStageNames[player.ClientState.Stage] = stageNamePacket.Name;
                     }

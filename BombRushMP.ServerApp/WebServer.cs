@@ -41,6 +41,7 @@ namespace BombRushMP.ServerApp
             {
                 var playerCount = 0;
                 var stages = new Dictionary<int, int>();
+                var stageNames = new Dictionary<int, string>();
 
                 foreach (var ply in _server.Players)
                 {
@@ -57,10 +58,17 @@ namespace BombRushMP.ServerApp
                     }
                 }
 
+                foreach(var stage in stages)
+                {
+                    var stageName = _server.GetStageName(stage.Key);
+                    stageNames[stage.Key] = stageName;
+                }
+
                 return new
                 {
                     count = playerCount,
-                    stages
+                    stages,
+                    stageNames
                 };
             });
         }
