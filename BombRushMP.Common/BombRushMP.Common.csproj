@@ -6,6 +6,16 @@
     <Configurations>Debug;Release;Developer Debug</Configurations>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="res\badwords.txt" />
+    <None Remove="res\profanity.txt" />
+    <None Remove="res\safewords.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\badwords.txt" />
+    <EmbeddedResource Include="res\profanity.txt" />
+    <EmbeddedResource Include="res\safewords.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />

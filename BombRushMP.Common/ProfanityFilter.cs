@@ -1,5 +1,4 @@
-﻿using BombRushMP.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,9 +8,8 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static UnityEngine.UIElements.TextField;
 
-namespace BombRushMP.Plugin
+namespace BombRushMP.Common
 {
     public static class ProfanityFilter
     {
@@ -33,7 +31,7 @@ namespace BombRushMP.Plugin
         {
             var result = new List<string>();
 
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BombRushMP.Plugin.res.badwords.txt");
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BombRushMP.Common.res.badwords.txt");
             if (stream is null) throw new Exception("Could not load bad words for profanity filter");
             var text = new StreamReader(stream).ReadToEnd();
 
@@ -54,7 +52,7 @@ namespace BombRushMP.Plugin
         {
             var result = new List<string>();
 
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BombRushMP.Plugin.res.safewords.txt");
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BombRushMP.Common.res.safewords.txt");
             if (stream is null) throw new Exception("Could not load safe words for profanity filter");
             var text = new StreamReader(stream).ReadToEnd();
 
@@ -75,7 +73,7 @@ namespace BombRushMP.Plugin
         {
             var result = new List<string>();
 
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BombRushMP.Plugin.res.profanity.txt");
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BombRushMP.Common.res.profanity.txt");
             if (stream is null) throw new Exception("Could not load profanity filter");
             var text = new StreamReader(stream).ReadToEnd();
 

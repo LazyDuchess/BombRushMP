@@ -831,7 +831,10 @@ namespace BombRushMP.Server
                         var stageNamePacket = (ClientCustomStageName)packet;
                         if (player.ClientState == null) return;
                         if (_customStageNames.ContainsKey(player.ClientState.Stage)) return;
-                        _customStageNames[player.ClientState.Stage] = stageNamePacket.Name;
+                        var name = TMPFilter.Sanitize(stageNamePacket.Name);
+                        if (string.IsNullOrWhiteSpace(name)) return;
+                        if (ProfanityFilter.TMPContainsProfanity(name)) return;
+                        _customStageNames[player.ClientState.Stage] = name;
                     }
                     break;
 
