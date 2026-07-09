@@ -383,6 +383,8 @@ namespace BombRushMP.Plugin
             var currentStageProgress = Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress();
             PlaceCurrentPlayer(currentStageProgress.respawnPos, Quaternion.Euler(currentStageProgress.respawnRot));
             player.motor.SetKinematic(false);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         public static PublicToilet GetCurrentToilet()
