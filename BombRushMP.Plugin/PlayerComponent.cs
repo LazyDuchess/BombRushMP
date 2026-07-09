@@ -86,6 +86,7 @@ namespace BombRushMP.Plugin
 
         private void OnDestroy()
         {
+            Ragdoll.OnDestroy();
             if (SkateboardMaterial != null)
                 Destroy(SkateboardMaterial);
             if (BMXMaterial != null)
@@ -425,6 +426,10 @@ namespace BombRushMP.Plugin
 
         private void LateUpdate()
         {
+            if (Ragdoll.Valid && Ragdoll.Active)
+            {
+                _player.transform.position = Ragdoll.Limbs[0].Transform.position;
+            }
             if (MovestyleSkin != null && MovestyleSkin.MoveStyle == MoveStyle.INLINE && MovestyleSkin is MPBuiltInSkin && _customInlines != null)
             {
                 _customInlines.SetActive(_player.characterVisual.moveStyleProps.skateL.activeInHierarchy);

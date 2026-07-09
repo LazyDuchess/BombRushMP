@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace BombRushMP.Plugin
 {
@@ -12,23 +13,43 @@ namespace BombRushMP.Plugin
         public PlayerComponent Owner { get; private set; } = null;
         public bool Valid { get; private set; } = false;
         public bool Active { get; private set; } = false;
-        private List<Limb> _limbs = new();
+        public CharacterVisual Visual { get; private set; } = null;
+        public List<Limb> Limbs = new();
+
+        public void OnDestroy()
+        {
+            if (Active)
+            {
+                Active = false;
+                if (Visual != null)
+                {
+                    GameObject.Destroy(Visual.gameObject);
+                }
+            }
+        }
 
         public void BecomeRagdoll()
         {
             if (!Valid) return;
             if (Active) return;
             Active = true;
+            Visual.transform.parent = null;
+            var vel = Owner.Player.GetPracticalWorldVelocity();
             Owner.Player.characterVisual.anim.enabled = false;
             Owner.Player.motor.HaveCollision(false);
             Owner.Player.motor.SetKinematic(true);
+            Owner.Player.SwitchToEquippedMovestyle(false, false, true, false);
             Owner.Player.isDisabled = true;
             Owner.Player.phone.TurnOff(false);
             Owner.Player.StopHoldProps();
-            foreach (var limb in _limbs)
+            Owner.Player.SetDustEmission(0);
+            Owner.Player.SetBoostpackAndFrictionEffects(BoostpackEffectMode.OFF, FrictionEffectMode.OFF);
+            Visual.VFX.boostpackTrail.SetActive(false);
+            foreach (var limb in Limbs)
             {
-                limb.Activate();
+                limb.Activate(vel);
             }
+            Owner.Player.CompletelyStop();
         }
 
         public void StopRagdoll()
@@ -36,11 +57,13 @@ namespace BombRushMP.Plugin
             if (!Valid) return;
             if (!Active) return;
             Active = false;
+            Visual.transform.parent = Owner.Player.interactionCollider.transform.parent;
+            Visual.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             Owner.Player.characterVisual.anim.enabled = true;
             Owner.Player.motor.HaveCollision(true);
             Owner.Player.motor.SetKinematic(false);
             Owner.Player.isDisabled = false;
-            foreach (var limb in _limbs)
+            foreach (var limb in Limbs)
             {
                 limb.Deactivate();
             }
@@ -53,9 +76,10 @@ namespace BombRushMP.Plugin
 
             Owner = player;
             Valid = false;
-            _limbs.Clear();
+            Visual = player.Player.characterVisual;
+            Limbs.Clear();
 
-            var root = player.Player.characterVisual.root;
+            var root = Visual.root;
             if (root == null) return;
 
             var s1 = root.transform.FindRecursive("s1");
@@ -107,7 +131,7 @@ namespace BombRushMP.Plugin
             var arm1rLimb = new Limb(arm1r, Limb.LimbTypes.Arm, s2Limb);
             var arm2rLimb = new Limb(arm2r, Limb.LimbTypes.Arm, arm1rLimb);
 
-            _limbs = [
+            Limbs = [
                 rootLimb, 
                 s1Limb, 
                 s2Limb, 

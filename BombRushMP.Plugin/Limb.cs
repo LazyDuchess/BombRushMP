@@ -25,7 +25,7 @@ namespace BombRushMP.Plugin
         public LimbTypes LimbType { get; set; }
 
         public bool Active { get; set; } = false;
-        public void Activate()
+        public void Activate(Vector3 velocity)
         {
             if (Active) return;
             if (RigidBody == null) return;
@@ -33,6 +33,7 @@ namespace BombRushMP.Plugin
             RigidBody.isKinematic = false;
             Collider.enabled = true;
             Transform.gameObject.layer = Layers.Enemies;
+            RigidBody.velocity = velocity;
         }
 
         public void Deactivate()
@@ -49,6 +50,7 @@ namespace BombRushMP.Plugin
         {
             Transform = tf;
             RigidBody = tf.gameObject.AddComponent<Rigidbody>();
+            RigidBody.interpolation = RigidbodyInterpolation.Interpolate;
             LimbType = type;
             RigidBody.isKinematic = true;
             CharacterJoint joint = null;
