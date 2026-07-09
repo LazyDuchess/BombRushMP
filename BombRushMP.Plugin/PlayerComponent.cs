@@ -60,6 +60,7 @@ namespace BombRushMP.Plugin
         public bool HasCustomInlines => _customInlines != null;
         public bool HasCustomSkateboard => _customSkateboard != null;
         public bool HasCustomBmx => _customBmx != null;
+        public PlayerRagdoll Ragdoll { get; private set; } = new PlayerRagdoll();
 
         public void CacheNewSkin()
         {
@@ -78,6 +79,9 @@ namespace BombRushMP.Plugin
 
             if (MovestyleSkin != null)
                 MovestyleSkin.ApplyToPlayer(_player);
+
+            Ragdoll.Initialize(this);
+            _player.characterVisual.anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         }
 
         private void OnDestroy()
