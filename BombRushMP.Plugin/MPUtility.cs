@@ -283,6 +283,16 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public static bool GetRagdollAllowed()
+        {
+            var clientController = ClientController.Instance;
+            if (!clientController.Connected)
+                return true;
+            if (clientController.ServerState.Tags.Contains(PlayerRagdoll.RagdollDisallowedTag))
+                return false;
+            return true;
+        }
+
         public static void SetUpPlayerForGameStateUpdate()
         {
             var playerComp = PlayerComponent.GetLocal();

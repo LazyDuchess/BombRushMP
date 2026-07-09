@@ -725,6 +725,32 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool RagdollOnHit
+        {
+            get
+            {
+                return _ragdollOnHit.Value;
+            }
+
+            set
+            {
+                _ragdollOnHit.Value = value;
+            }
+        }
+
+        public KeyCode RagdollKey
+        {
+            get
+            {
+                return _ragdollKey.Value;
+            }
+
+            set
+            {
+                _ragdollKey.Value = value;
+            }
+        }
+
 #if DEBUG
         public float SpriteBaseline
         {
@@ -812,6 +838,9 @@ namespace BombRushMP.Plugin
         
         private string _savePath;
         private ConfigFile _configFile;
+
+        private ConfigEntry<bool> _ragdollOnHit;
+        private ConfigEntry<KeyCode> _ragdollKey;
 
         private const string General = "1. General";
         private const string Settings = "2. Settings";
@@ -948,6 +977,8 @@ namespace BombRushMP.Plugin
                 MPAssets.Instance.Sprites.spriteSheet.filterMode = SmoothSprites ? FilterMode.Bilinear : FilterMode.Point;
             };
             _theme = configFile.Bind(Visuals, "Theme", "Default", "Name of the theme to use. Will look in plugin/(plugin)/themes and config/BombRushMP.Plugin/themes");
+            _ragdollOnHit = configFile.Bind(Misc, "Ragdoll On Hit", true, "Whether to ragdoll when receiving knockback.");
+            _ragdollKey = configFile.Bind(Misc, "Ragdoll Key", KeyCode.K, "Press this key to ragdoll on demand and get up.");
         }
 
         public void Save()

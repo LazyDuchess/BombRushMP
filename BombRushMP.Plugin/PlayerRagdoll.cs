@@ -10,6 +10,7 @@ namespace BombRushMP.Plugin
 {
     public class PlayerRagdoll
     {
+        public const string RagdollDisallowedTag = "noragdoll";
         public PlayerComponent Owner { get; private set; } = null;
         public bool Valid { get; private set; } = false;
         public bool Active { get; private set; } = false;
