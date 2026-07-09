@@ -285,6 +285,9 @@ namespace BombRushMP.Plugin
 
         public static bool GetRagdollAllowed()
         {
+            var ply = PlayerComponent.GetLocal();
+            if (ply.HasPropDisguise) 
+                return false;
             var clientController = ClientController.Instance;
             if (!clientController.Connected)
                 return true;

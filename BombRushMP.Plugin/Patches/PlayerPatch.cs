@@ -197,6 +197,66 @@ namespace BombRushMP.Plugin.Patches
             return true;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.GetHit), [typeof(int), typeof(Vector3), typeof(KnockbackAbility.KnockbackType)])]
+        private static bool GetHit_Prefix(Player __instance, int forDamage, Vector3 fromDir, KnockbackAbility.KnockbackType knockbackType)
+        {
+            if (__instance.isAI) return true;
+            if (!MPUtility.GetRagdollAllowed()) return true;
+            if (!MPSettings.Instance.RagdollOnHit) return true;
+            if (__instance.ability == __instance.recoverAbility || __instance.ability == __instance.caughtAbility)
+            {
+                return false;
+            }
+            if (__instance.ability == __instance.recoverAbility || __instance.ability == __instance.knockbackAbility)
+            {
+                return false;
+            }
+            if (Time.time > __instance.lastHit + __instance.invulnerabilityDuration || knockbackType != KnockbackAbility.KnockbackType.STATIONARY)
+            {
+                if (__instance.ability == __instance.dieAbility)
+                {
+                    return true;
+                }
+                if (knockbackType == KnockbackAbility.KnockbackType.STATIONARY && (__instance.GetVelocity().magnitude > __instance.minMoveSpeed || !__instance.IsGrounded()))
+                {
+                    if (__instance.doSmallHitCoroutine != null)
+                    {
+                        __instance.StopCoroutine(__instance.doSmallHitCoroutine);
+                    }
+                    __instance.doSmallHitCoroutine = __instance.StartCoroutine(__instance.DoSmallHit());
+                }
+                else if (knockbackType != KnockbackAbility.KnockbackType.NO_KNOCKBACK)
+                {
+                    var playerComp = PlayerComponent.GetLocal();
+                    switch (knockbackType)
+                    {
+                        case KnockbackAbility.KnockbackType.BIG:
+                            playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 60f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 60f));
+                            break;
+
+                        case KnockbackAbility.KnockbackType.FAR:
+                            playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 120f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 100f));
+                            break;
+
+                        default:
+                            __instance.knockbackAbility.SetKnockback(fromDir, knockbackType);
+                            __instance.ActivateAbility(__instance.knockbackAbility);
+                            break;
+                    }
+                }
+                __instance.StartScreenShake(ScreenShakeType.MEDIUM, 0.2f, false);
+                __instance.SetInCombat();
+                if (knockbackType != KnockbackAbility.KnockbackType.FALL)
+                {
+                    __instance.PlayVoice(AudioClipID.VoiceGetHit, VoicePriority.COMBAT, true);
+                }
+                __instance.ChangeHP(forDamage);
+                __instance.lastHit = Time.time;
+            }
+            return true;
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(nameof(Player.OnTriggerStay))]
         private static void OnTriggerStay_Postfix(Player __instance)

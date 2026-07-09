@@ -84,7 +84,7 @@ namespace BombRushMP.Plugin
                             joint.axis = new Vector3(0f, 1f, 0f);
                             joint.swingAxis = new Vector3(0f, 0f, 0f);
                             joint.lowTwistLimit = new SoftJointLimit() { limit = -30f };
-                            joint.highTwistLimit = new SoftJointLimit() { limit = 10f };
+                            joint.highTwistLimit = new SoftJointLimit() { limit = 15f };
                             joint.swing1Limit = new SoftJointLimit() { limit = 20f };
                             joint.swing2Limit = new SoftJointLimit() { limit = 20f };
                         }
@@ -162,8 +162,8 @@ namespace BombRushMP.Plugin
                             {
                                 joint.axis = new Vector3(0f, 1f, 0f);
                                 joint.swingAxis = new Vector3(0f, 0f, 0f);
-                                joint.lowTwistLimit = new SoftJointLimit() { limit = 0f };
-                                joint.highTwistLimit = new SoftJointLimit() { limit = 80f };
+                                joint.lowTwistLimit = new SoftJointLimit() { limit = -80f };
+                                joint.highTwistLimit = new SoftJointLimit() { limit = 15f };
                                 joint.swing1Limit = new SoftJointLimit() { limit = 10f };
                                 joint.swing2Limit = new SoftJointLimit() { limit = 40f };
                             }

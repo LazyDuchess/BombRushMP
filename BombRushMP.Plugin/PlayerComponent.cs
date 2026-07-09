@@ -163,6 +163,10 @@ namespace BombRushMP.Plugin
             var disguiseController = PropDisguiseController.Instance;
             if (!disguiseController.PropByIndex.TryGetValue(disguiseId, out var prop))
                 return;
+            if (Ragdoll.Active)
+            {
+                Ragdoll.StopRagdoll();
+            }
             DisguiseID = disguiseId;
             if (HasPropDisguise)
             {

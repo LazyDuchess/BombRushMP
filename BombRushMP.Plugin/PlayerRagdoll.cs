@@ -14,23 +14,29 @@ namespace BombRushMP.Plugin
         {
             public Modes Mode;
             public Vector3 ForcePosition;
-            public float ForceRadius;
             public float Force;
+            public Vector3 FixedForce;
 
             public Parameters(Modes mode)
             {
                 Mode = mode;
                 ForcePosition = Vector3.zero;
-                ForceRadius = 0f;
                 Force = 0f;
             }
 
-            public Parameters(Modes mode, float force, float forceRadius, Vector3 forcePosition)
+            public Parameters(Modes mode, float force, Vector3 forcePosition)
             {
                 Mode = mode;
                 ForcePosition = forcePosition;
-                ForceRadius = forceRadius;
                 Force = force;
+            }
+
+            public Parameters(Modes mode, float force, Vector3 forcePosition, Vector3 fixedForce)
+            {
+                Mode = mode;
+                ForcePosition = forcePosition;
+                Force = force;
+                FixedForce = fixedForce;
             }
         }
 
@@ -118,9 +124,36 @@ namespace BombRushMP.Plugin
             Owner.Player.SetDustEmission(0);
             Owner.Player.SetBoostpackAndFrictionEffects(BoostpackEffectMode.OFF, FrictionEffectMode.OFF);
             Visual.VFX.boostpackTrail.SetActive(false);
+
+            Limb closestLimb = null;
+            var closestLimbDist = 0f;
+            var hitDirection = Vector3.zero;
+
+            foreach(var limb in Limbs)
+            {
+                var dist = Vector2.Distance(limb.Transform.position, args.ForcePosition);
+                if (closestLimb == null)
+                {
+                    closestLimb = limb;
+                    closestLimbDist = dist;
+                }
+                else if (dist < closestLimbDist)
+                {
+                    closestLimb = limb;
+                    closestLimbDist = dist;
+                }
+            }
+
+            hitDirection = (closestLimb.Transform.position - args.ForcePosition).normalized;
+
             foreach (var limb in Limbs)
             {
-                limb.Activate(vel);
+                var limbVel = vel;
+                if (closestLimb == limb)
+                {
+                    limbVel += hitDirection * args.Force + args.FixedForce;
+                }
+                limb.Activate(limbVel);
             }
         }
 
