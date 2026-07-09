@@ -46,6 +46,11 @@ namespace BombRushMP.Plugin
             Transform.gameObject.layer = Layers.Default;
         }
 
+        public void HackUpdateCollider()
+        {
+            Collider.enabled = Active;
+        }
+
         public Limb(Transform tf, LimbTypes type, Limb parent = null)
         {
             Transform = tf;

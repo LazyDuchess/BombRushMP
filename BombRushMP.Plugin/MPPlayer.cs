@@ -25,6 +25,8 @@ namespace BombRushMP.Plugin
         public ClientState ClientState = null;
         public ClientVisualState ClientVisualState = null;
         public Player Player;
+        public RagdollEvent LatestRemoteEvent = null;
+        public RagdollState LatestRemoteRagdollState = null;
         public PlayerComponent PlayerComponent
         {
             get

@@ -1,10 +1,12 @@
 ﻿using Reptile;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.LowLevel;
 
 namespace BombRushMP.Plugin
 {
@@ -45,6 +47,9 @@ namespace BombRushMP.Plugin
             Hit,
             Manual
         }
+
+        public const string RagdollEventPacketId = "ACN-RAGDOLL_EVENT";
+        public const string RagdollStatePacketId = "ACN-RAGDOLL_STATE";
 
         public const string RagdollDisallowedTag = "noragdoll";
         public const float RagdollMinimumTime = 1f;
@@ -101,6 +106,14 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public void HackUpdateColliders()
+        {
+            foreach(var limb in Limbs)
+            {
+                limb.HackUpdateCollider();
+            }
+        }
+
         public void BecomeRagdoll(Parameters args)
         {
             if (!Valid) return;
@@ -119,7 +132,8 @@ namespace BombRushMP.Plugin
             Owner.Player.motor.SetKinematic(true);
             Owner.Player.SwitchToEquippedMovestyle(false, false, true, false);
             Owner.Player.isDisabled = true;
-            Owner.Player.phone.TurnOff(false);
+            if (Owner.Player.phone != null)
+                Owner.Player.phone.TurnOff(false);
             Owner.Player.StopHoldProps();
             Owner.Player.SetDustEmission(0);
             Owner.Player.SetBoostpackAndFrictionEffects(BoostpackEffectMode.OFF, FrictionEffectMode.OFF);
@@ -155,6 +169,22 @@ namespace BombRushMP.Plugin
                 }
                 limb.Activate(limbVel);
             }
+
+            var clientController = ClientController.Instance;
+            if (Owner.Local)
+            {
+                var limbRots = new List<Quaternion>();
+                foreach(var limb in Limbs)
+                {
+                    limbRots.Add(limb.Transform.rotation);
+                }
+                var ragdollState = new RagdollState(limbRots);
+                var ragdollEv = new RagdollEvent(RagdollEvent.Events.Start, ragdollState, args.Force, args.ForcePosition, args.FixedForce);
+                using var ms = new MemoryStream();
+                using var writer = new BinaryWriter(ms);
+                ragdollEv.Write(writer);
+                clientController.BroadcastCustomPacket(ms.ToArray(), RagdollEventPacketId, Common.Networking.IMessage.SendModes.Reliable);
+            }
         }
 
         public void StopRagdoll()
@@ -175,6 +205,104 @@ namespace BombRushMP.Plugin
             }
             Owner.Player.OrientVisualInstantReset();
             Owner.Player.ActivateAbility(Owner.Player.slideAbility);
+
+            var clientController = ClientController.Instance;
+            if (Owner.Local)
+            {
+                var ragdollEv = new RagdollEvent(RagdollEvent.Events.Stop);
+                using var ms = new MemoryStream();
+                using var writer = new BinaryWriter(ms);
+                ragdollEv.Write(writer);
+                clientController.BroadcastCustomPacket(ms.ToArray(), RagdollEventPacketId, Common.Networking.IMessage.SendModes.Reliable);
+            }
+        }
+
+        public void TickLocalNetworking()
+        {
+            if (!Active) return;
+            var clientController = ClientController.Instance;
+            var limbRots = new List<Quaternion>();
+            foreach (var limb in Limbs)
+            {
+                limbRots.Add(limb.Transform.rotation);
+            }
+            var ragdollState = new RagdollState(limbRots);
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            ragdollState.Write(writer);
+            clientController.BroadcastCustomPacket(ms.ToArray(), RagdollStatePacketId, Common.Networking.IMessage.SendModes.Unreliable);
+        }
+
+        
+
+        public void UpdateRemoteNetworking()
+        {
+            if (!Valid) return;
+            var mpPlayer = MPUtility.GetMuliplayerPlayer(Owner.Player);
+            if (mpPlayer == null) return;
+            if (mpPlayer.LatestRemoteEvent != null)
+            {
+                if (mpPlayer.LatestRemoteEvent.Event == RagdollEvent.Events.Start && !Active)
+                {
+                    mpPlayer.LatestRemoteRagdollState = mpPlayer.LatestRemoteEvent.State;
+                    BecomeRagdoll(new Parameters(Modes.Manual, mpPlayer.LatestRemoteEvent.Force, mpPlayer.LatestRemoteEvent.ForcePosition, mpPlayer.LatestRemoteEvent.FixedForce));
+                    SetRemoteStateNow();
+                }
+                else if (mpPlayer.LatestRemoteEvent.Event == RagdollEvent.Events.Stop && Active)
+                {
+                    StopRagdoll();
+                }
+            }
+            if (!Active) return;
+            Limbs[0].Transform.position = Owner.Player.transform.position;
+            if (mpPlayer.LatestRemoteRagdollState == null) return;
+            for(var i=0;i<Limbs.Count;i++)
+            {
+                var limb = Limbs[i];
+                var limbState = mpPlayer.LatestRemoteRagdollState.LimbRotations[i];
+                limb.Transform.rotation = Quaternion.Lerp(limb.Transform.rotation, limbState, Time.deltaTime * ClientConstants.PlayerInterpolation);
+            }
+        }
+
+        public void SetRemoteStateNow()
+        {
+            if (!Valid) return;
+            var mpPlayer = MPUtility.GetMuliplayerPlayer(Owner.Player);
+            if (mpPlayer == null) return;
+            if (mpPlayer.LatestRemoteRagdollState == null) return;
+            Limbs[0].Transform.position = Owner.Player.transform.position;
+            if (mpPlayer.LatestRemoteRagdollState == null) return;
+            for (var i = 0; i < Limbs.Count; i++)
+            {
+                var limb = Limbs[i];
+                var limbState = mpPlayer.LatestRemoteRagdollState.LimbRotations[i];
+                limb.Transform.rotation = limbState;
+            }
+        }
+
+        public static void InitializeStatic()
+        {
+            ClientController.RegisterCustomPacketHandler(RagdollEventPacketId, (player, data) =>
+            {
+                var clientController = ClientController.Instance;
+                if (!clientController.Players.TryGetValue(player, out var mpPlayer)) return;
+                using var ms = new MemoryStream(data);
+                using var reader = new BinaryReader(ms);
+                var ev = new RagdollEvent();
+                ev.Read(reader);
+                mpPlayer.LatestRemoteEvent = ev;
+            });
+
+            ClientController.RegisterCustomPacketHandler(RagdollStatePacketId, (player, data) =>
+            {
+                var clientController = ClientController.Instance;
+                if (!clientController.Players.TryGetValue(player, out var mpPlayer)) return;
+                using var ms = new MemoryStream(data);
+                using var reader = new BinaryReader(ms);
+                var state = new RagdollState();
+                state.Read(reader);
+                mpPlayer.LatestRemoteRagdollState = state;
+            });
         }
 
         public void Initialize(PlayerComponent player)

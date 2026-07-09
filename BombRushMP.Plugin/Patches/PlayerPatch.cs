@@ -669,6 +669,17 @@ namespace BombRushMP.Plugin.Patches
             return true;
         }
 
+        // FlyMode will screw up and enable all colliders on disable.
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Player.LockSwitchToEquippedMoveStyle))]
+        private static void LockSwitchToEquippedMoveStyle_Prefix(Player __instance)
+        {
+            if (__instance.isAI) return;
+            var playerComp = PlayerComponent.GetLocal();
+            if (playerComp == null) return;
+            playerComp.Ragdoll.HackUpdateColliders();
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.Awake))]
         private static void Awake_Prefix(Player __instance)

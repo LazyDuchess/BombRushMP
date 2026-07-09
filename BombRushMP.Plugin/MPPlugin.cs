@@ -145,6 +145,7 @@ namespace BombRushMP.Plugin
             StageAPI.OnStagePreInitialization += OnStagePreInitialization;
             InitShared();
             InitBannedModsSystem();
+            PlayerRagdoll.InitializeStatic();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 

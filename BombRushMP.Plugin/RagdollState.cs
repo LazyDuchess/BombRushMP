@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Numerics;
+using UnityEngine;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,7 +30,7 @@ namespace BombRushMP.Plugin
             var limbAmount = (int)reader.ReadByte();
             for(var i = 0; i < limbAmount; i++)
             {
-                LimbRotations.Add(Compression.ReadCompressedQuaternion(reader));
+                LimbRotations.Add(Compression.ReadCompressedQuaternion(reader).ToUnityQuaternion());
             }
         }
 
@@ -40,7 +40,7 @@ namespace BombRushMP.Plugin
             writer.Write((byte)LimbRotations.Count);
             foreach(var rot in LimbRotations)
             {
-                Compression.WriteCompressedQuaternion(rot, writer);
+                Compression.WriteCompressedQuaternion(rot.ToSystemQuaternion(), writer);
             }
         }
     }

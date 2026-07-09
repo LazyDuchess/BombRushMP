@@ -1,18 +1,19 @@
-﻿using Reptile;
+﻿using BombRushMP.Common;
+using BombRushMP.CrewBoom;
+using BombRushMP.Plugin.Gamemodes;
+using ch.sycoforge.Decal.Projectors.Geometry;
+using HarmonyLib;
+using MonoMod.Cil;
+using Reptile;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using BombRushMP.Common;
-using MonoMod.Cil;
 using UnityEngine.UIElements;
-using ch.sycoforge.Decal.Projectors.Geometry;
-using System.Drawing.Text;
-using HarmonyLib;
-using BombRushMP.CrewBoom;
-using BombRushMP.Plugin.Gamemodes;
 
 namespace BombRushMP.Plugin
 {
@@ -474,11 +475,15 @@ namespace BombRushMP.Plugin
             {
                 _player.UpdateCombat();
             }
+            if (!Local)
+            {
+                Ragdoll.UpdateRemoteNetworking();
+            }
         }
 
         private void LateUpdate()
         {
-            if (Ragdoll.Valid && Ragdoll.Active)
+            if (Ragdoll.Valid && Ragdoll.Active && Local)
             {
                 _player.transform.position = Ragdoll.Limbs[0].Transform.position;
             }
@@ -629,6 +634,27 @@ namespace BombRushMP.Plugin
                 if (!Ragdoll.Active)
                     charVisual.head.transform.rotation *= Quaternion.Euler(charVisual.head.transform.right * -45f * _afkWeight);
             }
+        }
+
+        public void OnTickLocal()
+        {
+            Ragdoll.TickLocalNetworking();
+        }
+
+        public void OnPlayerJoined(ushort id)
+        {
+            if (!Ragdoll.Active) return;
+            var limbRots = new List<Quaternion>();
+            foreach (var limb in Ragdoll.Limbs)
+            {
+                limbRots.Add(limb.Transform.rotation);
+            }
+            var ragdollState = new RagdollState(limbRots);
+            var ragdollEv = new RagdollEvent(RagdollEvent.Events.Start, ragdollState, 0f, Vector3.zero, Vector3.zero);
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            ragdollEv.Write(writer);
+            ClientController.Instance.SendCustomPacketToPlayer(ms.ToArray(), PlayerRagdoll.RagdollEventPacketId, id, Common.Networking.IMessage.SendModes.Reliable);
         }
 
         public static PlayerComponent Get(Player player)

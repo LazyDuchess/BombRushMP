@@ -380,6 +380,8 @@ namespace BombRushMP.Plugin
             {
                 SendVisualState();
             }
+            if (LocalPlayerComponent != null)
+                LocalPlayerComponent.OnTickLocal();
 #if DEBUG
             if (MPSettings.Instance.UpdatePlayers)
             {
@@ -677,15 +679,19 @@ namespace BombRushMP.Plugin
                         var clientStates = (ServerClientStates)packet;
                         foreach (var clientState in clientStates.ClientStates)
                         {
+                            var newJoin = false;
                             if (!Players.TryGetValue(clientState.Key, out var player))
                             {
                                 player = new MPPlayer();
                                 Players[clientState.Key] = player;
+                                newJoin = true;
                             }
                             player.SetClientState(clientState.Value);
                             player.ClientId = clientState.Key;
                             player.UpdateClientStateVisuals();
                             player.UpdateNameplate();
+                            if (LocalPlayerComponent != null)
+                                LocalPlayerComponent.OnPlayerJoined(clientState.Key);
                         }
                         if (clientStates.Full)
                         {
