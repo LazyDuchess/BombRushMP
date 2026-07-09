@@ -24,6 +24,7 @@ namespace BombRushMP.Plugin
             Owner.Player.motor.SetKinematic(true);
             Owner.Player.isDisabled = true;
             Owner.Player.phone.TurnOff(false);
+            Owner.Player.StopHoldProps();
             foreach (var limb in _limbs)
             {
                 limb.Activate();
