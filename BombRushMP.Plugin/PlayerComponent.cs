@@ -355,6 +355,14 @@ namespace BombRushMP.Plugin
             return true;
         }
 
+        public bool CanRagdoll()
+        {
+            if (!Ragdoll.Valid) return false;
+            if (_player.IsBusyWithSequence()) return false;
+            if (_player.IsDead()) return false;
+            return true;
+        }
+
         public void DoSayHello()
         {
             var saveData = MPSaveData.Instance;
@@ -421,6 +429,46 @@ namespace BombRushMP.Plugin
             else
             {
                 _player.playerGameplayVoicesAudioSource.pitch = 1f;
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (Local)
+            {
+                var gameInput = Core.Instance.GameInput;
+                var controllerMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs();
+                if (controllerMaps.controllerMapCategoryIDs.Contains(0))
+                {
+                    if (Input.GetKeyDown(MPSettings.Instance.RagdollKey))
+                    {
+                        if (CanRagdoll() && Ragdoll.Timer > PlayerRagdoll.RagdollMinimumTime)
+                        {
+                            if (!Ragdoll.Active && MPUtility.GetRagdollAllowed())
+                            {
+                                Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Manual));
+                            }
+                            else if (Ragdoll.Active && Ragdoll.Mode == PlayerRagdoll.Modes.Manual)
+                            {
+                                Ragdoll.StopRagdoll();
+                            }
+                        }
+                    }
+                }
+
+                if (Ragdoll.Active && Ragdoll.Mode != PlayerRagdoll.Modes.Manual && Ragdoll.Still && Ragdoll.Timer > PlayerRagdoll.RagdollMinimumTime && CanRagdoll())
+                {
+                    Ragdoll.StopRagdoll();
+                }
+            }
+            Ragdoll.OnFixedUpdate();
+        }
+
+        private void Update()
+        {
+            if (Ragdoll.Active && Local)
+            {
+                _player.UpdateCombat();
             }
         }
 
@@ -574,7 +622,8 @@ namespace BombRushMP.Plugin
                 _afkParticles.transform.position = charVisual.head.transform.position;
                 _afkParticles.transform.rotation = Quaternion.LookRotation(_player.transform.forward);
 
-                charVisual.head.transform.rotation *= Quaternion.Euler(charVisual.head.transform.right * -45f * _afkWeight);
+                if (!Ragdoll.Active)
+                    charVisual.head.transform.rotation *= Quaternion.Euler(charVisual.head.transform.right * -45f * _afkWeight);
             }
         }
 

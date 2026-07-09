@@ -18,6 +18,10 @@ namespace BombRushMP.Plugin.Patches
             ClientController.Instance.SendGenericEvent(GenericEvents.Death, IMessage.SendModes.ReliableUnordered);
             if (MPSettings.Instance.DeathSequence)
                 DeathSequenceController.Create();
+            if (MPUtility.GetRagdollAllowed() && MPSettings.Instance.RagdollOnHit)
+            {
+                PlayerComponent.GetLocal().Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit));
+            }
         }
     }
 }

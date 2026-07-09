@@ -10,10 +10,48 @@ namespace BombRushMP.Plugin
 {
     public class PlayerRagdoll
     {
+        public struct Parameters
+        {
+            public Modes Mode;
+            public Vector3 ForcePosition;
+            public float ForceRadius;
+            public float Force;
+
+            public Parameters(Modes mode)
+            {
+                Mode = mode;
+                ForcePosition = Vector3.zero;
+                ForceRadius = 0f;
+                Force = 0f;
+            }
+
+            public Parameters(Modes mode, float force, float forceRadius, Vector3 forcePosition)
+            {
+                Mode = mode;
+                ForcePosition = forcePosition;
+                ForceRadius = forceRadius;
+                Force = force;
+            }
+        }
+
+        public enum Modes
+        {
+            Hit,
+            Manual
+        }
+
         public const string RagdollDisallowedTag = "noragdoll";
+        public const float RagdollMinimumTime = 1f;
+        private const float MinTimeForStillness = 0.5f;
+        private const float MaxVelocityForStillness = 0.5f;
         public PlayerComponent Owner { get; private set; } = null;
         public bool Valid { get; private set; } = false;
         public bool Active { get; private set; } = false;
+        public Modes Mode { get; private set; } = Modes.Manual;
+        public float Timer { get; private set; } = 0f;
+        public bool Still { get; private set; } = false;
+        private bool _still = false;
+        private float _stillTimer = 0f;
         public CharacterVisual Visual { get; private set; } = null;
         public List<Limb> Limbs = new();
 
@@ -29,13 +67,47 @@ namespace BombRushMP.Plugin
             }
         }
 
-        public void BecomeRagdoll()
+        public void OnFixedUpdate()
+        {
+            Timer += Time.deltaTime;
+            Still = false;
+            if (Active)
+            {
+                if (Limbs[0].RigidBody.velocity.magnitude <= MaxVelocityForStillness)
+                {
+                    _still = true;
+                    _stillTimer += Time.deltaTime;
+                    if (_stillTimer >= MinTimeForStillness)
+                    {
+                        Still = true;
+                    }
+                }
+                else
+                {
+                    _stillTimer = 0f;
+                    _still = false;
+                }
+            }
+            else
+            {
+                _stillTimer = 0f;
+                _still = false;
+            }
+        }
+
+        public void BecomeRagdoll(Parameters args)
         {
             if (!Valid) return;
             if (Active) return;
-            Active = true;
-            Visual.transform.parent = null;
             var vel = Owner.Player.GetPracticalWorldVelocity();
+            if (!Owner.Player.IsDead())
+                Owner.Player.CompletelyStop();
+            Active = true;
+            Timer = 0f;
+            _stillTimer = 0f;
+            _still = false;
+            Mode = args.Mode;
+            Visual.transform.parent = null;
             Owner.Player.characterVisual.anim.enabled = false;
             Owner.Player.motor.HaveCollision(false);
             Owner.Player.motor.SetKinematic(true);
@@ -50,7 +122,6 @@ namespace BombRushMP.Plugin
             {
                 limb.Activate(vel);
             }
-            Owner.Player.CompletelyStop();
         }
 
         public void StopRagdoll()
@@ -58,6 +129,7 @@ namespace BombRushMP.Plugin
             if (!Valid) return;
             if (!Active) return;
             Active = false;
+            Timer = 0f;
             Visual.transform.parent = Owner.Player.interactionCollider.transform.parent;
             Visual.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             Owner.Player.characterVisual.anim.enabled = true;
@@ -68,6 +140,8 @@ namespace BombRushMP.Plugin
             {
                 limb.Deactivate();
             }
+            Owner.Player.OrientVisualInstantReset();
+            Owner.Player.ActivateAbility(Owner.Player.slideAbility);
         }
 
         public void Initialize(PlayerComponent player)

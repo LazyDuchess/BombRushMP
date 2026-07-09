@@ -171,19 +171,5 @@ public class AppMultiplayerDebug : CustomApp
             MPUtility.PingInMap(player.gameObject, 2f);
         };
         ScrollView.AddButton(button);
-
-        button = PhoneUIUtility.CreateSimpleButton("Become Ragdoll");
-        button.OnConfirm += () =>
-        {
-            PlayerComponent.GetLocal().Ragdoll.BecomeRagdoll();
-        };
-        ScrollView.AddButton(button);
-
-        button = PhoneUIUtility.CreateSimpleButton("Stop Ragdoll");
-        button.OnConfirm += () =>
-        {
-            PlayerComponent.GetLocal().Ragdoll.StopRagdoll();
-        };
-        ScrollView.AddButton(button);
     }
 }

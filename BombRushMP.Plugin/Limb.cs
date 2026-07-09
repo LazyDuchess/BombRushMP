@@ -81,9 +81,11 @@ namespace BombRushMP.Plugin
                         RigidBody.mass = 0.5f;
                         if (parent != null)
                         {
-                            joint.lowTwistLimit = new SoftJointLimit() { limit = -20f };
-                            joint.highTwistLimit = new SoftJointLimit() { limit = 20f };
-                            joint.swing1Limit = new SoftJointLimit() { limit = 30f };
+                            joint.axis = new Vector3(0f, 1f, 0f);
+                            joint.swingAxis = new Vector3(0f, 0f, 0f);
+                            joint.lowTwistLimit = new SoftJointLimit() { limit = -30f };
+                            joint.highTwistLimit = new SoftJointLimit() { limit = 10f };
+                            joint.swing1Limit = new SoftJointLimit() { limit = 20f };
                             joint.swing2Limit = new SoftJointLimit() { limit = 20f };
                         }
                     }

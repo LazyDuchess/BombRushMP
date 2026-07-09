@@ -288,6 +288,9 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             if (!clientController.Connected)
                 return true;
+            var user = clientController.GetLocalUser();
+            if (user != null && user.IsModerator)
+                return true;
             if (clientController.ServerState.Tags.Contains(PlayerRagdoll.RagdollDisallowedTag))
                 return false;
             return true;
@@ -376,6 +379,7 @@ namespace BombRushMP.Plugin
             player.ui.TurnOn(true);
             var currentStageProgress = Core.Instance.SaveManager.CurrentSaveSlot.GetCurrentStageProgress();
             PlaceCurrentPlayer(currentStageProgress.respawnPos, Quaternion.Euler(currentStageProgress.respawnRot));
+            player.motor.SetKinematic(false);
         }
 
         public static PublicToilet GetCurrentToilet()

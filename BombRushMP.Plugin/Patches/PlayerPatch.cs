@@ -389,6 +389,12 @@ namespace BombRushMP.Plugin.Patches
             if (__instance.isAI) return;
             var clientController = ClientController.Instance;
             if (clientController == null) return;
+            var playerComp = clientController.LocalPlayerComponent;
+            if (playerComp == null) return;
+            if (playerComp.Ragdoll.Active)
+            {
+                playerComp.Ragdoll.StopRagdoll();
+            }
             if (!clientController.Connected) return;
             clientController.SendGenericEvent(GenericEvents.Teleport, IMessage.SendModes.ReliableUnordered);
         }

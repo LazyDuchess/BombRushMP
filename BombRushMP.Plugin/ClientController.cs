@@ -348,6 +348,11 @@ namespace BombRushMP.Plugin
                     }
                     break;
             }
+            if (playerComp.Ragdoll.Active)
+            {
+                packet.VisualPosition = Vector3.zero.ToSystemVector3();
+                packet.VisualRotation = Quaternion.identity.ToSystemQuaternion();
+            }
             if (packet.Disguised)
             {
                 packet.VisualPosition = playerComp.DisguiseGameObject.transform.localPosition.ToSystemVector3();
