@@ -66,6 +66,9 @@ namespace BombRushMP.Plugin
         public CharacterVisual Visual { get; private set; } = null;
         public List<Limb> Limbs = new();
 
+        public ulong CurrentEventPacketId = 0;
+        public ulong CurrentStatePacketId = 0;
+
         public void OnDestroy()
         {
             if (Active)
@@ -178,12 +181,13 @@ namespace BombRushMP.Plugin
                 {
                     limbRots.Add(limb.Transform.rotation);
                 }
-                var ragdollState = new RagdollState(limbRots);
-                var ragdollEv = new RagdollEvent(RagdollEvent.Events.Start, ragdollState, args.Force, args.ForcePosition, args.FixedForce);
+                var ragdollState = new RagdollState(limbRots, CurrentStatePacketId);
+                var ragdollEv = new RagdollEvent(RagdollEvent.Events.Start, CurrentEventPacketId, ragdollState, args.Force, args.ForcePosition, args.FixedForce);
+                CurrentEventPacketId++;
                 using var ms = new MemoryStream();
                 using var writer = new BinaryWriter(ms);
                 ragdollEv.Write(writer);
-                clientController.BroadcastCustomPacket(ms.ToArray(), RagdollEventPacketId, Common.Networking.IMessage.SendModes.Reliable);
+                clientController.BroadcastCustomPacket(ms.ToArray(), RagdollEventPacketId, Common.Networking.IMessage.SendModes.ReliableUnordered);
             }
         }
 
@@ -209,11 +213,12 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             if (Owner.Local)
             {
-                var ragdollEv = new RagdollEvent(RagdollEvent.Events.Stop);
+                var ragdollEv = new RagdollEvent(RagdollEvent.Events.Stop, CurrentEventPacketId);
+                CurrentEventPacketId++;
                 using var ms = new MemoryStream();
                 using var writer = new BinaryWriter(ms);
                 ragdollEv.Write(writer);
-                clientController.BroadcastCustomPacket(ms.ToArray(), RagdollEventPacketId, Common.Networking.IMessage.SendModes.Reliable);
+                clientController.BroadcastCustomPacket(ms.ToArray(), RagdollEventPacketId, Common.Networking.IMessage.SendModes.ReliableUnordered);
             }
         }
 
@@ -226,11 +231,12 @@ namespace BombRushMP.Plugin
             {
                 limbRots.Add(limb.Transform.rotation);
             }
-            var ragdollState = new RagdollState(limbRots);
+            var ragdollState = new RagdollState(limbRots, CurrentStatePacketId);
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             ragdollState.Write(writer);
             clientController.BroadcastCustomPacket(ms.ToArray(), RagdollStatePacketId, Common.Networking.IMessage.SendModes.Unreliable);
+            CurrentStatePacketId++;
         }
 
         
@@ -290,7 +296,14 @@ namespace BombRushMP.Plugin
                 using var reader = new BinaryReader(ms);
                 var ev = new RagdollEvent();
                 ev.Read(reader);
-                mpPlayer.LatestRemoteEvent = ev;
+                if (mpPlayer.LatestRemoteEvent == null)
+                {
+                    mpPlayer.LatestRemoteEvent = ev;
+                }
+                else if (ev.PacketId >= mpPlayer.LatestRemoteEvent.PacketId)
+                {
+                    mpPlayer.LatestRemoteEvent = ev;
+                }
             });
 
             ClientController.RegisterCustomPacketHandler(RagdollStatePacketId, (player, data) =>
@@ -301,7 +314,14 @@ namespace BombRushMP.Plugin
                 using var reader = new BinaryReader(ms);
                 var state = new RagdollState();
                 state.Read(reader);
-                mpPlayer.LatestRemoteRagdollState = state;
+                if (mpPlayer.LatestRemoteRagdollState == null)
+                {
+                    mpPlayer.LatestRemoteRagdollState = state;
+                }
+                else if (state.PacketId >= mpPlayer.LatestRemoteRagdollState.PacketId)
+                {
+                    mpPlayer.LatestRemoteRagdollState = state;
+                }
             });
         }
 

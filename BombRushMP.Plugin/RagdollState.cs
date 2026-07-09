@@ -12,21 +12,24 @@ namespace BombRushMP.Plugin
     public class RagdollState
     {
         public List<Quaternion> LimbRotations = new();
+        public ulong PacketId = 0;
 
         public RagdollState()
         {
 
         }
 
-        public RagdollState(List<Quaternion> limbRotations)
+        public RagdollState(List<Quaternion> limbRotations, ulong packetId)
         {
             LimbRotations = limbRotations;
+            PacketId = packetId;
         }
 
         public void Read(BinaryReader reader)
         {
             LimbRotations.Clear();
             var version = reader.ReadByte();
+            PacketId = reader.ReadUInt64();
             var limbAmount = (int)reader.ReadByte();
             for(var i = 0; i < limbAmount; i++)
             {
@@ -37,6 +40,7 @@ namespace BombRushMP.Plugin
         public void Write(BinaryWriter writer)
         {
             writer.Write((byte)0);
+            writer.Write(PacketId);
             writer.Write((byte)LimbRotations.Count);
             foreach(var rot in LimbRotations)
             {

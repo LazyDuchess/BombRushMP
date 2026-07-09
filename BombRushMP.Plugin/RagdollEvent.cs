@@ -21,28 +21,32 @@ namespace BombRushMP.Plugin
         public float Force = 0f;
         public Vector3 ForcePosition = Vector3.zero;
         public Vector3 FixedForce = Vector3.zero;
+        public ulong PacketId = 0;
 
         public RagdollEvent()
         {
 
         }
 
-        public RagdollEvent(Events ev){
+        public RagdollEvent(Events ev, ulong packetId){
             Event = ev;
+            PacketId = packetId;
         }
 
-        public RagdollEvent(Events ev, RagdollState state, float force, Vector3 forcePosition, Vector3 fixedForce)
+        public RagdollEvent(Events ev, ulong packetId, RagdollState state, float force, Vector3 forcePosition, Vector3 fixedForce)
         {
             Event = ev;
             State = state;
             Force = force;
             ForcePosition = forcePosition;
             FixedForce = fixedForce;
+            PacketId = packetId;
         }
 
         public void Read(BinaryReader reader)
         {
             var version = reader.ReadByte();
+            PacketId = reader.ReadUInt64();
             Event = (Events)reader.ReadInt32();
             var hasState = reader.ReadBoolean();
             if (hasState)
@@ -65,6 +69,7 @@ namespace BombRushMP.Plugin
         public void Write(BinaryWriter writer)
         {
             writer.Write((byte)0);
+            writer.Write(PacketId);
             writer.Write((int)Event);
             writer.Write(State != null);
             if (State != null)

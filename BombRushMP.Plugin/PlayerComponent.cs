@@ -649,12 +649,13 @@ namespace BombRushMP.Plugin
             {
                 limbRots.Add(limb.Transform.rotation);
             }
-            var ragdollState = new RagdollState(limbRots);
-            var ragdollEv = new RagdollEvent(RagdollEvent.Events.Start, ragdollState, 0f, Vector3.zero, Vector3.zero);
+            var ragdollState = new RagdollState(limbRots, Ragdoll.CurrentStatePacketId);
+            var ragdollEv = new RagdollEvent(RagdollEvent.Events.Start, Ragdoll.CurrentEventPacketId, ragdollState, 0f, Vector3.zero, Vector3.zero);
+            Ragdoll.CurrentEventPacketId++;
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
             ragdollEv.Write(writer);
-            ClientController.Instance.SendCustomPacketToPlayer(ms.ToArray(), PlayerRagdoll.RagdollEventPacketId, id, Common.Networking.IMessage.SendModes.Reliable);
+            ClientController.Instance.SendCustomPacketToPlayer(ms.ToArray(), PlayerRagdoll.RagdollEventPacketId, id, Common.Networking.IMessage.SendModes.ReliableUnordered);
         }
 
         public static PlayerComponent Get(Player player)
