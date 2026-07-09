@@ -13,6 +13,7 @@ using BombRushMP.Common.Packets;
 using BombRushMP.Common.Networking;
 using BombRushMP.Plugin.Gamemodes;
 using BepInEx.Bootstrap;
+using System.IO;
 
 namespace BombRushMP.Plugin
 {
@@ -216,6 +217,21 @@ namespace BombRushMP.Plugin
             var args = cmd.Split(' ');
             ClientLogger.Log($"Processing chat command {args[0]}");
             switch (args[0]) {
+                case "ragdoll":
+                    if (ClientController.Instance.GetLocalUser().IsModerator && args.Length >= 4)
+                    {
+                        if (ushort.TryParse(args[1], out var playerId) && float.TryParse(args[2], out var force) && float.TryParse(args[3], out var upForce))
+                        {
+                            var point = WorldHandler.instance.GetCurrentPlayer().transform.position;
+                            var clientController = ClientController.Instance;
+                            var pack = new RagdollLaunchPacket(point, force, upForce);
+                            using var ms = new MemoryStream();
+                            using var writer = new BinaryWriter(ms);
+                            pack.Write(writer);
+                            clientController.SendCustomPacketToPlayer(ms.ToArray(), PlayerRagdoll.RagdollEventLaunchPacketId, playerId, IMessage.SendModes.ReliableUnordered);
+                        }
+                    }
+                    break;
                 case "emojis":
                     var emojiStr = "Available emojis:\n";
                     var emojis = MPAssets.Instance.Emojis.Sprites.OrderBy(x => x.Key[1].ToString(), StringComparer.InvariantCultureIgnoreCase).ToArray();

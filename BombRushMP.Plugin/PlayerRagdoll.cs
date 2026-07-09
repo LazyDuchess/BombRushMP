@@ -50,6 +50,7 @@ namespace BombRushMP.Plugin
 
         public const string RagdollEventPacketId = "ACN-RAGDOLL_EVENT";
         public const string RagdollStatePacketId = "ACN-RAGDOLL_STATE";
+        public const string RagdollEventLaunchPacketId = "ACN-RAGDOLL_LAUNCH";
 
         public const string RagdollDisallowedTag = "noragdoll";
         public const float RagdollMinimumTime = 1f;
@@ -322,6 +323,18 @@ namespace BombRushMP.Plugin
                 {
                     mpPlayer.LatestRemoteRagdollState = state;
                 }
+            });
+
+            ClientController.RegisterCustomPacketHandler(RagdollEventLaunchPacketId, (player, data) =>
+            {
+                var clientController = ClientController.Instance;
+                if (!clientController.Players.TryGetValue(player, out var mpPlayer)) return;
+                if (!mpPlayer.ClientState.User.IsModerator) return;
+                using var ms = new MemoryStream(data);
+                using var reader = new BinaryReader(ms);
+                var launch = new RagdollLaunchPacket();
+                launch.Read(reader);
+                PlayerComponent.GetLocal().Ragdoll.BecomeRagdoll(new Parameters(Modes.Hit, launch.Force, launch.Point, Vector3.up * launch.UpForce));
             });
         }
 

@@ -55,6 +55,8 @@ namespace BombRushMP.Plugin
         {
             Transform = tf;
             RigidBody = tf.gameObject.AddComponent<Rigidbody>();
+            var collHandler = tf.gameObject.AddComponent<LimbCollisionHandler>();
+            collHandler.Owner = this;
             RigidBody.interpolation = RigidbodyInterpolation.Interpolate;
             RigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             LimbType = type;
