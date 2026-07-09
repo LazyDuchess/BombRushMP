@@ -285,6 +285,11 @@ namespace BombRushMP.Plugin
 
         public static void SetUpPlayerForGameStateUpdate()
         {
+            var playerComp = PlayerComponent.GetLocal();
+            if (playerComp.Ragdoll.Active)
+            {
+                playerComp.Ragdoll.StopRagdoll();
+            }
             if (MinecraftPlayer.Instance != null)
             {
                 MinecraftPlayer.Instance.Kill();
