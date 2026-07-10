@@ -437,30 +437,39 @@ namespace BombRushMP.Plugin
             }
         }
 
+        private bool _ragdollKeyPressed = false;
+
+        private void PollInputs()
+        {
+            if (!Local) return;
+            var gameInput = Core.Instance.GameInput;
+            var controllerMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs();
+            if (controllerMaps.controllerMapCategoryIDs.Contains(0))
+            {
+                if (Input.GetKeyDown(MPSettings.Instance.RagdollKey))
+                    _ragdollKeyPressed = true;
+            }
+        }
+
         private void FixedUpdate()
         {
             if (Local)
             {
-                var gameInput = Core.Instance.GameInput;
-                var controllerMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs();
-                if (controllerMaps.controllerMapCategoryIDs.Contains(0))
+                if (_ragdollKeyPressed)
                 {
-                    if (Input.GetKeyDown(MPSettings.Instance.RagdollKey))
+                    if (CanRagdoll() && Ragdoll.Timer > PlayerRagdoll.RagdollMinimumTime)
                     {
-                        if (CanRagdoll() && Ragdoll.Timer > PlayerRagdoll.RagdollMinimumTime)
+                        if (!Ragdoll.Active && MPUtility.GetRagdollAllowed())
                         {
-                            if (!Ragdoll.Active && MPUtility.GetRagdollAllowed())
-                            {
-                                Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Manual));
-                            }
-                            else if (Ragdoll.Active && Ragdoll.Mode == PlayerRagdoll.Modes.Manual)
-                            {
-                                Ragdoll.StopRagdoll();
-                            }
+                            Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Manual));
+                        }
+                        else if (Ragdoll.Active && Ragdoll.Mode == PlayerRagdoll.Modes.Manual)
+                        {
+                            Ragdoll.StopRagdoll();
                         }
                     }
+                    _ragdollKeyPressed = false;
                 }
-
                 if (Ragdoll.Active && Ragdoll.Mode != PlayerRagdoll.Modes.Manual && Ragdoll.Still && Ragdoll.Timer > PlayerRagdoll.RagdollMinimumTime && CanRagdoll())
                 {
                     Ragdoll.StopRagdoll();
@@ -471,6 +480,10 @@ namespace BombRushMP.Plugin
 
         private void Update()
         {
+            if (Local)
+            {
+                PollInputs();
+            }
             if (Ragdoll.Active && Local)
             {
                 _player.UpdateCombat();
