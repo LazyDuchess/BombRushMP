@@ -36,6 +36,8 @@ namespace BombRushMP.Plugin.Patches
         private static bool CanSetToLine_Prefix(GrindAbility __instance, ref bool __result)
         {
             if (__instance.p.isAI) return true;
+            var clientController = ClientController.Instance;
+            if (clientController == null) return true;
             if (ClientController.Instance.PlayerAttached != null)
             {
                 __result = false;
