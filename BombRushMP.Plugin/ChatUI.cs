@@ -232,6 +232,33 @@ namespace BombRushMP.Plugin
                         }
                     }
                     break;
+                case "ragdoll_list":
+                    if (ClientController.Instance.GetLocalUser().IsModerator && args.Length >= 4)
+                    {
+                        if (float.TryParse(args[2], out var force) && float.TryParse(args[3], out var upForce))
+                        {
+                            var playerIdSplit = args[1].Split(',');
+                            var finalIds = new List<ushort>();
+                            foreach(var id in playerIdSplit)
+                            {
+                                if (string.IsNullOrWhiteSpace(id)) continue;
+                                if (ushort.TryParse(id, out var result))
+                                {
+                                    finalIds.Add(result);
+                                }
+                            }
+
+                            var point = WorldHandler.instance.GetCurrentPlayer().transform.position;
+                            var clientController = ClientController.Instance;
+                            var pack = new RagdollLaunchPacket(point, force, upForce);
+                            using var ms = new MemoryStream();
+                            using var writer = new BinaryWriter(ms);
+                            pack.Write(writer);
+
+                            clientController.SendCustomPacketToPlayers(ms.ToArray(), PlayerRagdoll.RagdollEventLaunchPacketId, finalIds.ToArray(), IMessage.SendModes.ReliableUnordered);
+                        }
+                    }
+                    break;
                 case "emojis":
                     var emojiStr = "Available emojis:\n";
                     var emojis = MPAssets.Instance.Emojis.Sprites.OrderBy(x => x.Key[1].ToString(), StringComparer.InvariantCultureIgnoreCase).ToArray();
