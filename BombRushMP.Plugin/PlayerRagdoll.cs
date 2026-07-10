@@ -345,7 +345,11 @@ namespace BombRushMP.Plugin
                 using var reader = new BinaryReader(ms);
                 var launch = new RagdollLaunchPacket();
                 launch.Read(reader);
-                PlayerComponent.GetLocal().Ragdoll.BecomeRagdoll(new Parameters(Modes.Hit, launch.Force, launch.Point, Vector3.up * launch.UpForce));
+                var ragdoll = PlayerComponent.GetLocal().Ragdoll;
+                if (!ragdoll.Active)
+                    ragdoll.BecomeRagdoll(new Parameters(Modes.Hit, launch.Force, launch.Point, Vector3.up * launch.UpForce));
+                else
+                    ragdoll.ApplyForceToRagdoll(launch.Force, launch.Point, Vector3.up * launch.UpForce);
             });
         }
 
