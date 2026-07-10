@@ -24,6 +24,8 @@ namespace BombRushMP.Plugin
         private GameInput _gameInput = null;
         private UIManager _uiManager = null;
 
+        private GameplayCamera _dummyCamera = null;
+
         private void Awake()
         {
             var chatUi = ChatUI.Instance;
@@ -47,7 +49,6 @@ namespace BombRushMP.Plugin
             currentPlayer.phone.TurnOff();
             currentPlayer.userInputEnabled = false;
             currentPlayer.SetIgnoreCamInput(true);
-            currentPlayer.cam = null;
             currentPlayer.DropCombo();
             currentPlayer.SetVelocity(Vector3.zero);
             currentPlayer.motor._rigidbody.isKinematic = true;
@@ -61,6 +62,18 @@ namespace BombRushMP.Plugin
             }
             CurrentSpectatingClient = _players[0];
             SpectatorUI.Instance.Activate();
+            var dummyCameraGO = Instantiate(GameplayCamera.instance.gameObject);
+            _dummyCamera = dummyCameraGO.GetComponent<GameplayCamera>();
+            _dummyCamera.player = currentPlayer;
+            currentPlayer.cam = _dummyCamera;
+            _dummyCamera.gameObject.SetActive(false);
+            GameplayCamera.instance = _gameplayCamera;
+        }
+
+        private void OnDestroy()
+        {
+            if (_dummyCamera != null)
+                Destroy(_dummyCamera.gameObject);
         }
         
         public void SpectatePlayer(MPPlayer player)
@@ -99,7 +112,10 @@ namespace BombRushMP.Plugin
             {
                 if (_currentSpectatingPlayer != null)
                 {
-                    _currentSpectatingPlayer.cam = null;
+                    if (!_currentSpectatingPlayer.isAI)
+                        _currentSpectatingPlayer.cam = _dummyCamera;
+                    else
+                        _currentSpectatingPlayer.cam = null;
                 }
                 targetPlayer.cam = _gameplayCamera;
                 _currentSpectatingPlayer = targetPlayer;
