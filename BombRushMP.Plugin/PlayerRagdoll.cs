@@ -195,11 +195,7 @@ namespace BombRushMP.Plugin
 
             hitDirection = (closestLimb.Transform.position - point).normalized;
 
-            foreach (var limb in Limbs)
-            {
-                limb.RigidBody.AddForceAtPosition(hitDirection * force, point, ForceMode.Impulse);
-                limb.RigidBody.AddForceAtPosition(fixedForce, point, ForceMode.Impulse);
-            }
+            closestLimb.RigidBody.velocity += (hitDirection * force) + fixedForce;
         }
 
         public void StopRagdoll()

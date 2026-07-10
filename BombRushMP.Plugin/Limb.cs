@@ -99,6 +99,7 @@ namespace BombRushMP.Plugin
                 joint = tf.gameObject.AddComponent<CharacterJoint>();
                 joint.connectedBody = parent.RigidBody;
                 joint.enablePreprocessing = false;
+                joint.enableProjection = true;
                 joint.autoConfigureConnectedAnchor = true;
             }
             switch (type)
