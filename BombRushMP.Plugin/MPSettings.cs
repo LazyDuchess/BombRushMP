@@ -763,8 +763,21 @@ namespace BombRushMP.Plugin
                 _spriteBaseline.Value = value;
             }
         }
+        public Limb.ContinuousDetectionMode ContinuousDetectionMode
+        {
+            get
+            {
+                return _continuousDetectionMode.Value;
+            }
+
+            set
+            {
+                _continuousDetectionMode.Value = value;
+            }
+        }
 #else
         public float SpriteBaseline => 0.8f;
+        public Limb.ContinuousDetectionMode ContinuousDetectionMode => Limb.ContinuousDetectionMode.Unity;
 #endif
 
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
@@ -823,6 +836,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _updateLobbyController;
         private ConfigEntry<bool> _updateNetworkClient;
         private ConfigEntry<float> _spriteBaseline;
+        private ConfigEntry<Limb.ContinuousDetectionMode> _continuousDetectionMode;
 #endif
         private ConfigEntry<bool> _allowTeleports;
         private ConfigEntry<float> _chatFontSize;
@@ -928,6 +942,7 @@ namespace BombRushMP.Plugin
             _gamemodePlayerSort = configFile.Bind(Visuals, "Lobby Player List Sort", Gamemode.PlayerSort.Score, "Whether to sort the lobby player list by last score or by total wins.");
             _graceTimer = configFile.Bind(Visuals, "Graffiti Race Timer", true, "If true, will display a timer during Graffiti Races.");
 #if DEBUG
+            _continuousDetectionMode = configFile.Bind(Debug, "Limb Collision Detection Mode", Limb.ContinuousDetectionMode.Unity, "Whether to use Unity's continous collision detection or a custom solution for ragdoll limbs.");
             _filterProfanity = configFile.Bind(ChatSettings, "Filter Profanity", true, "Whether to filter offensive words in the chat.");
             _debugLocalPlayer = configFile.Bind(Debug, "Debug Local Player", false, "Render the networked local player in the game.");
             _debugInfo = configFile.Bind(Debug, "Debug Info", false, "Shows debug stuff.");

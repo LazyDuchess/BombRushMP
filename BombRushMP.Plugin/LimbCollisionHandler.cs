@@ -23,7 +23,7 @@ namespace BombRushMP.Plugin
         {
             if (Owner == null) return;
             _previousVelocity = Owner.RigidBody.velocity;
-            if (Owner.Owner.Owner.Local)
+            if (Owner.DoCustomContinuousDetection)
             {
                 var currentPosition = Owner.RigidBody.position;
                 var diff = currentPosition - _previousPosition;

@@ -11,6 +11,11 @@ namespace BombRushMP.Plugin
 {
     public class Limb
     {
+        public enum ContinuousDetectionMode
+        {
+            Unity,
+            Custom
+        }
         public enum LimbTypes
         {
             Root,
@@ -29,6 +34,9 @@ namespace BombRushMP.Plugin
         public LimbTypes LimbType { get; private set; }
 
         public bool Active { get; private set; } = false;
+
+        public bool DoCustomContinuousDetection { get; private set; } = false;
+
         public void Activate(Vector3 velocity)
         {
             if (Active) return;
@@ -61,6 +69,18 @@ namespace BombRushMP.Plugin
             Owner = owner;
             Transform = tf;
             RigidBody = tf.gameObject.AddComponent<Rigidbody>();
+
+            if (MPSettings.Instance.ContinuousDetectionMode == ContinuousDetectionMode.Unity && Owner.Owner.Local)
+            {
+                RigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            }
+            else
+            {
+                RigidBody.collisionDetectionMode = CollisionDetectionMode.Discrete;
+                if (Owner.Owner.Local)
+                    DoCustomContinuousDetection = true;
+            }
+
             CollisionHandler = tf.gameObject.AddComponent<LimbCollisionHandler>();
             CollisionHandler.Owner = this;
             RigidBody.interpolation = RigidbodyInterpolation.Interpolate;
@@ -72,7 +92,6 @@ namespace BombRushMP.Plugin
                 joint = tf.gameObject.AddComponent<CharacterJoint>();
                 joint.connectedBody = parent.RigidBody;
                 joint.enablePreprocessing = false;
-                joint.enableProjection = true;
                 joint.autoConfigureConnectedAnchor = true;
             }
             switch (type)
