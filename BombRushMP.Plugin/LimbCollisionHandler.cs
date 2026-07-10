@@ -1,4 +1,6 @@
-﻿using Reptile;
+﻿using BombRushMP.Common.Networking;
+using BombRushMP.Common.Packets;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +42,28 @@ namespace BombRushMP.Plugin
                     }
                 }
                 _previousPosition = Owner.RigidBody.position;
+            }
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (Owner == null) return;
+            if (!Owner.Active) return;
+            if (!Owner.Owner.Owner.Local) return;
+            if (other.gameObject.layer == Layers.EnemyHitbox)
+            {
+                if (!PvPUtils.CanIGetHit()) return;
+                var otherPlayer = other.gameObject.GetComponentInParent<Player>();
+                if (otherPlayer == null) return;
+                if (PvPUtils.CanReptilePlayerPvP(otherPlayer))
+                {
+                    var canDamage = PvPUtils.CanIGetDamaged();
+                    Owner.Owner.Owner.Player.GetHit(canDamage ? 1 : 0, (otherPlayer.transform.position - Owner.Owner.Owner.Player.transform.position).normalized, KnockbackAbility.KnockbackType.FAR);
+                    MPSaveData.Instance.Stats.TimesHit++;
+                    Core.Instance.SaveManager.SaveCurrentSaveSlot();
+                    var mpPlayer = MPUtility.GetMuliplayerPlayer(otherPlayer);
+                    ClientController.Instance.SendPacket(new ClientHitByPlayer(mpPlayer.ClientId), IMessage.SendModes.ReliableUnordered, NetChannels.Default);
+                }
             }
         }
 
