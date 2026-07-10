@@ -136,7 +136,6 @@ namespace BombRushMP.Plugin
             Owner.Player.motor.SetKinematic(true);
             Owner.Player.usingEquippedMovestyle = false;
             Owner.Player.SetMoveStyle(MoveStyle.ON_FOOT, true, false);
-            Visual.SetMoveStyleVisualAnim(Owner.Player, MoveStyle.ON_FOOT);
             Owner.Player.isDisabled = true;
             if (Owner.Player.phone != null)
                 Owner.Player.phone.TurnOff(false);
@@ -199,6 +198,9 @@ namespace BombRushMP.Plugin
             if (!Valid) return;
             if (!Active) return;
             Active = false;
+            Owner.Player.usingEquippedMovestyle = false;
+            Owner.Player.SetMoveStyle(MoveStyle.ON_FOOT, true, false);
+            Visual.SetMoveStyleVisualAnim(Owner.Player, MoveStyle.ON_FOOT);
             Timer = 0f;
             Visual.transform.parent = Owner.Player.interactionCollider.transform.parent;
             Visual.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
