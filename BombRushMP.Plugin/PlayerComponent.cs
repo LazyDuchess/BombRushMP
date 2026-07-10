@@ -63,7 +63,7 @@ namespace BombRushMP.Plugin
         public bool HasCustomBmx => _customBmx != null;
         public PlayerRagdoll Ragdoll { get; private set; } = new PlayerRagdoll();
 
-        public const float RagdollHitInterval = 0.65f;
+        public const float RagdollHitInterval = 0.3f;
         public float RagdollHitTimer = 0f;
 
         public void CacheNewSkin()
