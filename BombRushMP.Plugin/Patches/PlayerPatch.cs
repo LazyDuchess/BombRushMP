@@ -232,16 +232,33 @@ namespace BombRushMP.Plugin.Patches
                     switch (knockbackType)
                     {
                         case KnockbackAbility.KnockbackType.BIG:
-                            playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 60f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 60f));
+                            if (playerComp.Ragdoll.Active)
+                            {
+                                playerComp.Ragdoll.ApplyForceToRagdoll(60f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 60f);
+                            }
+                            else
+                            {
+                                playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 60f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 60f));
+                            }
                             break;
 
                         case KnockbackAbility.KnockbackType.FAR:
-                            playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 120f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 100f));
+                            if (playerComp.Ragdoll.Active)
+                            {
+                                playerComp.Ragdoll.ApplyForceToRagdoll(120f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 100f);
+                            }
+                            else
+                            {
+                                playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 120f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 100f));
+                            }
                             break;
 
                         default:
-                            __instance.knockbackAbility.SetKnockback(fromDir, knockbackType);
-                            __instance.ActivateAbility(__instance.knockbackAbility);
+                            if (!playerComp.Ragdoll.Active)
+                            {
+                                __instance.knockbackAbility.SetKnockback(fromDir, knockbackType);
+                                __instance.ActivateAbility(__instance.knockbackAbility);
+                            }
                             break;
                     }
                 }

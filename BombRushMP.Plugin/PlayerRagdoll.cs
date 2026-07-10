@@ -193,6 +193,34 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public void ApplyForceToRagdoll(float force, Vector3 point, Vector3 fixedForce)
+        {
+            if (!Valid) return;
+            if (!Active) return;
+            Limb closestLimb = null;
+            var closestLimbDist = 0f;
+            var hitDirection = Vector3.zero;
+
+            foreach (var limb in Limbs)
+            {
+                var dist = Vector2.Distance(limb.Transform.position, point);
+                if (closestLimb == null)
+                {
+                    closestLimb = limb;
+                    closestLimbDist = dist;
+                }
+                else if (dist < closestLimbDist)
+                {
+                    closestLimb = limb;
+                    closestLimbDist = dist;
+                }
+            }
+
+            hitDirection = (closestLimb.Transform.position - point).normalized;
+
+            closestLimb.RigidBody.velocity += (hitDirection * force) + fixedForce;
+        }
+
         public void StopRagdoll()
         {
             if (!Valid) return;
