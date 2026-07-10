@@ -445,6 +445,11 @@ namespace BombRushMP.Plugin
         private void PollInputs()
         {
             if (!Local) return;
+            if (!Player.userInputEnabled)
+            {
+                _ragdollKeyPressed = false;
+                return;
+            }
             var gameInput = Core.Instance.GameInput;
             var controllerMaps = gameInput.GetAllCurrentEnabledControllerMapCategoryIDs();
             if (controllerMaps.controllerMapCategoryIDs.Contains(0))
