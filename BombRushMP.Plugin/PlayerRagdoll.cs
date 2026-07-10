@@ -144,36 +144,12 @@ namespace BombRushMP.Plugin
             Owner.Player.SetBoostpackAndFrictionEffects(BoostpackEffectMode.OFF, FrictionEffectMode.OFF);
             Visual.VFX.boostpackTrail.SetActive(false);
 
-            Limb closestLimb = null;
-            var closestLimbDist = 0f;
-            var hitDirection = Vector3.zero;
-
-            foreach(var limb in Limbs)
-            {
-                var dist = Vector2.Distance(limb.Transform.position, args.ForcePosition);
-                if (closestLimb == null)
-                {
-                    closestLimb = limb;
-                    closestLimbDist = dist;
-                }
-                else if (dist < closestLimbDist)
-                {
-                    closestLimb = limb;
-                    closestLimbDist = dist;
-                }
-            }
-
-            hitDirection = (closestLimb.Transform.position - args.ForcePosition).normalized;
-
             foreach (var limb in Limbs)
             {
-                var limbVel = vel;
-                if (closestLimb == limb)
-                {
-                    limbVel += hitDirection * args.Force + args.FixedForce;
-                }
-                limb.Activate(limbVel);
+                limb.Activate(vel);
             }
+
+            ApplyForceToRagdoll(args.Force, args.ForcePosition, args.FixedForce);
 
             var clientController = ClientController.Instance;
             if (Owner.Local)
@@ -197,6 +173,7 @@ namespace BombRushMP.Plugin
         {
             if (!Valid) return;
             if (!Active) return;
+
             Limb closestLimb = null;
             var closestLimbDist = 0f;
             var hitDirection = Vector3.zero;
@@ -218,7 +195,11 @@ namespace BombRushMP.Plugin
 
             hitDirection = (closestLimb.Transform.position - point).normalized;
 
-            closestLimb.RigidBody.velocity += (hitDirection * force) + fixedForce;
+            foreach (var limb in Limbs)
+            {
+                limb.RigidBody.AddForceAtPosition(hitDirection * force, point, ForceMode.Impulse);
+                limb.RigidBody.AddForceAtPosition(fixedForce, point, ForceMode.Impulse);
+            }
         }
 
         public void StopRagdoll()
