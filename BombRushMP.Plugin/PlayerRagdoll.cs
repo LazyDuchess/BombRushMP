@@ -213,6 +213,8 @@ namespace BombRushMP.Plugin
                 limb.Deactivate();
             }
             Owner.Player.OrientVisualInstantReset();
+            Owner.Player.ResetVisualRot();
+            Owner.Player.visualTf.position = Owner.Player.transform.position;
 
             var clientController = ClientController.Instance;
             if (Owner.Local)
