@@ -14,7 +14,8 @@ namespace BombRushMP.Plugin
         public enum ContinuousDetectionMode
         {
             Unity,
-            Custom
+            Custom,
+            Discrete
         }
         public enum LimbTypes
         {
@@ -70,15 +71,21 @@ namespace BombRushMP.Plugin
             Transform = tf;
             RigidBody = tf.gameObject.AddComponent<Rigidbody>();
 
-            if (MPSettings.Instance.ContinuousDetectionMode == ContinuousDetectionMode.Unity && Owner.Owner.Local)
+            RigidBody.collisionDetectionMode = CollisionDetectionMode.Discrete;
+
+            if (Owner.Owner.Local)
             {
-                RigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
-            }
-            else
-            {
-                RigidBody.collisionDetectionMode = CollisionDetectionMode.Discrete;
-                if (Owner.Owner.Local)
+                RigidBody.solverIterations = 12;
+                RigidBody.solverVelocityIterations = 6;
+
+                if (MPSettings.Instance.ContinuousDetectionMode == ContinuousDetectionMode.Unity)
+                {
+                    RigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                }
+                else if (Owner.Owner.Local && MPSettings.Instance.ContinuousDetectionMode == ContinuousDetectionMode.Custom)
+                {
                     DoCustomContinuousDetection = true;
+                }
             }
 
             CollisionHandler = tf.gameObject.AddComponent<LimbCollisionHandler>();
