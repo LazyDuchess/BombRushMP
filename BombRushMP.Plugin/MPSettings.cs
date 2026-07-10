@@ -1008,7 +1008,7 @@ namespace BombRushMP.Plugin
             };
             _theme = configFile.Bind(Visuals, "Theme", "Default", "Name of the theme to use. Will look in plugin/(plugin)/themes and config/BombRushMP.Plugin/themes");
             _ragdollOnHit = configFile.Bind(Misc, "Ragdoll On Hit", true, "Whether to ragdoll when receiving knockback.");
-            _ragdollKey = configFile.Bind(Misc, "Ragdoll Key", KeyCode.K, "Press this key to ragdoll on demand and get up.");
+            _ragdollKey = configFile.Bind(Misc, "Ragdoll Key", KeyCode.X, "Press this key to ragdoll on demand and get up.");
         }
 
         public void Save()
