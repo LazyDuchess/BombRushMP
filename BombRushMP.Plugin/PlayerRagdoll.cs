@@ -385,24 +385,24 @@ namespace BombRushMP.Plugin
 
             Valid = true;
 
-            var rootLimb = new Limb(root, Limb.LimbTypes.Root);
+            var rootLimb = new Limb(root, Limb.LimbTypes.Root, this);
 
-            var s1Limb = new Limb(s1, Limb.LimbTypes.Spine, rootLimb);
-            var s2Limb = new Limb(s2, Limb.LimbTypes.Spine, s1Limb);
+            var s1Limb = new Limb(s1, Limb.LimbTypes.Spine, this, rootLimb);
+            var s2Limb = new Limb(s2, Limb.LimbTypes.Spine, this, s1Limb);
 
-            var headLimb = new Limb(head, Limb.LimbTypes.Head, s2Limb);
+            var headLimb = new Limb(head, Limb.LimbTypes.Head, this, s2Limb);
 
-            var leg1lLimb = new Limb(leg1l, Limb.LimbTypes.Leg, rootLimb);
-            var leg2lLimb = new Limb(leg2l, Limb.LimbTypes.Leg, leg1lLimb);
+            var leg1lLimb = new Limb(leg1l, Limb.LimbTypes.Leg, this, rootLimb);
+            var leg2lLimb = new Limb(leg2l, Limb.LimbTypes.Leg, this, leg1lLimb);
 
-            var leg1rLimb = new Limb(leg1r, Limb.LimbTypes.Leg, rootLimb);
-            var leg2rLimb = new Limb(leg2r, Limb.LimbTypes.Leg, leg1rLimb);
+            var leg1rLimb = new Limb(leg1r, Limb.LimbTypes.Leg, this, rootLimb);
+            var leg2rLimb = new Limb(leg2r, Limb.LimbTypes.Leg, this, leg1rLimb);
 
-            var arm1lLimb = new Limb(arm1l, Limb.LimbTypes.Arm, s2Limb);
-            var arm2lLimb = new Limb(arm2l, Limb.LimbTypes.Arm, arm1lLimb);
+            var arm1lLimb = new Limb(arm1l, Limb.LimbTypes.Arm, this, s2Limb);
+            var arm2lLimb = new Limb(arm2l, Limb.LimbTypes.Arm, this, arm1lLimb);
 
-            var arm1rLimb = new Limb(arm1r, Limb.LimbTypes.Arm, s2Limb);
-            var arm2rLimb = new Limb(arm2r, Limb.LimbTypes.Arm, arm1rLimb);
+            var arm1rLimb = new Limb(arm1r, Limb.LimbTypes.Arm, this, s2Limb);
+            var arm2rLimb = new Limb(arm2r, Limb.LimbTypes.Arm, this, arm1rLimb);
 
             Limbs = [
                 rootLimb, 

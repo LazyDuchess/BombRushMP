@@ -12,11 +12,35 @@ namespace BombRushMP.Plugin
     {
         public Limb Owner;
         private Vector3 _previousVelocity = Vector3.zero;
+        private Vector3 _previousPosition = Vector3.zero;
+
+        public void OnActivation()
+        {
+            _previousPosition = Owner.RigidBody.position;
+        }
 
         private void FixedUpdate()
         {
             if (Owner == null) return;
             _previousVelocity = Owner.RigidBody.velocity;
+            if (Owner.Owner.Owner.Local)
+            {
+                var currentPosition = Owner.RigidBody.position;
+                var diff = currentPosition - _previousPosition;
+                var diffMag = diff.magnitude;
+                if (diffMag > float.Epsilon)
+                {
+                    var ray = new Ray(_previousPosition, diff.normalized);
+                    if (Physics.Raycast(ray, out var hit, diffMag, (1 << Layers.Default) | (1 << Layers.Junk) | (1 << Layers.NonStableSurface) | (1 << Layers.Wallrun) | (1 << Layers.VertSurface) | (1 << Layers.Water), QueryTriggerInteraction.Ignore))
+                    {
+                        Owner.RigidBody.MovePosition(_previousPosition);
+                        var norm = hit.normal;
+                        var projection = Vector3.Project(Owner.RigidBody.velocity, norm);
+                        Owner.RigidBody.velocity -= projection;
+                    }
+                }
+                _previousPosition = Owner.RigidBody.position;
+            }
         }
 
         private void OnCollisionEnter(Collision other)

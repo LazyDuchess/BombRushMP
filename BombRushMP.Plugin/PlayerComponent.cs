@@ -824,7 +824,6 @@ namespace BombRushMP.Plugin
         {
             var lodMat = MPAssets.Instance.LODMaterial;
             var renderers = _player.characterVisual.GetComponentsInChildren<Renderer>(true);
-            _player.anim.cullingMode = AnimatorCullingMode.CullCompletely;
             foreach(var renderer in renderers)
             {
                 var transp = true;

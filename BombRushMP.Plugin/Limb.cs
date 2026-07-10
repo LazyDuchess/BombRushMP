@@ -19,16 +19,21 @@ namespace BombRushMP.Plugin
             Arm,
             Leg
         }
-        public Transform Transform { get; set; }
-        public Rigidbody RigidBody { get; set; }
-        public Collider Collider { get; set; }
-        public LimbTypes LimbType { get; set; }
 
-        public bool Active { get; set; } = false;
+        public PlayerRagdoll Owner { get; private set; }
+        public Transform Transform { get; private set; }
+        public Rigidbody RigidBody { get; private set; }
+        public Collider Collider { get; private set; }
+
+        public LimbCollisionHandler CollisionHandler { get; private set; }
+        public LimbTypes LimbType { get; private set; }
+
+        public bool Active { get; private set; } = false;
         public void Activate(Vector3 velocity)
         {
             if (Active) return;
             if (RigidBody == null) return;
+            CollisionHandler.OnActivation();
             Active = true;
             RigidBody.isKinematic = false;
             Collider.enabled = true;
@@ -51,14 +56,14 @@ namespace BombRushMP.Plugin
             Collider.enabled = Active;
         }
 
-        public Limb(Transform tf, LimbTypes type, Limb parent = null)
+        public Limb(Transform tf, LimbTypes type, PlayerRagdoll owner, Limb parent = null)
         {
+            Owner = owner;
             Transform = tf;
             RigidBody = tf.gameObject.AddComponent<Rigidbody>();
-            var collHandler = tf.gameObject.AddComponent<LimbCollisionHandler>();
-            collHandler.Owner = this;
+            CollisionHandler = tf.gameObject.AddComponent<LimbCollisionHandler>();
+            CollisionHandler.Owner = this;
             RigidBody.interpolation = RigidbodyInterpolation.Interpolate;
-            RigidBody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             LimbType = type;
             RigidBody.isKinematic = true;
             CharacterJoint joint = null;
