@@ -41,7 +41,7 @@ namespace BombRushMP.Plugin
         public int Outfit = 0;
         private PlayerStates _previousState = PlayerStates.Normal;
         public Nameplate NamePlate;
-        private Lobby _lobby;
+        public Lobby Lobby { get; private set; } = null;
         private MapPin _mapPin = null;
         private GameObject _mapPinParticles = null;
         private Material _mapPinMaterial = null;
@@ -68,14 +68,14 @@ namespace BombRushMP.Plugin
             if (ClientVisualState != null && ClientVisualState.Ignore) return true;
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
-            if (localLobby != null && localLobby.InGame && GamemodeFactory.IsExclusive(localLobby.LobbyState.Gamemode) && _lobby != localLobby)
+            if (localLobby != null && localLobby.InGame && GamemodeFactory.IsExclusive(localLobby.LobbyState.Gamemode) && Lobby != localLobby)
                 return true;
-            if (_lobby != null && _lobby.LobbyState.InGame && GamemodeFactory.IsExclusive(_lobby.LobbyState.Gamemode) && _lobby != localLobby)
+            if (Lobby != null && Lobby.LobbyState.InGame && GamemodeFactory.IsExclusive(Lobby.LobbyState.Gamemode) && Lobby != localLobby)
                 return true;
-            if (_lobby != null && _lobby.LobbyState.InGame && _lobby == localLobby)
+            if (Lobby != null && Lobby.LobbyState.InGame && Lobby == localLobby)
             {
                 var propDisguiseController = PropDisguiseController.Instance;
-                if (_lobby.LobbyState.Players[ClientId].Team != _lobby.LobbyState.Players[clientController.LocalID].Team && propDisguiseController.InPropHunt && propDisguiseController.InSetupPhase)
+                if (Lobby.LobbyState.Players[ClientId].Team != Lobby.LobbyState.Players[clientController.LocalID].Team && propDisguiseController.InPropHunt && propDisguiseController.InSetupPhase)
                     return true;
             }
             return false;
@@ -124,8 +124,8 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
-            if (_lobby == null) return false;
-            return localLobby == _lobby;
+            if (Lobby == null) return false;
+            return localLobby == Lobby;
         }
 
         private bool InOurTeamLobby(out bool rival)
@@ -134,8 +134,8 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby == null) return false;
-            if (_lobby == null) return false;
-            if (localLobby == _lobby)
+            if (Lobby == null) return false;
+            if (localLobby == Lobby)
             {
                 var myPlayer = localLobby.LobbyState.Players[clientController.LocalID];
                 var otherPlayer = localLobby.LobbyState.Players[ClientId];
@@ -151,8 +151,8 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             var localLobby = clientController.ClientLobbyManager.CurrentLobby;
             if (localLobby != null) return false;
-            if (_lobby == null) return false;
-            return (_lobby.LobbyState.Challenge && !_lobby.LobbyState.InGame && _lobby.LobbyState.HostId == ClientId);
+            if (Lobby == null) return false;
+            return (Lobby.LobbyState.Challenge && !Lobby.LobbyState.InGame && Lobby.LobbyState.HostId == ClientId);
         }
 
         private IEnumerator ApplyCurrentAnimationToPlayerDelayed(Player player)
@@ -390,12 +390,12 @@ namespace BombRushMP.Plugin
         public void UpdateLobby()
         {
             var clientController = ClientController.Instance;
-            _lobby = null;
+            Lobby = null;
             foreach (var lobby in clientController.ClientLobbyManager.Lobbies)
             {
                 if (lobby.Value.LobbyState.Players.ContainsKey(ClientId))
                 {
-                    _lobby = lobby.Value;
+                    Lobby = lobby.Value;
                     break;
                 }
             }
@@ -752,7 +752,7 @@ namespace BombRushMP.Plugin
                 _interactable = PlayerInteractable.Create(this);
             }
 
-            if (_lobby == null)
+            if (Lobby == null)
                 _interactable.AlreadyTalked = false;
 
             if (IsChallengeable())
