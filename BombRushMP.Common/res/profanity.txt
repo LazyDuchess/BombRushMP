@@ -2,6 +2,7 @@
 # ...but it had a lot of false positives and a 'scorched earth' approach
 # yungotachi cut it out - thanks!
 # further edits made for slopchat - brought over from slopcrew
+# further edits for allcitynetwork
 acrotomophilia
 assmonkey
 assnigger
@@ -87,7 +88,6 @@ pedophile
 pedophilia
 pedophiliac
 pikey
-pinko
 polack
 porchmonkey
 porchmonkey
