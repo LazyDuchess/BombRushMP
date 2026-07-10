@@ -201,7 +201,7 @@ namespace BombRushMP.Plugin.Patches
         [HarmonyPatch(nameof(Player.GetHit), [typeof(int), typeof(Vector3), typeof(KnockbackAbility.KnockbackType)])]
         private static bool GetHit_Prefix(Player __instance, int forDamage, Vector3 fromDir, KnockbackAbility.KnockbackType knockbackType)
         {
-            if (__instance.isAI) return true;
+            if (__instance.isAI) return false;
             if (!MPUtility.GetRagdollAllowed()) return true;
             if (!MPSettings.Instance.RagdollOnHit) return true;
             if (__instance.ability == __instance.recoverAbility || __instance.ability == __instance.caughtAbility)
@@ -216,7 +216,7 @@ namespace BombRushMP.Plugin.Patches
             {
                 if (__instance.ability == __instance.dieAbility)
                 {
-                    return true;
+                    return false;
                 }
                 if (knockbackType == KnockbackAbility.KnockbackType.STATIONARY && (__instance.GetVelocity().magnitude > __instance.minMoveSpeed || !__instance.IsGrounded()))
                 {
@@ -254,7 +254,7 @@ namespace BombRushMP.Plugin.Patches
                 __instance.ChangeHP(forDamage);
                 __instance.lastHit = Time.time;
             }
-            return true;
+            return false;
         }
 
         [HarmonyPostfix]
