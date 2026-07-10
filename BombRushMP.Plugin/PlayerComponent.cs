@@ -63,6 +63,9 @@ namespace BombRushMP.Plugin
         public bool HasCustomBmx => _customBmx != null;
         public PlayerRagdoll Ragdoll { get; private set; } = new PlayerRagdoll();
 
+        public const float RagdollHitInterval = 0.65f;
+        public float RagdollHitTimer = 0f;
+
         public void CacheNewSkin()
         {
             _customInlines = null;
@@ -455,6 +458,12 @@ namespace BombRushMP.Plugin
         {
             if (Local)
             {
+                if (Ragdoll.Active)
+                    RagdollHitTimer -= Time.deltaTime;
+                else
+                    RagdollHitTimer = 0f;
+                if (RagdollHitTimer < 0f)
+                    RagdollHitTimer = 0f;
                 if (_ragdollKeyPressed)
                 {
                     if (CanRagdoll() && Ragdoll.Timer > PlayerRagdoll.RagdollMinimumTime)

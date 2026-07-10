@@ -212,6 +212,11 @@ namespace BombRushMP.Plugin.Patches
             {
                 return false;
             }
+            var playerComp = PlayerComponent.GetLocal();
+            if (playerComp.RagdollHitTimer > 0f && playerComp.Ragdoll.Active)
+            {
+                return false;
+            }
             if (Time.time > __instance.lastHit + __instance.invulnerabilityDuration || knockbackType != KnockbackAbility.KnockbackType.STATIONARY)
             {
                 if (__instance.ability == __instance.dieAbility)
@@ -228,7 +233,6 @@ namespace BombRushMP.Plugin.Patches
                 }
                 else if (knockbackType != KnockbackAbility.KnockbackType.NO_KNOCKBACK)
                 {
-                    var playerComp = PlayerComponent.GetLocal();
                     switch (knockbackType)
                     {
                         case KnockbackAbility.KnockbackType.BIG:
@@ -240,6 +244,7 @@ namespace BombRushMP.Plugin.Patches
                             {
                                 playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 60f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 60f));
                             }
+                            playerComp.RagdollHitTimer = PlayerComponent.RagdollHitInterval;
                             break;
 
                         case KnockbackAbility.KnockbackType.FAR:
@@ -251,6 +256,7 @@ namespace BombRushMP.Plugin.Patches
                             {
                                 playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 120f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 100f));
                             }
+                            playerComp.RagdollHitTimer = PlayerComponent.RagdollHitInterval;
                             break;
 
                         default:
