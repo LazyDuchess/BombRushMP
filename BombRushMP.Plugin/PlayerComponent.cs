@@ -456,6 +456,10 @@ namespace BombRushMP.Plugin
 
         private void FixedUpdate()
         {
+            if (Ragdoll.Valid && Ragdoll.Active && Local)
+            {
+                _player.transform.position = Ragdoll.Limbs[0].Transform.position;
+            }
             if (Local)
             {
                 if (Ragdoll.Active)
@@ -505,10 +509,6 @@ namespace BombRushMP.Plugin
 
         private void LateUpdate()
         {
-            if (Ragdoll.Valid && Ragdoll.Active && Local)
-            {
-                _player.transform.position = Ragdoll.Limbs[0].Transform.position;
-            }
             if (MovestyleSkin != null && MovestyleSkin.MoveStyle == MoveStyle.INLINE && MovestyleSkin is MPBuiltInSkin && _customInlines != null)
             {
                 _customInlines.SetActive(_player.characterVisual.moveStyleProps.skateL.activeInHierarchy);
