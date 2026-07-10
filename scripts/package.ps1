@@ -24,8 +24,8 @@ function EnsureDir($path) {
 }
 
 function Clean() {
-    if(Test-Path Build) {
-        Remove-Item -Recurse Build
+    if(Test-Path "Build/$Configuration") {
+        Remove-Item -Recurse "Build/$Configuration"
     }
 }
 
@@ -47,7 +47,7 @@ function AddToZip($zip, $path, $pathInZip=$path) {
 }
 
 function CreatePluginZip(){
-    $zipPath = "Build/BombRushMP.Plugin.$Configuration-$version.zip"
+    $zipPath = "Build/$Configuration/BombRushMP.Plugin.$Configuration-$version.zip"
     $readmePath = "README.md"
     $bundlePath = "BombRushMP.Editor/Build/assets"
     $zip = CreateZip $zipPath
@@ -87,5 +87,5 @@ function CreatePluginZip(){
 
 Clean
 dotnet build -c $Configuration
-EnsureDir "Build"
+EnsureDir "Build/$Configuration"
 CreatePluginZip
