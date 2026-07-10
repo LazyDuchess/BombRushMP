@@ -209,11 +209,11 @@ namespace BombRushMP.Plugin
                 limb.Deactivate();
             }
             Owner.Player.OrientVisualInstantReset();
-            Owner.Player.ActivateAbility(Owner.Player.slideAbility);
 
             var clientController = ClientController.Instance;
             if (Owner.Local)
             {
+                Owner.Player.ActivateAbility(Owner.Player.slideAbility);
                 var ragdollEv = new RagdollEvent(RagdollEvent.Events.Stop, CurrentEventPacketId);
                 CurrentEventPacketId++;
                 using var ms = new MemoryStream();
