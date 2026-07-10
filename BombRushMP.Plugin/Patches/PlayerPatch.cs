@@ -22,13 +22,39 @@ namespace BombRushMP.Plugin.Patches
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Player.OnCollisionEnter))]
-        private static bool OnCollisionEnter_Prefix(Collision other)
+        private static bool OnCollisionEnter_Prefix(Player __instance, Collision other)
         {
+            var clientController = ClientController.Instance;
+            if (clientController == null) return true;
+            if (clientController.ClientLobbyManager.CurrentLobby == null)
+                OnCollisionEnter_Freeroam(__instance, other);
             var propDisguiseController = PropDisguiseController.Instance;
             if (propDisguiseController == null) return true;
             if (!propDisguiseController.FrozenProps) return true;
             if (other.gameObject.layer == Layers.Junk) return false;
             return true;
+        }
+
+        private static void OnCollisionEnter_Freeroam(Player player, Collision other)
+        {
+            if (player.isAI) return;
+            if (!MPSettings.Instance.FreeroamTraffic) return;
+            if (player.motor.isOnPlatform && player.motor.groundRigidbody == other.rigidbody)
+            {
+                return;
+            }
+            if (other.collider.gameObject.layer == Layers.Default)
+            {
+                var car = other.collider.GetComponentInParent<Car>();
+                if (car != null && MPUtility.IsCarNormalHarmful(car, other.contacts[0].normal))
+                {
+                    var mover = car.gameObject.GetComponent<MoveAlongPoints>();
+                    if (mover != null)
+                    {
+                        mover.HitboxHitPlayer(player);
+                    }
+                }
+            }
         }
 
 
@@ -242,7 +268,7 @@ namespace BombRushMP.Plugin.Patches
                             }
                             else
                             {
-                                playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 60f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 60f));
+                                playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 100f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 120f));
                             }
                             playerComp.RagdollHitTimer = PlayerComponent.RagdollHitInterval;
                             break;
@@ -254,7 +280,7 @@ namespace BombRushMP.Plugin.Patches
                             }
                             else
                             {
-                                playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 120f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 100f));
+                                playerComp.Ragdoll.BecomeRagdoll(new PlayerRagdoll.Parameters(PlayerRagdoll.Modes.Hit, 130f, __instance.transform.position + fromDir + Vector3.up * 1f, Vector3.up * 90f));
                             }
                             playerComp.RagdollHitTimer = PlayerComponent.RagdollHitInterval;
                             break;

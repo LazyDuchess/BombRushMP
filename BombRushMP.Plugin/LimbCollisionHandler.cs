@@ -56,6 +56,19 @@ namespace BombRushMP.Plugin
                 return;
             }
 
+            if (other.collider.gameObject.layer == Layers.Default)
+            {
+                var car = other.collider.GetComponentInParent<Car>();
+                if (car != null && MPUtility.IsCarNormalHarmful(car, other.contacts[0].normal))
+                {
+                    var mover = car.gameObject.GetComponent<MoveAlongPoints>();
+                    if (mover != null)
+                    {
+                        mover.HitboxHitPlayer(Owner.Owner.Owner.Player);
+                    }
+                }
+            }
+
             if (other.gameObject.layer == Layers.Junk && impactVelocity >= 5f)
             {
                 var junkHolder = other.gameObject.GetComponentInParent<JunkHolder>();

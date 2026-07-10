@@ -359,6 +359,15 @@ namespace BombRushMP.Plugin
             return false;
         }
 
+        public static bool IsCarNormalHarmful(Car car, Vector3 normal)
+        {
+            var bwDot = Vector3.Dot(normal, -car.transform.forward);
+            if (bwDot >= 0.2f) return false;
+            var upDot = Vector3.Dot(normal, car.transform.up);
+            if (upDot >= 0.5f) return false;
+            return true;
+        }
+
         public static void Revive()
         {
             if (MinecraftPlayer.Instance != null)

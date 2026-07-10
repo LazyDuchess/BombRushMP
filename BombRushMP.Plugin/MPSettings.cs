@@ -775,10 +775,22 @@ namespace BombRushMP.Plugin
                 _continuousDetectionMode.Value = value;
             }
         }
+
 #else
         public float SpriteBaseline => 0.8f;
         public Limb.ContinuousDetectionMode ContinuousDetectionMode => Limb.ContinuousDetectionMode.Unity;
 #endif
+        public bool FreeroamTraffic
+        {
+            get
+            {
+                return _freeroamTraffic.Value;
+            }
+            set
+            {
+                _freeroamTraffic.Value = value;
+            }
+        }
 
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
@@ -856,6 +868,8 @@ namespace BombRushMP.Plugin
         private ConfigEntry<bool> _ragdollOnHit;
         private ConfigEntry<KeyCode> _ragdollKey;
 
+        private ConfigEntry<bool> _freeroamTraffic;
+
         private const string General = "1. General";
         private const string Settings = "2. Settings";
         private const string ChatSettings = "3. Chat Settings";
@@ -889,6 +903,7 @@ namespace BombRushMP.Plugin
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;
             };
+            _freeroamTraffic = configFile.Bind(Misc, "Dangerous Freeroam Traffic", true, "Makes traffic cars more dangerous when not in a lobby.");
             _showBadges = configFile.Bind(General, "Show Badges", true, "Whether to display your badges before your name, if you have any.");
             _showBadges.SettingChanged += (sender, args) =>
             {
