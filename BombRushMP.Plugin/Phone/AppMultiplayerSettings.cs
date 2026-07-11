@@ -19,7 +19,7 @@ public class AppMultiplayerSettings : CustomApp
 
     public static void Initialize()
     {
-        PhoneAPI.RegisterApp<AppMultiplayerDebug>("settings");
+        PhoneAPI.RegisterApp<AppMultiplayerSettings>("settings");
     }
 
     public override void OnAppInit()
