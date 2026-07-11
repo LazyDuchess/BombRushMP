@@ -289,6 +289,7 @@ namespace BombRushMP.Plugin
             ChatUI.Create();
             BalanceUI.Create();
             StatsUI.Create();
+            StatusTextUI.Create();
             if (MPSettings.Instance.DebugInfo)
                 DebugUI.Create();
         }

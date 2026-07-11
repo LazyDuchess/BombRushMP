@@ -5,6 +5,7 @@ using UnityEngine;
 using BombRushMP.Common;
 using System.Linq.Expressions;
 using BombRushMP.Plugin.Gamemodes;
+using System.Collections.Generic;
 
 public class AppMultiplayerSettings : CustomApp
 {
@@ -16,6 +17,9 @@ public class AppMultiplayerSettings : CustomApp
     private SimplePhoneButton _chatButton;
     private SimplePhoneButton _voicesButton;
     private SimplePhoneButton _ragdollButton;
+    private const int DescriptionStatusPriority = 0;
+    private const float DescriptionStatusTime = 0.5f;
+    private Dictionary<PhoneButton, string> _buttonDescriptions = new();
 
     public static void Initialize()
     {
@@ -28,6 +32,33 @@ public class AppMultiplayerSettings : CustomApp
         CreateIconlessTitleBar("Settings");
         ScrollView = PhoneScrollView.Create(this);
         PopulateButtons();
+    }
+
+    private void ShowDescription(string text)
+    {
+        var statusUI = StatusTextUI.Instance;
+        statusUI.TryShowStatus(DescriptionStatusPriority, text, DescriptionStatusTime);
+    }
+
+    private void SetButtonDescription(PhoneButton button, string desc)
+    {
+        _buttonDescriptions[button] = desc;
+    }
+
+    public override void OnAppUpdate()
+    {
+        var currentButton = ScrollView.Buttons[ScrollView.SelectedIndex];
+        if (currentButton != null)
+        {
+            if (_buttonDescriptions.TryGetValue(currentButton, out var desc))
+            {
+                ShowDescription(desc);
+            }
+            else
+            {
+                ShowDescription("");
+            }
+        }
     }
 
     private void UpdateLabels()
@@ -43,6 +74,7 @@ public class AppMultiplayerSettings : CustomApp
 
     private void PopulateButtons()
     {
+        _buttonDescriptions.Clear();
         ScrollView.RemoveAllButtons();
         SimplePhoneButton button;
         button = PhoneUIUtility.CreateSimpleButton("PvP");
@@ -52,6 +84,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "When enabled, you will be able to fight with players who also have this option enabled. Only works when not in a lobby.");
         _pvpButton = button;
         button = PhoneUIUtility.CreateSimpleButton("New Traffic");
         button.OnConfirm += () =>
@@ -60,6 +93,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "When enabled, traffic will be able to hit you more easily. Only works when not in a lobby.");
         _trafficButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Nameplates");
         button.OnConfirm += () =>
@@ -68,6 +102,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "Whether to display names above players.");
         _nameplatesButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Minimap");
         button.OnConfirm += () =>
@@ -76,6 +111,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "Whether to show the minimap in the bottom left corner.");
         _minimapButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Chat");
         button.OnConfirm += () =>
@@ -84,6 +120,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "Whether to show the chat window.");
         _chatButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Voices");
         button.OnConfirm += () =>
@@ -92,6 +129,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "Whether to play other players' voices.");
         _voicesButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Ragdoll");
         button.OnConfirm += () =>
@@ -100,6 +138,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "Whether to activate ragdoll when hit in-game.");
         _ragdollButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Theme");
         button.OnConfirm += () =>
@@ -107,6 +146,7 @@ public class AppMultiplayerSettings : CustomApp
             MyPhone.OpenApp(typeof(AppMultiplayerThemes));
         };
         ScrollView.AddButton(button);
+        SetButtonDescription(button, "Pick a theme for the UI. Changes apply on map restart!");
         UpdateLabels();
     }
 
