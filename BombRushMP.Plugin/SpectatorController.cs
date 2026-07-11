@@ -105,7 +105,8 @@ namespace BombRushMP.Plugin
                 return;
             }
             var playerId = _players[GetCurrentSpectatingIndex()];
-            var targetPlayer = _worldHandler.GetCurrentPlayer();
+            var realPlayer = _worldHandler.GetCurrentPlayer();
+            var targetPlayer = realPlayer;
             if (playerId != ClientController.Instance.LocalID)
                 targetPlayer = ClientController.Instance.Players[playerId].Player;
             if (_currentSpectatingPlayer != targetPlayer)
@@ -121,6 +122,8 @@ namespace BombRushMP.Plugin
                 _currentSpectatingPlayer = targetPlayer;
                 _gameplayCamera.SetPlayerToFollow(targetPlayer);
             }
+            if (realPlayer != targetPlayer)
+                realPlayer.cam = _dummyCamera;
             if (_gameInput.GetButtonNew(2, 0) && CanTeleportToCurrentPlayer() && !Forced)
             {
                 EndSpectating();
@@ -212,7 +215,10 @@ namespace BombRushMP.Plugin
             SpectatorUI.Instance.Deactivate();
             if (_currentSpectatingPlayer != null)
             {
-                _currentSpectatingPlayer.cam = null;
+                if (!_currentSpectatingPlayer.isAI)
+                    _currentSpectatingPlayer.cam = _dummyCamera;
+                else
+                    _currentSpectatingPlayer.cam = null;
             }
             _uiManager.gameplay.gameObject.SetActive(true);
             _gameInput.DisableAllControllerMaps(0);
