@@ -671,6 +671,8 @@ namespace BombRushMP.Plugin
                                 SendPacket(customStagePacket, IMessage.SendModes.Reliable, NetChannels.ClientAndLobbyUpdates);
                             }
                         }
+                        var prefs = LocalPlayerComponent.MakeLatestPreferencesPacket();
+                        BroadcastCustomPacket(prefs, PreferencesPacket.Id, IMessage.SendModes.ReliableUnordered);
                     }
                     break;
 

@@ -146,6 +146,7 @@ namespace BombRushMP.Plugin
             InitShared();
             InitBannedModsSystem();
             PlayerRagdoll.InitializeStatic();
+            PreferencesPacket.InitializeStatic();
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
 

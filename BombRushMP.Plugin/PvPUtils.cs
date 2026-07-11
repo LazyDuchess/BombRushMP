@@ -18,6 +18,7 @@ namespace BombRushMP.Plugin
             var mpPlayer = MPUtility.GetMuliplayerPlayer(player);
             if (mpPlayer == null) return false;
             if (mpPlayer.Lobby != null) return false;
+            if (mpPlayer.LatestPreferences != null && mpPlayer.LatestPreferences.PvP && MPSettings.Instance.PvP) return true;
             return mpPlayer.ClientState.User.HasTag(PvPTag) || ClientController.Instance.ServerState.Tags.Contains(PvPTag);
         }
 
@@ -28,6 +29,7 @@ namespace BombRushMP.Plugin
             if (clientController.ClientLobbyManager.CurrentLobby != null) return false;
             var user = clientController.GetLocalUser();
             if (user == null) return true;
+            if (MPSettings.Instance.PvP) return true;
             return !user.HasTag(CantGetHitTag);
         }
 

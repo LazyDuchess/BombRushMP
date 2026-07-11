@@ -27,6 +27,7 @@ namespace BombRushMP.Plugin
         public Player Player;
         public RagdollEvent LatestRemoteEvent = null;
         public RagdollState LatestRemoteRagdollState = null;
+        public PreferencesPacket LatestPreferences = null;
         public PlayerComponent PlayerComponent
         {
             get

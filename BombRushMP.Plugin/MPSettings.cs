@@ -792,6 +792,18 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public bool PvP
+        {
+            get
+            {
+                return _pvp.Value;
+            }
+            set
+            {
+                _pvp.Value = value;
+            }
+        }
+
         private ConfigEntry<ReflectionQualities> _reflectionQuality;
         private ConfigEntry<bool> _playerAudioEnabled;
         private ConfigEntry<bool> _playerDopplerEnabled;
@@ -869,6 +881,7 @@ namespace BombRushMP.Plugin
         private ConfigEntry<KeyCode> _ragdollKey;
 
         private ConfigEntry<bool> _freeroamTraffic;
+        private ConfigEntry<bool> _pvp;
 
         private const string General = "1. General";
         private const string Settings = "2. Settings";
@@ -902,6 +915,16 @@ namespace BombRushMP.Plugin
             {
                 var clientController = ClientController.Instance;
                 clientController.InfrequentClientStateUpdateQueued = true;
+            };
+            _pvp = configFile.Bind(Misc, "PvP", false, "Whether to allow PvP in freeroam. If enabled, you can fight players who also have PvP enabled in their config when outside of a lobby.");
+            _pvp.SettingChanged += (sender, args) =>
+            {
+                var clientController = ClientController.Instance;
+                if (clientController == null) return;
+                var playerComp = clientController.LocalPlayerComponent;
+                if (playerComp == null) return;
+                var prefs = playerComp.MakeLatestPreferencesPacket();
+                clientController.BroadcastCustomPacket(prefs, PreferencesPacket.Id, IMessage.SendModes.ReliableUnordered);
             };
             _freeroamTraffic = configFile.Bind(Misc, "Dangerous Freeroam Traffic", true, "Makes traffic cars more dangerous when not in a lobby.");
             _showBadges = configFile.Bind(General, "Show Badges", true, "Whether to display your badges before your name, if you have any.");

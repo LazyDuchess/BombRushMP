@@ -66,6 +66,8 @@ namespace BombRushMP.Plugin
         public const float RagdollHitInterval = 0.3f;
         public float RagdollHitTimer = 0f;
 
+        private ulong _preferencesPacketId = 0;
+
         public void CacheNewSkin()
         {
             _customInlines = null;
@@ -668,8 +670,20 @@ namespace BombRushMP.Plugin
             Ragdoll.TickLocalNetworking();
         }
 
+        public byte[] MakeLatestPreferencesPacket()
+        {
+            _preferencesPacketId++;
+            var prefs = new PreferencesPacket(MPSettings.Instance.PvP, _preferencesPacketId);
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+            prefs.Write(writer);
+            return ms.ToArray();
+        }
+
         public void OnPlayerJoined(ushort id)
         {
+            var prefs = MakeLatestPreferencesPacket();
+            ClientController.Instance.SendCustomPacketToPlayer(prefs, PreferencesPacket.Id, id, Common.Networking.IMessage.SendModes.ReliableUnordered);
             if (!Ragdoll.Active) return;
             var limbRots = new List<Quaternion>();
             foreach (var limb in Ragdoll.Limbs)
