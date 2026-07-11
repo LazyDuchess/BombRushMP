@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Reptile;
 
 namespace BombRushMP.Plugin
 {
@@ -107,7 +108,21 @@ namespace BombRushMP.Plugin
         private void TryBan()
         {
             if (_player == null) return;
-            ClientController.Instance.SendPacket(new ClientChat($"{Constants.CommandChar}banid {_player.ClientId}"), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+            Core.Instance.UIManager.Overlay.ShowPopup($"You will ban {MPUtility.GetPlayerDisplayName(_player.ClientState.Name)} (ID:{_player.ClientId}). Are you sure?", "Yes", "No", 
+                () =>
+                {
+                    ClientController.Instance.SendPacket(new ClientChat($"{Constants.CommandChar}banid {_player.ClientId}"), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+                    var playerList = PlayerListUI.Instance;
+                    if (playerList != null)
+                        playerList.Displaying = false;
+                }, 
+                () =>
+                {
+                    var playerList = PlayerListUI.Instance;
+                    if (playerList != null)
+                        playerList.Displaying = false;
+                }
+            );
         }
 
         public static PlayerInListUI Create(GameObject gameObject)
