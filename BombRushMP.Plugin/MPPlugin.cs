@@ -58,16 +58,6 @@ namespace BombRushMP.Plugin
             var theme = new Theme();
             var configPath = Path.Combine(themePath, "theme.json");
             var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(File.ReadAllText(configPath));
-            try
-            {
-                var serializedTheme = JsonConvert.SerializeObject(themeConfig, Formatting.Indented);
-                File.WriteAllText(configPath, serializedTheme);
-            }
-            catch (Exception e) 
-            {
-                Debug.LogError("Failed to write back serialized theme!");
-                Debug.LogException(e);
-            }
             theme.ParseConfig(themeConfig);
             var reticlePath = Path.Combine(themePath, "greticle.png");
             if (File.Exists(reticlePath))
