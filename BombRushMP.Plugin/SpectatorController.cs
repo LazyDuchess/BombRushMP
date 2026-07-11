@@ -15,6 +15,7 @@ namespace BombRushMP.Plugin
     {
         public bool Forced = false;
         public ushort CurrentSpectatingClient = 0;
+        public GameplayCamera DummyCamera { get; private set; } = null;
         public static SpectatorController Instance { get; private set; }
         private ClientController _clientController = null;
         private List<ushort> _players = new();
@@ -23,8 +24,6 @@ namespace BombRushMP.Plugin
         private WorldHandler _worldHandler = null;
         private GameInput _gameInput = null;
         private UIManager _uiManager = null;
-
-        private GameplayCamera _dummyCamera = null;
 
         private void Awake()
         {
@@ -63,17 +62,17 @@ namespace BombRushMP.Plugin
             CurrentSpectatingClient = _players[0];
             SpectatorUI.Instance.Activate();
             var dummyCameraGO = Instantiate(GameplayCamera.instance.gameObject);
-            _dummyCamera = dummyCameraGO.GetComponent<GameplayCamera>();
-            _dummyCamera.player = currentPlayer;
-            currentPlayer.cam = _dummyCamera;
-            _dummyCamera.gameObject.SetActive(false);
+            DummyCamera = dummyCameraGO.GetComponent<GameplayCamera>();
+            DummyCamera.player = currentPlayer;
+            currentPlayer.cam = DummyCamera;
+            DummyCamera.gameObject.SetActive(false);
             GameplayCamera.instance = _gameplayCamera;
         }
 
         private void OnDestroy()
         {
-            if (_dummyCamera != null)
-                Destroy(_dummyCamera.gameObject);
+            if (DummyCamera != null)
+                Destroy(DummyCamera.gameObject);
         }
         
         public void SpectatePlayer(MPPlayer player)
@@ -114,7 +113,7 @@ namespace BombRushMP.Plugin
                 if (_currentSpectatingPlayer != null)
                 {
                     if (!_currentSpectatingPlayer.isAI)
-                        _currentSpectatingPlayer.cam = _dummyCamera;
+                        _currentSpectatingPlayer.cam = DummyCamera;
                     else
                         _currentSpectatingPlayer.cam = null;
                 }
@@ -123,7 +122,7 @@ namespace BombRushMP.Plugin
                 _gameplayCamera.SetPlayerToFollow(targetPlayer);
             }
             if (realPlayer != targetPlayer)
-                realPlayer.cam = _dummyCamera;
+                realPlayer.cam = DummyCamera;
             if (_gameInput.GetButtonNew(2, 0) && CanTeleportToCurrentPlayer() && !Forced)
             {
                 EndSpectating();
@@ -216,7 +215,7 @@ namespace BombRushMP.Plugin
             if (_currentSpectatingPlayer != null)
             {
                 if (!_currentSpectatingPlayer.isAI)
-                    _currentSpectatingPlayer.cam = _dummyCamera;
+                    _currentSpectatingPlayer.cam = DummyCamera;
                 else
                     _currentSpectatingPlayer.cam = null;
             }
