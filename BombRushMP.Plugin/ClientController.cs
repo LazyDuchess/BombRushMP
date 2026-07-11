@@ -549,6 +549,11 @@ namespace BombRushMP.Plugin
             }
         }
 
+        public void SendChatPacket(string message)
+        {
+            SendPacket(new ClientChat(message), IMessage.SendModes.ReliableUnordered, NetChannels.Chat);
+        }
+
         private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
             var packetId = (Packets)e.MessageId;

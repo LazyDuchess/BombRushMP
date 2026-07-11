@@ -1,4 +1,5 @@
-﻿using BombRushMP.Common.Packets;
+﻿using BombRushMP.Common;
+using BombRushMP.Common.Packets;
 using CommonAPI;
 using CommonAPI.Phone;
 using System;
@@ -13,18 +14,8 @@ namespace BombRushMP.Plugin.Phone
 {
     public class AppMultiplayerBan : PlayerPickerApp
     {
-        public override bool Available
-        {
-            get
-            {
-                var clientController = ClientController.Instance;
-                if (clientController == null) return false;
-                if (!clientController.Connected) return false;
-                var user = clientController.GetLocalUser();
-                if (user == null) return false;
-                return user.IsModerator;
-            }
-        }
+        public override bool Available => false;
+
         public static void Initialize()
         {
             var txtFile = File.ReadAllBytes(Path.Combine(MPSettings.Instance.Directory, "acn_icon.png"));
@@ -48,7 +39,7 @@ namespace BombRushMP.Plugin.Phone
             var clientController = ClientController.Instance;
             foreach (var player in playerIds)
             {
-                ClientController.Instance.SendPacket(new ClientChat($"/banid {player}"), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+                ClientController.Instance.SendChatPacket($"{Constants.CommandChar}banid {player}");
             }
         }
     }

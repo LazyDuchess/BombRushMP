@@ -111,7 +111,7 @@ namespace BombRushMP.Plugin
             Core.Instance.UIManager.Overlay.ShowPopup($"You will ban {MPUtility.GetPlayerDisplayName(_player.ClientState.Name)} (ID:{_player.ClientId}). Are you sure?", "Yes", "No", 
                 () =>
                 {
-                    ClientController.Instance.SendPacket(new ClientChat($"{Constants.CommandChar}banid {_player.ClientId}"), Common.Networking.IMessage.SendModes.ReliableUnordered, Common.Networking.NetChannels.Chat);
+                    ClientController.Instance.SendChatPacket($"{Constants.CommandChar}banid {_player.ClientId}");
                     var playerList = PlayerListUI.Instance;
                     if (playerList != null)
                         playerList.Displaying = false;

@@ -206,7 +206,7 @@ namespace BombRushMP.Plugin
             SetState(States.Unfocused);
             if (!TMPFilter.IsValidChatMessage(message)) return;
             var clientController = ClientController.Instance;
-            clientController.SendPacket(new ClientChat(message), IMessage.SendModes.ReliableUnordered, NetChannels.Chat);
+            clientController.SendChatPacket(message);
             if (message[0] == Constants.CommandChar)
                 ProcessLocalCommand(message);
         }
