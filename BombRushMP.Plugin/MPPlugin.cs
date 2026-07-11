@@ -253,6 +253,7 @@ namespace BombRushMP.Plugin
             MoveStyleSkinPickerApp.Initialize();
             AppMultiplayerSwitchPlayerTeams.Initialize();
             AppMultiplayerPublicLobbies.Initialize();
+            AppMultiplayerSettings.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()

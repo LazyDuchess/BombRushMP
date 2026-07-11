@@ -10,6 +10,7 @@ public class AppMultiplayerSettings : CustomApp
 {
     public override bool Available => false;
     private SimplePhoneButton _pvpButton;
+    private SimplePhoneButton _trafficButton;
     public static void Initialize()
     {
         PhoneAPI.RegisterApp<AppMultiplayerDebug>("settings");
@@ -26,6 +27,7 @@ public class AppMultiplayerSettings : CustomApp
     private void UpdateLabels()
     {
         _pvpButton.Label.text = $"PvP = {(MPSettings.Instance.PvP ? "ON" : "OFF")}";
+        _trafficButton.Label.text = $"New Traffic = {(MPSettings.Instance.FreeroamTraffic ? "ON" : "OFF")}";
     }
 
     private void PopulateButtons()
@@ -38,6 +40,14 @@ public class AppMultiplayerSettings : CustomApp
             MPSettings.Instance.PvP = !MPSettings.Instance.PvP;
         };
         ScrollView.AddButton(button);
+        _pvpButton = button;
+        button = PhoneUIUtility.CreateSimpleButton("New Traffic");
+        button.OnConfirm += () =>
+        {
+            MPSettings.Instance.FreeroamTraffic = !MPSettings.Instance.FreeroamTraffic;
+        };
+        ScrollView.AddButton(button);
+        _trafficButton = button;
         UpdateLabels();
     }
 

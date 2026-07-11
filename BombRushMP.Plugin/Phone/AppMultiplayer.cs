@@ -176,6 +176,13 @@ public class AppMultiplayer : CustomApp
         };
         ScrollView.AddButton(button);
 
+        button = PhoneUIUtility.CreateSimpleButton("Settings");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppMultiplayerSettings));
+        };
+        ScrollView.AddButton(button);
+
 #if DEBUG
         button = PhoneUIUtility.CreateSimpleButton("Debug");
         button.OnConfirm += () =>
