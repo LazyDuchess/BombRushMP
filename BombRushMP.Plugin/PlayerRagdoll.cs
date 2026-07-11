@@ -224,7 +224,7 @@ namespace BombRushMP.Plugin
             var clientController = ClientController.Instance;
             if (Owner.Local)
             {
-                Owner.Player.ActivateAbility(Owner.Player.slideAbility);
+                Owner.Player.PlayAnim(Owner.Player.landHash, true, true);
                 var ragdollEv = new RagdollEvent(RagdollEvent.Events.Stop, CurrentEventPacketId);
                 CurrentEventPacketId++;
                 using var ms = new MemoryStream();
