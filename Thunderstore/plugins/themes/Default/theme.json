@@ -29,5 +29,10 @@
 	"GraffitiSwirlColor": "#F4D342FF",
 	"RaceGraffitiSwirlColor": "#F4D342FF",
 	
+	"MapPlayerColor": "#E5E5E5FF",
+	"MapFriendlyColor": "#00E500FF",
+	"MapRivalColor": "#E5E500FF",
+	"MapPvPColor": "#E500E5FF",
+	
 	"RaceReticleSize": 1.0
 }

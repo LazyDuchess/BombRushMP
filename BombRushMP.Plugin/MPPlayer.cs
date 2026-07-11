@@ -2,6 +2,7 @@
 using BombRushMP.Common;
 using BombRushMP.Common.Packets;
 using BombRushMP.CrewBoom;
+using BombRushMP.Mono.Runtime;
 using BombRushMP.Plugin.Gamemodes;
 using BombRushMP.Plugin.Patches;
 using BombRushMP.Plugin.Phone;
@@ -742,11 +743,13 @@ namespace BombRushMP.Plugin
                 _mapPin.gameObject.SetActive(true);
 
             if (rival && inTeamLobby)
-                _mapPinMaterial.color = new Color(0.9f, 0.9f, 0f);
+                _mapPinMaterial.color = Theme.CurrentTheme.MapRivalColor;
             else if (InSameLobbyAsLocalPlayer())
-                _mapPinMaterial.color = new Color(0f, 0.9f, 0f);
+                _mapPinMaterial.color = Theme.CurrentTheme.MapFriendlyColor;
+            else if (PvPUtils.CanReptilePlayerPvP(Player))
+                _mapPinMaterial.color = Theme.CurrentTheme.MapPvPColor;
             else
-                _mapPinMaterial.color = new Color(0.9f, 0.9f, 0.9f);
+                _mapPinMaterial.color = Theme.CurrentTheme.MapPlayerColor;
 
             if (_interactable == null)
             {

@@ -42,6 +42,11 @@ namespace BombRushMP.Mono.Runtime
 
         public Color RaceGraffitiSwirlColor { get; private set; }
 
+        public Color MapPlayerColor { get; private set; }
+        public Color MapRivalColor { get; private set; }
+        public Color MapFriendlyColor { get; private set; }
+        public Color MapPvPColor { get; private set; }
+
         public float RaceReticleSize { get; private set; }
 
         public Texture2D GraffitiReticle;
@@ -78,6 +83,11 @@ namespace BombRushMP.Mono.Runtime
 
             GraffitiSwirlColor = ColorFromHex(config.GraffitiSwirlColor);
             RaceGraffitiSwirlColor = ColorFromHex(config.RaceGraffitiSwirlColor);
+
+            MapPlayerColor = ColorFromHex(config.MapPlayerColor);
+            MapRivalColor = ColorFromHex(config.MapRivalColor);
+            MapFriendlyColor = ColorFromHex(config.MapFriendlyColor);
+            MapPvPColor = ColorFromHex(config.MapPvPColor);
 
             RaceReticleSize = config.RaceReticleSize;
 

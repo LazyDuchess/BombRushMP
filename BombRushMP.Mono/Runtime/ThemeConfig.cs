@@ -39,6 +39,11 @@ namespace BombRushMP.Mono.Runtime
         public string GraffitiSwirlColor = "#F4D342FF";
         public string RaceGraffitiSwirlColor = "#F4D342FF";
 
+        public string MapPlayerColor = "#E5E5E5FF";
+        public string MapFriendlyColor = "#00E500FF";
+        public string MapRivalColor = "#E5E500FF";
+        public string MapPvPColor = "#E500E5FF";
+
         public float RaceReticleSize = 1.0f;
         public float LobbyPlayerTeamBackgroundAlpha = 0.8f;
     }
