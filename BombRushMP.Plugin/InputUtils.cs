@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BombRushMP.Mono.Runtime;
 
 namespace BombRushMP.Plugin
 {
@@ -16,9 +17,11 @@ namespace BombRushMP.Plugin
                 if (Override) return false;
                 var chat = ChatUI.Instance;
                 var playerList = PlayerListUI.Instance;
+                var textInput = TextInput.Instance;
                 if (playerList == null) return false;
                 if (chat == null) return false;
-                return chat.State == ChatUI.States.Focused || playerList.Displaying;
+                if (textInput == null) return false;
+                return chat.State == ChatUI.States.Focused || playerList.Displaying || textInput.Open;
             }
         }
     }
