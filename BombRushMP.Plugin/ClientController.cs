@@ -661,6 +661,10 @@ namespace BombRushMP.Plugin
                             {
                                 ChatUI.Instance.AddMessage(connectionResponse.MOTD);
                             }
+                            if (MPSettings.Instance.PlayerName == MPSettings.DefaultName)
+                            {
+                                ChatUI.Instance.AddMessage("<color=yellow>Welcome! Use the Multiplayer app on the phone and head to Settings to set up and change your name! Have fun!");
+                            }
                         }
                         if (MapStationSupport.Installed)
                         {
