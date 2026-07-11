@@ -17,6 +17,7 @@ public class AppMultiplayerSettings : CustomApp
     private SimplePhoneButton _chatButton;
     private SimplePhoneButton _voicesButton;
     private SimplePhoneButton _ragdollButton;
+    private SimplePhoneButton _themeButton;
     private const int DescriptionStatusPriority = 0;
     private const float DescriptionStatusTime = 0.5f;
     private Dictionary<PhoneButton, string> _buttonDescriptions = new();
@@ -50,6 +51,10 @@ public class AppMultiplayerSettings : CustomApp
         var currentButton = ScrollView.Buttons[ScrollView.SelectedIndex];
         if (currentButton != null)
         {
+            if (currentButton == _themeButton)
+            {
+                UpdateDescriptions();
+            }
             if (_buttonDescriptions.TryGetValue(currentButton, out var desc))
             {
                 ShowDescription(desc);
@@ -70,6 +75,11 @@ public class AppMultiplayerSettings : CustomApp
         _minimapButton.Label.text = $"Minimap = {(MPSettings.Instance.ShowMinimap ? "ON" : "OFF")}";
         _chatButton.Label.text = $"Chat = {(MPSettings.Instance.ShowChat ? "ON" : "OFF")}";
         _ragdollButton.Label.text = $"Ragdoll = {(MPSettings.Instance.RagdollOnHit ? "ON" : "OFF")}";
+    }
+
+    private void UpdateDescriptions()
+    {
+        SetButtonDescription(_themeButton, $"Pick a theme for the UI. Changes apply on map load! Current Theme: {MPSettings.Instance.Theme}");
     }
 
     private void PopulateButtons()
@@ -102,7 +112,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
-        SetButtonDescription(button, "Whether to display names above players.");
+        SetButtonDescription(button, "Display names above players.");
         _nameplatesButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Minimap");
         button.OnConfirm += () =>
@@ -111,7 +121,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
-        SetButtonDescription(button, "Whether to show the minimap in the bottom left corner.");
+        SetButtonDescription(button, "Show the minimap in the bottom left corner.");
         _minimapButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Chat");
         button.OnConfirm += () =>
@@ -120,7 +130,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
-        SetButtonDescription(button, "Whether to show the chat window.");
+        SetButtonDescription(button, "Show the chat window.");
         _chatButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Voices");
         button.OnConfirm += () =>
@@ -129,7 +139,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
-        SetButtonDescription(button, "Whether to play other players' voices.");
+        SetButtonDescription(button, "Hear other players' voices.");
         _voicesButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Ragdoll");
         button.OnConfirm += () =>
@@ -138,7 +148,7 @@ public class AppMultiplayerSettings : CustomApp
             UpdateLabels();
         };
         ScrollView.AddButton(button);
-        SetButtonDescription(button, "Whether to activate ragdoll when hit in-game.");
+        SetButtonDescription(button, "Activate ragdoll when hit in-game.");
         _ragdollButton = button;
         button = PhoneUIUtility.CreateSimpleButton("Theme");
         button.OnConfirm += () =>
@@ -146,12 +156,14 @@ public class AppMultiplayerSettings : CustomApp
             MyPhone.OpenApp(typeof(AppMultiplayerThemes));
         };
         ScrollView.AddButton(button);
-        SetButtonDescription(button, "Pick a theme for the UI. Changes apply on map restart!");
+        _themeButton = button;
         UpdateLabels();
+        UpdateDescriptions();
     }
 
     public override void OnAppEnable()
     {
         UpdateLabels();
+        UpdateDescriptions();
     }
 }
