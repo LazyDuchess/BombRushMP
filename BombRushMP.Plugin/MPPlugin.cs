@@ -41,7 +41,7 @@ namespace BombRushMP.Plugin
         private bool _offline = false;
         private ServerController _localServerController;
 
-        private Dictionary<string, string> _themePaths = new();
+        public static Dictionary<string, string> ThemePaths = new();
 
         private void RegisterThemes(string path)
         {
@@ -49,7 +49,7 @@ namespace BombRushMP.Plugin
             foreach (var dir in themeDirs)
             {
                 var themeName = Path.GetFileName(dir);
-                _themePaths[themeName] = dir;
+                ThemePaths[themeName] = dir;
             }
         }
 
@@ -94,10 +94,13 @@ namespace BombRushMP.Plugin
 
             var theme = MPSettings.Instance.Theme;
 
-            if (!_themePaths.ContainsKey(theme))
+            if (!ThemePaths.ContainsKey(theme))
+            {
                 theme = "Default";
+                MPSettings.Instance.Theme = theme;
+            }
 
-            Theme.CurrentTheme = LoadTheme(_themePaths[theme]);
+            Theme.CurrentTheme = LoadTheme(ThemePaths[theme]);
 
             NetworkingEnvironment.UseNativeSocketsIfAvailable = MPSettings.Instance.UseNativeSockets;
             NetworkingEnvironment.NetworkingInterface = NetworkInterfaceFactory.GetNetworkInterface(MPSettings.Instance.NetworkInterface);
