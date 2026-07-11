@@ -53,7 +53,7 @@ namespace BombRushMP.Plugin
             }
         }
 
-        private Theme LoadTheme(string themePath)
+        public Theme LoadTheme(string themePath)
         {
             var theme = new Theme();
             var configPath = Path.Combine(themePath, "theme.json");
@@ -230,6 +230,15 @@ namespace BombRushMP.Plugin
 
         private void StageManager_OnStageInitialized()
         {
+            var theme = MPSettings.Instance.Theme;
+
+            if (!ThemePaths.ContainsKey(theme))
+            {
+                theme = "Default";
+                MPSettings.Instance.Theme = theme;
+            }
+
+            Theme.CurrentTheme = LoadTheme(ThemePaths[theme]);
             if (CrewBoomSupport.Installed)
             {
                 CrewBoomStreamer.ReloadResources();
