@@ -926,7 +926,7 @@ namespace BombRushMP.Plugin
                 var prefs = playerComp.MakeLatestPreferencesPacket();
                 clientController.BroadcastCustomPacket(prefs, PreferencesPacket.Id, IMessage.SendModes.ReliableUnordered);
             };
-            _freeroamTraffic = configFile.Bind(Misc, "Dangerous Freeroam Traffic", true, "Makes traffic cars more dangerous when not in a lobby.");
+            _freeroamTraffic = configFile.Bind(Misc, "Dangerous Freeroam Traffic", false, "Makes traffic cars more dangerous when not in a lobby.");
             _showBadges = configFile.Bind(General, "Show Badges", true, "Whether to display your badges before your name, if you have any.");
             _showBadges.SettingChanged += (sender, args) =>
             {
