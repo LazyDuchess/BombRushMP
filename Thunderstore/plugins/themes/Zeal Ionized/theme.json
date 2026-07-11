@@ -1,0 +1,38 @@
+{
+	"LobbyNameBackgroundColor": "#FFA500CC",
+	"LobbyNameColor": "#FFFFFFFF",
+	
+	"LobbyPlayerBackgroundColor": "#000000CC",
+	"LobbyPlayerTeamBackgroundAlpha": 0.8,
+	"LobbyPlayerNameColor": "#FFFFFFFF",
+	"LobbyPlayerScoreColor": "#FFE900FF",
+	
+	"LobbySettingsColor": "#FFFFFFFF",
+	
+	"TimerColor": "#ECE873FF",
+	
+	"MapOutlineColor": "#FFA500CC",
+	"MapBackgroundColor": "#FFE900FF",
+	"MapContentsColor": "#FFFFFFFF",
+	"MapIconsColor": "#FFFFFFFF",
+	"MapTextColor": "#FFFFFFFF",
+	
+	"ChatTextColor": "#FFFFFFFF",
+	"ChatScrollViewColor": "#00000080",
+	"ChatScrollBarColor": "#262626FF",
+	"ChatForegroundColor": "#3A3A3AFF",
+	
+	"NotificationBackgroundColor": "#00000080",
+	"NotificationTextColor": "#FFFFFFFF",
+	"NotificationIconColor": "#FFFFFFFF",
+	
+	"GraffitiSwirlColor": "#40E0D0FF",
+	"RaceGraffitiSwirlColor": "#FFA500FF",
+	
+	"MapPlayerColor": "#E5E5E5FF",
+	"MapFriendlyColor": "#00E500FF",
+	"MapRivalColor": "#E5E500FF",
+	"MapPvPColor": "#E500E5FF",
+	
+	"RaceReticleSize": 1.0
+}
