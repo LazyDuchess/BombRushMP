@@ -14,6 +14,7 @@ using BombRushMP.Common.Networking;
 using BombRushMP.Plugin.Gamemodes;
 using BepInEx.Bootstrap;
 using System.IO;
+using BombRushMP.PluginCommon;
 
 namespace BombRushMP.Plugin
 {
@@ -380,7 +381,7 @@ namespace BombRushMP.Plugin
 
         private void FocusedUpdate()
         {
-            InputUtils.Override = true;
+            SharedUtils.OverrideInput = true;
             try
             {
                 _messageHideTimer = 0f;
@@ -402,7 +403,7 @@ namespace BombRushMP.Plugin
             }
             finally
             {
-                InputUtils.Override = false;
+                SharedUtils.OverrideInput = false;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Reptile;
+﻿using BombRushMP.PluginCommon;
+using Reptile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +73,7 @@ namespace BombRushMP.Plugin
             {
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
-                InputUtils.Override = true;
+                SharedUtils.OverrideInput = true;
                 try
                 {
                     if (Input.GetKeyDown(MPSettings.Instance.PlayerListKey) || Input.GetKeyDown(KeyCode.Escape))
@@ -82,7 +83,7 @@ namespace BombRushMP.Plugin
                 }
                 finally
                 {
-                    InputUtils.Override = false;
+                    SharedUtils.OverrideInput = false;
                 }
                 if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
                 {

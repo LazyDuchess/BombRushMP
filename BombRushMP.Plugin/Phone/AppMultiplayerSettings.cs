@@ -6,6 +6,7 @@ using BombRushMP.Common;
 using System.Linq.Expressions;
 using BombRushMP.Plugin.Gamemodes;
 using System.Collections.Generic;
+using BombRushMP.Mono.Runtime;
 
 public class AppMultiplayerSettings : CustomApp
 {
@@ -18,6 +19,8 @@ public class AppMultiplayerSettings : CustomApp
     private SimplePhoneButton _voicesButton;
     private SimplePhoneButton _ragdollButton;
     private SimplePhoneButton _themeButton;
+    private SimplePhoneButton _nameButton;
+    private SimplePhoneButton _crewNameButton;
     private const int DescriptionStatusPriority = 0;
     private const float DescriptionStatusTime = 0.5f;
     private Dictionary<PhoneButton, string> _buttonDescriptions = new();
@@ -80,6 +83,8 @@ public class AppMultiplayerSettings : CustomApp
     private void UpdateDescriptions()
     {
         SetButtonDescription(_themeButton, $"Pick a theme for the UI. Changes apply on map load! Current Theme: {MPSettings.Instance.Theme}");
+        SetButtonDescription(_nameButton, $"Change your player name. You might have to reload the map to apply. Current Name: {MPSettings.Instance.PlayerName}");
+        SetButtonDescription(_crewNameButton, $"Change your crew name. Used for team gamemodes, share it with your crew! Current Crew Name: {MPSettings.Instance.CrewName}");
     }
 
     private void PopulateButtons()
@@ -87,6 +92,40 @@ public class AppMultiplayerSettings : CustomApp
         _buttonDescriptions.Clear();
         ScrollView.RemoveAllButtons();
         SimplePhoneButton button;
+        button = PhoneUIUtility.CreateSimpleButton("Player Name");
+        button.OnConfirm += () =>
+        {
+            TextInput.Instance.ShowOkCancel((text) =>
+            {
+                MPSettings.Instance.PlayerName = text;
+                UpdateDescriptions();
+            }, (text) =>
+            {
+
+            }, (text) =>
+            {
+                return true;
+            }, "Enter your player name.", Constants.MaxNameLength, "Player Name...", MPSettings.Instance.PlayerName);
+        };
+        ScrollView.AddButton(button);
+        _nameButton = button;
+        button = PhoneUIUtility.CreateSimpleButton("Crew Name");
+        button.OnConfirm += () =>
+        {
+            TextInput.Instance.ShowOkCancel((text) =>
+            {
+                MPSettings.Instance.CrewName = text;
+                UpdateDescriptions();
+            }, (text) =>
+            {
+
+            }, (text) =>
+            {
+                return true;
+            }, "Enter your player name.", Constants.MaxCrewNameLength, "Crew Name...", MPSettings.Instance.CrewName);
+        };
+        ScrollView.AddButton(button);
+        _crewNameButton = button;
         button = PhoneUIUtility.CreateSimpleButton("PvP");
         button.OnConfirm += () =>
         {

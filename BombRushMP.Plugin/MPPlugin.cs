@@ -290,6 +290,13 @@ namespace BombRushMP.Plugin
             BalanceUI.Create();
             StatsUI.Create();
             StatusTextUI.Create();
+            if (TextInput.Instance == null)
+            {
+                var mpAssets = MPAssets.Instance;
+                var prefab = mpAssets.Bundle.LoadAsset<GameObject>("Text Input UI");
+                var textInput = Instantiate(prefab);
+                textInput.transform.SetParent(Core.Instance.UIManager.transform, false);
+            }
             if (MPSettings.Instance.DebugInfo)
                 DebugUI.Create();
         }

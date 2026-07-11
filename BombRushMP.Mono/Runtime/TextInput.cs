@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 #if PLUGIN
+using BombRushMP.PluginCommon;
 using Reptile;
 #endif
 
@@ -42,6 +43,12 @@ namespace BombRushMP.Mono.Runtime
         private Func<string, bool> _validateButton2Callback;
         private Func<string, bool> _validateButton3Callback;
 
+        private Action<string> _enterCallback;
+        private Action<string> _cancelCallback;
+
+        private Func<string, bool> _validateEnterCallback;
+        private Func<string, bool> _validateCancelCallback;
+
         private int _maxLength = 64;
         public bool Open = false;
 
@@ -50,8 +57,8 @@ namespace BombRushMP.Mono.Runtime
             Instance = this;
             _window = GetComponentInChildren<Canvas>(true).gameObject;
             _button1Label = _button1.GetComponentInChildren<TextMeshProUGUI>(true);
-            _button2Label = _button1.GetComponentInChildren<TextMeshProUGUI>(true);
-            _button3Label = _button1.GetComponentInChildren<TextMeshProUGUI>(true);
+            _button2Label = _button2.GetComponentInChildren<TextMeshProUGUI>(true);
+            _button3Label = _button3.GetComponentInChildren<TextMeshProUGUI>(true);
             _window.SetActive(false);
         }
 
@@ -89,6 +96,51 @@ namespace BombRushMP.Mono.Runtime
                 _button1.interactable = activeButton1;
                 _button2.interactable = activeButton2;
                 _button3.interactable = activeButton3;
+
+#if PLUGIN
+                SharedUtils.OverrideInput = true;
+                try
+                {
+                    if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                    {
+                        if (_validateEnterCallback != null && _validateEnterCallback(_inputField.text))
+                        {
+                            Close();
+                            _enterCallback(_inputField.text);
+                        }
+                        else if (_validateEnterCallback == null)
+                        {
+                            Close();
+                            _enterCallback(_inputField.text);
+                        }
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Escape))
+                    {
+                        if (_validateCancelCallback != null && _validateCancelCallback(_inputField.text))
+                        {
+                            Cancel();
+                        }
+                        else if (_validateCancelCallback == null)
+                        {
+                            Cancel();
+                        }
+                    }
+                }
+                finally
+                {
+                    SharedUtils.OverrideInput = false;
+                }
+#endif
+            }
+        }
+
+        public void Cancel()
+        {
+            Close();
+            if (_cancelCallback != null)
+            {
+                _cancelCallback(_inputField.text);
             }
         }
 
@@ -107,10 +159,10 @@ namespace BombRushMP.Mono.Runtime
 
         public void ShowOkCancel(Action<string> okCallback, Action<string> cancelCallback, Func<string,bool> validateCallback, string label, int maxLength = 64, string placeholder = "", string defaultText = "")
         {
-            Show(okCallback, cancelCallback, null, validateCallback, (input) => { return true; }, null, true, true, false, maxLength, label, placeholder, defaultText, "OK", "Cancel");
+            Show(okCallback, cancelCallback, null, validateCallback, (input) => { return true; }, null, validateCallback, okCallback, (input) => { return true; }, null, true, true, false, maxLength, label, placeholder, defaultText, "OK", "Cancel");
         }
 
-        public void Show(Action<string> button1Callback, Action<string> button2Callback, Action<string> button3Callback, Func<string, bool> validateButton1Callback, Func<string, bool> validateButton2Callback, Func<string, bool> validateButton3Callback, bool showButton1, bool showButton2, bool showButton3, int maxLength = 64, string label = "Text Input", string placeholder = "", string defaultText = "", string button1Label = "Yes", string button2Label = "No", string button3Label = "Cancel")
+        public void Show(Action<string> button1Callback, Action<string> button2Callback, Action<string> button3Callback, Func<string, bool> validateButton1Callback, Func<string, bool> validateButton2Callback, Func<string, bool> validateButton3Callback, Func<string, bool> validateEnterCallback, Action<string> enterCallback, Func<string, bool> validateCancelCallback, Action<string> cancelCallback, bool showButton1, bool showButton2, bool showButton3, int maxLength = 64, string label = "Text Input", string placeholder = "", string defaultText = "", string button1Label = "Yes", string button2Label = "No", string button3Label = "Cancel")
         {
             Open = true;
 #if PLUGIN
@@ -130,8 +182,8 @@ namespace BombRushMP.Mono.Runtime
             _validateButton3Callback = validateButton3Callback;
 
             _button1.gameObject.SetActive(showButton1);
-            _button1.gameObject.SetActive(showButton2);
-            _button1.gameObject.SetActive(showButton3);
+            _button2.gameObject.SetActive(showButton2);
+            _button3.gameObject.SetActive(showButton3);
 
             _maxLength = maxLength;
             _inputField.characterLimit = maxLength;
@@ -173,6 +225,13 @@ namespace BombRushMP.Mono.Runtime
                     _button3Callback(_inputField.text);
                 }
             });
+
+            _validateEnterCallback = validateEnterCallback;
+            _validateCancelCallback = validateCancelCallback;
+            _enterCallback = enterCallback;
+            _cancelCallback = cancelCallback;
+
+            _inputField.Select();
         }
     }
 }

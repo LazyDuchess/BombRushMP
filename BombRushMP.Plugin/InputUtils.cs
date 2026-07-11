@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BombRushMP.Mono.Runtime;
+using BombRushMP.PluginCommon;
 
 namespace BombRushMP.Plugin
 {
     public static class InputUtils
     {
-        public static bool Override = false;
         public static bool InputBlocked
         {
             get
             {
-                if (Override) return false;
+                if (SharedUtils.OverrideInput) return false;
                 var chat = ChatUI.Instance;
                 var playerList = PlayerListUI.Instance;
                 var textInput = TextInput.Instance;

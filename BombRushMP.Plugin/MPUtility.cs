@@ -346,6 +346,9 @@ namespace BombRushMP.Plugin
             var statsUi = StatsUI.Instance;
             if (statsUi != null && statsUi.Displaying)
                 statsUi.Deactivate();
+            var textInput = TextInput.Instance;
+            if (textInput != null && textInput.Open)
+                textInput.Cancel();
         }
 
         public static bool AnyMenusOpen()

@@ -13,5 +13,6 @@ namespace BombRushMP.PluginCommon
         public static Action<Characters> SetLocalCharacter;
         public static Action<SpecialSkins> SetLocalSpecialSkin;
 
+        public static bool OverrideInput = false;
     }
 }
