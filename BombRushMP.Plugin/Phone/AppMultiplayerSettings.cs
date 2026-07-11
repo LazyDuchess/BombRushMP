@@ -101,6 +101,12 @@ public class AppMultiplayerSettings : CustomApp
         };
         ScrollView.AddButton(button);
         _ragdollButton = button;
+        button = PhoneUIUtility.CreateSimpleButton("Theme");
+        button.OnConfirm += () =>
+        {
+            MyPhone.OpenApp(typeof(AppMultiplayerThemes));
+        };
+        ScrollView.AddButton(button);
         UpdateLabels();
     }
 

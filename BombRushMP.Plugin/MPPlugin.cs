@@ -277,6 +277,7 @@ namespace BombRushMP.Plugin
             AppMultiplayerSwitchPlayerTeams.Initialize();
             AppMultiplayerPublicLobbies.Initialize();
             AppMultiplayerSettings.Initialize();
+            AppMultiplayerThemes.Initialize();
         }
 
         private void StageManager_OnStagePostInitialization()
