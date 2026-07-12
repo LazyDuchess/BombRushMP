@@ -62,6 +62,7 @@ namespace BombRushMP.Mono.Runtime
             _button2Label = _button2.GetComponentInChildren<TextMeshProUGUI>(true);
             _button3Label = _button3.GetComponentInChildren<TextMeshProUGUI>(true);
             _window.SetActive(false);
+            _inputField.textComponent.richText = false;
         }
 
         private void OnDestroy()
