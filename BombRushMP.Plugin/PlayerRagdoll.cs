@@ -353,6 +353,42 @@ namespace BombRushMP.Plugin
             });
         }
 
+        private bool CanReachTransformParentChain(Transform target, Transform from)
+        {
+            var cur = from.parent;
+            while (cur != null && cur != target)
+            {
+                cur = cur.parent;
+            }
+            if (cur == target) return true;
+            return false;
+        }
+
+        private Transform FindPelvis(Transform leg2l, Transform head)
+        {
+            var cPar = leg2l;
+            while (cPar != null)
+            {
+                if (CanReachTransformParentChain(cPar, head))
+                    return cPar;
+                cPar = cPar.parent;
+            }
+            return cPar;
+        }
+
+        private Transform FindFirstChild(Transform from, Transform childOf)
+        {
+            var cur = from;
+            var next = from.parent;
+            while (next != null && next != childOf)
+            {
+                cur = next;
+                next = cur.parent;
+            }
+            if (next == null) return null;
+            return cur;
+        }
+
         public void Initialize(PlayerComponent player)
         {
             if (Active)
@@ -374,11 +410,11 @@ namespace BombRushMP.Plugin
                 var leg1l = leg2l.parent;
                 if (leg1l == null) return;
 
-                var pelvis = leg1l.parent;
-                if (pelvis == null) return;
-
                 var head = root.transform.FindRecursive("head");
                 if (head == null) return;
+
+                var pelvis = FindPelvis(leg2l, head);
+                if (pelvis == null) return;
 
                 var curp = head;
                 var nextp = head.parent;
