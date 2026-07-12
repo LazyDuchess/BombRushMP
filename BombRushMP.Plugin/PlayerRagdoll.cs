@@ -70,6 +70,9 @@ namespace BombRushMP.Plugin
         public ulong CurrentEventPacketId = 0;
         public ulong CurrentStatePacketId = 0;
 
+        private List<SkinnedMeshRenderer> _renderersToForceRender = new();
+        private bool _shouldForceRender = false;
+
         public void OnDestroy()
         {
             if (Active)
@@ -122,6 +125,13 @@ namespace BombRushMP.Plugin
         {
             if (!Valid) return;
             if (Active) return;
+            if (_shouldForceRender)
+            {
+                foreach (var skin in _renderersToForceRender)
+                {
+                    skin.updateWhenOffscreen = true;
+                }
+            }
             var vel = Owner.Player.GetPracticalWorldVelocity();
             if (!Owner.Player.IsDead())
                 Owner.Player.CompletelyStop();
@@ -202,6 +212,13 @@ namespace BombRushMP.Plugin
         {
             if (!Valid) return;
             if (!Active) return;
+            if (_shouldForceRender)
+            {
+                foreach(var skin in _renderersToForceRender)
+                {
+                    skin.updateWhenOffscreen = false;
+                }
+            }
             Active = false;
             Owner.Player.usingEquippedMovestyle = false;
             Owner.Player.SetMoveStyle(MoveStyle.ON_FOOT, true, false);
@@ -398,6 +415,8 @@ namespace BombRushMP.Plugin
             Valid = false;
             Visual = player.Player.characterVisual;
             Limbs.Clear();
+            _shouldForceRender = false;
+            _renderersToForceRender.Clear();
 
             try
             {
@@ -407,14 +426,18 @@ namespace BombRushMP.Plugin
                 var leg2l = root.transform.FindRecursive("leg2l");
                 if (leg2l == null) return;
 
-                var leg1l = leg2l.parent;
-                if (leg1l == null) return;
-
                 var head = root.transform.FindRecursive("head");
                 if (head == null) return;
 
                 var pelvis = FindPelvis(leg2l, head);
+                if (pelvis != root)
+                {
+                    _shouldForceRender = true;
+                }
                 if (pelvis == null) return;
+
+                var leg1l = leg2l.parent;
+                if (leg1l == null) return;
 
                 var curp = head;
                 var nextp = head.parent;
@@ -495,6 +518,18 @@ namespace BombRushMP.Plugin
                 arm1rLimb,
                 arm2rLimb
                 ];
+
+                if (_shouldForceRender)
+                {
+                    var skins = Visual.GetComponentsInChildren<SkinnedMeshRenderer>();
+                    foreach(var skin in skins)
+                    {
+                        if (!skin.updateWhenOffscreen)
+                        {
+                            _renderersToForceRender.Add(skin);
+                        }
+                    }
+                }
             }
             catch(Exception e)
             {
