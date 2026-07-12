@@ -122,7 +122,7 @@ public class AppMultiplayerSettings : CustomApp
             }, (text) =>
             {
                 return true;
-            }, "Enter your player name.", Constants.MaxCrewNameLength, "Crew Name...", MPSettings.Instance.CrewName);
+            }, "Enter your crew name.", Constants.MaxCrewNameLength, "Crew Name...", MPSettings.Instance.CrewName);
         };
         ScrollView.AddButton(button);
         _crewNameButton = button;
