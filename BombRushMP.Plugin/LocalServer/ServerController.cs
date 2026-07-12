@@ -20,7 +20,7 @@ namespace BombRushMP.Plugin.LocalServer
         public ServerController(int port, float tickRate, ushort maxPlayers, bool offline, LocalServerDatabase db)
         {
             Instance = this;
-            Server = new BRCServer(port, maxPlayers, tickRate, db);
+            Server = new BRCServer(port, maxPlayers, tickRate, db, true);
             var serverThread = new Thread(Update);
             serverThread.IsBackground = true;
             serverThread.Start();
