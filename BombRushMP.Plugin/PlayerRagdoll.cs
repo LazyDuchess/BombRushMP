@@ -479,12 +479,16 @@ namespace BombRushMP.Plugin
                 if (arm2l == null) return;
 
                 var arm1l = FindFirstChild(arm2l, shldl);
+                if (arm1l == arm2l)
+                    arm1l = shldl;
                 if (arm1l == null) return;
 
                 var arm2r = handr.parent;
                 if (arm2r == null) return;
 
                 var arm1r = FindFirstChild(arm2r, shldr);
+                if (arm1r == arm2r)
+                    arm1r = shldr;
                 if (arm1r == null) return;
 
 
