@@ -10,6 +10,7 @@ using System.IO;
 using BombRushMP.Common.Networking;
 using BombRushMP.Server;
 using System.Diagnostics;
+using BombRushMP.Common;
 
 namespace BombRushMP.ServerApp
 {
@@ -53,7 +54,8 @@ namespace BombRushMP.ServerApp
             };
             PacketFactory.Initialize();
             var db = new ServerAppDatabase(ServerSettings.WebServer, ServerSettings.DatabaseConnectionString);
-            Server = new BRCServer(ServerSettings.Port, ServerSettings.MaxPlayers, 1f/ ServerSettings.TicksPerSecond, db);
+            var ticks = 1f / ServerSettings.TicksPerSecond;
+            Server = new BRCServer(ServerSettings.Port, ServerSettings.MaxPlayers, ticks, db, ServerSettings.CustomPackets);
             PlayerAnimation.ServerSendMode = ServerSettings.ServerAnimationSendMode;
             Server.ClientAnimationSendMode = ServerSettings.ClientAnimationSendMode;
             Server.LogMessagesToFile = ServerSettings.LogChatsToFiles;

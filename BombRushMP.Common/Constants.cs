@@ -1,4 +1,6 @@
-﻿namespace BombRushMP.Common
+﻿using System.Collections.Generic;
+
+namespace BombRushMP.Common
 {
     public static class Constants
     {
@@ -11,5 +13,6 @@
         public const int MaxNameLength = 64;
         public const int MaxCrewNameLength = 32;
         public const string PropHuntLockedTag = "phlocked";
+        public static HashSet<int> AlwaysAllowedCustomPackets = [ Compression.HashString("ACN-RAGDOLL_EVENT"), Compression.HashString("ACN-RAGDOLL_STATE"), Compression.HashString("ACN-RAGDOLL_LAUNCH"), Compression.HashString("ACN-BANNEDMODS"), Compression.HashString("ACN-BANNEDMODS-JOINEDLOBBY"), Compression.HashString("ACN-PREFERENCESPACKET") ];
     }
 }

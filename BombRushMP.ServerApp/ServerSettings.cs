@@ -40,6 +40,7 @@ namespace BombRushMP.ServerApp
         public string MOTD = "<color=yellow>Welcome to All City Network!";
         public bool AlwaysShowMOTD = false;
         public bool WebServer = false;
+        public bool CustomPackets = true;
         public string WebServerFrontendURL = "";
         public string DiscordClientId = "";
         public string DiscordClientSecret = "";

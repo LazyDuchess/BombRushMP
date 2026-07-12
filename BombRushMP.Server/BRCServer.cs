@@ -110,9 +110,12 @@ namespace BombRushMP.Server
             _commandQueue.Enqueue(action);
         }
 
-        public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database)
+        private bool _allowCustomPackets = true;
+
+        public BRCServer(int port, ushort maxPlayers, float tickRate, IServerDatabase database, bool allowCustomPackets)
         {
             Instance = this;
+            _allowCustomPackets = allowCustomPackets;
             _database = database;
             _tickRate = tickRate;
             NetworkingInterface.MaxPayloadSize = Constants.MaxPayloadSize;
@@ -841,6 +844,7 @@ namespace BombRushMP.Server
                 case Packets.ClientCustomPacket:
                     {
                         var customPacket = (ClientCustomPacket)packet;
+                        if (!_allowCustomPackets && !Constants.AlwaysAllowedCustomPackets.Contains(customPacket.CustomPacketId)) break;
                         customPacket.Sender = player.Client.Id;
                         if (player.ClientState == null) return;
                         switch (customPacket.TargetMode)
