@@ -1,3 +1,12 @@
+## 1.6.1
+- Ragdolls now work for way more characters without a BRC skeleton. Some might still not work if they are missing certain humanoid bones or built weirdly.
+- Player IDs are now displayed on the player list and spectator mode.
+- Fixed input field for crew name being mislabeled as player name.
+- Fixed input field inconsistent focus bug.
+- Removed rich text tags from input fields.
+- ServerApp: Can now disable custom packets.
+- Updated badges and emojis.
+
 ## 1.6.0
 - Added a Settings button to the Multiplayer phone app that allows you to change your name and other common config settings directly in-game.
 - When banning players from the player list, you are now asked for confirmation.
