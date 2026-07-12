@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
 #if PLUGIN
 using BombRushMP.PluginCommon;
 using Reptile;
@@ -155,6 +157,7 @@ namespace BombRushMP.Mono.Runtime
             gameInput.EnableControllerMaps(BaseModule.IN_GAME_INPUT_MAPS);
 #endif
             _window.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(null);
         }
 
         public void ShowOkCancel(Action<string> okCallback, Action<string> cancelCallback, Func<string,bool> validateCallback, string label, int maxLength = 64, string placeholder = "", string defaultText = "")
