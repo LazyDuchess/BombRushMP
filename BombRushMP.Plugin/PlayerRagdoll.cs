@@ -381,12 +381,12 @@ namespace BombRushMP.Plugin
             return false;
         }
 
-        private Transform FindPelvis(Transform leg2l, Transform head)
+        private Transform FindCommonBone(Transform bone1, Transform bone2)
         {
-            var cPar = leg2l;
+            var cPar = bone1;
             while (cPar != null)
             {
-                if (CanReachTransformParentChain(cPar, head))
+                if (CanReachTransformParentChain(cPar, bone2))
                     return cPar;
                 cPar = cPar.parent;
             }
@@ -429,15 +429,12 @@ namespace BombRushMP.Plugin
                 var head = root.transform.FindRecursive("head");
                 if (head == null) return;
 
-                var pelvis = FindPelvis(leg2l, head);
+                var pelvis = FindCommonBone(leg2l, head);
                 if (pelvis != root)
                 {
                     _shouldForceRender = true;
                 }
                 if (pelvis == null) return;
-
-                var leg1l = leg2l.parent;
-                if (leg1l == null) return;
 
                 var curp = head;
                 var nextp = head.parent;
@@ -453,16 +450,6 @@ namespace BombRushMP.Plugin
                 var s1 = curp;
 
                 if (s1 == null) return;
-                var neck = head.parent;
-                if (neck == null) return;
-                var s2 = neck.parent;
-                if (s2 == null) return;
-
-                var leg2r = root.transform.FindRecursive("leg2r");
-                if (leg2r == null) return;
-
-                var leg1r = leg2r.parent;
-                if (leg1r == null) return;
 
                 var handr = root.transform.FindRecursive("handr");
                 var handl = root.transform.FindRecursive("handl");
@@ -470,16 +457,34 @@ namespace BombRushMP.Plugin
                 if (handr == null) return;
                 if (handl == null) return;
 
+                var s2 = FindCommonBone(handr, head);
+                if (s2 == null) return;
+
+                var leg2r = root.transform.FindRecursive("leg2r");
+                if (leg2r == null) return;
+
+                var leg1r = FindFirstChild(leg2r, pelvis);
+                if (leg1r == null) return;
+
+                var leg1l = FindFirstChild(leg2l, pelvis);
+                if (leg1l == null) return;
+
+                var shldr = FindFirstChild(handr, s2);
+                var shldl = FindFirstChild(handl, s2);
+
+                if (shldr == null) return;
+                if (shldl == null) return;
+
                 var arm2l = handl.parent;
                 if (arm2l == null) return;
 
-                var arm1l = arm2l.parent;
+                var arm1l = FindFirstChild(arm2l, shldl);
                 if (arm1l == null) return;
 
                 var arm2r = handr.parent;
                 if (arm2r == null) return;
 
-                var arm1r = arm2r.parent;
+                var arm1r = FindFirstChild(arm2r, shldr);
                 if (arm1r == null) return;
 
 
