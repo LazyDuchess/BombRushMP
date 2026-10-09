@@ -868,6 +868,10 @@ namespace BombRushMP.Server
                                     }
                                 }
                                 break;
+
+                            case ClientCustomPacket.SendTargets.Global: // Revline Quick Race Support in Any Map
+                                SendPacket(customPacket, customPacket.SendMode, NetChannels.Custom, [player.Client.Id]);
+                                break;
                         }
                     }
                     break;
