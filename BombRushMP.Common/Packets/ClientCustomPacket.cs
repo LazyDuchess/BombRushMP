@@ -14,7 +14,8 @@ namespace BombRushMP.Common.Packets
         {
             Broadcast,
             Lobby,
-            Players
+            Players,
+            Global
         }
         public override Packets PacketId => Packets.ClientCustomPacket;
         public IMessage.SendModes SendMode = IMessage.SendModes.ReliableUnordered;
