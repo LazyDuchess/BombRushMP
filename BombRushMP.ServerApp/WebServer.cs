@@ -338,7 +338,9 @@ namespace BombRushMP.ServerApp
                         if (ply.Value.ClientState.User.Description != request.id) continue;
                         ply.Value.ClientState.User = _server.Database.AuthKeys.GetUser(ply.Value.Auth.AuthKey, ply.Value.Challenge);
                         var newClientState = _server.CreatePlayerClientState(ply.Value);
-                        if (newClientState != null)
+                        if (ply.Value.Invisible)
+                            _server.SendPacketToStageMods(newClientState, IMessage.SendModes.Reliable, ply.Value.ClientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                        else
                             _server.SendPacketToStage(newClientState, IMessage.SendModes.Reliable, ply.Value.ClientState.Stage, NetChannels.ClientAndLobbyUpdates);
                     }
 

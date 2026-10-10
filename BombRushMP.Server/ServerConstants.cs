@@ -10,6 +10,8 @@ namespace BombRushMP.Server
     {
         public const string JoinMessage = "{0} Connected.";
         public const string LeaveMessage = "{0} Disconnected.";
+        public const string JoinMessageInvisible = "{0} Connected (Invisible)";
+        public const string LeaveMessageInvisible = "{0} Disconnected (Invisible)";
         public const string AFKMessage = "{0} is now AFK.";
         public const string LeaveAFKMessage = "{0} is no longer AFK.";
         public const float PlayerCountTickRate = 1f;

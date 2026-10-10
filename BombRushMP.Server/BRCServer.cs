@@ -214,10 +214,15 @@ namespace BombRushMP.Server
 
         private void TickStage(int stage)
         {
-            var clientVisualStates = CreateClientVisualStatesPacket(stage);
+            var clientVisualStates = CreateClientVisualStatesPacket(stage, false);
+            var modVisualStates = CreateClientVisualStatesPacket(stage, true);
             foreach (var visualState in clientVisualStates)
             {
-                SendPacketToStage(visualState, IMessage.SendModes.Unreliable, stage, NetChannels.VisualUpdates);
+                SendPacketToStageNonMods(visualState, IMessage.SendModes.Unreliable, stage, NetChannels.VisualUpdates);
+            }
+            foreach (var visualState in modVisualStates)
+            {
+                SendPacketToStageMods(visualState, IMessage.SendModes.Unreliable, stage, NetChannels.VisualUpdates);
             }
         }
 
@@ -260,6 +265,32 @@ namespace BombRushMP.Server
             }
         }
 
+        public void SendPacketToStageMods(Packet packet, IMessage.SendModes sendMode, int stage, NetChannels channel, ushort[] except = null)
+        {
+            var message = PacketFactory.MessageFromPacket(packet, sendMode, channel);
+            foreach (var player in Players)
+            {
+                if (player.Value.ClientState == null) continue;
+                if (player.Value.ClientState.Stage != stage) continue;
+                if (except != null && except.Contains(player.Key)) continue;
+                if (!player.Value.ClientState.User.IsModerator) continue;
+                player.Value.Client.Send(message);
+            }
+        }
+
+        public void SendPacketToStageNonMods(Packet packet, IMessage.SendModes sendMode, int stage, NetChannels channel, ushort[] except = null)
+        {
+            var message = PacketFactory.MessageFromPacket(packet, sendMode, channel);
+            foreach (var player in Players)
+            {
+                if (player.Value.ClientState == null) continue;
+                if (player.Value.ClientState.Stage != stage) continue;
+                if (except != null && except.Contains(player.Key)) continue;
+                if (player.Value.ClientState.User.IsModerator) continue;
+                player.Value.Client.Send(message);
+            }
+        }
+
         public void SendPacketToClient(Packet packet, IMessage.SendModes sendMode, INetConnection client, NetChannels channel)
         {
             var message = PacketFactory.MessageFromPacket(packet, sendMode, channel);
@@ -285,8 +316,10 @@ namespace BombRushMP.Server
             var activeStages = GetActiveStages();
             foreach(var activeStage in activeStages)
             {
-                var clientStates = CreateClientStatesPacket(activeStage);
-                SendPacketToStage(clientStates, IMessage.SendModes.Reliable, activeStage, NetChannels.ClientAndLobbyUpdates);
+                var clientStates = CreateClientStatesPacket(activeStage, false);
+                var modClientStates = CreateClientStatesPacket(activeStage, true);
+                SendPacketToStageNonMods(clientStates, IMessage.SendModes.Reliable, activeStage, NetChannels.ClientAndLobbyUpdates);
+                SendPacketToStageMods(modClientStates, IMessage.SendModes.Reliable, activeStage, NetChannels.ClientAndLobbyUpdates);
             }
         }
 
@@ -749,11 +782,13 @@ namespace BombRushMP.Server
                             if (user.CanLurk)
                             {
                                 player.Invisible = clientAuth.Invisible;
+                                clientState.ServerInvisible = player.Invisible;
                             }
                         }
                         else if (oldClientState != null)
                         {
                             clientState.User = oldClientState.User;
+                            clientState.ServerInvisible = player.Invisible;
                         }
                         if (clientState.User.HasTag(SpecialPlayerUtils.SpecialPlayerTag))
                         {
@@ -770,7 +805,9 @@ namespace BombRushMP.Server
                         player.ClientState = clientState;
 
                         var updateClientState = CreatePlayerClientState(player);
-                        if (updateClientState != null)
+                        if (player.Invisible)
+                            SendPacketToStageMods(updateClientState, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
+                        else
                             SendPacketToStage(updateClientState, IMessage.SendModes.Reliable, clientState.Stage, NetChannels.ClientAndLobbyUpdates);
 
                         if (oldClientState != null)
@@ -785,7 +822,7 @@ namespace BombRushMP.Server
                         ServerLogger.Log($"Player from {client.Address} (ID: {client.Id}) connected as {clientState.Name} in stage {clientState.Stage} (HWID: {player.Auth.HWID}), (GUID: {player.Auth.GUID})");
                         SendPacketToClient(new ServerConnectionResponse() { LocalClientId = client.Id, TickRate = _tickRate, ClientAnimationSendMode = ClientAnimationSendMode, User = clientState.User, ServerState = ServerState, MOTD = MOTD, AlwaysShowMOTD = AlwaysShowMOTD }, IMessage.SendModes.Reliable, client, NetChannels.Default);
 
-                        var currentClientStates = CreateClientStatesPacket(clientState.Stage);
+                        var currentClientStates = CreateClientStatesPacket(clientState.Stage, clientState.User.IsModerator);
                         SendPacketToClient(currentClientStates, IMessage.SendModes.Reliable, client, NetChannels.ClientAndLobbyUpdates);
 
                         var joinMessage = ServerConstants.JoinMessage;
@@ -797,6 +834,12 @@ namespace BombRushMP.Server
                         {
                             SendPacketToStage(new ServerChat(
                                 clientState.Name, joinMessage, clientState.ShowBadges ? clientState.User.Badges : null, ChatMessageTypes.PlayerJoinedOrLeft),
+                                IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
+                        }
+                        else
+                        {
+                            SendPacketToStageMods(new ServerChat(
+                                clientState.Name, ServerConstants.JoinMessageInvisible, clientState.ShowBadges ? clientState.User.Badges : null, ChatMessageTypes.PlayerJoinedOrLeft),
                                 IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                         }
 
@@ -1057,12 +1100,17 @@ namespace BombRushMP.Server
                         clientState.Name, leaveMessage, clientState.ShowBadges ? clientState.User.Badges : null, ChatMessageTypes.PlayerJoinedOrLeft),
                         IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
                 }
+                else
+                {
+                    SendPacketToStageMods(new ServerChat(
+                        clientState.Name, ServerConstants.LeaveMessageInvisible, clientState.ShowBadges ? clientState.User.Badges : null, ChatMessageTypes.PlayerJoinedOrLeft),
+                        IMessage.SendModes.ReliableUnordered, clientState.Stage, NetChannels.Chat);
+                }
             }
         }
 
         public ServerClientStates CreatePlayerClientState(Player player)
         {
-            if (player.Invisible) return null;
             if (player.ClientState == null) return null;
             var packet = new ServerClientStates();
             packet.Full = false;
@@ -1070,13 +1118,13 @@ namespace BombRushMP.Server
             return packet;
         }
 
-        private ServerClientStates CreateClientStatesPacket(int stage)
+        private ServerClientStates CreateClientStatesPacket(int stage, bool includeInvisible)
         {
             var packet = new ServerClientStates();
             packet.Full = true;
             foreach(var player in Players)
             {
-                if (player.Value.Invisible) continue;
+                if (player.Value.Invisible && !includeInvisible) continue;
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
                 packet.ClientStates[player.Key] = player.Value.ClientState;
@@ -1086,7 +1134,7 @@ namespace BombRushMP.Server
 
         private const int MaxVisualUpdates = 5;
 
-        private List<ServerClientVisualStates> CreateClientVisualStatesPacket(int stage)
+        private List<ServerClientVisualStates> CreateClientVisualStatesPacket(int stage, bool includeInvisible)
         {
             var packetList = new List<ServerClientVisualStates>();
             packetList.Shuffle();
@@ -1099,7 +1147,7 @@ namespace BombRushMP.Server
                     packetList.Add(currentPacket);
                     currentPacket = new ServerClientVisualStates();
                 }
-                if (player.Value.Invisible) continue;
+                if (player.Value.Invisible && !includeInvisible) continue;
                 if (player.Value.ClientState == null) continue;
                 if (player.Value.ClientState.Stage != stage) continue;
                 if (player.Value.ClientVisualState == null) continue;

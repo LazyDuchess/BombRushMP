@@ -26,6 +26,7 @@ namespace BombRushMP.Common.Packets
         public bool HasSpecialUnlock = false;
         public bool AllowTeleports = true;
         public bool ShowBadges = true;
+        public bool ServerInvisible = false;
         public AuthUser User = new AuthUser();
 
         public override void Read(BinaryReader reader)
@@ -44,6 +45,7 @@ namespace BombRushMP.Common.Packets
             HasSpecialUnlock = reader.ReadBoolean();
             AllowTeleports = reader.ReadBoolean();
             ShowBadges = reader.ReadBoolean();
+            ServerInvisible = reader.ReadBoolean();
             var user = new AuthUser();
             User.Read(reader);
         }
@@ -63,6 +65,7 @@ namespace BombRushMP.Common.Packets
             writer.Write(HasSpecialUnlock);
             writer.Write(AllowTeleports);
             writer.Write(ShowBadges);
+            writer.Write(ServerInvisible);
             User.Write(writer);
         }
     }

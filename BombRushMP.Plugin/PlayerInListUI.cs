@@ -70,6 +70,10 @@ namespace BombRushMP.Plugin
             var nameText = MPUtility.GetPlayerDisplayName(player.ClientState);
             var user = clientController.GetLocalUser();
             nameText = $"[{player.ClientId}] {nameText}";
+            if (player.ClientState != null && player.ClientState.ServerInvisible)
+            {
+                nameText = $"[{player.ClientId}] [INVIS] {nameText}";
+            }
             _label.text = nameText;
             var localId = clientController.LocalID;
 

@@ -901,6 +901,8 @@ namespace BombRushMP.Plugin
             CreateNameplateIfNecessary();
 
             var name = MPUtility.GetPlayerDisplayName(ClientState);
+            if (ClientState.ServerInvisible)
+                name = $"[INVIS] {name}";
 
             if (inOurTeamLobby)
             {
