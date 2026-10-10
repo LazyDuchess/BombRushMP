@@ -1,3 +1,7 @@
+## 1.8.0
+- Invisible players are now visible to moderators.
+- Custom packets can now be sent globally across stages. Contributed by @AbsentmindedGCN
+
 ## 1.7.1
 - Fixed "emojis" command reporting the wrong total number of pages.
 
